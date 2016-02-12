@@ -9,7 +9,7 @@ stdenv.mkDerivation {
   name = "${pname}-${version}";
 
   src = fetchurl {
-    url = "${webpage}/downloads/${pname}-${version}.tar.gz";
+    url = "mirror://debian/pool/main/o/omake/omake_${version}.orig.tar.gz";
     sha256 = "1sas02pbj56m7wi5vf3vqrrpr4ynxymw2a8ybvfj2dkjf7q9ii13";
   };
   patchFlags = "-p0";
