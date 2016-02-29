@@ -41,8 +41,10 @@ nixos.path = ./nixpkgs-unstable-2015-12-06/nixos;
 
   <itemizedlist>
     <listitem><para><literal>services/monitoring/longview.nix</literal></para></listitem>
+    <listitem><para><literal>services/networking/pdnsd.nix</literal></para></listitem>
     <listitem><para><literal>services/web-apps/pump.io.nix</literal></para></listitem>
     <listitem><para><literal>services/security/haka.nix</literal></para></listitem>
+    <listitem><para><literal>i18n/inputMethod/default.nix</literal></para></listitem>
   </itemizedlist>
 </para>
 
@@ -168,8 +170,65 @@ fileSystems."/example" = {
   options = [ "noatime" "compress=lzo" "space_cache" "autodefrag" ];
 };
 </programlisting>
+    </para>
+  </listitem>
+
+  <listitem>
+    <para>CUPS, installed by <literal>services.printing</literal> module, now
+    has its data directory in <filename>/var/lib/cups</filename>. Old
+    configurations from <filename>/etc/cups</filename> are moved there
+    automatically, but there might be problems. Also configuration options
+    <literal>services.printing.cupsdConf</literal> and
+    <literal>services.printing.cupsdFilesConf</literal> were removed
+    because they had been allowing one to override configuration variables
+    required for CUPS to work at all on NixOS. For most use cases,
+    <literal>services.printing.extraConf</literal> and new option
+    <literal>services.printing.extraFilesConf</literal> should be enough;
+    if you encounter a situation when they are not, please file a bug.</para>
+
+    <para>There are also Gutenprint improvements; in particular, a new option
+    <literal>services.printing.gutenprint</literal> is added to enable automatic
+    updating of Gutenprint PPMs; it's greatly recommended to enable it instead
+    of adding <literal>gutenprint</literal> to the <literal>drivers</literal> list.
+    </para>
+  </listitem>
+
+  <listitem>
+    <para><literal>services.xserver.vaapiDrivers</literal> has been removed. Use
+    <literal>services.hardware.opengl.extraPackages{,32}</literal> instead. You can
+    also specify VDPAU drivers there.</para>
+  </listitem>
+
+  <listitem>
+    <para>
+    <literal>programs.ibus</literal> moved to <literal>i18n.inputMethod.ibus</literal>.
+    The option <literal>programs.ibus.plugins</literal> changed to <literal>i18n.inputMethod.ibus.engines</literal>
+    and the option to enable ibus changed from <literal>programs.ibus.enable</literal> to
+    <literal>i18n.inputMethod.enabled</literal>.
+    <literal>i18n.inputMethod.enabled</literal> should be set to the used input method name,
+    <literal>"ibus"</literal> for ibus.
+    An example of the new style:
+
+<programlisting>
+i18n.inputMethod.enabled = "ibus";
+i18n.inputMethod.ibus.engines = with pkgs.ibus-engines; [ anthy mozc ];
+</programlisting>
+
+That is equivalent to the old version:
+
+<programlisting>
+programs.ibus.enable = true;
+programs.ibus.plugins = with pkgs; [ ibus-anthy mozc ];
+</programlisting>
 
     </para>
+  </listitem>
+
+  <listitem>
+    <para><literal>services.udev.extraRules</literal> option now writes rules
+    to <filename>99-local.rules</filename> instead of <filename>10-local.rules</filename>.
+    This makes all the user rules apply after others, so their results wouldn't be
+    overriden by anything else.</para>
   </listitem>
 
 </itemizedlist>
@@ -188,6 +247,12 @@ fileSystems."/example" = {
   <listitem>
     <para><literal>ejabberd</literal> module is brought back and now works on
     NixOS.</para>
+  </listitem>
+
+  <listitem>
+    <para>Input method support was improved. New NixOS modules (fcitx, nabi and uim),
+    fcitx engines (chewing, hangul, m17n, mozc and table-other) and ibus engines (hangul and m17n)
+    have been added.</para>
   </listitem>
 
 </itemizedlist></para>

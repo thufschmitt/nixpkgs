@@ -2,10 +2,10 @@
 
 stdenv.mkDerivation rec {
   name = "mcelog-${version}";
-  version = "130";
+  version = "132";
 
   src = fetchFromGitHub {
-    sha256 = "05yszlhd6kljx371nlgrzjs0fi44wwgxcv2j5rwwgklm6ifp2zza";
+    sha256 = "0qr0rdkva8a8wzsdmk0dm9zhpdnwp1lmla324xnayf0afyym3zj8";
     rev = "v${version}";
     repo = "mcelog";
     owner = "andikleen";
