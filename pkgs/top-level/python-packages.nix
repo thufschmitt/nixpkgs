@@ -931,15 +931,18 @@ in modules // {
 
   arrow = buildPythonPackage rec {
     name = "arrow-${version}";
-    version = "0.5.0";
+    version = "0.7.0";
 
     src = pkgs.fetchurl {
       url    = "https://pypi.python.org/packages/source/a/arrow/${name}.tar.gz";
-      sha256 = "1q3a6arjm6ysl2ff6lgdm504np7b1rbivrzspybjypq1nczcb7qy";
+      sha256 = "0yx10dz3hp825fcq9w15zbp26v622npcjscb91da05zig8036lra";
     };
 
-    doCheck = false;
-    propagatedBuildInputs = with self; [ dateutil ];
+    checkPhase = ''
+    nosetests
+    '';
+
+    propagatedBuildInputs = with self; [ dateutil nose chai simplejson ];
 
     meta = {
       description = "Twitter API library";
