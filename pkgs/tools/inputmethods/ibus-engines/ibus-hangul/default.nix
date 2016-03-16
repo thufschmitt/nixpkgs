@@ -1,36 +1,23 @@
-{ stdenv, gnome, fetchFromGitHub, ibus, libhangul, autoconf, automake, gettext, libtool, librsvg,
-  intltool, pkgconfig, pythonPackages, makeWrapper, gtk3, python }:
+{ stdenv, fetchurl, intltool, pkgconfig
+, gtk3, ibus, libhangul, librsvg, python3, pygobject3
+}:
 
 stdenv.mkDerivation rec {
   name = "ibus-hangul-${version}";
   version = "1.5.0";
 
-  src = fetchFromGitHub {
-    owner  = "choehwanjin";
-    repo   = "ibus-hangul";
-    rev    = version;
-    sha256 = "12l2spr32biqdbz01bzkamgq5gskbi6cd7ai343wqyy1ibjlkmp8";
+  src = fetchurl {
+    url = "https://github.com/choehwanjin/ibus-hangul/releases/download/${version}/${name}.tar.gz";
+    sha256 = "120p9w7za6hi521hz8q235fkl4i3p1qqr8nqm4a3kxr0pcq40bd2";
   };
 
-  buildInputs = [ ibus libhangul autoconf gettext automake libtool
-    intltool pkgconfig python pythonPackages.pygobject3 gtk3 makeWrapper ];
+  buildInputs = [ gtk3 ibus libhangul python3 pygobject3 ];
 
-  preConfigure = ''
-    autoreconf --verbose --force --install
-    intltoolize --automake --force --copy
-  '';
-
-  postInstall = ''
-    wrapProgram $out/bin/ibus-setup-hangul \
-      --prefix PYTHONPATH : $PYTHONPATH \
-      --prefix GI_TYPELIB_PATH : "$GI_TYPELIB_PATH" \
-      --prefix GDK_PIXBUF_MODULE_FILE : ${librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache \
-      --prefix LD_LIBRARY_PATH : ${libhangul}/lib
-  '';
+  nativeBuildInputs = [ intltool pkgconfig ];
 
   meta = with stdenv.lib; {
     isIbusEngine = true;
-    description  = "Ibus Hangul engine.";
+    description  = "Ibus Hangul engine";
     homepage     = https://github.com/choehwanjin/ibus-hangul;
     license      = licenses.gpl2;
     platforms    = platforms.linux;

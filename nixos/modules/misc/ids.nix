@@ -252,6 +252,8 @@
       gammu-smsd = 228;
       pdnsd = 229;
       octoprint = 230;
+      avahi-autoipd = 231;
+      nntp-proxy = 232;
 
       # When adding a uid, make sure it doesn't match an existing gid. And don't use uids above 399!
 

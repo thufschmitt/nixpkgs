@@ -65,10 +65,7 @@ rec {
 
     uhc = callPackage ../development/compilers/uhc/default.nix ({
       stdenv = pkgs.clangStdenv;
-      # UHC 1.1.9.2 is incompatible with hashable 1.2.4.0,
-      # latest LTS with a compatible hashable is LTS 4.1
-      # See also https://github.com/UU-ComputerScience/uhc/issues/69
-      inherit (pkgs.haskell.packages.lts-4_1) ghcWithPackages;
+      inherit (pkgs.haskellPackages) ghcWithPackages;
     });
 
   };
@@ -359,7 +356,13 @@ rec {
     lts-5_3 = packages.ghc7103.override {
       packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.3.nix { };
     };
-    lts-5 = packages.lts-5_3;
+    lts-5_4 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.4.nix { };
+    };
+    lts-5_5 = packages.ghc7103.override {
+      packageSetConfig = callPackage ../development/haskell-modules/configuration-lts-5.5.nix { };
+    };
+    lts-5 = packages.lts-5_5;
 
     lts = packages.lts-5;
   };

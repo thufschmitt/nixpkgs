@@ -1,15 +1,34 @@
-{ stdenv, fetchurl, ibus, pkgconfig, python3, pythonPackages }:
+{ stdenv, fetchurl, pkgconfig
+, gtk3, dconf, gobjectIntrospection, ibus, python3, pygobject3 }:
 
 stdenv.mkDerivation rec {
   name = "ibus-table-${version}";
-  version = "1.9.6";
+  version = "1.9.11";
 
   src = fetchurl {
     url = "https://github.com/kaio/ibus-table/releases/download/${version}/${name}.tar.gz";
-    sha256 = "0xygfscmsx0x80c4d4v40k9bc7831kgdsc74mc84ljxbjg9p9lcf";
+    sha256 = "14sb89z1inbbhcrbsm5nww8la04ncy2lk32mxfqpi4ghl22ixxqd";
   };
 
-  buildInputs = [ ibus pkgconfig python3 pythonPackages.pygobject3 ];
+  postPatch = ''
+    # Data paths will be set at run-time.
+    sed -e "/export IBUS_TABLE_LIB_LOCATION=/ s/^.*$//" \
+        -e "/export IBUS_TABLE_LOCATION=/ s/^.*$//" \
+        -i "engine/ibus-engine-table.in"
+    sed -e "/export IBUS_TABLE_BIN_PATH=/ s/^.*$//" \
+        -e "/export IBUS_TABLE_DATA_DIR=/ s/^.*$//" \
+        -i "engine/ibus-table-createdb.in"
+    sed -e "/export IBUS_PREFIX=/ s/^.*$//" \
+        -e "/export IBUS_DATAROOTDIR=/ s/^.$//" \
+        -e "/export IBUS_LOCALEDIR=/ s/^.$//" \
+        -i "setup/ibus-setup-table.in"
+  '';
+
+  buildInputs = [
+    dconf gtk3 gobjectIntrospection ibus python3 pygobject3
+  ];
+
+  nativeBuildInputs = [ pkgconfig ];
 
   meta = with stdenv.lib; {
     isIbusEngine = true;
