@@ -5147,7 +5147,7 @@ in
 
   };
 
-  ocamlPackages = recurseIntoAttrs ocamlPackages_4_01_0;
+  # ocamlPackages_4_01_0 = recurseIntoAttrs ocamlPackages_4_01_0;
   ocamlPackages_3_10_0 = (mkOcamlPackages ocaml_3_10_0 pkgs.ocamlPackages_3_10_0)
   // { lablgtk = ocamlPackages_3_10_0.lablgtk_2_14; };
   ocamlPackages_3_11_2 = (mkOcamlPackages ocaml_3_11_2 pkgs.ocamlPackages_3_11_2)
@@ -5158,6 +5158,7 @@ in
   ocamlPackages_4_01_0 = mkOcamlPackages ocaml_4_01_0 pkgs.ocamlPackages_4_01_0;
   ocamlPackages_4_02 = mkOcamlPackages ocaml_4_02 pkgs.ocamlPackages_4_02;
   ocamlPackages_latest = ocamlPackages_4_02;
+  ocamlPackages = recurseIntoAttrs ocamlPackages_4_02;
 
   ocaml_make = callPackage ../development/ocaml-modules/ocamlmake { };
 
