@@ -14,7 +14,7 @@ in {
       owner = "donovan6000";
       repo = "M3D-Fio";
       rev = "V${version}";
-      sha256 = "1ifbq7yibq42jjvqvklnx3qzr6vk2ngsxh3xhlbdrhqrg54gky4r";
+      sha256 = "17jyr7qf9psq3xcckk1zjhaw0h8a0mh3v8lcv9vgqzni27kq9pnb";
     };
 
     patches = [
