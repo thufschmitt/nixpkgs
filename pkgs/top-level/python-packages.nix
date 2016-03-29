@@ -15,8 +15,10 @@ let
 
   callPackage = pkgs.newScope self;
 
+  bootstrapped-pip = callPackage ../development/python-modules/bootstrapped-pip { };
+
   buildPythonPackage = makeOverridable (callPackage ../development/python-modules/generic {
-    bootstrapped-pip = callPackage ../development/python-modules/bootstrapped-pip { };
+    inherit bootstrapped-pip;
   });
 
   buildPythonApplication = args: buildPythonPackage ({namePrefix="";} // args );
@@ -40,7 +42,7 @@ let
 
 in modules // {
 
-  inherit python isPy26 isPy27 isPy33 isPy34 isPy35 isPyPy isPy3k pythonName buildPythonPackage buildPythonApplication;
+  inherit python bootstrapped-pip isPy26 isPy27 isPy33 isPy34 isPy35 isPyPy isPy3k pythonName buildPythonPackage buildPythonApplication;
 
   # helpers
 
@@ -234,7 +236,7 @@ in modules // {
       sha256 = "1ywimbisgb5g7xl9nrfwcm7dv3j8fsrjfp7bxb3l58zbsrzj6z2s";
     };
 
-    propagatedBuildInputs = with self; [ appdirs colorama dateutil requests2 requests_toolbelt sqlalchemy7 ];
+    propagatedBuildInputs = with self; [ appdirs colorama dateutil requests2 requests_toolbelt sqlalchemy ];
 
     makeWrapperArgs = [ "--prefix LIBFUSE_PATH : ${pkgs.fuse}/lib/libfuse.so" ];
 
@@ -926,6 +928,10 @@ in modules // {
       url = "https://pypi.python.org/packages/source/c/chai/${name}.tar.gz";
       sha256 = "016kf3irrclpkpvcm7q0gmkfibq7jgy30a9v73pp42bq9h9a32bl";
     };
+
+    meta = {
+      description = "Mocking, stubbing and spying framework for python";
+    };
   };
 
   arrow = buildPythonPackage rec {
@@ -938,13 +944,14 @@ in modules // {
     };
 
     checkPhase = ''
-    nosetests
+      nosetests
     '';
 
-    propagatedBuildInputs = with self; [ dateutil nose chai simplejson ];
+    buildInputs = with self; [ nose chai simplejson ];
+    propagatedBuildInputs = with self; [ dateutil ];
 
     meta = {
-      description = "Twitter API library";
+      description = "Python library for date manipulation";
       license     = "apache";
       maintainers = with maintainers; [ thoughtpolice ];
     };
@@ -3626,11 +3633,11 @@ in modules // {
 
   cryptography = buildPythonPackage rec {
     # also bump cryptography_vectors
-    name = "cryptography-1.1.1";
+    name = "cryptography-1.2.3";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/c/cryptography/${name}.tar.gz";
-      sha256 = "1q5snbnn2am85zb5jrnxwzncl4kwa11740ws8g9b4ps5ywx944i9";
+      sha256 = "0kj511z4g21fhcr649pyzpl0zzkkc7hsgxxjys6z8wwfvmvirccf";
     };
 
     buildInputs = [ pkgs.openssl self.pretend self.cryptography_vectors
@@ -3646,11 +3653,11 @@ in modules // {
 
   cryptography_vectors = buildPythonPackage rec {
       # also bump cryptography
-    name = "cryptography_vectors-1.1.1";
+    name = "cryptography_vectors-1.2.3";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/c/cryptography-vectors/${name}.tar.gz";
-      sha256 = "17gi301p3wi39dr4dhrmpfflid3k004jp9cnvdp46b7p5lm6hb3w";
+      sha256 = "0shawgpax79gvjrj0a313sll9gaqys7q1hxngn6j4k24lmz7bwki";
     };
   };
 
@@ -3998,18 +4005,25 @@ in modules // {
   };
 
   cffi = if isPyPy then null else buildPythonPackage rec {
-    name = "cffi-1.3.0";
+    name = "cffi-1.5.2";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/c/cffi/${name}.tar.gz";
-      sha256 = "1s9lcwmyhshrmvgcwy0vww70v23ncz7bgshhbk469kxmy2pm7alx";
+      sha256 = "1p91p1n8n46y0k3q7ddgxxjnfh08rjqsjh7zbjxzfiifhycxx6ys";
     };
 
     propagatedBuildInputs = with self; [ pkgs.libffi pycparser ];
     buildInputs = with self; [ pytest ];
 
+    checkPhase = ''
+      py.test
+    '';
+
     meta = {
       maintainers = with maintainers; [ iElectric ];
+      homepage = https://cffi.readthedocs.org/;
+      license = with licenses; [ mit ];
+      description = "Foreign Function Interface for Python calling C code";
     };
   };
 
@@ -10312,6 +10326,8 @@ in modules // {
       maintainers = with maintainers; [ olcai ];
     };
   };
+
+  icdiff = callPackage ../tools/text/icdiff {};
 
   importlib = buildPythonPackage rec {
     name = "importlib-1.0.2";
@@ -17149,7 +17165,7 @@ in modules // {
       downloadPage = https://github.com/progrium/pyjwt/releases;
       license = licenses.mit;
       maintainers = with maintainers; [ prikhi ];
-      platforms = platforms.linux;
+      platforms = platforms.unix;
     };
   };
 
@@ -26211,7 +26227,8 @@ in modules // {
       sha256 = "1888khfl9yxb8yfxq9b48dxwplqlxx8s0l530z5j7c6bx74v08b4";
     };
 
-    propagatedBuildInputs = with self; [ termstyle colorama mock ];
+    propagatedBuildInputs = with self; [ termstyle colorama ];
+    buildInputs = with self; [ mock ];
 
     meta = {
       description = "python test runner";
@@ -26232,11 +26249,10 @@ in modules // {
       sha256 = "0vmfr2cxn3r5zc0c4q3a94xy1r0cv177b9zrm9hkkjcmhgq42s3h";
     };
 
-    propagatedBuildInputs = with self; [ arrow icalendar ]
-    ++ pkgs.lib.optionals doCheck [ mock freezegun coverage ];
+    propagatedBuildInputs = with self; [ arrow icalendar ];
+    buildInputs = with self; [ mock freezegun coverage pkgs.glibcLocales ];
 
-    # fails with "ascii codec out of range" on some tests
-    doCheck = false;
+    LC_ALL="en_US.UTF-8";
   };
 
   meta = {

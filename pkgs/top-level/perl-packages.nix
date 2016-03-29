@@ -890,14 +890,13 @@ let self = _self // overrides; _self = with self; {
   };
 
   CatalystActionREST = buildPerlPackage rec {
-    name = "Catalyst-Action-REST-1.19";
+    name = "Catalyst-Action-REST-1.20";
     src = fetchurl {
-      url = "mirror://cpan/authors/id/F/FR/FREW/${name}.tar.gz";
-      sha256 = "0qiw6b932a73prrg8vw9brpdvjqm37c6wmbliyxvmz0kij6pi2qd";
+      url = mirror://cpan/authors/id/J/JJ/JJNAPIORK/Catalyst-Action-REST-1.20.tar.gz;
+      sha256 = "c0470541ec0016b837db3186ed77915813c8b856b941db89b86db8602e31ead6";
     };
     buildInputs = [ TestRequires ];
-    propagatedBuildInputs = [ CatalystRuntime ClassInspector LWP MROCompat
-      ModulePluggable Moose ParamsValidate URIFind namespaceautoclean ];
+    propagatedBuildInputs = [ CatalystRuntime ClassInspector JSONMaybeXS MROCompat ModulePluggable Moose ParamsValidate URIFind namespaceautoclean ];
     meta = {
       description = "Automated REST Method Dispatching";
       license = "perl";
@@ -1431,10 +1430,10 @@ let self = _self // overrides; _self = with self; {
   };
 
   CGI = buildPerlPackage rec {
-    name = "CGI-4.27";
+    name = "CGI-4.28";
     src = fetchurl {
       url = "mirror://cpan/authors/id/L/LE/LEEJO/${name}.tar.gz";
-      sha256 = "0rjif2z44lnfk4hkf95mq52nsgvlgjdigabjpx3v697lfibhx37c";
+      sha256 = "1297d3ed6616cacb4eb57860e3e743f3890111e7a63ca08849930f42f1360532";
     };
     buildInputs = [ TestDeep TestWarn ];
     propagatedBuildInputs = [ HTMLParser self."if" ];
@@ -2717,6 +2716,18 @@ let self = _self // overrides; _self = with self; {
       homepage = https://github.com/rjbs/Data-GUID;
       description = "Globally unique identifiers";
       license = "perl";
+    };
+  };
+
+  DataHexDump = buildPerlPackage {
+    name = "Data-HexDump-0.02";
+    src = fetchurl {
+      url = mirror://cpan/authors/id/F/FT/FTASSIN/Data-HexDump-0.02.tar.gz;
+      sha256 = "1a9d843e7f667c1c6f77c67af5d77e7462ff23b41937cb17454d03535cd9be70";
+    };
+    meta = {
+      description = "Hexadecimal Dumper";
+      maintainers = with stdenv.lib.maintainers; [ AndersonTorres ];
     };
   };
 
@@ -4831,6 +4842,21 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
+  FileHandleUnget = buildPerlPackage rec {
+    name = "FileHandle-Unget-0.1628";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/D/DC/DCOPPIT/${name}.tar.gz";
+      sha256 = "9ef4eb765ddfdc35b350905d8dd0a1e12139eabc586652811bfab41972100fdf";
+    };
+    buildInputs = [ FileSlurp URI ];
+    meta = {
+      homepage = https://github.com/coppit/filehandle-unget/;
+      description = "FileHandle which supports multi-byte unget";
+      license = stdenv.lib.licenses.gpl2;
+      maintainers = with maintainers; [ romildo ];
+    };
+  };
+
   FileHomeDir = buildPerlPackage {
     name = "File-HomeDir-1.00";
     src = fetchurl {
@@ -5330,6 +5356,22 @@ let self = _self // overrides; _self = with self; {
       description = "Perl interface to the GraphViz graphing tool";
       license = licenses.artistic2;
       maintainers = [ ];
+    };
+  };
+
+  grepmail = buildPerlPackage rec {
+    name = "grepmail-5.3104";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/D/DC/DCOPPIT/${name}.tar.gz";
+      sha256 = "7969e569ec54b2f569a5af56ac4d884c630ad850974658219b0b6953e97b5d3d";
+    };
+    buildInputs = [ FileSlurp URI ];
+    propagatedBuildInputs = [ DateManip DigestMD5 MailMboxMessageParser TimeDate ];
+    meta = {
+      homepage = https://github.com/coppit/grepmail;
+      description = "Search mailboxes for mail matching a regular expression";
+      license = stdenv.lib.licenses.gpl2;
+      maintainers = with maintainers; [ romildo ];
     };
   };
 
@@ -6900,11 +6942,11 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
-  Log4Perl = buildPerlPackage rec {
-    name = "Log-Log4perl-1.46";
+  LogLog4perl = buildPerlPackage rec {
+    name = "Log-Log4perl-1.47";
     src = fetchurl {
       url = "mirror://cpan/authors/id/M/MS/MSCHILLI/${name}.tar.gz";
-      sha256 = "31011a17c04e78016e73eaa4865d0481d2ffc3dc22813c61065d90ad73c64e6f";
+      sha256 = "9001dded011226538b9a50c7856815bb0dba72a1e6218fdcaba56f651356b96f";
     };
     meta = {
       homepage = https://mschilli.github.io/log4perl/;
@@ -6913,6 +6955,9 @@ let self = _self // overrides; _self = with self; {
       maintainers = [ maintainers.rycee ];
     };
   };
+
+  # For backwards compatibility.
+  Log4Perl = self.LogLog4perl;
 
   LogDispatchArray = buildPerlPackage {
     name = "Log-Dispatch-Array-1.003";
@@ -7072,6 +7117,22 @@ let self = _self // overrides; _self = with self; {
 
   maatkit = import ../development/perl-modules/maatkit {
     inherit fetchurl buildPerlPackage stdenv DBDmysql;
+  };
+
+  MailMboxMessageParser = buildPerlPackage rec {
+    name = "Mail-Mbox-MessageParser-1.5105";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/D/DC/DCOPPIT/${name}.tar.gz";
+      sha256 = "641edd8b7ab74de671ab4931311413c1bd037a1c3eaa0a0c97451cd7b104f2d8";
+    };
+    buildInputs = [ FileSlurp TextDiff URI ];
+    propagatedBuildInputs = [ FileHandleUnget ];
+    meta = {
+      homepage = https://github.com/coppit/mail-mbox-messageparser;
+      description = "A fast and simple mbox folder reader";
+      license = stdenv.lib.licenses.gpl2;
+      maintainers = with maintainers; [ romildo ];
+    };
   };
 
   MailDKIM = buildPerlPackage rec {
@@ -7730,17 +7791,43 @@ let self = _self // overrides; _self = with self; {
       description = "Embed a Perl interpreter in the Apache HTTP server";
     };
   };
-
-  Mojolicious = buildPerlPackage {
-    name = "Mojolicious-4.63";
+  Mojolicious = buildPerlPackage rec {
+    name = "Mojolicious-6.56";
     src = fetchurl {
-      url = mirror://cpan/authors/id/S/SR/SRI/Mojolicious-4.63.tar.gz;
-      sha256 = "f20f77e86fc560dac1c958e765ed64242dcf6343939ed605b45f2bbe2596d5e9";
+      url = "mirror://cpan/authors/id/S/SR/SRI/${name}.tar.gz";
+      sha256 = "82f73553836ac378edf825fd9f24be982653be9e0d78f8ba38b7841aabdafb02";
+    };
+    propagatedBuildInputs = [ JSONPP ];
+    meta = {
+      homepage = http://mojolicious.org;
+      description = "Real-time web framework";
+      license = with stdenv.lib.licenses; [ artistic2 ];
+    };
+  };
+
+  MojoIOLoopForkCall = buildPerlModule rec {
+    name = "Mojo-IOLoop-ForkCall-0.17";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/J/JB/JBERGER/${name}.tar.gz";
+      sha256 = "886de5c3b44194a86228471075fac4036073bda19093e776c702aa65c3ef1824";
+    };
+    propagatedBuildInputs = [ IOPipely Mojolicious ];
+    meta = {
+      description = "Run blocking functions asynchronously by forking";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
+  IOPipely = buildPerlPackage rec {
+    name = "IO-Pipely-0.005";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/R/RC/RCAPUTO/${name}.tar.gz";
+      sha256 = "e33b6cf5cb2b46ee308513f51e623987a50a89901e81bf19701dce35179f2e74";
     };
     meta = {
-      homepage = http://mojolicio.us;
-      description = "Real-time web framework";
-      license = stdenv.lib.licenses.artistic2;
+      homepage = http://search.cpan.org/dist/IO-Pipely/;
+      description = "Portably create pipe() or pipe-like handles";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
     };
   };
 
@@ -10872,13 +10959,13 @@ let self = _self // overrides; _self = with self; {
   };
 
   SubName = buildPerlPackage rec {
-    name = "Sub-Name-0.14";
+    name = "Sub-Name-0.15";
     src = fetchurl {
       url = "mirror://cpan/authors/id/E/ET/ETHER/${name}.tar.gz";
-      sha256 = "9276412677b445e7e9bdf6ab3a034a05a860e5c5dc560dd9272967745eeb3f17";
+      sha256 = "dabc9a4abcbe067d120ce005b4203b8a44291cbda013900152ba19a1e7c1c8c8";
     };
     meta = {
-      homepage = https://github.com/karenetheridge/Sub-Name;
+      homepage = https://github.com/p5sagit/Sub-Name;
       description = "(re)name a sub";
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
       maintainers = [ maintainers.rycee ];
