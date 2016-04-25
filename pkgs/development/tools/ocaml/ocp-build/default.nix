@@ -1,15 +1,26 @@
-{ stdenv, fetchurl, ocaml, findlib, ncurses, camlp4 }:
+{ stdenv, fetchFromGitHub, ocaml, findlib, ncurses, camlp4, buildEnv }:
+let
+  caml_with_p4 = buildEnv {
+    name = "caml-with-camlp4";
+    paths = [ ocaml camlp4 ];
+  };
+in
+stdenv.mkDerivation rec {
 
-stdenv.mkDerivation {
+  name = "ocp-build-${version}";
+  version = "1.99.14-beta";
 
-  name = "ocp-build-1.99.9-beta";
+  src = fetchFromGitHub {
+    owner = "OCamlPro";
+    repo = "ocp-build";
+    rev = version;
+    sha256 = "06zwga9w4nnyg2zf4l4870dss6jpnip9fk7b6dimij0id09w02dj";
 
-  src = fetchurl {
-    url = http://www.typerex.org/pub/ocp-build/ocp-build.1.99.9-beta.tar.gz;
-    sha256 = "0wcb49bp239ns9mz55ky0kfjcz80cp97k0j0rwaw4h5sp3phn4l0";
+    # url = http://www.typerex.org/pub/ocp-build/ocp-build.1.99.9-beta.tar.gz;
+    # sha256 = "0wcb49bp239ns9mz55ky0kfjcz80cp97k0j0rwaw4h5sp3phn4l0";
   };
 
-  buildInputs = [ ocaml findlib ncurses camlp4 ];
+  buildInputs = [ caml_with_p4 findlib ncurses ];
   preInstall = "mkdir -p $out/bin";
 
   # In the Nix sandbox, the TERM variable is unset and stty does not
