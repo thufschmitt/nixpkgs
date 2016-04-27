@@ -14,16 +14,6 @@ stdenv.mkDerivation rec {
   buildInputs = [ ocaml findlib ncurses ];
   preInstall = "mkdir -p $out/bin";
 
-  # In the Nix sandbox, the TERM variable is unset and stty does not
-  # work. In such a case, ocp-build crashes due to a bug. The
-  # ./fix-for-no-term.patch fixes this bug in the source code and hence
-  # also in the final installed version of ocp-build. However, it does not
-  # fix the bug in the precompiled bootstrap version of ocp-build that is
-  # used during the compilation process. In order to bypass the bug until
-  # it's also fixed upstream, we simply set TERM to some valid entry in the
-  # terminfo database during the bootstrap.
-  TERM = "xterm";
-
   meta = with stdenv.lib; {
     homepage = http://www.typerex.org/ocp-build.html;
     description = "A build tool for OCaml";
