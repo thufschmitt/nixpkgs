@@ -20,7 +20,7 @@ in
 stdenv.mkDerivation (args // {
   name = "ocaml-${name}-${version}";
 
-  buildInputs = [ ocaml findlib camlp4 ] ++ buildInputs;
+  buildInputs = [ ocaml findlib ] ++ buildInputs;
 
   setupHook = if setupHook == null && hasSharedObjects
   then writeText "setupHook.sh" ''
