@@ -4692,6 +4692,8 @@ in
 
   ocaml_4_02 = callPackage ../development/compilers/ocaml/4.02.nix { };
 
+  ocaml_4_03 = callPackage ../development/compilers/ocaml/4.03.nix { };
+
   orc = callPackage ../development/compilers/orc { };
 
   metaocaml_3_09 = callPackage ../development/compilers/ocaml/metaocaml-3.09.nix { };
@@ -4959,6 +4961,12 @@ in
 
     core = callPackage ../development/ocaml-modules/core { };
 
+    ocamlbuild =
+    if lib.versionOlder "4.03" ocaml_version then
+    callPackage ../development/tools/ocaml/ocamlbuild { }
+    else
+    null;
+
     ocaml_cryptgps = callPackage ../development/ocaml-modules/cryptgps { };
 
     ocaml_data_notation = callPackage ../development/ocaml-modules/odn { };
@@ -5147,7 +5155,7 @@ in
 
   };
 
-  ocamlPackages = recurseIntoAttrs ocamlPackages_4_01_0;
+  # ocamlPackages_4_01_0 = recurseIntoAttrs ocamlPackages_4_01_0;
   ocamlPackages_3_10_0 = (mkOcamlPackages ocaml_3_10_0 pkgs.ocamlPackages_3_10_0)
   // { lablgtk = ocamlPackages_3_10_0.lablgtk_2_14; };
   ocamlPackages_3_11_2 = (mkOcamlPackages ocaml_3_11_2 pkgs.ocamlPackages_3_11_2)
@@ -5157,7 +5165,9 @@ in
   ocamlPackages_4_00_1 = mkOcamlPackages ocaml_4_00_1 pkgs.ocamlPackages_4_00_1;
   ocamlPackages_4_01_0 = mkOcamlPackages ocaml_4_01_0 pkgs.ocamlPackages_4_01_0;
   ocamlPackages_4_02 = mkOcamlPackages ocaml_4_02 pkgs.ocamlPackages_4_02;
+  ocamlPackages_4_03 = mkOcamlPackages ocaml_4_03 pkgs.ocamlPackages_4_03;
   ocamlPackages_latest = ocamlPackages_4_02;
+  ocamlPackages = recurseIntoAttrs ocamlPackages_4_02;
 
   ocaml_make = callPackage ../development/ocaml-modules/ocamlmake { };
 

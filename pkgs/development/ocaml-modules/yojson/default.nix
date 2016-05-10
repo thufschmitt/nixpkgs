@@ -1,4 +1,4 @@
-{ stdenv, fetchzip, ocaml, findlib, cppo, easy-format, biniou }:
+{ stdenv, fetchzip, ocaml, findlib, cppo, easy-format, biniou, ocamlbuild }:
 let
   pname = "yojson";
   version = "1.2.3";
@@ -12,7 +12,7 @@ stdenv.mkDerivation {
     sha256 = "10dvkndgwanvw4agbjln7kgb1n9s6lii7jw82kwxczl5rd1sgmvl";
   };
 
-  buildInputs = [ ocaml findlib ];
+  buildInputs = [ ocaml findlib ocamlbuild ];
 
   propagatedBuildInputs = [ cppo easy-format biniou ];
 
