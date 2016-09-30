@@ -1,4 +1,4 @@
-{stdenv, fetchurl, buildOcaml}:
+{stdenv, fetchurl, buildOcaml, ocamlbuild }:
 
 buildOcaml rec {
   minimumSupportedOcamlVersion = "4.02";
@@ -10,6 +10,8 @@ buildOcaml rec {
     url = "https://github.com/janestreet/type_conv/archive/${version}.tar.gz";
     sha256 = "dbbc33b7ab420e8442d79ba4308ea6c0c16903b310d33525be18841159aa8855";
   };
+
+  buildInputs = [ ocamlbuild ];
 
   meta = {
     homepage = "https://github.com/janestreet/type_conv/";
