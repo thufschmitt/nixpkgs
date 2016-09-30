@@ -16,6 +16,8 @@ stdenv.mkDerivation {
 
   buildInputs = [ ocaml ];
 
+  patches = [ ./disable-fatal-warn-31.diff ];
+
   preBuild = ''
     mv config/Makefile.unix config/Makefile
     substituteInPlace config/Makefile --replace BINDIR=/usr/local/bin BINDIR=$out
