@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ ocaml findlib ncurses ];
 
   # Version number in META file is wrong
-  patchPhase = ''
+  prePatch = ''
     patch -p 0 META <<EOF
     3c3
     < version="1.7.1"
@@ -20,6 +20,10 @@ stdenv.mkDerivation rec {
     > version="${version}"
     EOF
   '';
+
+  patches = [
+    ./int.patch # From the opam repository
+  ];
 
   createFindlibDestdir = true;
 
