@@ -7,15 +7,15 @@
 let
   ocaml_version = (builtins.parseDrvName ocaml.name).version;
   pname = "ocaml-mysql";
-  version = "1.1.1";
+  version = "1.2.1";
 in
 
 stdenv.mkDerivation {
   name = "${pname}-${version}";
 
   src = fetchurl {
-    url = "https://forge.ocamlcore.org/frs/download.php/870/${pname}-${version}.tar.gz";
-    sha256 = "f896fa101a05d81b85af8122fe1c2809008a5e5fdca00f9ceeb7eec356369e3a";
+    url = "http://ygrek.org.ua/p/release/ocaml-mysql/ocaml-mysql-${version}.tar.gz";
+    sha256 = "06mb2bq7v37wn0lza61917zqgb4bsg1xxb73myjyn88p6khl6yl2";
   };
 
   configureFlags = [ 
