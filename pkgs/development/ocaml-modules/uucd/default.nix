@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, ocaml, findlib, opam, xmlm, topkg }:
+{ stdenv, fetchurl, ocaml, findlib, opam, xmlm, topkg, ocamlbuild }:
 let
   pname = "uucd";
   version = "4.0.0";
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
     sha256 = "11cjfwa4wjhsyvzq4wl9z44xi28n49drz8nbfpx754vyfzwj3yc6";
   };
 
-  buildInputs = [ ocaml findlib opam topkg ];
+  buildInputs = [ ocaml findlib opam topkg ocamlbuild ];
 
   createFindlibDestdir = true;
 
