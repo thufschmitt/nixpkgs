@@ -6,8 +6,6 @@
 { stdenv, lib, make, fetchurl
 , ocaml, findlib, camlp5, ncurses, lablgtk ? null, csdp ? null }:
 
-assert lib.versionOlder ocaml.version "4";
-
 let 
   version = "8.3pl4";
   buildIde = lablgtk != null;
@@ -78,5 +76,6 @@ stdenv.mkDerivation {
     branch = "8.3";
     maintainers = with maintainers; [ roconnor vbgl ];
     platforms = with platforms; linux;
+    broken = lib.versionAtLeast ocaml.version "4";
   };
 }
