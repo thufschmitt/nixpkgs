@@ -1,4 +1,4 @@
-{stdenv, buildOcaml, fetchur, ocamlbuildl}:
+{stdenv, buildOcaml, fetchurl, ocamlbuildl}:
 
 buildOcaml rec {
   version = "109.35.02";
