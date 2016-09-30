@@ -1,4 +1,4 @@
-{stdenv, buildOcaml, fetchurl, pcre, ocaml, findlib}:
+{stdenv, buildOcaml, fetchurl, pcre, ocaml, findlib, ocamlbuild }:
 
 buildOcaml {
   name = "ocaml-pcre";
@@ -9,7 +9,7 @@ buildOcaml {
     sha256 = "0nj4gb6hjjjmz5gnl9cjrh4w82rw8cvbwnk0hxhfgfd25p9k50n3";
   };
 
-  buildInputs = [ocaml findlib];
+  buildInputs = [ocaml findlib ocamlbuild ];
   propagatedBuildInputs = [pcre];
 
   createFindlibDestdir = true;
