@@ -1,4 +1,4 @@
-{stdenv, fetchurl, ocaml, findlib, opam}:
+{stdenv, fetchurl, ocaml, findlib, opam, ocamlbuild }:
 let
   pname = "uutf";
   version = "0.9.3";
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
     sha256 = "0xvq20knmq25902ijpbk91ax92bkymsqkbfklj1537hpn64lydhz";
   };
 
-  buildInputs = [ ocaml findlib opam ];
+  buildInputs = [ ocaml findlib opam ocamlbuild ];
 
   createFindlibDestdir = true;
 
