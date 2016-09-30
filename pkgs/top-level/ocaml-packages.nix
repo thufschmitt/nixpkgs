@@ -98,11 +98,11 @@ let
     camomile = callPackage ../development/ocaml-modules/camomile { };
 
     camlimages = if lib.versionOlder ocaml_version "4.0" then callPackage ../development/ocaml-modules/camlimages/4.0.nix {
-        libpng = libpng12;
-        giflib = giflib_4_1;
+        libpng = pkgs.libpng12;
+        giflib = pkgs.giflib_4_1;
       }
     else callPackage ../development/ocaml-modules/camlimages/4.1.nix {
-      giflib = giflib_4_1;
+      giflib = pkgs.giflib_4_1;
     };
 
     conduit = callPackage ../development/ocaml-modules/conduit {
