@@ -1,4 +1,4 @@
-{stdenv, fetchurl, ocaml, findlib, camlp4}:
+{stdenv, fetchurl, ocaml, findlib, camlp4, ocamlbuild}:
 
 let
   ocaml_version = (builtins.parseDrvName ocaml.name).version;
@@ -12,7 +12,7 @@ stdenv.mkDerivation {
     sha256 = "118xsadrx84pif9vaq13hv4yh22w9kmr0ypvhrs0viir1jr0ajjd";
   };
 
-  buildInputs = [ocaml findlib camlp4];
+  buildInputs = [ocaml findlib camlp4 ocamlbuild];
 
   dontAddPrefix = true;
 
