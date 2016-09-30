@@ -1,4 +1,4 @@
-{stdenv, fetchurl, ocaml, findlib, opam}:
+{stdenv, fetchurl, ocaml, findlib, opam, ocamlbuild }:
 let
   pname = "xmlm";
   version = "1.2.0";
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
     sha256 = "1jywcrwn5z3gkgvicr004cxmdaqfmq8wh72f81jqz56iyn5024nh";
   };
 
-  buildInputs = [ ocaml findlib opam ];
+  buildInputs = [ ocaml findlib opam ocamlbuild ];
 
   createFindlibDestdir = true;
 
