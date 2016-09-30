@@ -97,14 +97,13 @@ let
     camomile_0_8_2 = callPackage ../development/ocaml-modules/camomile/0.8.2.nix { };
     camomile = callPackage ../development/ocaml-modules/camomile { };
 
-    camlimages_4_0 = callPackage ../development/ocaml-modules/camlimages/4.0.nix {
-      libpng = pkgs.libpng12;
-      giflib = pkgs.giflib_4_1;
+    camlimages = if lib.versionOlder ocaml_version "4.0" then callPackage ../development/ocaml-modules/camlimages/4.0.nix {
+        libpng = libpng12;
+        giflib = giflib_4_1;
+      }
+    else callPackage ../development/ocaml-modules/camlimages/4.1.nix {
+      giflib = giflib_4_1;
     };
-    camlimages_4_1 = callPackage ../development/ocaml-modules/camlimages/4.1.nix {
-      giflib = pkgs.giflib_4_1;
-    };
-    camlimages = camlimages_4_1;
 
     conduit = callPackage ../development/ocaml-modules/conduit {
        lwt = ocaml_lwt;
