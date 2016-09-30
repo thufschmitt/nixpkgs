@@ -1,5 +1,5 @@
 {stdenv, buildOcaml, fetchurl,
- cppo, ppx_tools, result, ounit}:
+ cppo, ppx_tools, result, ounit, ocamlbuild }:
 
 buildOcaml rec {
   name = "ppx_deriving";
@@ -14,7 +14,7 @@ buildOcaml rec {
 
   hasSharedObjects = true;
 
-  buildInputs = [ cppo ounit ];
+  buildInputs = [ cppo ounit ocamlbuild ];
   propagatedBuildInputs =
     [ ppx_tools result ];
 
