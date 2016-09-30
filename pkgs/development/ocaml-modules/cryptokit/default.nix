@@ -1,4 +1,4 @@
-{stdenv, fetchurl, zlib, ocaml, findlib, ncurses}:
+{stdenv, fetchurl, zlib, ocaml, findlib, ncurses, ocamlbuild}:
 
 let
   ocaml_version = (builtins.parseDrvName ocaml.name).version;
@@ -14,7 +14,7 @@ stdenv.mkDerivation {
     sha256 = "1k2f2ixm7jcsgrzn9lz1hm9qqgq71lk9lxy3v3cwsd8xdrj3jrnv";
   };
 
-  buildInputs = [zlib ocaml findlib ncurses];
+  buildInputs = [zlib ocaml findlib ncurses ocamlbuild];
 
   buildFlags = "setup.data build";
 
