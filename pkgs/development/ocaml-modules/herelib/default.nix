@@ -1,4 +1,4 @@
-{stdenv, buildOcaml, fetchurl}:
+{stdenv, buildOcaml, fetchur, ocamlbuildl}:
 
 buildOcaml rec {
   version = "109.35.02";
@@ -10,6 +10,8 @@ buildOcaml rec {
     url = "https://github.com/janestreet/herelib/archive/${version}.tar.gz";
     sha256 = "7f8394169cb63f6d41e91c9affa1b8ec240d5f6e9dfeda3fbb611df521d4b05a";
   };
+
+  buildinputs = [ ocamlbuild ];
 
   meta = with stdenv.lib; {
     homepage = https://github.com/janestreet/herelib;
