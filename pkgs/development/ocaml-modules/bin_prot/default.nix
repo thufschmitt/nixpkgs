@@ -1,4 +1,4 @@
-{stdenv, writeText, buildOcaml, fetchurl, type_conv}:
+{stdenv, writeText, buildOcaml, fetchurl, type_conv, ocamlbuild }:
 
 buildOcaml rec {
   name = "bin_prot";
@@ -11,7 +11,7 @@ buildOcaml rec {
     sha256 = "dc0c978a825c7c123990af3317637c218f61079e6f35dc878260651084f1adb4";
   };
 
-  propagatedBuildInputs = [ type_conv ];
+  propagatedBuildInputs = [ type_conv ocamlbuild ];
 
   hasSharedObjects = true;
 
