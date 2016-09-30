@@ -1,4 +1,4 @@
-{stdenv, fetchurl, ocaml, findlib, gmp, mpfr, ncurses }:
+{stdenv, fetchurl, ocaml, ocamlbuild, findlib, gmp, mpfr, ncurses }:
 
 let
   ocaml_version = (builtins.parseDrvName ocaml.name).version;
@@ -19,7 +19,7 @@ stdenv.mkDerivation {
   ];
 
   preConfigure = "make clean";
-  buildInputs = [ocaml findlib gmp mpfr ncurses];
+  buildInputs = [ocaml findlib ocamlbuild gmp mpfr ncurses];
 
   createFindlibDestdir = true;
 
@@ -33,5 +33,6 @@ stdenv.mkDerivation {
     homepage = http://opam.ocamlpro.com/pkg/mlgmp.20120224.html;
     description = "OCaml bindings to GNU MP library";
     license = "Free software ?";
+    broken = stdenv.lib.versionAtLeast "4.03" (stdenv.getVersion ocaml);
   };
 }
