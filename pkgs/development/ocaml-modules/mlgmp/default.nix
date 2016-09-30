@@ -33,6 +33,6 @@ stdenv.mkDerivation {
     homepage = http://opam.ocamlpro.com/pkg/mlgmp.20120224.html;
     description = "OCaml bindings to GNU MP library";
     license = "Free software ?";
-    broken = stdenv.lib.versionAtLeast "4.03" (stdenv.getVersion ocaml);
+    broken = stdenv.lib.versionAtLeast "4.03" (stdenv.lib.getVersion ocaml);
   };
 }
