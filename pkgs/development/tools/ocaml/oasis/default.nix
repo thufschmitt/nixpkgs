@@ -1,5 +1,5 @@
 {stdenv, fetchurl, ocaml, findlib, ocaml_data_notation, type_conv, camlp4,
- ocamlmod, ocamlify, ounit, expect}:
+ ocamlmod, ocamlify, ounit, expect, ocamlbuild }:
 
 stdenv.mkDerivation rec {
   version = "0.4.7";
@@ -17,6 +17,7 @@ stdenv.mkDerivation rec {
   buildInputs =
     [
       ocaml findlib type_conv ocamlmod ocamlify ounit camlp4
+      ocamlbuild
     ];
 
   propagatedBuildInputs = [ ocaml_data_notation ];
