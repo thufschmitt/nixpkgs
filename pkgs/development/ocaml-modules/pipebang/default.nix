@@ -1,4 +1,4 @@
-{stdenv, buildOcaml, fetchurl}:
+{stdenv, buildOcaml, fetchurl, ocamlbuild }:
 
 buildOcaml rec {
   name = "pipebang";
@@ -10,6 +10,8 @@ buildOcaml rec {
     url = "https://github.com/janestreet/pipebang/archive/${version}.tar.gz";
     sha256 = "a8858d9607c15cdf0a775196be060c8d91de724fc80a347d7a76ef1d38329096";
   };
+
+  buildInputs = [ ocamlbuild ];
 
   meta = with stdenv.lib; {
     homepage = https://github.com/janestreet/pipebang;
