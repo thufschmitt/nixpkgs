@@ -1,4 +1,4 @@
-{ stdenv, buildOcaml, fetchurl }:
+{ stdenv, buildOcaml, fetchurl, ocamlbuild }:
 
 buildOcaml rec {
   name = "estring";
@@ -8,6 +8,8 @@ buildOcaml rec {
     url = "https://forge.ocamlcore.org/frs/download.php/1012/estring-${version}.tar.gz";
     sha256 = "0b6znz5igm8pp28w4b7sgy82rpd9m5aw6ss933rfbw1mrh05gvcg";
   };
+
+  buildInputs = [ ocamlbuild ];
 
   meta = with stdenv.lib; {
     homepage = "http://estring.forge.ocamlcore.org/";
