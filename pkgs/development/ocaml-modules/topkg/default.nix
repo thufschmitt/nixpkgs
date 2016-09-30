@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, ocaml, findlib, result, opam }:
+{ stdenv, fetchurl, ocaml, findlib, result, opam, ocamlbuild }:
 
 let ocaml-version = stdenv.lib.getVersion ocaml; in
 
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ opam ];
-  buildInputs = [ ocaml findlib ];
+  buildInputs = [ ocaml findlib ocamlbuild ];
   propagatedBuildInputs = [ result ];
 
   unpackCmd = "tar xjf ${src}";
