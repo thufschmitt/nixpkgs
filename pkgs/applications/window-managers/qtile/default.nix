@@ -24,9 +24,9 @@ buildPythonApplication rec {
 
   postPatch = ''
     substituteInPlace libqtile/manager.py --subst-var-by out $out
-    substituteInPlace libqtile/pangocffi.py --subst-var-by glib ${pkgs.glib}
-    substituteInPlace libqtile/pangocffi.py --subst-var-by pango ${pkgs.pango}
-    substituteInPlace libqtile/xcursors.py --subst-var-by xcb-cursor ${pkgs.xorg.xcbutilcursor}
+    substituteInPlace libqtile/pangocffi.py --subst-var-by glib ${pkgs.glib.out}
+    substituteInPlace libqtile/pangocffi.py --subst-var-by pango ${pkgs.pango.out}
+    substituteInPlace libqtile/xcursors.py --subst-var-by xcb-cursor ${pkgs.xorg.xcbutilcursor.out}
   '';
 
   buildInputs = [ pkgs.pkgconfig pkgs.glib pkgs.xorg.libxcb pkgs.cairo pkgs.pango python27Packages.xcffib ];
@@ -35,9 +35,9 @@ buildPythonApplication rec {
 
   postInstall = ''
     wrapProgram $out/bin/qtile \
-      --set QTILE_WRAPPER '"$0"' \
-      --set QTILE_SAVED_PYTHONPATH '"$PYTHONPATH"' \
-      --set QTILE_SAVED_PATH '"$PATH"'
+      --set QTILE_WRAPPER '$0' \
+      --set QTILE_SAVED_PYTHONPATH '$PYTHONPATH' \
+      --set QTILE_SAVED_PATH '$PATH'
   '';
 
   meta = with stdenv.lib; {

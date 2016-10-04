@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fetchpatch, pkgconfig, freetype, expat, libxslt, fontbhttf
+{ stdenv, fetchurl, fetchpatch, pkgconfig, freetype, expat, libxslt, dejavu_fonts
 , substituteAll }:
 
 /** Font configuration scheme
@@ -36,14 +36,16 @@ stdenv.mkDerivation rec {
     })
   ];
 
+  outputs = [ "bin" "dev" "lib" "out" ]; # $out contains all the config
+
   propagatedBuildInputs = [ freetype ];
   buildInputs = [ pkgconfig expat ];
 
   configureFlags = [
     "--with-cache-dir=/var/cache/fontconfig" # otherwise the fallback is in $out/
     "--disable-docs"
-    # just ~1MB; this is what you get when loading config fails for some reason
-    "--with-default-fonts=${fontbhttf}"
+    # just <1MB; this is what you get when loading config fails for some reason
+    "--with-default-fonts=${dejavu_fonts.minimal}"
   ];
 
   # We should find a better way to access the arch reliably.
@@ -64,9 +66,7 @@ stdenv.mkDerivation rec {
 
   postInstall = ''
     cd "$out/etc/fonts"
-    rm conf.d/{50-user,51-local}.conf
-    "${libxslt}/bin/xsltproc" --stringparam fontDirectories "${fontbhttf}" \
-      --stringparam fontconfig "$out" \
+    "${libxslt.bin}/bin/xsltproc" --stringparam fontDirectories "${dejavu_fonts.minimal}" \
       --stringparam fontconfigConfigVersion "${configVersion}" \
       --path $out/share/xml/fontconfig \
       ${./make-fonts-conf.xsl} $out/etc/fonts/fonts.conf \

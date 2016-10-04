@@ -1,18 +1,20 @@
-{ stdenv, fetchurl, python, makeWrapper, docutils, unzip, hg-git, dulwich
-, guiSupport ? false, tk ? null, curses
+{ stdenv, fetchurl, pythonPackages, makeWrapper, docutils, unzip
+, guiSupport ? false, tk ? null
 , ApplicationServices, cf-private }:
 
 let
-  version = "3.7.1";
+  # if you bump version, update pkgs.tortoisehg too or ping maintainer
+  version = "3.9.1";
   name = "mercurial-${version}";
+  inherit (pythonPackages) curses docutils hg-git dulwich python;
 in
 
 stdenv.mkDerivation {
   inherit name;
 
   src = fetchurl {
-    url = "http://mercurial.selenic.com/release/${name}.tar.gz";
-    sha256 = "1vfgqlb8z2k1vcx2nvcianxmml79cqqqncchw6aj40sa8hgpvlwn";
+    url = "https://mercurial-scm.org/release/${name}.tar.gz";
+    sha256 = "0x6zjl8za6nnlbmyxng4pfrr2h77zi3wbg985262ghjyx33lypk2";
   };
 
   inherit python; # pass it so that the same version can be used in hg2git
@@ -67,5 +69,7 @@ stdenv.mkDerivation {
     downloadPage = "http://mercurial.selenic.com/release/";
     license = stdenv.lib.licenses.gpl2;
     maintainers = [ stdenv.lib.maintainers.eelco ];
+    updateWalker = true;
+    platforms = stdenv.lib.platforms.unix;
   };
 }

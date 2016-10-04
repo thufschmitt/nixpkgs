@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgs }:
+{ stdenv, fetchurl, fetchpatch, pkgs }:
 
 let
 
@@ -18,22 +18,35 @@ let
       };
     };
 
-  grsecPatch = { grversion ? "3.1", kernel, patches, kversion, revision, branch ? "test", sha256 }:
-    assert kversion == kernel.version;
-    { name = "grsecurity-${grversion}-${kversion}";
-      inherit grversion kernel patches kversion revision;
-      patch = fetchurl {
-        url = if branch == "stable"
-              then "https://github.com/kdave/grsecurity-patches/blob/master/grsecurity_patches/grsecurity-${grversion}-${kversion}-${revision}.patch?raw=true"
-              else "https://github.com/slashbeast/grsecurity-scrape/blob/master/${branch}/grsecurity-${grversion}-${kversion}-${revision}.patch?raw=true";
-        inherit sha256;
-      };
-      features.grsecurity = true;
+  grsecPatch = { grbranch ? "test", grver ? "3.1", kver, grrev, sha256 }: rec {
+    name = "grsecurity-${grver}-${kver}-${grrev}";
+
+    # Pass these along to allow the caller to determine compatibility
+    inherit grver kver grrev;
+
+    patch = fetchurl {
+      # When updating versions/hashes, ALWAYS use the official version; we use
+      # this mirror only because upstream removes sources files immediately upon
+      # releasing a new version ...
+      url = "https://raw.githubusercontent.com/slashbeast/grsecurity-scrape/master/${grbranch}/${name}.patch";
+      inherit sha256;
     };
 
+    features.grsecurity = true;
+  };
 in
 
 rec {
+
+  link_lguest =
+    { name = "gcc5-link-lguest";
+      patch = ./gcc5-link-lguest.patch;
+    };
+
+  link_apm =
+    { name = "gcc5-link-apm";
+      patch = ./gcc5-link-apm.patch;
+    };
 
   bridge_stp_helper =
     { name = "bridge-stp-helper";
@@ -61,14 +74,14 @@ rec {
       patch = ./mips-ext3-n32.patch;
     };
 
-  ubuntu_fan =
-    { name = "ubuntu-fan";
-      patch = ./ubuntu-fan-3.patch;
+  modinst_arg_list_too_long =
+    { name = "modinst-arglist-too-long";
+      patch = ./modinst-arg-list-too-long.patch;
     };
 
-  ubuntu_fan_4 =
+  ubuntu_fan_4_4 =
     { name = "ubuntu-fan";
-      patch = ./ubuntu-fan-4.patch;
+      patch = ./ubuntu-fan-4.4.patch;
     };
 
   ubuntu_unprivileged_overlayfs =
@@ -82,41 +95,18 @@ rec {
     sha256 = "00b1rqgd4yr206dxp4mcymr56ymbjcjfa4m82pxw73khj032qw3j";
   };
 
-  grsecurity_3_14 = grsecPatch
-    { kernel    = pkgs.grsecurity_base_linux_3_14;
-      patches   = [ grsecurity_fix_path_3_14 ];
-      kversion  = "3.14.51";
-      revision  = "201508181951";
-      branch    = "stable";
-      sha256    = "1sp1gwa7ahzflq7ayb51bg52abrn5zx1hb3pff3axpjqq7vfai6f";
+  grsecurity_testing = grsecPatch
+    { kver   = "4.7.4";
+      grrev  = "201609211951";
+      sha256 = "0h5lxl04rvww02ww0y21id6dc8mhglls8dqhjdcxdcpahxq1fb6y";
     };
 
-  grsecurity_4_1 = grsecPatch
-    { kernel    = pkgs.grsecurity_base_linux_4_1;
-      patches   = [ grsecurity_fix_path_3_14 ];
-      kversion  = "4.1.7";
-      revision  = "201509201149";
-      sha256    = "1agv8c3c4vmh5algbzmrq2f6vwk72rikrlcbm4h7jbrb9js6fxk4";
-    };
-
-  grsecurity_4_4 = grsecPatch
-    { kernel    = pkgs.grsecurity_base_linux_4_4;
-      patches   = [ grsecurity_fix_path_4_4 ];
-      kversion  = "4.4.5";
-      revision  = "201603131305";
-      sha256    = "04k4nhshl6r5n41ha5620s7cd70dmmmvyf9mnn5359jr1720kxpf";
-    };
-
-  grsecurity_latest = grsecurity_4_4;
-
-  grsecurity_fix_path_3_14 =
-    { name = "grsecurity-fix-path-3.14";
-      patch = ./grsecurity-path-3.14.patch;
-    };
-
-  grsecurity_fix_path_4_4 =
-    { name = "grsecurity-fix-path-4.4";
-      patch = ./grsecurity-path-4.4.patch;
+  # This patch relaxes grsec constraints on the location of usermode helpers,
+  # e.g., modprobe, to allow calling into the Nix store.
+  grsecurity_nixos_kmod =
+    {
+      name  = "grsecurity-nixos-kmod";
+      patch = ./grsecurity-nixos-kmod.patch;
     };
 
   crc_regression =
@@ -149,4 +139,14 @@ rec {
     { name = "mfd_fix_dependency";
       patch = ./chromiumos-patches/mfd-fix-dependency.patch;
     };
+
+  hiddev_CVE_2016_5829 =
+    { name = "hiddev_CVE_2016_5829";
+      patch = fetchpatch {
+        url = "https://sources.debian.net/data/main/l/linux/4.6.3-1/debian/patches/bugfix/all/HID-hiddev-validate-num_values-for-HIDIOCGUSAGES-HID.patch";
+        sha256 = "14rm1qr87p7a5prz8g5fwbpxzdp3ighj095x8rvhm8csm20wspyy";
+      };
+    };
+
+  cpu-cgroup-v2 = import ./cpu-cgroup-v2-patches;
 }

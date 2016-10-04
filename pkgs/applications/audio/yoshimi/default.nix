@@ -22,10 +22,10 @@ stdenv.mkDerivation  rec {
 
   preConfigure = "cd src";
 
-  cmakeFlags = [ "-DFLTK_MATH_LIBRARY=${stdenv.glibc}/lib/libm.so -DCMAKE_INSTALL_DATAROOTDIR=$out" ];
+  cmakeFlags = [ "-DFLTK_MATH_LIBRARY=${stdenv.glibc.out}/lib/libm.so -DCMAKE_INSTALL_DATAROOTDIR=$out" ];
 
   meta = with stdenv.lib; {
-    description = "high quality software synthesizer based on ZynAddSubFX";
+    description = "High quality software synthesizer based on ZynAddSubFX";
     longDescription = ''
       Yoshimi delivers the same synthesizer capabilities as
       ZynAddSubFX along with very good Jack and Alsa midi/audio

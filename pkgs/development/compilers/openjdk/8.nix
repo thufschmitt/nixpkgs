@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, cpio, file, which, unzip, zip, xorg, cups, freetype
+{ stdenv, fetchurl, cpio, pkgconfig, file, which, unzip, zip, xorg, cups, freetype
 , alsaLib, bootjdk, cacert, perl, liberation_ttf, fontconfig, zlib
 , setJavaClassPath
 , minimal ? false
@@ -18,42 +18,42 @@ let
     else
       throw "openjdk requires i686-linux or x86_64 linux";
 
-  update = "76";
+  update = "122";
   build = "00";
   baseurl = "http://hg.openjdk.java.net/jdk8u/jdk8u";
   repover = "jdk8u${update}-b${build}";
   paxflags = if stdenv.isi686 then "msp" else "m";
   jdk8 = fetchurl {
              url = "${baseurl}/archive/${repover}.tar.gz";
-             sha256 = "1bzwrm18vdd531xxin7pzsc5dx2ybkdgdxz6jp2ki19ka6pmk1l7";
+             sha256 = "0biy2xpb6krinmpj5pqsz0vryd2m6i819csvqnv88rc3750qh13d";
           };
   langtools = fetchurl {
              url = "${baseurl}/langtools/archive/${repover}.tar.gz";
-             sha256 = "044gyb7hgrahlr78vah9r3wfv6w569ihqzwqplwzr6m0l1s52994";
+             sha256 = "1wy9n64fvxybpd8lqd2zbiv2z23nfp10bd098lhqw7z46yxbm3ra";
           };
   hotspot = fetchurl {
              url = "${baseurl}/hotspot/archive/${repover}.tar.gz";
-             sha256 = "1if70s9wjsvmrdj92ky88ngpmigi9c5gfpkilpydzdibs38f05f8";
+             sha256 = "1hzliyjaz0dq7l934d16c3ddx6kiszl2hkc2cs0rhb09m7q4zcv7";
           };
   corba = fetchurl {
              url = "${baseurl}/corba/archive/${repover}.tar.gz";
-             sha256 = "0fl852x25cjzz3lrhjnhj59qbb4m3ywwc2f9vbj6mqdnpzl7cg83";
+             sha256 = "0576r009my434fgv9m7lwd5bvvgbb182aw8z8fwwbi36mf5j3sr5";
           };
   jdk = fetchurl {
              url = "${baseurl}/jdk/archive/${repover}.tar.gz";
-             sha256 = "11ql3p5fsizrn1fiylfkgrw0lgf6snwyich18hggsmd00bhvv3ah";
+             sha256 = "1hn40jm2fcs037zx30k1gxw6j24hr50a78zjjaaql73yhhzf74xh";
           };
   jaxws = fetchurl {
              url = "${baseurl}/jaxws/archive/${repover}.tar.gz";
-             sha256 = "1d2q4bbvlz557caqciwpd5ms9f14bjk8jl5zlfflqnww9b097qy4";
+             sha256 = "1lbvaw3ck0inz9376qh9nw8d1ys93plfpsn1sp9mmwdjyglvznif";
           };
   jaxp = fetchurl {
              url = "${baseurl}/jaxp/archive/${repover}.tar.gz";
-             sha256 = "0nrd4c77ggxkyv2271k30afbjjcp0kybc8gcypmhy8by54w4ap0j";
+             sha256 = "11viwry7fj70wgzfbpslb6j1zpqqzicdf8yyqhw3whf7l6wx2bav";
           };
   nashorn = fetchurl {
              url = "${baseurl}/nashorn/archive/${repover}.tar.gz";
-             sha256 = "11idvkzk4nqhhw4xq5pl03g4gwnaiq021xxj2yx54rixr59zl0q6";
+             sha256 = "057g393kjb9via2a3x3zm7r4g9dslw0nkwn6yppzd8hal325s1wa";
           };
   openjdk8 = stdenv.mkDerivation {
     name = "openjdk-8u${update}b${build}";
@@ -63,6 +63,7 @@ let
 
     outputs = [ "out" "jre" ];
 
+    nativeBuildInputs = [ pkgconfig ];
     buildInputs = [
       cpio file which unzip zip
       xorg.libX11 xorg.libXt xorg.libXext xorg.libXrender xorg.libXtst
@@ -93,7 +94,6 @@ let
     '';
 
     configureFlags = [
-      "--with-freetype=${freetype}"
       "--with-boot-jdk=${bootjdk.home}"
       "--with-update-version=${update}"
       "--with-build-number=${build}"
@@ -101,6 +101,10 @@ let
       "--enable-unlimited-crypto"
       "--disable-debug-symbols"
       "--disable-freetype-bundling"
+
+      # glibc 2.24 deprecated readdir_r so we need this
+      # See https://www.mail-archive.com/openembedded-devel@lists.openembedded.org/msg49006.html
+      "--with-extra-cflags=\"-Wno-error=deprecated-declarations\""
     ] ++ (if minimal then [
       "--disable-headful"
       "--with-zlib=bundled"
@@ -118,15 +122,16 @@ let
 
       cp -av build/*/images/j2sdk-image/* $out/lib/openjdk
 
-      # Move some stuff to top-level.
-      mv $out/lib/openjdk/include $out/include
-      mv $out/lib/openjdk/man $out/share/man
+      # Remove some broken manpages.
+      rm -rf $out/lib/openjdk/man/ja*
+
+      # Mirror some stuff in top-level.
+      mkdir $out/include $out/share/man
+      ln -s $out/lib/openjdk/include/* $out/include/
+      ln -s $out/lib/openjdk/man/* $out/share/man/
 
       # jni.h expects jni_md.h to be in the header search path.
       ln -s $out/include/linux/*_md.h $out/include/
-
-      # Remove some broken manpages.
-      rm -rf $out/share/man/ja*
 
       # Remove crap from the installation.
       rm -rf $out/lib/openjdk/demo $out/lib/openjdk/sample
@@ -170,6 +175,7 @@ let
 
       ln -s $out/lib/openjdk/bin $out/bin
       ln -s $jre/lib/openjdk/jre/bin $jre/bin
+      ln -s $jre/lib/openjdk/jre $out/jre
     '';
 
     # FIXME: this is unnecessary once the multiple-outputs branch is merged.

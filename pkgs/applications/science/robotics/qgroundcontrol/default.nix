@@ -1,6 +1,6 @@
-{ stdenv, fetchgit, git,  espeak, SDL, udev, doxygen, cmake, overrideCC#, gcc48
+{ stdenv, fetchgit, git,  espeak, SDL, udev, doxygen, cmake
   , qtbase, qtlocation, qtserialport, qtdeclarative, qtconnectivity, qtxmlpatterns
-  , qtsvg, qtquick1, qtquickcontrols, qtgraphicaleffects
+  , qtsvg, qtquick1, qtquickcontrols, qtgraphicaleffects, qmakeHook
   , makeQtWrapper, lndir
   , gst_all_1, qt_gstreamer1, pkgconfig, glibc
   , version ? "2.9.4"
@@ -23,30 +23,25 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
   nativeBuildInputs = [
-    pkgconfig makeQtWrapper
+    pkgconfig makeQtWrapper qmakeHook
  ] ++ qtInputs;
 
   patches = [ ./0001-fix-gcc-cmath-namespace-issues.patch ];
+  postPatch = ''
+    sed '1i#include <cmath>' -i src/Vehicle/Vehicle.cc \
+      -i src/comm/{QGCFlightGearLink,QGCJSBSimLink}.cc \
+      -i src/{uas/UAS,ui/QGCDataPlot2D}.cc
+  '';
 
   preConfigure = ''
-    git submodule init
-    git submodule update
-
-  '';
-
-  configurePhase = ''
     mkdir build
-    pushd build
-
-    qmake ../qgroundcontrol.pro
-
-    popd
+    cd build
   '';
 
-  preBuild = "pushd build/";
-  postBuild = "popd";
+  qmakeFlags = [ "../qgroundcontrol.pro" ];
 
   installPhase = ''
+    cd ..
     mkdir -p $out/share/applications
     cp -v qgroundcontrol.desktop $out/share/applications
     
@@ -84,12 +79,12 @@ stdenv.mkDerivation rec {
   src = fetchgit {
     url = "https://github.com/mavlink/qgroundcontrol.git";
     rev = "refs/tags/v${version}";
-    sha256 = "0rwn2ddlar58ydzdykvnab1anr4xzvb9x0sxx5rs037i49f6sqga";
+    sha256 = "0isr0zamhvr853c94lblazkilil6zzmvf7afs3mxgn07jn9wrqz3";
     fetchSubmodules = true;
   };
 
   meta = {
-    description = "provides full ground station support and configuration for the PX4 and APM Flight Stacks";
+    description = "Provides full ground station support and configuration for the PX4 and APM Flight Stacks";
     homepage = http://qgroundcontrol.org/;
     license = stdenv.lib.licenses.gpl3Plus;
     platforms = with stdenv.lib.platforms; linux;

@@ -2,7 +2,7 @@
 , freetype, fontconfig, libXft, libXrender, libxcb, expat, libXau, libXdmcp
 , libuuid, cups, xz
 , gstreamer, gst_plugins_base, libxml2
-, gtkSupport ? true, glib, gtk, pango, gdk_pixbuf, cairo, atk
+, gtkSupport ? true, glib, gtk2, pango, gdk_pixbuf, cairo, atk
 , kdeSupport ? false, qt4, kdelibs
 }:
 
@@ -41,12 +41,12 @@ stdenv.mkDerivation rec {
       libXft freetype fontconfig libXrender libuuid expat
       gstreamer libxml2 gst_plugins_base
     ]
-    ++ stdenv.lib.optionals gtkSupport [ glib gtk pango gdk_pixbuf cairo atk ]
+    ++ stdenv.lib.optionals gtkSupport [ glib gtk2 pango gdk_pixbuf cairo atk ]
     ++ stdenv.lib.optionals kdeSupport [ kdelibs qt4 ];
 
   libPath = stdenv.lib.makeLibraryPath buildInputs
     + stdenv.lib.optionalString (stdenv.system == "x86_64-linux")
-      (":" + stdenv.lib.makeSearchPath "lib64" buildInputs);
+      (":" + stdenv.lib.makeSearchPathOutput "lib" "lib64" buildInputs);
 
   preFixup =
     ''
@@ -73,7 +73,7 @@ stdenv.mkDerivation rec {
 
   postFixup = ''
     oldRPATH=`patchelf --print-rpath $out/lib/opera/opera`
-    patchelf --set-rpath $oldRPATH:${cups}/lib $out/lib/opera/opera
+    patchelf --set-rpath $oldRPATH:${cups.out}/lib $out/lib/opera/opera
 
     # This file should normally require a gtk-update-icon-cache -q /usr/share/icons/hicolor command
     # It have no reasons to exist in a redistribuable package

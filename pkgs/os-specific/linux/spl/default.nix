@@ -1,4 +1,4 @@
-{ fetchFromGitHub, stdenv, autoconf, automake, libtool, coreutils, gawk
+{ fetchFromGitHub, stdenv, autoreconfHook, coreutils, gawk
 , configFile ? "all"
 
 # Kernel dependencies
@@ -17,25 +17,23 @@ assert buildKernel -> kernel != null;
 stdenv.mkDerivation rec {
   name = "spl-${configFile}-${version}${optionalString buildKernel "-${kernel.version}"}";
 
-  version = "0.6.5.5";
+  version = "0.6.5.7";
 
   src = fetchFromGitHub {
     owner = "zfsonlinux";
     repo = "spl";
     rev = "spl-${version}";
-    sha256 = "1f49qv648klg2sn1v1wzwd6ls1njjj0hrazz7msd74ayhwm0zcw7";
+    sha256 = "0i9ak4wqn444i6362xq5xl0msvcck8qqypp0fynrxq8mddzypwps";
   };
 
   patches = [ ./const.patch ./install_prefix.patch ];
 
-  buildInputs = [ autoconf automake libtool ];
+  nativeBuildInputs = [ autoreconfHook ];
+
+  hardeningDisable = [ "pic" ];
 
   preConfigure = ''
-    ./autogen.sh
-
     substituteInPlace ./module/spl/spl-generic.c --replace /usr/bin/hostid hostid
-    substituteInPlace ./module/spl/spl-module.c  --replace /bin/mknod mknod
-
     substituteInPlace ./module/spl/spl-generic.c --replace "PATH=/sbin:/usr/sbin:/bin:/usr/bin" "PATH=${coreutils}:${gawk}:/bin"
     substituteInPlace ./module/splat/splat-vnode.c --replace "PATH=/sbin:/usr/sbin:/bin:/usr/bin" "PATH=${coreutils}:/bin"
     substituteInPlace ./module/splat/splat-linux.c --replace "PATH=/sbin:/usr/sbin:/bin:/usr/bin" "PATH=${coreutils}:/bin"
@@ -62,6 +60,10 @@ stdenv.mkDerivation rec {
     platforms = platforms.linux;
     license = licenses.gpl2Plus;
     maintainers = with maintainers; [ jcumming wizeman wkennington ];
-    broken = (kernel.features.grsecurity or false);
+    broken = buildKernel
+      && (kernel.features.grsecurity or
+            # spl marked as broken until following patch is released
+            # https://github.com/zfsonlinux/spl/commit/fdbc1ba99d1f4d3958189079eee9b6c957e0264b
+            (versionAtLeast  kernel.version "4.7"));
   };
 }

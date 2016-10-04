@@ -44,7 +44,7 @@ let
        ${cfg.extraGSettingsOverrides}
      EOF
 
-     ${pkgs.glib}/bin/glib-compile-schemas $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas/
+     ${pkgs.glib.dev}/bin/glib-compile-schemas $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas/
     '';
   };
 
@@ -78,12 +78,13 @@ in {
         type = types.listOf types.path;
         description = "List of packages for which gsettings are overridden.";
       };
+
+      debug = mkEnableOption "gnome-session debug messages";
     };  
 
     environment.gnome3.packageSet = mkOption {
-      type = types.nullOr types.package;
       default = null;
-      example = literalExample "pkgs.gnome3_18";
+      example = literalExample "pkgs.gnome3_20";
       description = "Which GNOME 3 package set to use.";
       apply = p: if p == null then pkgs.gnome3 else p;
     };
@@ -118,7 +119,11 @@ in {
     services.telepathy.enable = mkDefault true;
     networking.networkmanager.enable = mkDefault true;
     services.upower.enable = config.powerManagement.enable;
+    services.dbus.packages = mkIf config.services.printing.enable [ pkgs.system-config-printer ];
+    services.colord.enable = mkDefault true;
+    services.packagekit.enable = mkDefault true;
     hardware.bluetooth.enable = mkDefault true;
+    services.xserver.libinput.enable = mkDefault true; # for controlling touchpad settings via gnome control center
 
     fonts.fonts = [ pkgs.dejavu_fonts pkgs.cantarell_fonts ];
 
@@ -160,13 +165,15 @@ in {
           # Update user dirs as described in http://freedesktop.org/wiki/Software/xdg-user-dirs/
           ${pkgs.xdg-user-dirs}/bin/xdg-user-dirs-update
 
-          ${gnome3.gnome_session}/bin/gnome-session&
+          ${gnome3.gnome_session}/bin/gnome-session ${optionalString cfg.debug "--debug"} &
           waitPID=$!
         '';
       };
 
+    services.xserver.updateDbusEnvironment = true;
+
     environment.variables.GIO_EXTRA_MODULES = [ "${gnome3.dconf}/lib/gio/modules"
-                                                "${gnome3.glib_networking}/lib/gio/modules"
+                                                "${gnome3.glib_networking.out}/lib/gio/modules"
                                                 "${gnome3.gvfs}/lib/gio/modules" ];
     environment.systemPackages = gnome3.corePackages ++ cfg.sessionPath
       ++ (removePackagesByName gnome3.optionalPackages config.environment.gnome3.excludePackages);

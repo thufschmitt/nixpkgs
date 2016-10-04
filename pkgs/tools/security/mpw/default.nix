@@ -27,7 +27,7 @@ in stdenv.mkDerivation {
     patchShebangs .
   '';
 
-  NIX_CFLAGS_COMPILE = "-I${libxml2}/include/libxml2";
+  NIX_CFLAGS_COMPILE = "-I${libxml2.dev}/include/libxml2";
 
   buildInputs = [ autoconf automake openssl libxml2 ];
 
@@ -39,4 +39,8 @@ in stdenv.mkDerivation {
     mkdir -p $out/bin
     mv mpw $out/bin/mpw
   '';
+
+  meta = {
+    platforms = stdenv.lib.platforms.unix;
+  };
 }

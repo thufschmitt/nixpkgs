@@ -48,6 +48,8 @@ stdenv.mkDerivation {
 
   pythonPath = [ pythonPackages.curses ];
 
+  hardeningDisable = [ "stackprotector" "fortify" "pic" ];
+
   patches = stdenv.lib.optionals ((xenserverPatched == false) && (builtins.hasAttr "xenPatches" xenConfig)) xenConfig.xenPatches;
 
   postPatch = ''
@@ -99,14 +101,11 @@ stdenv.mkDerivation {
         --replace /usr/sbin/vgs ${lvm2}/sbin/vgs \
         --replace /usr/sbin/lvs ${lvm2}/sbin/lvs
 
-      substituteInPlace tools/hotplug/Linux/network-bridge \
-        --replace /usr/bin/logger ${utillinux}/bin/logger
-
       substituteInPlace tools/xenmon/xenmon.py \
         --replace /usr/bin/pkill ${procps}/bin/pkill
 
       substituteInPlace tools/xenstat/Makefile \
-        --replace /usr/include/curses.h ${ncurses}/include/curses.h
+        --replace /usr/include/curses.h ${ncurses.dev}/include/curses.h
 
       substituteInPlace tools/qemu-xen-traditional/xen-hooks.mak \
         --replace /usr/include/pci ${pciutils}/include/pci
@@ -140,6 +139,9 @@ stdenv.mkDerivation {
       mkdir -p tools/include/gnu
       touch tools/include/gnu/stubs-32.h
     '';
+
+  # Fix build on Glibc 2.24.
+  NIX_CFLAGS_COMPILE = "-Wno-error=deprecated-declarations";
 
   # TODO: Flask needs more testing before enabling it by default.
   #makeFlags = "XSM_ENABLE=y FLASK_ENABLE=y PREFIX=$(out) CONFIG_DIR=/etc XEN_EXTFILES_URL=\\$(XEN_ROOT)/xen_ext_files ";

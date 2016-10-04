@@ -193,7 +193,7 @@ in rec {
 
     path = mkOption {
       default = [];
-      apply = ps: "${makeSearchPath "bin" ps}:${makeSearchPath "sbin" ps}";
+      apply = ps: "${makeBinPath ps}:${makeSearchPathOutput "bin" "sbin" ps}";
       description = ''
         Packages added to the service's <envar>PATH</envar>
         environment variable.  Both the <filename>bin</filename>
@@ -309,7 +309,7 @@ in rec {
     };
 
     startAt = mkOption {
-      type = types.str;
+      type = with types; either str (listOf str);
       default = "";
       example = "Sun 14:00:00";
       description = ''

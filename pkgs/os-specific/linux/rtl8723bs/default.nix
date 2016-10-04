@@ -1,36 +1,42 @@
-{ stdenv, fetchFromGitHub, kernel }:
-
-let
-  ver = "c517f2b";
-in
+{ stdenv, fetchFromGitHub, nukeReferences, kernel }:
+with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "rtl8723bs-${kernel.version}-c517f2b";
-  
+  name = "rtl8723bs-${kernel.version}-${version}";
+  version = "2016-04-11";
+
   src = fetchFromGitHub {
     owner = "hadess";
     repo = "rtl8723bs";
-    rev = "c517f2bf8bcc3d57311252ea7cd49ae81466eead";
-    sha256 = "0phzrhq85g52pi2b74a9sr9l2x6dzlz714k3pix486w2x5axw4xb";
+    rev = "11ab92d8ccd71c80f0102828366b14ef6b676fb2";
+    sha256 = "05q7mf12xcb00v6ba4wwvqi53q7ph5brfkj17xf6vkx4jr7xxnmm";
   };
-  
-  patchPhase = ''
-    substituteInPlace ./Makefile --replace /lib/modules/ "${kernel.dev}/lib/modules/"
-    substituteInPlace ./Makefile --replace '$(shell uname -r)' "${kernel.modDirVersion}"
-    substituteInPlace ./Makefile --replace /sbin/depmod #
-    substituteInPlace ./Makefile --replace '$(MODDESTDIR)' "$out/lib/modules/${kernel.modDirVersion}/kernel/net/wireless/"
-    substituteInPlace ./Makefile --replace '/lib/firmware' "$out/lib/firmware"
+
+  hardeningDisable = [ "pic" ];
+
+  buildInputs = [ nukeReferences ];
+
+  makeFlags = concatStringsSep " " [
+    "ARCH=${stdenv.platform.kernelArch}" # Normally not needed, but the Makefile sets ARCH in a broken way.
+    "KSRC=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build" # Makefile uses $(uname -r); breaks us.
+  ];
+
+  enableParallelBuilding = true;
+
+  # The Makefile doesn't use env-vars well, so install manually:
+  installPhase = ''
+    mkdir -p      $out/lib/modules/${kernel.modDirVersion}/kernel/drivers/net/wireless
+    cp r8723bs.ko $out/lib/modules/${kernel.modDirVersion}/kernel/drivers/net/wireless
+
+    nuke-refs $(find $out -name "*.ko")
   '';
-  
-  preInstall = ''
-    mkdir -p "$out/lib/modules/${kernel.modDirVersion}/kernel/net/wireless/"
-    mkdir -p "$out/lib/firmware/rtlwifi"
-  '';
-   
+
   meta = {
     description = "Realtek SDIO Wi-Fi driver";
     homepage = "https://github.com/hadess/rtl8723bs";
     license = stdenv.lib.licenses.gpl2;
-    platforms = [ "x86_64-linux" "i686-linux" ];
-    broken = !stdenv.lib.versionAtLeast kernel.version "3.19";
+    platforms = stdenv.lib.platforms.linux;
+    broken = (! versionAtLeast kernel.version "3.19")
+      || (kernel.features.grsecurity or false);
+    maintainers = with maintainers; [ elitak ];
   };
 }

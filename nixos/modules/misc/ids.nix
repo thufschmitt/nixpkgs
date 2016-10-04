@@ -47,6 +47,7 @@
       #floppy = 18; # unused
       #uucp = 19; # unused
       #lp = 20; # unused
+      #proc = 21; # unused
       pulseaudio = 22; # must match `pulseaudio' GID
       gpsd = 23;
       #cdrom = 24; # unused
@@ -73,7 +74,6 @@
       rtkit = 45;
       dovecot2 = 46;
       dovenull2 = 47;
-      unbound = 48;
       prayer = 49;
       mpd = 50;
       clamav = 51;
@@ -140,13 +140,12 @@
       ngircd = 112;
       btsync = 113;
       minecraft = 114;
-      monetdb = 115;
+      #monetdb = 115; # unused (not packaged), removed 2016-09-19
       rippled = 116;
       murmur = 117;
       foundationdb = 118;
       newrelic = 119;
       starbound = 120;
-      #grsecurity = 121; # unused
       hydra = 122;
       spiped = 123;
       teamspeak = 124;
@@ -181,7 +180,6 @@
       systemd-timesync = 154;
       liquidsoap = 155;
       etcd = 156;
-      docker-registry = 157;
       hbase = 158;
       opentsdb = 159;
       scollector = 160;
@@ -257,6 +255,26 @@
       radicale = 234;
       hydra-queue-runner = 235;
       hydra-www = 236;
+      syncthing = 237;
+      mfi = 238;
+      caddy = 239;
+      taskd = 240;
+      factorio = 241;
+      emby = 242;
+      graylog = 243;
+      sniproxy = 244;
+      nzbget = 245;
+      mosquitto = 246;
+      toxvpn = 247;
+      squeezelite = 248;
+      turnserver = 249;
+      smokeping = 250;
+      gocd-agent = 251;
+      gocd-server = 252;
+      terraria = 253;
+      mattermost = 254;
+      prometheus = 255;
+      telegraf = 256;
 
       # When adding a uid, make sure it doesn't match an existing gid. And don't use uids above 399!
 
@@ -286,6 +304,7 @@
       floppy = 18;
       uucp = 19;
       lp = 20;
+      proc = 21;
       pulseaudio = 22; # must match `pulseaudio' UID
       gpsd = 23;
       cdrom = 24;
@@ -312,7 +331,6 @@
       #rtkit = 45; # unused
       dovecot2 = 46;
       #dovenull = 47; # unused
-      #unbound = 48; # unused
       prayer = 49;
       mpd = 50;
       clamav = 51;
@@ -356,7 +374,7 @@
       quassel = 89;
       amule = 90;
       minidlna = 91;
-      #elasticsearch = 92; # unused
+      elasticsearch = 92;
       #tcpcryptd = 93; # unused
       connman = 94;
       firebird = 95;
@@ -377,13 +395,12 @@
       #ngircd = 112; # unused
       btsync = 113;
       #minecraft = 114; # unused
-      monetdb = 115;
+      #monetdb = 115; # unused (not packaged), removed 2016-09-19
       #ripped = 116; # unused
       #murmur = 117; # unused
       foundationdb = 118;
       newrelic = 119;
       starbound = 120;
-      grsecurity = 121;
       hydra = 122;
       spiped = 123;
       teamspeak = 124;
@@ -418,7 +435,6 @@
       systemd-timesync = 154;
       liquidsoap = 155;
       #etcd = 156; # unused
-      #docker-registry = 157; # unused
       hbase = 158;
       opentsdb = 159;
       scollector = 160;
@@ -485,6 +501,25 @@
       pdnsd = 229;
       octoprint = 230;
       radicale = 234;
+      syncthing = 237;
+      #mfi = 238; # unused
+      caddy = 239;
+      taskd = 240;
+      factorio = 241;
+      emby = 242;
+      sniproxy = 244;
+      nzbget = 245;
+      mosquitto = 246;
+      #toxvpn = 247; # unused
+      #squeezelite = 248; #unused
+      turnserver = 249;
+      smokeping = 250;
+      gocd-agent = 251;
+      gocd-server = 252;
+      terraria = 253;
+      mattermost = 254;
+      prometheus = 255;
+      #telegraf = 256; # unused
 
       # When adding a gid, make sure it doesn't match an existing
       # uid. Users and groups with the same name should have equal

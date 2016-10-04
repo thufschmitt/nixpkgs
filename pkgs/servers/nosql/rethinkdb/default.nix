@@ -1,17 +1,16 @@
 { stdenv, fetchurl, which, m4, python
 , protobuf, boost, zlib, curl, openssl, icu, jemalloc, libtool
+, pythonPackages, makeWrapper
 }:
 
 stdenv.mkDerivation rec {
   name = "rethinkdb-${version}";
-  version = "2.2.4";
+  version = "2.3.5";
 
   src = fetchurl {
-    url = "http://download.rethinkdb.com/dist/${name}.tgz";
-    sha256 = "0zs07g7arrrvm85mqbkffyzgd255qawn64r6iqdws25lj1kq2qim";
+    url = "https://download.rethinkdb.com/dist/${name}.tgz";
+    sha256 = "047fz3r0rn95mqr5p1xfdprf0hq4avq2a1q8zsdifxxid7hyx2nx";
   };
-
-  patches = [ ./glibc-2.23.patch ];
 
   postPatch = stdenv.lib.optionalString stdenv.isDarwin ''
     sed -i 's/raise.*No Xcode or CLT version detected.*/version = "7.0.0"/' external/v8_3.30.33.16/build/gyp/pylib/gyp/xcode_emulation.py
@@ -30,13 +29,18 @@ stdenv.mkDerivation rec {
     "--lib-path=${jemalloc}/lib"
   ];
 
-  buildInputs = [ protobuf boost zlib curl openssl icu ]
+  buildInputs = [ protobuf boost zlib curl openssl icu makeWrapper ]
     ++ stdenv.lib.optional (!stdenv.isDarwin) jemalloc
     ++ stdenv.lib.optional stdenv.isDarwin libtool;
 
   nativeBuildInputs = [ which m4 python ];
 
   enableParallelBuilding = true;
+
+  postInstall = ''
+    wrapProgram $out/bin/rethinkdb \
+      --prefix PATH ":" "${pythonPackages.rethinkdb}/bin"
+  '';
 
   meta = {
     description = "An open-source distributed database built with love";

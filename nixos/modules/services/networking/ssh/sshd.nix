@@ -85,7 +85,7 @@ in
 
       forwardX11 = mkOption {
         type = types.bool;
-        default = cfgc.setXAuthLocation;
+        default = false;
         description = ''
           Whether to allow X11 connections to be forwarded.
         '';
@@ -195,7 +195,7 @@ in
       authorizedKeysFiles = mkOption {
         type = types.listOf types.str;
         default = [];
-        description = "Files from with authorized keys are read.";
+        description = "Files from which authorized keys are read.";
       };
 
       extraConfig = mkOption {
@@ -226,6 +226,8 @@ in
   ###### implementation
 
   config = mkIf cfg.enable {
+
+    programs.ssh.setXAuthLocation = mkForce cfg.forwardX11;
 
     users.extraUsers.sshd =
       { isSystemUser = true;
@@ -263,6 +265,7 @@ in
 
             serviceConfig =
               { ExecStart =
+                  (optionalString cfg.startWhenNeeded "-") +
                   "${cfgc.package}/bin/sshd " + (optionalString cfg.startWhenNeeded "-i ") +
                   "-f ${pkgs.writeText "sshd_config" cfg.extraConfig}";
                 KillMode = "process";

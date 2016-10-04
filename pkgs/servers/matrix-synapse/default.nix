@@ -1,24 +1,24 @@
-{ pkgs, stdenv, buildPythonApplication, pythonPackages, fetchurl, fetchFromGitHub }:
+{ lib, pkgs, stdenv, buildPythonApplication, pythonPackages, fetchurl, fetchFromGitHub }:
 let
   matrix-angular-sdk = buildPythonApplication rec {
     name = "matrix-angular-sdk-${version}";
-    version = "0.6.6";
+    version = "0.6.8";
 
     src = fetchurl {
-      url = "https://pypi.python.org/packages/source/m/matrix-angular-sdk/matrix-angular-sdk-${version}.tar.gz";
-      sha256 = "1vknhmibb8gh8lng50va2cdvng5xm7vqv9dl680m3gj38pg0bv8a";
+      url = "mirror://pypi/m/matrix-angular-sdk/matrix-angular-sdk-${version}.tar.gz";
+      sha256 = "0gmx4y5kqqphnq3m7xk2vpzb0w2a4palicw7wfdr1q2schl9fhz2";
     };
   };
 in
 buildPythonApplication rec {
   name = "matrix-synapse-${version}";
-  version = "0.12.0";
+  version = "0.17.2";
 
   src = fetchFromGitHub {
     owner = "matrix-org";
     repo = "synapse";
-    rev = "f35f8d06ea58e2d0cdccd82924c7a44fd93f4c38";
-    sha256 = "0b0k1am9lh0qglagc06m91qs26ybv37k7wpbg5333x8jaf5d1si4";
+    rev = "v${version}";
+    sha256 = "0171pp7phizg5j78i1srkx2hj4fqi0qn66sn6x4gshv9grncjsgw";
   };
 
   patches = [ ./matrix-synapse.patch ];
@@ -27,7 +27,8 @@ buildPythonApplication rec {
     blist canonicaljson daemonize dateutil frozendict pillow pybcrypt pyasn1
     pydenticon pymacaroons-pynacl pynacl pyopenssl pysaml2 pytz requests2
     service-identity signedjson systemd twisted ujson unpaddedbase64 pyyaml
-    matrix-angular-sdk
+    matrix-angular-sdk bleach netaddr jinja2 psycopg2 python.modules.curses
+    ldap3 psutil
   ];
 
   # Checks fail because of Tox.
@@ -37,9 +38,10 @@ buildPythonApplication rec {
     mock setuptoolsTrial
   ];
 
-  meta = {
+  meta = with stdenv.lib; {
     homepage = https://matrix.org;
     description = "Matrix reference homeserver";
-    license = stdenv.lib.licenses.asl20;
+    license = licenses.asl20;
+    maintainers = [ maintainers.ralith maintainers.roblabla ];
   };
 }

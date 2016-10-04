@@ -4,11 +4,11 @@
 , gsm, speex, portaudio, spandsp, libuuid
 }:
 stdenv.mkDerivation rec {
-  version = "0.4.17";
+  version = "0.4.20";
   name = "baresip-${version}";
   src=fetchurl {
     url = "http://www.creytiv.com/pub/baresip-${version}.tar.gz";
-    sha256 = "106nagdyayyxj3q68bs3fsps5wnwzjh82vcmy98fp42j33q6yzny";
+    sha256 = "0m8afbfdc9a57cy94ny7g6jv2ndfmrvkx0lgk64i8w870958gkwb";
   };
   buildInputs = [zlib openssl libre librem pkgconfig
     cairo mpg123 gstreamer gst_ffmpeg gst_plugins_base gst_plugins_bad gst_plugins_good
@@ -35,7 +35,9 @@ stdenv.mkDerivation rec {
   ++ stdenv.lib.optional (stdenv.cc.cc != null) "SYSROOT_ALT=${stdenv.cc.cc}"
   ++ stdenv.lib.optional (stdenv.cc.libc != null) "SYSROOT=${stdenv.cc.libc}"
   ;
-  NIX_CFLAGS_COMPILE='' -I${librem}/include/rem -I${gsm}/include/gsm '';
+  NIX_CFLAGS_COMPILE='' -I${librem}/include/rem -I${gsm}/include/gsm
+    -DHAVE_INTTYPES_H -D__GLIBC__ 
+    -D__need_timeval -D__need_timespec -D__need_time_t '';
   meta = {
     homepage = "http://www.creytiv.com/baresip.html";
     platforms = with stdenv.lib.platforms; linux;

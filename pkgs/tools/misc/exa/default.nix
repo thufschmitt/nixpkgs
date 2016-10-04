@@ -4,15 +4,17 @@ with rustPlatform;
 
 buildRustPackage rec {
   name = "exa-${version}";
-  version = "2016-03-22";
+  version = "2016-04-20";
 
-  depsSha256 = "18anwh235kzziq6z7md8f3rl2xl4l9d4ivsqw9grkb7yivd5j0jk";
+  # NOTE: There is an impurity caused by `exa` depending on
+  # https://github.com/rust-datetime/zoneinfo-compiled.git
+  depsSha256 = "0qsqkgc1wxigvskhaamgfp5pyc2kprsikhcfccysgs07w44nxkd0";
 
   src = fetchFromGitHub {
     owner = "ogham";
     repo = "exa";
-    rev = "8805ce9e3bcd4b56f8811a686dd56c47202cdbab";
-    sha256 = "0dkvk0rsf068as6zcd01p7959rdjzm26mlkpid6z0j168gp4kh4q";
+    rev = "110a1c716bfc4a7f74f74b3c4f0a881c773fcd06";
+    sha256 = "136yxi85m50vwmqinr1wnd0h29n5yjykqqqk9ibbcmmhx8sqhjzf";
   };
 
   nativeBuildInputs = [ cmake ];

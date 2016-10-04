@@ -14,6 +14,7 @@ let
   upstreamSystemUnits =
     [ # Targets.
       "basic.target"
+      "busnames.target"
       "sysinit.target"
       "sockets.target"
       "graphical.target"
@@ -120,7 +121,6 @@ let
       "systemd-poweroff.service"
       "halt.target"
       "systemd-halt.service"
-      "ctrl-alt-del.target"
       "shutdown.target"
       "umount.target"
       "final.target"
@@ -141,6 +141,7 @@ let
       "user.slice"
       "machine.slice"
       "systemd-machined.service"
+      "systemd-nspawn@.service"
 
       # Temporary file creation / cleanup.
       "systemd-tmpfiles-clean.service"
@@ -162,7 +163,6 @@ let
       "systemd-hostnamed.service"
       "systemd-binfmt.service"
     ]
-
     ++ cfg.additionalUpstreamSystemUnits;
 
   upstreamSystemWants =
@@ -472,10 +472,26 @@ in
       '';
     };
 
+    systemd.generator-packages = mkOption {
+      default = [];
+      type = types.listOf types.package;
+      example = literalExample "[ pkgs.systemd-cryptsetup-generator ]";
+      description = "Packages providing systemd generators.";
+    };
+
     systemd.defaultUnit = mkOption {
       default = "multi-user.target";
       type = types.str;
       description = "Default unit started when the system boots.";
+    };
+
+    systemd.ctrlAltDelUnit = mkOption {
+      default = "reboot.target";
+      type = types.str;
+      example = "poweroff.target";
+      description = ''
+        Target that should be started when Ctrl-Alt-Delete is pressed.
+      '';
     };
 
     systemd.globalEnvironment = mkOption {
@@ -555,6 +571,16 @@ in
       '';
     };
 
+    systemd.user.extraConfig = mkOption {
+      default = "";
+      type = types.lines;
+      example = "DefaultCPUAccounting=yes";
+      description = ''
+        Extra config options for systemd user instances. See man systemd-user.conf for
+        available options.
+      '';
+    };
+
     systemd.tmpfiles.rules = mkOption {
       type = types.listOf types.str;
       default = [];
@@ -628,7 +654,18 @@ in
 
     environment.systemPackages = [ systemd ];
 
-    environment.etc = {
+    environment.etc = let
+      # generate contents for /etc/systemd/system-generators from
+      # systemd.generators and systemd.generator-packages
+      generators = pkgs.runCommand "system-generators" { packages = cfg.generator-packages; } ''
+        mkdir -p $out
+        for package in $packages
+        do
+          ln -s $package/lib/systemd/system-generators/* $out/
+        done;
+        ${concatStrings (mapAttrsToList (generator: target: "ln -s ${target} $out/${generator};\n") cfg.generators)}
+      '';
+    in ({
       "systemd/system".source = generateUnits "system" cfg.units upstreamSystemUnits upstreamSystemWants;
 
       "systemd/user".source = generateUnits "user" cfg.user.units upstreamUserUnits [];
@@ -636,6 +673,11 @@ in
       "systemd/system.conf".text = ''
         [Manager]
         ${config.systemd.extraConfig}
+      '';
+
+      "systemd/user.conf".text = ''
+        [Manager]
+        ${config.systemd.user.extraConfig}
       '';
 
       "systemd/journald.conf".text = ''
@@ -651,6 +693,7 @@ in
 
       "systemd/logind.conf".text = ''
         [Login]
+        KillUserProcesses=no
         ${config.services.logind.extraConfig}
       '';
 
@@ -667,7 +710,11 @@ in
 
         ${concatStringsSep "\n" cfg.tmpfiles.rules}
       '';
-    } // mapAttrs' (n: v: nameValuePair "systemd/system-generators/${n}" {"source"=v;}) cfg.generators;
+
+      "systemd/system-generators" = { source = generators; };
+    });
+
+    services.dbus.enable = true;
 
     system.activationScripts.systemd = stringAfter [ "groups" ]
       ''
@@ -695,18 +742,6 @@ in
         unitConfig.X-StopOnReconfiguration = true;
       };
 
-    systemd.targets.network-online.after = [ "ip-up.target" ];
-
-    systemd.targets.network-pre = {
-      wantedBy = [ "network.target" ];
-      before = [ "network.target" ];
-    };
-
-    systemd.targets.remote-fs-pre = {
-      wantedBy = [ "remote-fs.target" ];
-      before = [ "remote-fs.target" ];
-    };
-
     systemd.units =
       mapAttrs' (n: v: nameValuePair "${n}.target" (targetToUnit n v)) cfg.targets
       // mapAttrs' (n: v: nameValuePair "${n}.service" (serviceToUnit n v)) cfg.services
@@ -731,13 +766,6 @@ in
         "TMPFS_XATTR" "SECCOMP"
       ];
 
-    environment.shellAliases =
-      { start = "systemctl start";
-        stop = "systemctl stop";
-        restart = "systemctl restart";
-        status = "systemctl status";
-      };
-
     users.extraGroups.systemd-journal.gid = config.ids.gids.systemd-journal;
     users.extraUsers.systemd-journal-gateway.uid = config.ids.uids.systemd-journal-gateway;
     users.extraGroups.systemd-journal-gateway.gid = config.ids.gids.systemd-journal-gateway;
@@ -748,7 +776,7 @@ in
         { wantedBy = [ "timers.target" ];
           timerConfig.OnCalendar = service.startAt;
         })
-        (filterAttrs (name: service: service.startAt != "") cfg.services);
+        (filterAttrs (name: service: service.enable && service.startAt != "") cfg.services);
 
     # Generate timer units for all services that have a ‘startAt’ value.
     systemd.user.timers =
@@ -778,6 +806,8 @@ in
     systemd.services.systemd-remount-fs.restartIfChanged = false;
     systemd.services.systemd-update-utmp.restartIfChanged = false;
     systemd.services.systemd-user-sessions.restartIfChanged = false; # Restart kills all active sessions.
+    systemd.services.systemd-logind.restartTriggers = [ config.environment.etc."systemd/logind.conf".source ];
+    systemd.services.systemd-logind.stopIfChanged = false;
     systemd.targets.local-fs.unitConfig.X-StopOnReconfiguration = true;
     systemd.targets.remote-fs.unitConfig.X-StopOnReconfiguration = true;
     systemd.services.systemd-binfmt.wants = [ "proc-sys-fs-binfmt_misc.automount" ];

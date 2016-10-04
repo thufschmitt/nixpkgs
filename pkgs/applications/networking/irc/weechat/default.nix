@@ -20,16 +20,16 @@ let
 in
 
 stdenv.mkDerivation rec {
-  version = "1.4";
+  version = "1.5";
   name = "weechat-${version}";
 
   src = fetchurl {
     url = "http://weechat.org/files/src/weechat-${version}.tar.bz2";
-    sha256 = "1m6xq6izcac5186xvvmm8znfjzrg9hq42p69jabdvv7cri4rjvg0";
+    sha256 = "0n4cbhh9a7qq6y70ac9b4r0kb7hydwsic99h45ppr2jly322fvij";
   };
 
   cmakeFlags = with stdenv.lib; []
-    ++ optional stdenv.isDarwin "-DICONV_LIBRARY=${libiconv}/lib/libiconv.dylib"
+    ++ optionals stdenv.isDarwin ["-DICONV_LIBRARY=${libiconv}/lib/libiconv.dylib" "-DCMAKE_FIND_FRAMEWORK=LAST"]
     ++ optional (!guileSupport) "-DENABLE_GUILE=OFF"
     ++ optional (!luaSupport)   "-DENABLE_LUA=OFF"
     ++ optional (!perlSupport)  "-DENABLE_PERL=OFF"
@@ -52,9 +52,11 @@ stdenv.mkDerivation rec {
 
   NIX_CFLAGS_COMPILE = "-I${python}/include/${python.libPrefix} -DCA_FILE=/etc/ssl/certs/ca-certificates.crt";
 
-  postInstall = ''
+  postInstall = with stdenv.lib; ''
     NIX_PYTHONPATH="$out/lib/${python.libPrefix}/site-packages"
     wrapProgram "$out/bin/weechat" \
+      ${optionalString perlSupport "--prefix PATH : ${perl}/bin"} \
+      --prefix PATH : ${pythonPackages.python}/bin \
       --prefix PYTHONPATH : "$PYTHONPATH" \
       --prefix PYTHONPATH : "$NIX_PYTHONPATH"
   '';

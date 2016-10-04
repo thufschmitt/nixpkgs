@@ -1,5 +1,5 @@
 { stdenv, lib, fetchurl
-  , qt4, openssl
+  , qt4, qmake4Hook, openssl
   , xproto, libX11, libXScrnSaver, scrnsaverproto
   , xz, zlib
 }:
@@ -16,9 +16,18 @@ stdenv.mkDerivation rec {
     qt4 openssl xproto libX11 libXScrnSaver scrnsaverproto xz zlib
   ];
 
-  configurePhase = ''
-    qmake INSTALL_PREFIX=$out -recursive vacuum.pro
+  # hack: needed to fix build issues in
+  # http://hydra.nixos.org/build/38322959/nixlog/1
+  # should be an upstream issue but it's easy to fix
+  NIX_LDFLAGS = "-lz";
+
+  nativeBuildInputs = [ qmake4Hook ];
+
+  preConfigure = ''
+    qmakeFlags="$qmakeFlags INSTALL_PREFIX=$out"
   '';
+
+  hardeningDisable = [ "format" ];
 
   meta = with stdenv.lib; {
     description = "An XMPP client fully composed of plugins";

@@ -21,13 +21,9 @@ stdenv.mkDerivation {
 
   buildInputs = [ ncurses pcre ];
 
-  configureFlags = [
-    "--enable-maildir-support"
-    "--enable-multibyte"
-    "--enable-zprofile=$out/etc/zprofile"
-    "--with-tcsetpgrp"
-    "--enable-pcre"
-  ];
+  preConfigure = ''
+    configureFlags="--enable-maildir-support --enable-multibyte --enable-zprofile=$out/etc/zprofile --with-tcsetpgrp --enable-pcre"
+  '';
 
   # the zsh/zpty module is not available on hydra
   # so skip groups Y Z
@@ -83,5 +79,9 @@ EOF
     homepage = "http://www.zsh.org/";
     maintainers = with stdenv.lib.maintainers; [ chaoflow pSub ];
     platforms = stdenv.lib.platforms.unix;
+  };
+
+  passthru = {
+    shellPath = "/bin/zsh";
   };
 }

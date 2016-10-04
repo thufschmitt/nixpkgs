@@ -1,6 +1,6 @@
 { stdenv, fetchurl, makeFontsConf, makeWrapper
 , cairo, coreutils, fontconfig, freefont_ttf
-, glib, gmp, gtk, libffi, libjpeg, libpng
+, glib, gmp, gtk2, libffi, libjpeg, libpng
 , libtool, mpfr, openssl, pango, poppler
 , readline, sqlite
 , disableDocs ? true
@@ -17,7 +17,7 @@ let
     fontconfig
     glib
     gmp
-    gtk
+    gtk2
     libjpeg
     libpng
     mpfr
@@ -28,20 +28,15 @@ let
     sqlite
   ];
 
-  boolPatch = fetchurl {
-    url = "http://copr-dist-git.fedorainfracloud.org/cgit/bthomas/racket/racket.git/plain/xform-errors-converting-fix.patch";
-    sha256 = "0h5g7a7w8wwj43jb8q69xldgbyxkn0y0i1na6r9fk17dd56nsm68";
-  };
-
 in
 
 stdenv.mkDerivation rec {
   name = "racket-${version}";
-  version = "6.3";
+  version = "6.6";
 
   src = fetchurl {
     url = "http://mirror.racket-lang.org/installers/${version}/${name}-src.tgz";
-    sha256 = "0f21vnads6wsrzimfja969gf3pkl60s0rdfrjf9s70lcy9x0jz4i";
+    sha256 = "1kzdi1n6h6hmz8zd9k8r5a5yp2ryi4w3c2fjm1k6cqicn18cwaxz";
   };
 
   FONTCONFIG_FILE = fontsConf;
@@ -55,10 +50,6 @@ stdenv.mkDerivation rec {
     mkdir src/build
     cd src/build
   '';
-
-  # https://github.com/racket/racket/issues/1222
-  # Fixed upstream after the release of 6.4
-  patches = [ boolPatch ];
 
   shared = if stdenv.isDarwin then "dylib" else "shared";
   configureFlags = [ "--enable-${shared}" "--enable-lt=${libtool}/bin/libtool" ]
@@ -88,7 +79,7 @@ stdenv.mkDerivation rec {
     '';
     homepage = http://racket-lang.org/;
     license = licenses.lgpl3;
-    maintainers = with maintainers; [ kkallio henrytill ];
+    maintainers = with maintainers; [ kkallio henrytill vrthra ];
     platforms = platforms.unix;
   };
 }
