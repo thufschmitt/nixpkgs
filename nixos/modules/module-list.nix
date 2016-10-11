@@ -70,6 +70,7 @@
   ./programs/fish.nix
   ./programs/freetds.nix
   ./programs/info.nix
+  ./programs/java.nix
   ./programs/kbdlight.nix
   ./programs/light.nix
   ./programs/man.nix
@@ -133,6 +134,7 @@
   ./services/computing/slurm/slurm.nix
   ./services/continuous-integration/buildkite-agent.nix
   ./services/continuous-integration/hydra/default.nix
+  ./services/continuous-integration/gitlab-runner.nix
   ./services/continuous-integration/gocd-agent/default.nix
   ./services/continuous-integration/gocd-server/default.nix
   ./services/continuous-integration/jenkins/default.nix
@@ -210,10 +212,12 @@
   ./services/mail/freepops.nix
   ./services/mail/mail.nix
   ./services/mail/mlmmj.nix
+  ./services/mail/offlineimap.nix
   ./services/mail/opendkim.nix
   ./services/mail/opensmtpd.nix
   ./services/mail/postfix.nix
   ./services/mail/postsrsd.nix
+  ./services/mail/postgrey.nix
   ./services/mail/spamassassin.nix
   ./services/mail/rspamd.nix
   ./services/mail/rmilter.nix
@@ -343,6 +347,7 @@
   ./services/networking/ferm.nix
   ./services/networking/firefox/sync-server.nix
   ./services/networking/firewall.nix
+  ./services/networking/flannel.nix
   ./services/networking/flashpolicyd.nix
   ./services/networking/freenet.nix
   ./services/networking/gale.nix
@@ -382,7 +387,6 @@
   ./services/networking/ntopng.nix
   ./services/networking/ntpd.nix
   ./services/networking/nylon.nix
-  ./services/networking/offlineimap.nix
   ./services/networking/oidentd.nix
   ./services/networking/openfire.nix
   ./services/networking/openntpd.nix
@@ -433,6 +437,7 @@
   ./services/networking/wakeonlan.nix
   ./services/networking/websockify.nix
   ./services/networking/wicd.nix
+  ./services/networking/wireguard.nix
   ./services/networking/wpa_supplicant.nix
   ./services/networking/xinetd.nix
   ./services/networking/xl2tpd.nix
@@ -469,6 +474,7 @@
   ./services/system/uptimed.nix
   ./services/torrent/deluge.nix
   ./services/torrent/flexget.nix
+  ./services/torrent/opentracker.nix
   ./services/torrent/peerflix.nix
   ./services/torrent/transmission.nix
   ./services/ttys/agetty.nix
