@@ -1,7 +1,7 @@
 { stdenv, fetchFromGitHub }:
 
 stdenv.mkDerivation rec {
-  name = "selfoss-${version}";
+  name = "selfoss-unstable-${version}";
   version = "2016-07-31";
 
   src = fetchFromGitHub {
