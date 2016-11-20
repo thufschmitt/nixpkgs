@@ -23,6 +23,7 @@
 , dvdreadSupport     ? !stdenv.isDarwin,  libdvdread    ? null
 , dvdnavSupport      ? dvdreadSupport,  libdvdnav     ? null
 , bluraySupport      ? true,  libbluray     ? null
+, cddaSupport        ? true,  libcdio-paranoia ? null
 , speexSupport       ? true,  speex         ? null
 , theoraSupport      ? true,  libtheora     ? null
 , pulseSupport       ? !stdenv.isDarwin,  libpulseaudio ? null
@@ -103,6 +104,7 @@ in stdenv.mkDerivation rec {
     "--disable-build-date" # Purity
     (enableFeature vaapiSupport "vaapi")
     (enableFeature waylandSupport "wayland")
+    (enableFeature cddaSupport "cdda")
   ];
 
   configurePhase = ''
@@ -137,6 +139,7 @@ in stdenv.mkDerivation rec {
     ++ optional vaapiSupport       libva
     ++ optional drmSupport         libdrm
     ++ optional vapoursynthSupport vapoursynth
+    ++ optional cddaSupport        libcdio-paranoia
     ++ optionals dvdnavSupport     [ libdvdnav libdvdnav.libdvdread ]
     ++ optionals x11Support        [ libX11 libXext mesa libXxf86vm ]
     ++ optionals waylandSupport    [ wayland libxkbcommon ];
