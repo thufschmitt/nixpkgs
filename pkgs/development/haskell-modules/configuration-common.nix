@@ -4,6 +4,11 @@ with import ./lib.nix { inherit pkgs; };
 
 self: super: {
 
+  # Some Hackage packages reference this attribute, which exists only in the
+  # GHCJS package set. We provide a dummy version here to fix potential
+  # evaluation errors.
+  ghcjs-base = null;
+
   # Some packages need a non-core version of Cabal.
   cabal-install = super.cabal-install.overrideScope (self: super: { Cabal = self.Cabal_1_24_1_0; });
 
@@ -43,7 +48,7 @@ self: super: {
     src = pkgs.fetchFromGitHub {
       owner = "joeyh";
       repo = "git-annex";
-      sha256 = "1np1v2x5n9dl39cbwlqbjap1j5120q4n8p18cm1884vdxidbkc01";
+      sha256 = "0yy4fdk0sp19hc838j82sls68l5wnrhr55zzs0gbqnagna77cxhd";
       rev = drv.version;
     };
   })).overrideScope (self: super: {
@@ -68,6 +73,14 @@ self: super: {
     preConfigure = ''
       unset CC          # unconfuse the haskell-cuda configure script
       sed -i -e 's|/usr/local/cuda|${pkgs.cudatoolkit}|g' configure
+    '';
+  });
+
+  # jni needs help finding libjvm.so because it's in a weird location.
+  jni = overrideCabal super.jni (drv: {
+    preConfigure = ''
+      local libdir=( "${pkgs.jdk}/lib/openjdk/jre/lib/"*"/server" )
+      configureFlags+=" --extra-lib-dir=''${libdir[0]}"
     '';
   });
 
@@ -139,7 +152,6 @@ self: super: {
   groupoids = dontHaddock super.groupoids;
   hamlet = dontHaddock super.hamlet;
   HaXml = dontHaddock super.HaXml;
-  HDBC-odbc = dontHaddock super.HDBC-odbc;
   hoodle-core = dontHaddock super.hoodle-core;
   hsc3-db = dontHaddock super.hsc3-db;
   http-client-conduit = dontHaddock super.http-client-conduit;
@@ -173,6 +185,11 @@ self: super: {
       testToolDepends = [];
     }))
     else super.hakyll;
+
+  # Heist's test suite requires system pandoc
+  heist = overrideCabal super.heist (drv: {
+    testToolDepends = [pkgs.pandoc];
+  });
 
   # cabal2nix likes to generate dependencies on hinotify when hfsevents is really required
   # on darwin: https://github.com/NixOS/cabal2nix/issues/146.
@@ -490,12 +507,10 @@ self: super: {
 
   # https://ghc.haskell.org/trac/ghc/ticket/9625
   vty = dontCheck super.vty;
+  vty_5_13 = dontCheck super.vty_5_13;
 
   # https://github.com/vincenthz/hs-crypto-pubkey/issues/20
   crypto-pubkey = dontCheck super.crypto-pubkey;
-
-  # https://github.com/Gabriel439/Haskell-Turtle-Library/issues/1
-  turtle = dontCheck super.turtle;
 
   # https://github.com/Philonous/xml-picklers/issues/5
   xml-picklers = dontCheck super.xml-picklers;
@@ -803,7 +818,7 @@ self: super: {
   };
 
   # # Make elisp files available at a location where people expect it.
-  hindent = overrideCabal super.hindent (drv: {
+  hindent = (overrideCabal super.hindent (drv: {
     # We cannot easily byte-compile these files, unfortunately, because they
     # depend on a new version of haskell-mode that we don't have yet.
     postInstall = ''
@@ -812,7 +827,9 @@ self: super: {
       ln -s $lispdir $out/share/emacs/site-lisp
     '';
     doCheck = false; # https://github.com/chrisdone/hindent/issues/299
-  });
+  })).override {
+    haskell-src-exts = self.haskell-src-exts_1_19_0;
+  };
 
   # https://github.com/yesodweb/Shelly.hs/issues/106
   # https://github.com/yesodweb/Shelly.hs/issues/108
@@ -974,7 +991,7 @@ self: super: {
 
   # https://github.com/commercialhaskell/stack/issues/2263
   stack = super.stack.overrideScope (self: super: {
-    http-client = self.http-client_0_5_3_4;
+    http-client = self.http-client_0_5_4;
     http-client-tls = self.http-client-tls_0_3_3;
     http-conduit = self.http-conduit_2_2_3;
     optparse-applicative = dontCheck self.optparse-applicative_0_13_0_0;
@@ -982,7 +999,26 @@ self: super: {
   });
 
   # The latest Hoogle needs versions not yet in LTS Haskell 7.x.
-  hoogle = super.hoogle.override { haskell-src-exts = self.haskell-src-exts_1_18_2; };
+  hoogle = super.hoogle.override { haskell-src-exts = self.haskell-src-exts_1_19_0; };
+
+  # To be in sync with Hoogle.
+  lambdabot-haskell-plugins = (overrideCabal super.lambdabot-haskell-plugins (drv: {
+    patches = [
+      (pkgs.fetchpatch {
+        url = "https://github.com/lambdabot/lambdabot/commit/78a2361024724acb70bc1c12c42f3a16015bb373.patch";
+        sha256 = "0aw0jpw07idkrg8pdn3y3qzhjfrxsvmx3plg51m1aqgbzs000yxf";
+        stripLen = 2;
+        addPrefixes = true;
+      })
+    ];
+
+    jailbreak = true;
+  })).override {
+    haskell-src-exts = self.haskell-src-exts-simple;
+  };
+
+  # Needs new version.
+  haskell-src-exts-simple = super.haskell-src-exts-simple.override { haskell-src-exts = self.haskell-src-exts_1_19_0; };
 
   # Test suite fails a QuickCheck property.
   optparse-applicative_0_13_0_0 = dontCheck super.optparse-applicative_0_13_0_0;
@@ -1018,14 +1054,14 @@ self: super: {
 
   # http-api-data_0.3.x requires QuickCheck > 2.9, but overriding that version
   # is hard because of transitive dependencies, so we just disable tests.
-  http-api-data_0_3_2 = dontCheck super.http-api-data_0_3_2;
+  http-api-data_0_3_3 = dontCheck super.http-api-data_0_3_3;
 
   # Fix build for latest versions of servant and servant-client.
   servant_0_9_1_1 = super.servant_0_9_1_1.overrideScope (self: super: {
-    http-api-data = self.http-api-data_0_3_2;
+    http-api-data = self.http-api-data_0_3_3;
   });
   servant-client_0_9_1_1 = super.servant-client_0_9_1_1.overrideScope (self: super: {
-    http-api-data = self.http-api-data_0_3_2;
+    http-api-data = self.http-api-data_0_3_3;
     servant-server = self.servant-server_0_9_1_1;
     servant = self.servant_0_9_1_1;
   });
@@ -1070,5 +1106,23 @@ self: super: {
 
   # Test suite occasionally runs for 1+ days on Hydra.
   distributed-process-tests = dontCheck super.distributed-process-tests;
+
+  # https://github.com/mulby/diff-parse/issues/9
+  diff-parse = doJailbreak super.diff-parse;
+
+  # https://github.com/josefs/STMonadTrans/issues/4
+  STMonadTrans = dontCheck super.STMonadTrans;
+
+  socket_0_7_0_0 = super.socket_0_7_0_0.overrideScope (self: super: { QuickCheck = self.QuickCheck_2_9_2; });
+
+  # Encountered missing dependencies: hspec >=1.3 && <2.1
+  # https://github.com/rampion/ReadArgs/issues/8
+  ReadArgs = doJailbreak super.ReadArgs;
+
+  # https://github.com/philopon/barrier/issues/3
+  barrier = doJailbreak super.barrier;
+
+  # requires vty 5.13
+  brick = super.brick.overrideScope (self: super: { vty = self.vty_5_13; });
 
 }
