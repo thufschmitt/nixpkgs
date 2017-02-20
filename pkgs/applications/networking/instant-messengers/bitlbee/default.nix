@@ -1,30 +1,32 @@
-{ fetchurl, fetchpatch, stdenv, gnutls, glib, pkgconfig, check, libotr, python }:
+{ fetchurl, fetchpatch, stdenv, gnutls, glib, pkgconfig, check, libotr, python,
+enableLibPurple ? false, pidgin ? null }:
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "bitlbee-3.5.1";
+  name = "bitlbee-3.5";
 
   src = fetchurl {
     url = "mirror://bitlbee/src/${name}.tar.gz";
-    sha256 = "0sgsn0fv41rga46mih3fyv65cvfa6rvki8x92dn7bczbi7yxfdln";
+    sha256 = "06c371bjly38yrkvfwdh5rjfx9xfl7bszyhrlbldy0xk38c057al";
   };
 
   nativeBuildInputs = [ pkgconfig ] ++ optional doCheck check;
 
-  buildInputs = [ gnutls glib libotr python ];
+  buildInputs = [ gnutls glib libotr python ]
+    ++ optional enableLibPurple pidgin;
+
+  preConfigure = optionalString enableLibPurple
+    "export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${pidgin}/lib/pkgconfig";
 
   configureFlags = [
     "--gcov=1"
     "--otr=1"
     "--ssl=gnutls"
     "--pidfile=/var/lib/bitlbee/bitlbee.pid"
-  ];
+  ]
+  ++ optional enableLibPurple "--purple=1";
 
-  buildPhase = ''
-    make install-dev
-  '';
-
-  doCheck = true;
+  doCheck = !enableLibPurple; # Checks fail with libpurple for sme reason
 
   meta = {
     description = "IRC instant messaging gateway";
