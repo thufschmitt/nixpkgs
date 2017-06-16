@@ -7,19 +7,20 @@
 , officialRelease ? false
 , # The platforms for which we build Nixpkgs.
   supportedSystems ? [ "x86_64-linux" ]
+, subSetName ? "ocamlPackages"
 }:
 
 with import ./release-lib.nix {inherit supportedSystems; };
 with lib;
 
 let
-  onlyOcaml = mapAttrs (name: value:
+  onlySelectedSubset = mapAttrs (name: value:
     let res = builtins.tryEval (
-      if hasPrefix "ocamlPackages" name then
+      if name  == subSetName then
         packagePlatforms value
       else []
     );
     in if res.success then res.value else []
     );
-in (mapTestOn (onlyOcaml pkgs))
+in (mapTestOn (onlySelectedSubset pkgs))
 
