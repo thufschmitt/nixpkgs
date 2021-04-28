@@ -465,16 +465,18 @@ in
       perl = buildPackages.perl.override { fetchurl = stdenv.fetchurlBoot; };
       openssl = buildPackages.openssl.override {
         fetchurl = stdenv.fetchurlBoot;
-        coreutils = buildPackages.coreutils.override {
-          fetchurl = stdenv.fetchurlBoot;
+        buildPackages = {
+          coreutils = buildPackages.coreutils.override {
+            fetchurl = stdenv.fetchurlBoot;
+            inherit perl;
+            xz = buildPackages.xz.override { fetchurl = stdenv.fetchurlBoot; };
+            gmp = null;
+            aclSupport = false;
+            attrSupport = false;
+          };
           inherit perl;
-          xz = buildPackages.xz.override { fetchurl = stdenv.fetchurlBoot; };
-          gmp = null;
-          aclSupport = false;
-          attrSupport = false;
         };
         inherit perl;
-        buildPackages = { inherit perl; };
       };
       libssh2 = buildPackages.libssh2.override {
         fetchurl = stdenv.fetchurlBoot;
@@ -1479,6 +1481,8 @@ in
 
   ili2c = callPackage ../tools/misc/ili2c { };
 
+  imagelol = callPackage ../tools/compression/imagelol { };
+
   imageworsener = callPackage ../tools/graphics/imageworsener { };
 
   imgpatchtools = callPackage ../development/mobile/imgpatchtools { };
@@ -2369,7 +2373,8 @@ in
 
   duf = callPackage ../tools/misc/duf { };
 
-  inherit (ocamlPackages) dune_1 dune_2 dune-release;
+  inherit (ocaml-ng.ocamlPackages_4_10) dune_1;
+  inherit (ocamlPackages) dune_2 dune-release;
 
   duperemove = callPackage ../tools/filesystems/duperemove { };
 
@@ -5589,6 +5594,8 @@ in
       irods
       irods-icommands;
 
+  ignite = callPackage ../applications/virtualization/ignite { };
+
   igmpproxy = callPackage ../tools/networking/igmpproxy { };
 
   ihaskell = callPackage ../development/tools/haskell/ihaskell/wrapper.nix {
@@ -6177,6 +6184,10 @@ in
   natscli = callPackage ../tools/system/natscli { };
 
   nbench = callPackage ../tools/misc/nbench { };
+
+  nbtscanner = callPackage ../tools/security/nbtscanner {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   ncrack = callPackage ../tools/security/ncrack { };
 
@@ -12231,6 +12242,8 @@ in
     binutils-arm-embedded = pkgsCross.arm-embedded.buildPackages.binutils;
   };
 
+  inav-blackbox-tools = callPackage ../tools/misc/inav-blackbox-tools { };
+
   msp430GccSupport = callPackage ../development/misc/msp430/gcc-support.nix { };
 
   msp430Newlib      = callPackage ../development/misc/msp430/newlib.nix { };
@@ -13083,7 +13096,11 @@ in
 
   kube-prompt = callPackage ../development/tools/kube-prompt { };
 
+  kubei = callPackage ../tools/security/kubei { };
+
   kubeprompt = callPackage ../development/tools/kubeprompt { };
+
+  kubesec = callPackage ../tools/security/kubesec { };
 
   kubespy = callPackage ../applications/networking/cluster/kubespy { };
 
@@ -14508,7 +14525,7 @@ in
   givaro_3 = callPackage ../development/libraries/givaro/3.nix {};
   givaro_3_7 = callPackage ../development/libraries/givaro/3.7.nix {};
 
-  ghp-import = callPackage ../development/tools/ghp-import { };
+  ghp-import = with python3Packages; toPythonApplication ghp-import;
 
   ghcid = haskellPackages.ghcid.bin;
 
@@ -16901,10 +16918,7 @@ in
 
   wolfssl = callPackage ../development/libraries/wolfssl { };
 
-  openssl =
-    if stdenv.hostPlatform.isMinGW # Work around broken cross build
-    then openssl_1_0_2
-    else openssl_1_1;
+  openssl = openssl_1_1;
 
   inherit (callPackages ../development/libraries/openssl { })
     openssl_1_0_2
@@ -18791,6 +18805,7 @@ in
   nginx = nginxStable;
 
   nginxQuic = callPackage ../servers/http/nginx/quic.nix {
+    zlib = zlib-ng.override { withZlibCompat = true; };
     withPerl = false;
     # We don't use `with` statement here on purpose!
     # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
@@ -18800,6 +18815,7 @@ in
   };
 
   nginxStable = callPackage ../servers/http/nginx/stable.nix {
+    zlib = zlib-ng.override { withZlibCompat = true; };
     withPerl = false;
     # We don't use `with` statement here on purpose!
     # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
@@ -18807,6 +18823,7 @@ in
   };
 
   nginxMainline = callPackage ../servers/http/nginx/mainline.nix {
+    zlib = zlib-ng.override { withZlibCompat = true; };
     withPerl = false;
     # We don't use `with` statement here on purpose!
     # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
@@ -21789,6 +21806,8 @@ in
 
   theano = callPackage ../data/fonts/theano { };
 
+  tela-icon-theme = callPackage ../data/icons/tela-icon-theme { };
+
   template-glib = callPackage ../development/libraries/template-glib { };
 
   tempora_lgc = callPackage ../data/fonts/tempora-lgc { };
@@ -23043,7 +23062,7 @@ in
 
   gomuks = callPackage ../applications/networking/instant-messengers/gomuks { };
 
-  inherit (ocamlPackages) google-drive-ocamlfuse;
+  inherit (ocaml-ng.ocamlPackages_4_10) google-drive-ocamlfuse;
 
   googler = callPackage ../applications/misc/googler {
     python = python3;
@@ -24199,6 +24218,8 @@ in
   fluxcd = callPackage ../applications/networking/cluster/fluxcd { };
 
   linkerd = callPackage ../applications/networking/cluster/linkerd { };
+
+  kile-wl = callPackage ../applications/misc/kile-wl { };
 
   kubernetes-helm = callPackage ../applications/networking/cluster/helm { };
 
@@ -30315,6 +30336,8 @@ in
   pt = callPackage ../applications/misc/pt { };
 
   protocol = python3Packages.callPackage ../applications/networking/protocol { };
+
+  punes = libsForQt5.callPackage ../misc/emulators/punes { };
 
   pykms = callPackage ../tools/networking/pykms { };
 

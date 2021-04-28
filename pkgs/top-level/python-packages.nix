@@ -2323,6 +2323,8 @@ in {
 
   ffmpeg-python = callPackage ../development/python-modules/ffmpeg-python { };
 
+  ffmpeg-progress-yield = callPackage ../development/python-modules/ffmpeg-progress-yield { };
+
   fido2 = callPackage ../development/python-modules/fido2 { };
 
   filebrowser_safe = callPackage ../development/python-modules/filebrowser_safe { };
@@ -2657,6 +2659,8 @@ in {
   gflags = callPackage ../development/python-modules/gflags { };
 
   ghdiff = callPackage ../development/python-modules/ghdiff { };
+
+  ghp-import = callPackage ../development/python-modules/ghp-import { };
 
   gidgethub = callPackage ../development/python-modules/gidgethub { };
 
@@ -4186,6 +4190,8 @@ in {
 
   mock-open = callPackage ../development/python-modules/mock-open { };
 
+  mock-services = callPackage ../development/python-modules/mock-services { };
+
   modeled = callPackage ../development/python-modules/modeled { };
 
   moderngl = callPackage ../development/python-modules/moderngl { };
@@ -4593,6 +4599,8 @@ in {
   onnx = callPackage ../development/python-modules/onnx { };
 
   openant = callPackage ../development/python-modules/openant { };
+
+  openapi-schema-validator = callPackage ../development/python-modules/openapi-schema-validator { };
 
   openapi-spec-validator = callPackage ../development/python-modules/openapi-spec-validator { };
 
@@ -7020,6 +7028,8 @@ in {
 
   retworkx = callPackage ../development/python-modules/retworkx { };
 
+  rfc3339-validator = callPackage ../development/python-modules/rfc3339-validator { };
+
   rfc3986 = callPackage ../development/python-modules/rfc3986 { };
 
   rfc3987 = callPackage ../development/python-modules/rfc3987 { };
@@ -7957,6 +7967,8 @@ in {
   testtools = callPackage ../development/python-modules/testtools { };
 
   test-tube = callPackage ../development/python-modules/test-tube { };
+
+  textdistance = callPackage ../development/python-modules/textdistance { };
 
   textacy = callPackage ../development/python-modules/textacy { };
 
