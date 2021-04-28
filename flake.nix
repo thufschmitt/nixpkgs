@@ -7,6 +7,13 @@
     let
       jobs = import ./pkgs/top-level/release.nix {
         nixpkgs = self;
+        nixpkgsArgs = {
+          config = {
+            allowUnfree = false;
+            inHydra = true;
+            config.contentAddressedByDefault = true;
+          };
+        };
       };
 
       lib = import ./lib;
@@ -21,6 +28,8 @@
       ];
 
       forAllSystems = f: lib.genAttrs systems (system: f system);
+
+      legacyPackages = forAllSystems (system: import ./. { inherit system; config.contentAddressedByDefault = true; });
 
     in
     {
@@ -62,7 +71,32 @@
           });
       });
 
-      checks.x86_64-linux.tarball = jobs.tarball;
+      checks.x86_64-linux = {
+        inherit (legacyPackages.x86_64-linux)
+          gcc
+          apacheHttpd
+          cmake
+          cryptsetup
+          emacs
+          gettext
+          git
+          imagemagick
+          jdk
+          linux
+          mysql
+          nginx
+          nodejs
+          openssh
+          php
+          postgresql
+          python
+          rsyslog
+          stdenv
+          subversion
+          vim
+          firefox
+          pandoc;
+      };
 
       htmlDocs = {
         nixpkgsManual = jobs.manual;
@@ -71,7 +105,7 @@
         }).nixos.manual.x86_64-linux;
       };
 
-      legacyPackages = forAllSystems (system: import ./. { inherit system; });
+      legacyPackages = legacyPackages;
 
       nixosModules = {
         notDetected = import ./nixos/modules/installer/scan/not-detected.nix;
