@@ -4569,6 +4569,8 @@ in
 
   flawfinder = callPackage ../development/tools/flawfinder { };
 
+  flip-link = callPackage ../development/tools/flip-link { };
+
   flips = callPackage ../tools/compression/flips { };
 
   fmbt = callPackage ../development/tools/fmbt {
@@ -14994,6 +14996,10 @@ in
 
   hunspellWithDicts = dicts: callPackage ../development/libraries/hunspell/wrapper.nix { inherit dicts; };
 
+  hunter = callPackage ../applications/misc/hunter {
+    inherit (darwin.apple_sdk.frameworks) CoreServices IOKit Security;
+  };
+
   hwloc = callPackage ../development/libraries/hwloc {};
 
   inherit (callPackage ../development/tools/misc/hydra { })
@@ -15099,7 +15105,6 @@ in
   indicator-application-gtk3 = callPackage ../development/libraries/indicator-application/gtk3.nix { };
 
   indilib = callPackage ../development/libraries/science/astronomy/indilib { };
-  indi-3rdparty = callPackage ../development/libraries/science/astronomy/indilib/indi-3rdparty.nix { };
   indi-full = callPackage ../development/libraries/science/astronomy/indilib/indi-full.nix { };
 
   inih = callPackage ../development/libraries/inih { };
