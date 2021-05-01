@@ -4459,7 +4459,9 @@ in
 
   ferm = callPackage ../tools/networking/ferm { };
 
-  ffsend = callPackage ../tools/misc/ffsend { };
+  ffsend = callPackage ../tools/misc/ffsend {
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation CoreServices Security AppKit;
+  };
 
   fgallery = callPackage ../tools/graphics/fgallery { };
 
@@ -8199,9 +8201,7 @@ in
 
   scmpuff = callPackage ../applications/version-management/git-and-tools/scmpuff { };
 
-  scream-receivers = callPackage ../misc/scream-receivers {
-    pulseSupport = config.pulseaudio or false;
-  };
+  scream = callPackage ../applications/audio/scream { };
 
   scimark = callPackage ../misc/scimark { };
 
@@ -10314,6 +10314,7 @@ in
   gcc8Stdenv = overrideCC gccStdenv buildPackages.gcc8;
   gcc9Stdenv = overrideCC gccStdenv buildPackages.gcc9;
   gcc10Stdenv = overrideCC gccStdenv buildPackages.gcc10;
+  gcc11Stdenv = overrideCC gccStdenv buildPackages.gcc11;
 
   wrapCCMulti = cc:
     if stdenv.targetPlatform.system == "x86_64-linux" then let
@@ -10500,7 +10501,21 @@ in
     isl = if !stdenv.isDarwin then isl_0_20 else null;
   }));
 
-  gcc_latest = gcc10;
+  gcc11 = lowPrio (wrapCC (callPackage ../development/compilers/gcc/11 {
+    inherit noSysDirs;
+
+    reproducibleBuild = true;
+    profiledCompiler = false;
+
+    enableLTO = !stdenv.isi686;
+
+    libcCross = if stdenv.targetPlatform != stdenv.buildPlatform then libcCross else null;
+    threadsCross = if stdenv.targetPlatform != stdenv.buildPlatform then threadsCross else null;
+
+    isl = if !stdenv.isDarwin then isl_0_20 else null;
+  }));
+
+  gcc_latest = gcc11;
 
   gfortran = gfortran9;
 
@@ -11509,6 +11524,8 @@ in
   sbcl_2_1_1 = callPackage ../development/compilers/sbcl/2.1.1.nix {};
   sbcl_2_1_2 = callPackage ../development/compilers/sbcl/2.1.2.nix {};
   sbcl = sbcl_2_1_2;
+
+  roswell = callPackage ../development/tools/roswell/default.nix { };
 
   scala_2_10 = callPackage ../development/compilers/scala/2.x.nix { majorVersion = "2.10"; jre = jdk8; };
   scala_2_11 = callPackage ../development/compilers/scala/2.x.nix { majorVersion = "2.11"; jre = jdk8; };
@@ -16623,6 +16640,10 @@ in
   mlv-app = libsForQt5.callPackage ../applications/video/mlv-app { };
 
   mono-addins = callPackage ../development/libraries/mono-addins { };
+
+  movine = callPackage ../development/tools/database/movine {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   movit = callPackage ../development/libraries/movit { };
 
@@ -22304,9 +22325,7 @@ in
 
   caerbannog = callPackage ../applications/misc/caerbannog { };
 
-  cage = callPackage ../applications/window-managers/cage {
-    wlroots = wlroots_0_12;
-  };
+  cage = callPackage ../applications/window-managers/cage { };
 
   calf = callPackage ../applications/audio/calf {
       inherit (gnome2) libglade;
@@ -24512,6 +24531,8 @@ in
       canonicaljson;
   };
 
+  matrix-commander = callPackage ../applications/networking/instant-messengers/matrix-commander { };
+
   matrix-dl = callPackage ../applications/networking/instant-messengers/matrix-dl { };
 
   matrix-recorder = callPackage ../applications/networking/instant-messengers/matrix-recorder {};
@@ -24734,6 +24755,8 @@ in
   rofi-emoji = callPackage ../applications/misc/rofi-emoji { };
 
   rofi-file-browser = callPackage ../applications/misc/rofi-file-browser { };
+
+  rofi-power-menu = callPackage ../applications/misc/rofi-power-menu { };
 
   ympd = callPackage ../applications/audio/ympd { };
 
@@ -30930,8 +30953,6 @@ in
   mg = callPackage ../applications/editors/mg { };
 
   mpvc = callPackage ../applications/misc/mpvc { };
-
-  togglesg-download = callPackage ../tools/misc/togglesg-download { };
 
   discord = import ../applications/networking/instant-messengers/discord {
     branch = "stable";
