@@ -605,6 +605,8 @@ in {
 
   auth0-python = callPackage ../development/python-modules/auth0-python { };
 
+  authcaptureproxy = callPackage ../development/python-modules/authcaptureproxy { };
+
   authheaders = callPackage ../development/python-modules/authheaders { };
 
   authlib = callPackage ../development/python-modules/authlib { };
@@ -614,6 +616,8 @@ in {
   autobahn = callPackage ../development/python-modules/autobahn { };
 
   autograd = callPackage ../development/python-modules/autograd { };
+
+  autoit-ripper = callPackage ../development/python-modules/autoit-ripper { };
 
   autologging = callPackage ../development/python-modules/autologging { };
 
@@ -3563,6 +3567,8 @@ in {
 
   karton-asciimagic = callPackage ../development/python-modules/karton-asciimagic { };
 
+  karton-autoit-ripper = callPackage ../development/python-modules/karton-autoit-ripper { };
+
   karton-classifier = callPackage ../development/python-modules/karton-classifier { };
 
   karton-config-extractor = callPackage ../development/python-modules/karton-config-extractor { };
@@ -5073,7 +5079,7 @@ in {
   poolsense = callPackage ../development/python-modules/poolsense { };
 
   poppler-qt5 = callPackage ../development/python-modules/poppler-qt5 {
-    inherit (pkgs.qt5) qtbase;
+    inherit (pkgs.qt5) qtbase qmake;
     inherit (pkgs.libsForQt5) poppler;
   };
 
