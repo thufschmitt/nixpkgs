@@ -96,6 +96,9 @@
           vim
           firefox
           pandoc;
+        myRev = legacyPackages.x86_64-linux.runCommand "my-rev" {} ''
+          echo ${self.rev or "Unknown"} > $out
+        '';
       };
 
       htmlDocs = {
