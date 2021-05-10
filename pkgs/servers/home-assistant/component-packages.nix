@@ -2,7 +2,7 @@
 # Do not edit!
 
 {
-  version = "2021.5.0";
+  version = "2021.5.1";
   components = {
     "abode" = ps: with ps; [ abodepy ];
     "accuweather" = ps: with ps; [ accuweather ];
@@ -413,7 +413,7 @@
     "itach" = ps: with ps; [ ]; # missing inputs: pyitachip2ir
     "itunes" = ps: with ps; [ ];
     "izone" = ps: with ps; [ ]; # missing inputs: python-izone
-    "jewish_calendar" = ps: with ps; [ ]; # missing inputs: hdate
+    "jewish_calendar" = ps: with ps; [ hdate ];
     "joaoapps_join" = ps: with ps; [ ]; # missing inputs: python-join-api
     "juicenet" = ps: with ps; [ ]; # missing inputs: python-juicenet
     "kaiterra" = ps: with ps; [ ]; # missing inputs: kaiterra-async-client
@@ -660,7 +660,7 @@
     "pushover" = ps: with ps; [ pushover-complete ];
     "pushsafer" = ps: with ps; [ ];
     "pvoutput" = ps: with ps; [ jsonpath xmltodict ];
-    "pvpc_hourly_pricing" = ps: with ps; [ ]; # missing inputs: aiopvpc
+    "pvpc_hourly_pricing" = ps: with ps; [ aiopvpc ];
     "pyload" = ps: with ps; [ ];
     "python_script" = ps: with ps; [ restrictedpython ];
     "qbittorrent" = ps: with ps; [ ]; # missing inputs: python-qbittorrent

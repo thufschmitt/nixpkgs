@@ -105,7 +105,7 @@ let
   extraBuildInputs = extraPackages py.pkgs;
 
   # Don't forget to run parse-requirements.py after updating
-  hassVersion = "2021.5.0";
+  hassVersion = "2021.5.1";
 
 in with py.pkgs; buildPythonApplication rec {
   pname = "homeassistant";
@@ -124,7 +124,7 @@ in with py.pkgs; buildPythonApplication rec {
     owner = "home-assistant";
     repo = "core";
     rev = version;
-    sha256 = "1kwx0bq2i76p9gbx5kkzkjxd88vzf2daccm0wf123693isk1nwzs";
+    sha256 = "0bipjfkz4zqhy84jgrn3qxvs4nxya3j08lcsq3xa31xfz8wnpxwj";
   };
 
   # leave this in, so users don't have to constantly update their downstream patch handling
@@ -176,6 +176,7 @@ in with py.pkgs; buildPythonApplication rec {
     # test infrastructure
     asynctest
     pytest-aiohttp
+    pytest-mock
     pytest-rerunfailures
     pytest-xdist
     pytestCheckHook
@@ -204,6 +205,7 @@ in with py.pkgs; buildPythonApplication rec {
     "calendar"
     "camera"
     "cast"
+    "climacell"
     "climate"
     "cloud"
     "comfoconnect"
@@ -216,6 +218,7 @@ in with py.pkgs; buildPythonApplication rec {
     "deconz"
     "default_config"
     "demo"
+    "denonavr"
     "derivative"
     "device_automation"
     "device_sun_light_trigger"
@@ -237,6 +240,7 @@ in with py.pkgs; buildPythonApplication rec {
     "folder"
     "folder_watcher"
     "freebox"
+    "fritz"
     "fritzbox"
     "fritzbox_callmonitor"
     "frontend"
@@ -272,6 +276,7 @@ in with py.pkgs; buildPythonApplication rec {
     "intent"
     "intent_script"
     "ipp"
+    "jewish_calendar"
     "kmtronic"
     "knx"
     "kodi"
@@ -319,6 +324,7 @@ in with py.pkgs; buildPythonApplication rec {
     "prometheus"
     "proximity"
     "push"
+    "pvpc_hourly_pricing"
     "python_script"
     "random"
     "recorder"
@@ -327,6 +333,7 @@ in with py.pkgs; buildPythonApplication rec {
     "rituals_perfume_genie"
     "rmvtransport"
     "roku"
+    "roomba"
     "rss_feed_template"
     "ruckus_unleashed"
     "safe_mode"
@@ -355,6 +362,7 @@ in with py.pkgs; buildPythonApplication rec {
     "stream"
     "subaru"
     "sun"
+    "surepetcare"
     "switch"
     "system_health"
     "system_log"
@@ -382,6 +390,7 @@ in with py.pkgs; buildPythonApplication rec {
     "wled"
     "workday"
     "worldclock"
+    "xiaomi_miio"
     "yeelight"
     "zeroconf"
     "zha"
