@@ -156,6 +156,8 @@ in
 
   antsimulator = callPackage ../games/antsimulator { };
 
+  atuin = callPackage ../tools/misc/atuin { };
+
   fiche = callPackage ../servers/fiche { };
 
   fishnet = callPackage ../servers/fishnet { };
@@ -807,6 +809,8 @@ in
   quich = callPackage ../tools/misc/quich { } ;
 
   tfk8s = callPackage ../tools/misc/tfk8s { };
+
+  xcd = callPackage ../tools/misc/xcd { };
 
   xtrt = callPackage ../tools/archivers/xtrt { };
 
@@ -1478,6 +1482,8 @@ in
   hakrawler = callPackage ../tools/security/hakrawler { };
 
   harvid = callPackage ../tools/video/harvid { };
+
+  hilbish = callPackage ../shells/hilbish { };
 
   hime = callPackage ../tools/inputmethods/hime {};
 
@@ -3214,7 +3220,14 @@ in
 
   bdsync = callPackage ../tools/backup/bdsync { };
 
-  beamerpresenter = libsForQt5.callPackage ../applications/office/beamerpresenter { };
+  beamerpresenter = libsForQt5.callPackage ../applications/office/beamerpresenter {
+    # developed for a compiler with C++20 support
+    stdenv =
+      if stdenv.isDarwin then
+        overrideCC stdenv clang_10
+      else
+        stdenv;
+  };
 
   beanstalkd = callPackage ../servers/beanstalkd { };
 
@@ -6118,8 +6131,6 @@ in
   martin = callPackage ../servers/martin {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
-
-  matrix-dendrite = callPackage ../servers/matrix-dendrite { };
 
   /* Python 3.8 is currently broken with matrix-synapse since `python38Packages.bleach` fails
     (https://github.com/NixOS/nixpkgs/issues/76093) */
@@ -9456,7 +9467,9 @@ in
 
   tre = callPackage ../development/libraries/tre { };
 
-  tremor-rs = callPackage ../tools/misc/tremor-rs { };
+  tremor-rs = callPackage ../tools/misc/tremor-rs {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   ts = callPackage ../tools/system/ts { };
 
@@ -10607,6 +10620,14 @@ in
     profiledCompiler = false;
   });
 
+  gfortran11 = wrapCC (gcc11.cc.override {
+    name = "gfortran";
+    langFortran = true;
+    langCC = false;
+    langC = false;
+    profiledCompiler = false;
+  });
+
   libgccjit = gcc.cc.override {
     name = "libgccjit";
     langFortran = false;
@@ -10650,6 +10671,15 @@ in
   });
 
   gnat10 = wrapCC (gcc10.cc.override {
+    name = "gnat";
+    langC = true;
+    langCC = false;
+    langAda = true;
+    profiledCompiler = false;
+    gnatboot = gnat6;
+  });
+
+  gnat11 = wrapCC (gcc11.cc.override {
     name = "gnat";
     langC = true;
     langCC = false;
@@ -17634,7 +17664,9 @@ in
 
   socket_wrapper = callPackage ../development/libraries/socket_wrapper { };
 
-  sofia_sip = callPackage ../development/libraries/sofia-sip { };
+  sofia_sip = callPackage ../development/libraries/sofia-sip {
+    inherit (darwin.apple_sdk.frameworks) SystemConfiguration;
+  };
 
   soil = callPackage ../development/libraries/soil {
     inherit (darwin.apple_sdk.frameworks) Carbon;
@@ -18617,6 +18649,8 @@ in
   };
 
   couchpotato = callPackage ../servers/couchpotato {};
+
+  dendrite = callPackage ../servers/dendrite { };
 
   dex-oidc = callPackage ../servers/dex { };
 
@@ -22200,7 +22234,9 @@ in
   audacious = libsForQt5.callPackage ../applications/audio/audacious { };
   audaciousQt5 = audacious;
 
-  audacity = callPackage ../applications/audio/audacity { wxGTK = wxGTK31-gtk2; };
+  audacity-gtk2 = callPackage ../applications/audio/audacity { wxGTK = wxGTK31-gtk2; };
+  audacity-gtk3 = callPackage ../applications/audio/audacity { wxGTK = wxGTK31-gtk3; };
+  audacity = audacity-gtk2;
 
   audio-recorder = callPackage ../applications/audio/audio-recorder { };
 
@@ -22410,6 +22446,8 @@ in
   bviplus = callPackage ../applications/editors/bviplus { };
 
   caerbannog = callPackage ../applications/misc/caerbannog { };
+
+  cardboard = callPackage ../applications/window-managers/cardboard { };
 
   cage = callPackage ../applications/window-managers/cage { };
 
@@ -24943,9 +24981,7 @@ in
 
   newsflash = callPackage ../applications/networking/feedreaders/newsflash { };
 
-  nicotine-plus = callPackage ../applications/networking/soulseek/nicotine-plus {
-    geoip = geoipWithDatabase;
-  };
+  nicotine-plus = callPackage ../applications/networking/soulseek/nicotine-plus { };
 
   nice-dcv-client = callPackage ../applications/networking/remote/nice-dcv-client { };
 
@@ -25418,6 +25454,8 @@ in
   pdfgrep  = callPackage ../tools/typesetting/pdfgrep { };
 
   pdfpc = callPackage ../applications/misc/pdfpc {
+    # https://github.com/pdfpc/pdfpc/issues/594
+    vala = vala_0_50;
     inherit (gst_all_1) gstreamer gst-plugins-base gst-plugins-good gst-libav;
   };
 
@@ -26196,14 +26234,7 @@ in
 
   stumpish = callPackage ../applications/window-managers/stumpish {};
 
-  stumpwm = callPackage ../applications/window-managers/stumpwm {
-    version = "latest";
-  };
-
-  stumpwm-git = stumpwm.override {
-    version = "git";
-    inherit sbcl lispPackages;
-  };
+  stumpwm = lispPackages.stumpwm;
 
   sublime = callPackage ../applications/editors/sublime/2 { };
 
@@ -26422,6 +26453,8 @@ in
   };
 
   timewarrior = callPackage ../applications/misc/timewarrior { };
+
+  timew-sync-server = callPackage ../applications/misc/timew-sync-server { };
 
   timg = callPackage ../tools/graphics/timg { };
 

@@ -95,6 +95,7 @@ digitaltoad/vim-pug
 direnv/direnv.vim
 dleonard0/pony-vim-syntax
 dmix/elvish.vim
+dominikduda/vim_current_word
 dpelle/vim-LanguageTool
 dracula/vim as dracula-vim
 drewtempelmeyer/palenight.vim
@@ -106,6 +107,8 @@ eagletmt/ghcmod-vim
 eagletmt/neco-ghc
 easymotion/vim-easymotion
 editorconfig/editorconfig-vim
+edluffy/hologram.nvim@main
+edluffy/specs.nvim@main
 edwinb/idris2-vim
 ehamberg/vim-cute-python
 eigenfoo/stan-vim

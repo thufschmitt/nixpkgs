@@ -665,6 +665,8 @@ in {
 
   aws-xray-sdk = callPackage ../development/python-modules/aws-xray-sdk { };
 
+  awscrt = callPackage ../development/python-modules/awscrt { };
+
   awsiotpythonsdk = callPackage ../development/python-modules/awsiotpythonsdk { };
 
   awslambdaric = callPackage ../development/python-modules/awslambdaric { };
@@ -4271,6 +4273,8 @@ in {
 
   mortgage = callPackage ../development/python-modules/mortgage { };
 
+  motioneye-client = callPackage ../development/python-modules/motioneye-client { };
+
   moto = callPackage ../development/python-modules/moto { };
 
   moviepy = callPackage ../development/python-modules/moviepy { };
@@ -4344,6 +4348,8 @@ in {
   mutagen = callPackage ../development/python-modules/mutagen { };
 
   mutatormath = callPackage ../development/python-modules/mutatormath { };
+
+  mutesync = callPackage ../development/python-modules/mutesync { };
 
   mwclient = callPackage ../development/python-modules/mwclient { };
 
@@ -5705,6 +5711,8 @@ in {
 
   pykodi = callPackage ../development/python-modules/pykodi { };
 
+  pykoplenti = callPackage ../development/python-modules/pykoplenti { };
+
   pykwalify = callPackage ../development/python-modules/pykwalify { };
 
   pylacrosse = callPackage ../development/python-modules/pylacrosse { };
@@ -5804,6 +5812,8 @@ in {
   pyment = callPackage ../development/python-modules/pyment { };
 
   pymetar = callPackage ../development/python-modules/pymetar { };
+
+  pymeteireann = callPackage ../development/python-modules/pymeteireann { };
 
   pymetno = callPackage ../development/python-modules/pymetno { };
 
@@ -6726,6 +6736,8 @@ in {
 
   pytoml = callPackage ../development/python-modules/pytoml { };
 
+  pytomlpp = callPackage ../development/python-modules/pytomlpp { };
+
   pytools = callPackage ../development/python-modules/pytools { };
 
   pytorch = callPackage ../development/python-modules/pytorch {
@@ -7203,6 +7215,8 @@ in {
   rst2ansi = callPackage ../development/python-modules/rst2ansi { };
 
   rtmidi-python = callPackage ../development/python-modules/rtmidi-python { };
+
+  rtoml = callPackage ../development/python-modules/rtoml { };
 
   Rtree = callPackage ../development/python-modules/Rtree {
     inherit (pkgs) libspatialindex;
