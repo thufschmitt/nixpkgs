@@ -253,6 +253,8 @@ in
 
   eclipse-mat = callPackage ../development/tools/eclipse-mat { };
 
+  evans = callPackage ../development/tools/evans { };
+
   frugal = callPackage ../development/tools/frugal { };
 
   glade = callPackage ../development/tools/glade { };
@@ -809,6 +811,8 @@ in
   quich = callPackage ../tools/misc/quich { } ;
 
   tfk8s = callPackage ../tools/misc/tfk8s { };
+
+  tnat64 = callPackage ../tools/networking/tnat64 { };
 
   xcd = callPackage ../tools/misc/xcd { };
 
@@ -1933,6 +1937,8 @@ in
   };
 
   buildpack = callPackage ../development/tools/buildpack { };
+
+  bottom-rs = callPackage ../tools/misc/bottom-rs { };
 
   buildtorrent = callPackage ../tools/misc/buildtorrent { };
 
@@ -7146,7 +7152,9 @@ in
 
   nylon = callPackage ../tools/networking/nylon { };
 
-  nym = callPackage ../applications/networking/nym { };
+  nym = callPackage ../applications/networking/nym {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   nzbget = callPackage ../tools/networking/nzbget { };
 
@@ -7819,6 +7827,8 @@ in
   pwndbg = callPackage ../development/tools/misc/pwndbg { };
 
   pycangjie = pythonPackages.pycangjie;
+
+  pycflow2dot = with python.pkgs; toPythonApplication pycflow2dot;
 
   pydb = callPackage ../development/tools/pydb { };
 
@@ -11525,7 +11535,9 @@ in
   cargo-make = callPackage ../development/tools/rust/cargo-make {
     inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
   };
-  cargo-msrv = callPackage ../development/tools/rust/cargo-msrv { };
+  cargo-msrv = callPackage ../development/tools/rust/cargo-msrv {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
   cargo-play = callPackage ../development/tools/rust/cargo-play { };
   cargo-raze = callPackage ../development/tools/rust/cargo-raze {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -11855,7 +11867,7 @@ in
   erlang_nox = beam_nox.interpreters.erlang;
 
   inherit (beam.packages.erlang)
-    rebar rebar3
+    rebar rebar3 rebar3WithPlugins
     fetchHex beamPackages
     relxExe;
 
@@ -20289,7 +20301,6 @@ in
 
     nvidiaPackages = dontRecurseIntoAttrs (callPackage ../os-specific/linux/nvidia-x11 { });
 
-    nvidia_x11_legacy304   = nvidiaPackages.legacy_304;
     nvidia_x11_legacy340   = nvidiaPackages.legacy_340;
     nvidia_x11_legacy390   = nvidiaPackages.legacy_390;
     nvidia_x11_beta        = nvidiaPackages.beta;
@@ -27204,6 +27215,8 @@ in
 
   picom = callPackage ../applications/window-managers/picom {};
 
+  xd = callPackage ../applications/networking/p2p/xd {};
+
   xdaliclock = callPackage ../tools/misc/xdaliclock {};
 
   xdg-dbus-proxy = callPackage ../development/libraries/xdg-dbus-proxy { };
@@ -30109,8 +30122,9 @@ in
     kops_1_16
     kops_1_17
     kops_1_18
+    kops_1_19
     ;
-  kops = kops_1_18;
+  kops = kops_1_19;
 
   lguf-brightness = callPackage ../misc/lguf-brightness { };
 
