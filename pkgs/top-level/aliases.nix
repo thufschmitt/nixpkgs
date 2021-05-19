@@ -63,6 +63,7 @@ mapAliases ({
   at_spi2_core = at-spi2-core; # added 2018-02-25
   aucdtect = throw "aucdtect: Upstream no longer provides download urls."; # added 2020-12-26
   avldrums-lv2 = x42-avldrums; # added 2020-03-29
+  avxsynth = throw "avxsynth was removed because it was broken"; # added 2021-05-18
   bar-xft = lemonbar-xft;  # added 2015-01-16
   bashCompletion = bash-completion; # Added 2016-09-28
   batti = throw "batti has been removed from nixpkgs, as it was unmaintained"; # added 2019-12-10
@@ -607,6 +608,7 @@ mapAliases ({
   postgis = postgresqlPackages.postgis;
   # end
   ppl-address-book = throw "ppl-address-book deprecated on 2019-05-02: abandoned by upstream.";
+  privateer = throw "privateer was removed because it was broken"; # added 2021-05-18
   processing3 = processing; # added 2019-08-16
   procps-ng = procps; # added 2018-06-08
   proj_5 = throw "Proj-5 has been removed from nixpkgs, use proj instead."; # added 2021-04-12

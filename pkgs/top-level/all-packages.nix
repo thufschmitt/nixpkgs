@@ -265,7 +265,9 @@ in
 
   html5validator = python3Packages.callPackage ../applications/misc/html5validator { };
 
-  probe-run = callPackage ../development/tools/rust/probe-run {};
+  probe-run = callPackage ../development/tools/rust/probe-run {
+    inherit (darwin.apple_sdk.frameworks) AppKit IOKit;
+  };
 
   proto-contrib = callPackage ../development/tools/proto-contrib {};
 
@@ -13452,7 +13454,9 @@ in
     libiberty_static = libiberty.override { staticBuild = true; };
   };
 
-  pactorio = callPackage ../development/tools/pactorio { };
+  pactorio = callPackage ../development/tools/pactorio {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   pahole = callPackage ../development/tools/misc/pahole {};
 
@@ -17217,7 +17221,9 @@ in
 
   pe-parse = callPackage ../development/libraries/pe-parse { };
 
-  inherit (callPackage ../development/libraries/physfs { })
+  inherit (callPackage ../development/libraries/physfs {
+    inherit (darwin.apple_sdk.frameworks) Foundation Carbon;
+  })
     physfs_2
     physfs;
 
@@ -22408,10 +22414,6 @@ in
 
   avrdudess = callPackage ../applications/misc/avrdudess { };
 
-  avxsynth = callPackage ../applications/video/avxsynth {
-    libjpeg = libjpeg_original; # error: 'JCOPYRIGHT_SHORT' was not declared in this scope
-  };
-
   awesome-4-0 = callPackage ../applications/window-managers/awesome {
     cairo = cairo.override { xcbSupport = true; };
     inherit (texFunctions) fontsConf;
@@ -27048,6 +27050,8 @@ in
 
   webmacs = libsForQt5.callPackage ../applications/networking/browsers/webmacs {};
 
+  webssh = with python3Packages; toPythonApplication webssh;
+
   webtorrent_desktop = callPackage ../applications/video/webtorrent_desktop {};
 
   wrapWeechat = callPackage ../applications/networking/irc/weechat/wrapper.nix { };
@@ -28361,8 +28365,6 @@ in
   pokerth-server = libsForQt5.callPackage ../games/pokerth { target = "server"; };
 
   prboom = callPackage ../games/prboom { };
-
-  privateer = callPackage ../games/privateer { };
 
   pysolfc = python3Packages.callPackage ../games/pysolfc { };
 
@@ -29830,7 +29832,9 @@ in
     stdenv = if stdenv.cc.isClang then llvmPackages_5.stdenv else gcc8Stdenv;
   });
 
-  rink = callPackage ../applications/science/misc/rink { };
+  rink = callPackage ../applications/science/misc/rink {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   simgrid = callPackage ../applications/science/misc/simgrid { };
 
