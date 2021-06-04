@@ -1370,6 +1370,8 @@ in
 
   coolreader = libsForQt5.callPackage ../applications/misc/coolreader {};
 
+  corsair = with python3Packages; toPythonApplication corsair-scan;
+
   corsmisc = callPackage ../tools/security/corsmisc { };
 
   cosign = callPackage ../tools/security/cosign {
@@ -1619,6 +1621,8 @@ in
 
   git-credential-gopass = callPackage ../tools/security/gopass/git-credential.nix { };
 
+  gosh = callPackage ../tools/security/gosh { };
+
   gospider = callPackage ../tools/security/gospider { };
 
   browserpass = callPackage ../tools/security/browserpass { };
@@ -1650,6 +1654,8 @@ in
   pebble = callPackage ../tools/admin/pebble { };
 
   play-with-mpv = callPackage ../tools/video/play-with-mpv { };
+
+  plausible = callPackage ../servers/web-apps/plausible { };
 
   reattach-to-user-namespace = callPackage ../os-specific/darwin/reattach-to-user-namespace {};
 
@@ -1969,6 +1975,9 @@ in
 
   boxfs = callPackage ../tools/filesystems/boxfs { };
 
+  bozohttpd = callPackage ../servers/http/bozohttpd { };
+  bozohttpd-minimal = callPackage ../servers/http/bozohttpd { minimal = true; };
+
   bpytop = callPackage ../tools/system/bpytop { };
 
   brasero-original = lowPrio (callPackage ../tools/cd-dvd/brasero { });
@@ -2009,6 +2018,8 @@ in
   buildpack = callPackage ../development/tools/buildpack { };
 
   bottom-rs = callPackage ../tools/misc/bottom-rs { };
+
+  bsp-layout = callPackage ../tools/misc/bsp-layout {};
 
   buildtorrent = callPackage ../tools/misc/buildtorrent { };
 
@@ -2720,6 +2731,8 @@ in
       Accelerate CoreGraphics CoreVideo;
   };
 
+  gpg-tui = callPackage ../tools/security/gpg-tui { };
+
   goa = callPackage ../development/tools/goa { };
 
   gohai = callPackage ../tools/system/gohai { };
@@ -2825,6 +2838,8 @@ in
   kapacitor = callPackage ../servers/monitoring/kapacitor { };
 
   kaldi = callPackage ../tools/audio/kaldi { };
+
+  kalk = callPackage ../tools/misc/kalk { };
 
   kisslicer = callPackage ../tools/misc/kisslicer { };
 
@@ -5834,6 +5849,8 @@ in
 
   ipget = callPackage ../applications/networking/ipget { };
 
+  iptsd = callPackage ../applications/misc/iptsd { };
+
   ipmitool = callPackage ../tools/system/ipmitool {};
 
   ipmiutil = callPackage ../tools/system/ipmiutil {};
@@ -6932,6 +6949,8 @@ in
   mtx = callPackage ../tools/backup/mtx {};
 
   mt-st = callPackage ../tools/backup/mt-st {};
+
+  mubeng = callPackage ../tools/networking/mubeng { };
 
   multitime = callPackage ../tools/misc/multitime { };
 
@@ -8598,6 +8617,8 @@ in
     tex = texlive.combined.scheme-small;
   };
 
+  skytemple = callPackage ../applications/misc/skytemple {};
+
   sleuthkit = callPackage ../tools/system/sleuthkit {};
 
   # Not updated upstream since 2018, doesn't support qt newer than 5.12
@@ -9360,6 +9381,8 @@ in
   ursadb = callPackage ../servers/ursadb {};
 
   usbmuxd = callPackage ../tools/misc/usbmuxd {};
+
+  ustreamer = callPackage ../applications/video/ustreamer { };
 
   usync = callPackage ../applications/misc/usync { };
 
@@ -11386,7 +11409,7 @@ in
       /**/ if platform.isDarwin then (if platform.isAarch64 then 11 else 7)
       else if platform.isFreeBSD then 7
       else if platform.isAndroid then 12
-      else if platform.isLinux then 7
+      else if platform.isLinux then (if platform.isRiscV then 9 else 7)
       else if platform.isWasm then 8
       else 11; # latest
     # We take the "max of the mins". Why? Since those are lower bounds of the
@@ -12099,8 +12122,7 @@ in
   inherit (beam.packages.erlang)
     erlang-ls
     rebar rebar3 rebar3WithPlugins
-    fetchHex beamPackages
-    relxExe;
+    fetchHex beamPackages;
 
   inherit (beam.packages.erlangR21) lfe lfe_1_3;
 
@@ -14438,7 +14460,9 @@ in
 
   chromaprint = callPackage ../development/libraries/chromaprint { };
 
-  cl = callPackage ../development/libraries/cl { };
+  cl = callPackage ../development/libraries/cl {
+    erlang = erlangR23;
+  };
 
   clanlib = callPackage ../development/libraries/clanlib { };
 
@@ -19274,7 +19298,7 @@ in
     zlib = zlib-ng.override { withZlibCompat = true; };
     withPerl = false;
     # We don't use `with` statement here on purpose!
-    # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
+    # See https://github.com/NixOS/nixpkgs/pull/10474#discussion_r42369334
     modules = [ nginxModules.rtmp nginxModules.dav nginxModules.moreheaders ];
     # Use latest boringssl to allow http3 support
     openssl = boringssl;
@@ -19284,7 +19308,7 @@ in
     zlib = zlib-ng.override { withZlibCompat = true; };
     withPerl = false;
     # We don't use `with` statement here on purpose!
-    # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
+    # See https://github.com/NixOS/nixpkgs/pull/10474#discussion_r42369334
     modules = [ nginxModules.rtmp nginxModules.dav nginxModules.moreheaders ];
   };
 
@@ -19292,7 +19316,7 @@ in
     zlib = zlib-ng.override { withZlibCompat = true; };
     withPerl = false;
     # We don't use `with` statement here on purpose!
-    # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
+    # See https://github.com/NixOS/nixpkgs/pull/10474#discussion_r42369334
     modules = [ nginxModules.dav nginxModules.moreheaders ];
   };
 
@@ -19690,7 +19714,7 @@ in
   rabbitmq-server = callPackage ../servers/amqp/rabbitmq-server {
     inherit (darwin.apple_sdk.frameworks) AppKit Carbon Cocoa;
     elixir = beam_nox.interpreters.elixir_1_8;
-    erlang = erlang_nox;
+    erlang = beam_nox.interpreters.erlangR23;
   };
 
   radicale1 = callPackage ../servers/radicale/1.x.nix { };
@@ -22419,6 +22443,8 @@ in
   yanone-kaffeesatz = callPackage ../data/fonts/yanone-kaffeesatz {};
 
   yaru-theme = callPackage ../data/themes/yaru {};
+
+  yaru-remix-theme = callPackage ../data/themes/yaru-remix {};
 
   zafiro-icons = callPackage ../data/icons/zafiro-icons {
     inherit (plasma5Packages) breeze-icons;
@@ -30967,6 +30993,8 @@ in
 
   brscan4 = callPackage ../applications/graphics/sane/backends/brscan4 { };
 
+  brscan5 = callPackage ../applications/graphics/sane/backends/brscan5 { };
+
   dsseries = callPackage ../applications/graphics/sane/backends/dsseries { };
 
   sane-airscan = callPackage ../applications/graphics/sane/backends/airscan { };
@@ -31376,6 +31404,8 @@ in
 
   zsnes = pkgsi686Linux.callPackage ../misc/emulators/zsnes { };
 
+  xcp = callPackage ../tools/misc/xcp { };
+
   xcpc = callPackage ../misc/emulators/xcpc { };
 
   zxcvbn-c = callPackage ../development/libraries/zxcvbn-c { };
@@ -31631,6 +31661,8 @@ in
 
   kodelife = callPackage ../applications/graphics/kodelife {};
 
+  bunnyfetch = callPackage ../tools/misc/bunnyfetch {};
+
   _3proxy = callPackage ../applications/networking/3proxy {};
 
   pigeon = callPackage ../development/tools/pigeon {};
@@ -31708,6 +31740,8 @@ in
   lc3tools = callPackage ../development/tools/lc3tools {};
 
   xcolor = callPackage ../tools/graphics/xcolor { };
+
+  zthrottle = callPackage ../tools/misc/zthrottle { };
 
   zktree = callPackage ../applications/misc/zktree {};
 }
