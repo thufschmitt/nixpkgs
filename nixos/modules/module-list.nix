@@ -547,6 +547,7 @@
   ./services/misc/ripple-data-api.nix
   ./services/misc/serviio.nix
   ./services/misc/safeeyes.nix
+  ./services/misc/sdrplay.nix
   ./services/misc/sickbeard.nix
   ./services/misc/siproxd.nix
   ./services/misc/snapper.nix
@@ -1112,6 +1113,7 @@
   ./virtualisation/openvswitch.nix
   ./virtualisation/parallels-guest.nix
   ./virtualisation/podman.nix
+  ./virtualisation/podman-network-socket-ghostunnel.nix
   ./virtualisation/qemu-guest-agent.nix
   ./virtualisation/railcar.nix
   ./virtualisation/spice-usb-redirection.nix

@@ -112,6 +112,8 @@ in {
   inherit buildSetupcfg;
 
   inherit (callPackage ../development/interpreters/python/hooks { })
+    condaInstallHook
+    condaUnpackHook
     eggUnpackHook
     eggBuildHook
     eggInstallHook
@@ -418,6 +420,8 @@ in {
   ansible-base = callPackage ../development/python-modules/ansible/base.nix { };
 
   ansible-collections = callPackage ../development/python-modules/ansible/collections.nix { };
+
+  ansible-core = callPackage ../development/python-modules/ansible/core.nix { };
 
   ansible-kernel = callPackage ../development/python-modules/ansible-kernel { };
 
@@ -1393,6 +1397,8 @@ in {
 
   clf = callPackage ../development/python-modules/clf { };
 
+  cock = callPackage ../development/python-modules/cock { };
+
   click = callPackage ../development/python-modules/click { };
 
   clickclick = callPackage ../development/python-modules/clickclick { };
@@ -1520,6 +1526,8 @@ in {
   colour = callPackage ../development/python-modules/colour { };
 
   commandparse = callPackage ../development/python-modules/commandparse { };
+
+  commentjson = callPackage ../development/python-modules/commentjson { };
 
   commoncode = callPackage ../development/python-modules/commoncode { };
 
@@ -5751,6 +5759,8 @@ in {
 
   pygrok = callPackage ../development/python-modules/pygrok { };
 
+  pygtfs = callPackage ../development/python-modules/pygtfs { };
+
   pygtail = callPackage ../development/python-modules/pygtail { };
 
   pygtrie = callPackage ../development/python-modules/pygtrie { };
@@ -6193,6 +6203,8 @@ in {
   pyro-api = callPackage ../development/python-modules/pyro-api { };
 
   pyro-ppl = callPackage ../development/python-modules/pyro-ppl { };
+
+  pyroon = callPackage ../development/python-modules/pyroon { };
 
   pyroute2 = callPackage ../development/python-modules/pyroute2 { };
 
@@ -7212,6 +7224,8 @@ in {
 
   resampy = callPackage ../development/python-modules/resampy { };
 
+  resolvelib = callPackage ../development/python-modules/resolvelib { };
+
   responses = callPackage ../development/python-modules/responses { };
 
   respx = callPackage ../development/python-modules/respx { };
@@ -7406,11 +7420,6 @@ in {
   samsungtvws = callPackage ../development/python-modules/samsungtvws { };
 
   sanic = callPackage ../development/python-modules/sanic {
-    # pytest-sanic is doing ok for the sole purpose of testing Sanic.
-    pytest-sanic = self.pytest-sanic.overridePythonAttrs (oldAttrs: {
-      doCheck = false;
-      meta.broken = false;
-    });
     # Don't pass any `sanic` to avoid dependency loops.  `sanic-testing`
     # has special logic to disable tests when this is the case.
     sanic-testing = self.sanic-testing.override { sanic = null; };

@@ -1528,6 +1528,12 @@
     githubId = 510553;
     name = "Jos van Bakel";
   };
+  c4605 = {
+    email = "bolasblack@gmail.com";
+    github = "bolasblack";
+    githubId = 382011;
+    name = "c4605";
+  };
   caadar = {
     email = "v88m@posteo.net";
     github = "caadar";
@@ -6423,6 +6429,10 @@
     githubId = 44469426;
     name = "Matheus de Souza Pessanha";
     email = "matheus_pessanha2001@outlook.com";
+    keys = [{
+      longkeyid = "rsa4096/6DFD656220A3B849";
+      fingerprint = "2D4D 488F 17FB FF75 664E  C016 6DFD 6562 20A3 B849";
+    }];
   };
   meatcar = {
     email = "nixpkgs@denys.me";
@@ -6604,6 +6614,16 @@
     github = "mikesperber";
     githubId = 1387206;
     name = "Mike Sperber";
+  };
+  mikroskeem = {
+    email = "mikroskeem@mikroskeem.eu";
+    github = "mikroskeem";
+    githubId = 3490861;
+    name = "Mark Vainomaa";
+    keys = [{
+      longkeyid = "rsa4096/0xDA015B05B5A11B22";
+      fingerprint = "DB43 2895 CF68 F0CE D4B7  EF60 DA01 5B05 B5A1 1B22";
+    }];
   };
   milesbreslin = {
     email = "milesbreslin@gmail.com";
@@ -7165,6 +7185,12 @@
     githubId = 10180857;
     name = "Anmol Sethi";
   };
+  nichtsfrei = {
+    email = "philipp.eder@posteo.net";
+    github = "nichtsfrei";
+    githubId = 1665818;
+    name = "Philipp Eder";
+  };
   nickhu = {
     email = "me@nickhu.co.uk";
     github = "nickhu";
@@ -7452,6 +7478,12 @@
     github = "olcai";
     githubId = 20923;
     name = "Erik Timan";
+  };
+  olebedev = {
+    email = "ole6edev@gmail.com";
+    github = "olebedev";
+    githubId = 848535;
+    name = "Oleg Lebedev";
   };
   olejorgenb = {
     email = "olejorgenb@yahoo.no";
@@ -8762,6 +8794,12 @@
     github = "ruuda";
     githubId = 506953;
     name = "Ruud van Asseldonk";
+  };
+  rvarago = {
+    email = "rafael.varago@gmail.com";
+    github = "rvarago";
+    githubId = 7365864;
+    name = "Rafael Varago";
   };
   rvl = {
     email = "dev+nix@rodney.id.au";
