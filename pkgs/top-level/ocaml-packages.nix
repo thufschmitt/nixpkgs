@@ -643,6 +643,10 @@ let
 
     menhir = callPackage ../development/ocaml-modules/menhir { };
 
+    menhirLib = callPackage ../development/ocaml-modules/menhir/lib.nix { };
+
+    menhirSdk = callPackage ../development/ocaml-modules/menhir/sdk.nix { };
+
     merlin =
       if lib.versionAtLeast ocaml.version "4.11"
       then callPackage ../development/tools/ocaml/merlin/4.x.nix { }
@@ -1085,15 +1089,7 @@ let
 
     ppx_gen_rec = callPackage ../development/ocaml-modules/ppx_gen_rec {};
 
-    ppx_import = callPackage ../development/ocaml-modules/ppx_import (
-      let ppxlib_0_15 = if lib.versionAtLeast ppxlib.version "0.15"
-        then ppxlib.override { version = "0.15.0"; }
-        else ppxlib; in
-      {
-        ppx_deriving = ppx_deriving.override { ppxlib = ppxlib_0_15; };
-        ppxlib = ppxlib_0_15;
-      }
-    );
+    ppx_import = callPackage ../development/ocaml-modules/ppx_import {};
 
     ppx_irmin = callPackage ../development/ocaml-modules/irmin/ppx.nix {
     };
@@ -1176,6 +1172,8 @@ let
     };
 
     ssl = callPackage ../development/ocaml-modules/ssl { };
+
+    stdcompat = callPackage ../development/ocaml-modules/stdcompat { };
 
     stdlib-shims = callPackage ../development/ocaml-modules/stdlib-shims { };
 
