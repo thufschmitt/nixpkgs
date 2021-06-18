@@ -946,9 +946,7 @@ in
     flavour = "git";
   };
 
-  logseq = callPackage ../applications/misc/logseq {
-    electron = electron_12;
-  };
+  logseq = callPackage ../applications/misc/logseq { };
 
   lxterminal = callPackage ../applications/terminal-emulators/lxterminal { };
 
@@ -4778,6 +4776,8 @@ in
   flip-link = callPackage ../development/tools/flip-link { };
 
   flips = callPackage ../tools/compression/flips { };
+
+  flowblade = callPackage ../applications/video/flowblade { };
 
   fmbt = callPackage ../development/tools/fmbt {
     python = python2;
@@ -9401,6 +9401,8 @@ in
 
   ubertooth = callPackage ../applications/radio/ubertooth { };
 
+  ucarp = callPackage ../servers/ucarp { };
+
   ucl = callPackage ../development/libraries/ucl { };
 
   ucspi-tcp = callPackage ../tools/networking/ucspi-tcp { };
@@ -10647,6 +10649,8 @@ in
   flutter = flutterPackages.stable;
 
   fpc = callPackage ../development/compilers/fpc { };
+
+  g203-led = callPackage ../tools/misc/g203-led { };
 
   gambit = callPackage ../development/compilers/gambit { };
   gambit-unstable = callPackage ../development/compilers/gambit/unstable.nix { };
@@ -15276,6 +15280,8 @@ in
 
   qtstyleplugin-kvantum-qt4 = callPackage ../development/libraries/qtstyleplugin-kvantum-qt4 { };
 
+  qxmpp = libsForQt5.callPackage ../development/libraries/qxmpp {};
+
   gnet = callPackage ../development/libraries/gnet { };
 
   gnu-config = callPackage ../development/libraries/gnu-config { };
@@ -16210,6 +16216,8 @@ in
   libseccomp = callPackage ../development/libraries/libseccomp { };
 
   libsecret = callPackage ../development/libraries/libsecret { };
+
+  libserdes = callPackage ../development/libraries/libserdes { };
 
   libserialport = callPackage ../development/libraries/libserialport { };
 
@@ -17910,6 +17918,8 @@ in
   qgnomeplatform =  libsForQt514.callPackage ../development/libraries/qgnomeplatform { };
 
   randomx = callPackage ../development/libraries/randomx { };
+
+  retro-gtk = callPackage ../development/libraries/retro-gtk { };
 
   resolv_wrapper = callPackage ../development/libraries/resolv_wrapper { };
 
@@ -20423,6 +20433,7 @@ in
   iomelt = callPackage ../os-specific/linux/iomelt { };
 
   iotop = callPackage ../os-specific/linux/iotop { };
+  iotop-c = callPackage ../os-specific/linux/iotop-c { };
 
   iproute2 = callPackage ../os-specific/linux/iproute { };
 
@@ -23405,6 +23416,7 @@ in
     acl = null;
     gpm = null;
     inherit (darwin.apple_sdk.frameworks) AppKit GSS ImageIO;
+    inherit (darwin) sigtool;
   };
 
   emacs27-nox = lowPrio (appendToName "nox" (emacs27.override {
@@ -24761,6 +24773,8 @@ in
   k4dirstat = libsForQt5.callPackage ../applications/misc/k4dirstat { };
 
   kbibtex = libsForQt5.callPackage ../applications/office/kbibtex { };
+
+  kaidan = libsForQt5.callPackage ../applications/networking/instant-messengers/kaidan { };
 
   kdeltachat = libsForQt5.callPackage ../applications/networking/instant-messengers/kdeltachat { };
 
@@ -30621,6 +30635,8 @@ in
 
   j2cli = with python3Packages; toPythonApplication j2cli;
 
+  jquake = callPackage ../applications/misc/jquake { };
+
   jstest-gtk = callPackage ../tools/misc/jstest-gtk { };
 
   keynav = callPackage ../tools/X11/keynav { };
@@ -31142,6 +31158,9 @@ in
   mfcl8690cdwcupswrapper = callPackage ../misc/cups/drivers/mfcl8690cdwcupswrapper { };
   mfcl8690cdwlpr = callPackage ../misc/cups/drivers/mfcl8690cdwlpr { };
 
+  mfc9140cdncupswrapper = callPackage ../misc/cups/drivers/mfc9140cdncupswrapper { };
+  mfc9140cdnlpr = callPackage ../misc/cups/drivers/mfc9140cdnlpr { };
+
   samsung-unified-linux-driver_1_00_36 = callPackage ../misc/cups/drivers/samsung/1.00.36/default.nix { };
   samsung-unified-linux-driver_1_00_37 = callPackage ../misc/cups/drivers/samsung/1.00.37.nix { };
   samsung-unified-linux-driver_4_00_39 = callPackage ../misc/cups/drivers/samsung/4.00.39 { };
@@ -31242,15 +31261,12 @@ in
   termpdfpy = python3Packages.callPackage ../applications/misc/termpdf.py {};
 
   inherit (callPackage ../applications/networking/cluster/terraform { })
-    terraform_0_12
-    terraform_0_13
-    terraform_0_14
-    terraform_0_15
-    terraform_1_0_0
+    mkTerraform
+    terraform_1_0
     terraform_plugins_test
     ;
 
-  terraform = terraform_0_12;
+  terraform = terraform_1_0;
   # deprecated
   terraform-full = terraform.full;
 

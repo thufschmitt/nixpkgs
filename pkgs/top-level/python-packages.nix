@@ -499,6 +499,8 @@ in {
 
   arabic-reshaper = callPackage ../development/python-modules/arabic-reshaper { };
 
+  arcam-fmj = callPackage ../development/python-modules/arcam-fmj { };
+
   archinfo = callPackage ../development/python-modules/archinfo { };
 
   area = callPackage ../development/python-modules/area { };
@@ -724,6 +726,8 @@ in {
   azure-datalake-store = callPackage ../development/python-modules/azure-datalake-store { };
 
   azure-eventgrid = callPackage ../development/python-modules/azure-eventgrid { };
+
+  azure-eventhub = callPackage ../development/python-modules/azure-eventhub { };
 
   azure-functions-devops-build = callPackage ../development/python-modules/azure-functions-devops-build { };
 
@@ -1053,6 +1057,8 @@ in {
 
   billiard = callPackage ../development/python-modules/billiard { };
 
+  bimmer-connected = callPackage ../development/python-modules/bimmer-connected { };
+
   binaryornot = callPackage ../development/python-modules/binaryornot { };
 
   binho-host-adapter = callPackage ../development/python-modules/binho-host-adapter { };
@@ -1099,11 +1105,15 @@ in {
 
   bleak = callPackage ../development/python-modules/bleak { };
 
+  blebox-uniapi = callPackage ../development/python-modules/blebox-uniapi { };
+
   blessed = callPackage ../development/python-modules/blessed { };
 
   blessings = callPackage ../development/python-modules/blessings { };
 
   blinker = callPackage ../development/python-modules/blinker { };
+
+  blinkpy = callPackage ../development/python-modules/blinkpy { };
 
   BlinkStick = callPackage ../development/python-modules/blinkstick { };
 
@@ -1133,6 +1143,8 @@ in {
 
   boltztrap2 = callPackage ../development/python-modules/boltztrap2 { };
 
+  bond-api = callPackage ../development/python-modules/bond-api { };
+
   booleanoperations = callPackage ../development/python-modules/booleanoperations { };
 
   boolean-py = callPackage ../development/python-modules/boolean-py { };
@@ -1145,6 +1157,10 @@ in {
   });
 
   boschshcpy = callPackage ../development/python-modules/boschshcpy { };
+
+  boost-histogram = callPackage ../development/python-modules/boost-histogram {
+    inherit (pkgs) boost;
+  };
 
   boto3 = callPackage ../development/python-modules/boto3 { };
 
@@ -1550,6 +1566,8 @@ in {
   colormath = callPackage ../development/python-modules/colormath { };
 
   colorspacious = callPackage ../development/python-modules/colorspacious { };
+
+  colorthief = callPackage ../development/python-modules/colorthief { };
 
   colour = callPackage ../development/python-modules/colour { };
 
@@ -2626,6 +2644,8 @@ in {
 
   fonttools = callPackage ../development/python-modules/fonttools { };
 
+  foobot-async = callPackage ../development/python-modules/foobot-async { };
+
   foolscap = callPackage ../development/python-modules/foolscap { };
 
   forbiddenfruit = callPackage ../development/python-modules/forbiddenfruit { };
@@ -2703,6 +2723,8 @@ in {
   });
 
   garminconnect-aio = callPackage ../development/python-modules/garminconnect-aio { };
+
+  garminconnect-ha = callPackage ../development/python-modules/garminconnect-ha { };
 
   gast = callPackage ../development/python-modules/gast { };
 
@@ -2849,6 +2871,8 @@ in {
   gntp = callPackage ../development/python-modules/gntp { };
 
   gnureadline = callPackage ../development/python-modules/gnureadline { };
+
+  goalzero = callPackage ../development/python-modules/goalzero { };
 
   goobook = callPackage ../development/python-modules/goobook { };
 
@@ -3015,6 +3039,8 @@ in {
 
   graphql-server-core = callPackage ../development/python-modules/graphql-server-core { };
 
+  graphql-subscription-manager = callPackage ../development/python-modules/graphql-subscription-manager { };
+
   graph-tool = callPackage ../development/python-modules/graph-tool/2.x.x.nix { };
 
   graphtage = callPackage ../development/python-modules/graphtage { };
@@ -3028,6 +3054,8 @@ in {
   graspologic = callPackage ../development/python-modules/graspologic { };
 
   greatfet = callPackage ../development/python-modules/greatfet { };
+
+  greeclimate = callPackage ../development/python-modules/greeclimate { };
 
   green = callPackage ../development/python-modules/green { };
 
@@ -3942,6 +3970,8 @@ in {
 
   libpurecool = callPackage ../development/python-modules/libpurecool { };
 
+  libpyfoscam = callPackage ../development/python-modules/libpyfoscam { };
+
   libredwg = toPythonModule (pkgs.libredwg.override {
     enablePython = true;
     inherit (self) python libxml2;
@@ -4372,6 +4402,11 @@ in {
   mlrose = callPackage ../development/python-modules/mlrose { };
 
   mlxtend = callPackage ../development/python-modules/mlxtend { };
+
+  mlt = toPythonModule (pkgs.mlt.override {
+    inherit python;
+    enablePython = true;
+  });
 
   mmh3 = callPackage ../development/python-modules/mmh3 { };
 
@@ -5196,6 +5231,14 @@ in {
   ppdeep = callPackage ../development/python-modules/ppdeep { };
 
   pyatag = callPackage ../development/python-modules/pyatag { };
+
+  pycontrol4 = callPackage ../development/python-modules/pycontrol4 { };
+
+  pycoolmasternet-async = callPackage ../development/python-modules/pycoolmasternet-async { };
+
+  pyfireservicerota = callPackage ../development/python-modules/pyfireservicerota { };
+
+  pyflick = callPackage ../development/python-modules/pyflick { };
 
   pynndescent = callPackage ../development/python-modules/pynndescent { };
 
@@ -6964,6 +7007,8 @@ in {
 
   pyeverlights = callPackage ../development/python-modules/pyeverlights { };
 
+  pytibber = callPackage ../development/python-modules/pytibber { };
+
   pytile = callPackage ../development/python-modules/pytile { };
 
   pytimeparse = callPackage ../development/python-modules/pytimeparse { };
@@ -7648,8 +7693,6 @@ in {
   segments = callPackage ../development/python-modules/segments { };
 
   selectors2 = callPackage ../development/python-modules/selectors2 { };
-
-  selectors34 = callPackage ../development/python-modules/selectors34 { };
 
   selenium = callPackage ../development/python-modules/selenium { };
 
@@ -8881,6 +8924,8 @@ in {
 
   wakeonlan = callPackage ../development/python-modules/wakeonlan { };
 
+  wallbox = callPackage ../development/python-modules/wallbox { };
+
   Wand = callPackage ../development/python-modules/Wand { };
 
   warlock = callPackage ../development/python-modules/warlock { };
@@ -8935,7 +8980,7 @@ in {
 
   webrtcvad = callPackage ../development/python-modules/webrtcvad { };
 
-  websocket_client = callPackage ../development/python-modules/websocket_client { };
+  websocket-client = callPackage ../development/python-modules/websocket-client { };
 
   websockets = callPackage ../development/python-modules/websockets { };
 
