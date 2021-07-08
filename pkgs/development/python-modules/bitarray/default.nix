@@ -1,12 +1,16 @@
-{ lib, buildPythonPackage, fetchPypi, python }:
+{ lib
+, buildPythonPackage
+, fetchPypi
+, python
+}:
 
 buildPythonPackage rec {
   pname = "bitarray";
-  version = "2.1.0";
+  version = "2.2.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-lyJKGTJezuSaO/TfPuBTHTr5zyiLZ9CJp+9Eo8TqODk=";
+    sha256 = "sha256-xF7u+qYA9vL2hD/EaZhprl18HouPtY/zgFhM6bx6cII=";
   };
 
   checkPhase = ''

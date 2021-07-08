@@ -1,4 +1,4 @@
-{ config, lib, buildEnv, callPackage, vscode-utils, nodePackages, jdk, llvmPackages_8, nixpkgs-fmt, jq, shellcheck }:
+{ config, lib, buildEnv, callPackage, vscode-utils, asciidoctor, nodePackages, jdk, llvmPackages_8, nixpkgs-fmt, jq, shellcheck }:
 
 let
   inherit (vscode-utils) buildVscodeMarketplaceExtension;
@@ -92,6 +92,40 @@ let
           version = "0.2.2";
           sha256 = "0mfap16la09mn0jhvy8s3dainrmjz64vra7d0d4fbcpgg420kv3f";
         };
+        meta = with lib; {
+          license = licenses.mit;
+        };
+      };
+
+      arrterian.nix-env-selector = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "nix-env-selector";
+          publisher = "arrterian";
+          version = "1.0.7";
+          sha256 = "0e76885c9dbb6dca4eac8a75866ec372b948cc64a3a3845327d7c3ef6ba42a57";
+        };
+        meta = {
+          license = lib.licenses.mit;
+        };
+      };
+
+      asciidoctor.asciidoctor-vscode = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "asciidoctor-vscode";
+          publisher = "asciidoctor";
+          version = "2.8.9";
+          sha256 = "1xkxx5i3nhd0dzqhhdmx0li5jifsgfhv0p5h7xwsscz3gzgsdcyb";
+        };
+
+        postPatch = ''
+          substituteInPlace dist/src/text-parser.js \
+            --replace "get('asciidoctor_command', 'asciidoctor')" \
+                      "get('asciidoctor_command', '${asciidoctor}/bin/asciidoctor')"
+          substituteInPlace dist/src/commands/exportAsPDF.js \
+            --replace "get('asciidoctorpdf_command', 'asciidoctor-pdf')" \
+                      "get('asciidoctorpdf_command', '${asciidoctor}/bin/asciidoctor-pdf')"
+        '';
+
         meta = with lib; {
           license = licenses.mit;
         };
@@ -273,8 +307,8 @@ let
         mktplcRef = {
           name = "vscode-markdownlint";
           publisher = "DavidAnson";
-          version = "0.38.0";
-          sha256 = "0d6hbsjrx1j8wrmfnvdwsa7sci1brplgxwkmy6sp74va7zxfjnqv";
+          version = "0.42.1";
+          sha256 = "c8c0647e0dd786fe68becca6dc73eade5f4220a26ab9faff8dd813a14b25df51";
         };
         meta = with lib; {
           license = licenses.mit;
@@ -352,11 +386,21 @@ let
         mktplcRef = {
           name = "gitlens";
           publisher = "eamodio";
-          version = "11.1.3";
-          sha256 = "sha256-hqJg3jP4bbXU4qSJOjeKfjkPx61yPDMsQdSUVZObK/U=";
+          version = "11.5.1";
+          sha256 = "sha256-Ic7eT8WX2GDYIj/aTu1d4m+fgPtXe4YQx04G0awbwnM=";
         };
-        meta = {
-          license = lib.licenses.mit;
+        meta = with lib; {
+          changelog = "https://marketplace.visualstudio.com/items/eamodio.gitlens/changelog";
+          description = "GitLens supercharges the Git capabilities built into Visual Studio Code.";
+          longDescription = ''
+            Supercharge the Git capabilities built into Visual Studio Code — Visualize code authorship at a glance via Git
+            blame annotations and code lens, seamlessly navigate and explore Git repositories, gain valuable insights via
+            powerful comparison commands, and so much more
+          '';
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens";
+          homepage = "https://gitlens.amod.io/";
+          license = licenses.mit;
+          maintainers = with maintainers; [ ratsclub ];
         };
       };
 
@@ -449,6 +493,23 @@ let
           publisher = "file-icons";
           version = "1.0.28";
           sha256 = "1lyx0l42xhi2f3rdnjddc3mw7m913kjnchawi98i6vqsx3dv7091";
+        };
+      };
+
+      foam.foam-vscode = buildVscodeMarketplaceExtension {
+        meta = with lib; {
+          changelog = "https://marketplace.visualstudio.com/items/foam.foam-vscode/changelog";
+          description = "A personal knowledge management and sharing system for VSCode ";
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=foam.foam-vscode";
+          homepage = "https://foambubble.github.io/";
+          license = licenses.mit;
+          maintainers = with maintainers; [ ratsclub ];
+        };
+        mktplcRef = {
+          name = "foam-vscode";
+          publisher = "foam";
+          version = "0.13.7";
+          sha256 = "Y2pcd4iXPiuhJdD/9d+tbTJN18O4+kRMqUdOtbx8xy8=";
         };
       };
 
@@ -566,8 +627,8 @@ let
         mktplcRef = {
           name = "Go";
           publisher = "golang";
-          version = "0.18.1";
-          sha256 = "sha256-b2Wa3TULQQnBm1/xnDCB9SZjE+Wxz5wBttjDEtf8qlE=";
+          version = "0.25.1";
+          sha256 = "sha256-ZDUWN9lzDnR77W7xcMFQaaFl/6Lf/x1jgaBkwZPqGGw=";
         };
         meta = {
           license = lib.licenses.mit;
@@ -650,6 +711,23 @@ let
           homepage = "https://github.com/iciclesoft/workspacesort-for-VSCode";
           license = licenses.mit;
           maintainers = with maintainers; [ dbirks ];
+        };
+      };
+
+      ionide.ionide-fsharp = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "Ionide-fsharp";
+          publisher = "Ionide";
+          version = "5.5.5";
+          sha256 = "xrBNiIbZVJ0sGUk/4PudD8kSyX94QkrFtf7Ho/sB0Vs=";
+        };
+        meta = with lib; {
+          changelog = "https://marketplace.visualstudio.com/items/Ionide.Ionide-fsharp/changelog";
+          description = "Enhanced F# Language Features for Visual Studio Code";
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=Ionide.Ionide-fsharp";
+          homepage = "https://ionide.io";
+          license = licenses.mit;
+          maintainers = with maintainers; [ ratsclub ];
         };
       };
 
@@ -845,16 +923,9 @@ let
 
       ms-vscode-remote.remote-ssh = callPackage ./remote-ssh { };
 
-      ms-python.python =
-        let
-          raw-package = callPackage ./python {
-            extractNuGet = callPackage ./python/extract-nuget.nix { };
-          };
-        in
-        buildEnv {
-          name = "vscode-extension-ms-python-python-full";
-          paths = [ raw-package self.ms-toolsai.jupyter ];
-        };
+      ms-python.python = callPackage ./python {
+        extractNuGet = callPackage ./python/extract-nuget.nix { };
+      };
 
       msjsdiag.debugger-for-chrome = buildVscodeMarketplaceExtension {
         mktplcRef = {
@@ -1132,6 +1203,23 @@ let
         };
         meta = {
           license = lib.licenses.mit;
+        };
+      };
+
+      svsool.markdown-memo = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "markdown-memo";
+          publisher = "svsool";
+          version = "0.3.8";
+          sha256 = "eFiCCXxrOnXwJK1AOMfIDsPGsFG3ArLD1X/uAEH5lRY=";
+        };
+        meta = with lib; {
+          changelog = "https://marketplace.visualstudio.com/items/svsool.markdown-memo/changelog";
+          description = "Markdown knowledge base with bidirectional [[link]]s built on top of VSCode";
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=svsool.markdown-memo";
+          homepage = "https://github.com/svsool/vscode-memo";
+          license = licenses.mit;
+          maintainers = with maintainers; [ ratsclub ];
         };
       };
 

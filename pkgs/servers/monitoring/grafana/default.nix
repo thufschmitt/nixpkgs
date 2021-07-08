@@ -1,8 +1,8 @@
-{ lib, buildGoModule, fetchurl, fetchFromGitHub, nixosTests, fetchpatch }:
+{ lib, buildGoModule, fetchurl, fetchFromGitHub, nixosTests }:
 
 buildGoModule rec {
   pname = "grafana";
-  version = "8.0.2";
+  version = "8.0.4";
 
   excludedPackages = [ "release_publisher" ];
 
@@ -10,24 +10,15 @@ buildGoModule rec {
     rev = "v${version}";
     owner = "grafana";
     repo = "grafana";
-    sha256 = "sha256-kCsrLZ0EbuMwqqDvUvhm8+B/vh6FpeJ5zkwste+qwyQ=";
+    sha256 = "sha256-I4TUPni2WDdpsV19nltsaF1PugB5SOtQ9Jb0YzWUwFg=";
   };
 
   srcStatic = fetchurl {
     url = "https://dl.grafana.com/oss/release/grafana-${version}.linux-amd64.tar.gz";
-    sha256 = "sha256-QBMGLN3MjYJcv2vbs9GHfrCixcV7nH+Ox3o6/YtRYak=";
+    sha256 = "sha256-GUVnw2kKxVfztvfsNMwRLxPTqRYzbxXzoH2GkmZB2JE=";
   };
 
   vendorSha256 = "sha256-x7sSVIim/TOhMTbnRK/fpgxiSRSO8KwGILTE2i1gU3U=";
-
-  patches = [
-    # https://github.com/grafana/grafana/pull/35635 (fixes declarative plugins for us)
-    (fetchpatch {
-      url = "https://github.com/grafana/grafana/commit/5b5cb948092bdb85e0378fd9ae01b564c4bf65f1.patch";
-      sha256 = "sha256-MnCjfLiHsBSWPcxVZ2dC4q8x1/TjzR8uyQhH2Jzgx7o=";
-      includes = [ "pkg/util/filepath.go" ];
-    })
-  ];
 
   preBuild = ''
     # The testcase makes an API call against grafana.com:

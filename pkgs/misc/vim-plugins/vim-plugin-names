@@ -24,6 +24,7 @@ andweeb/presence.nvim@main
 andymass/vim-matchup
 andys8/vim-elm-syntax
 antoinemadec/coc-fzf
+antoinemadec/FixCursorHold.nvim
 ap/vim-css-color
 arcticicestudio/nord-vim
 arthurxavierx/vim-unicoder
@@ -47,6 +48,7 @@ bronson/vim-trailing-whitespace
 brooth/far.vim
 buoto/gotests-vim
 camspiers/lens.vim
+camspiers/snap@main
 carlitux/deoplete-ternjs
 ccarpita/rtorrent-syntax-file
 cespare/vim-toml
@@ -71,6 +73,7 @@ clojure-vim/vim-jack-in
 cloudhead/neovim-fuzzy
 CoatiSoftware/vim-sourcetrail
 cocopon/iceberg.vim
+codota/tabnine-vim
 cohama/lexima.vim
 ConradIrwin/vim-bracketed-paste
 crusoexia/vim-monokai
@@ -99,6 +102,7 @@ digitaltoad/vim-pug
 direnv/direnv.vim
 dleonard0/pony-vim-syntax
 dmix/elvish.vim
+doki-theme/doki-theme-vim
 dominikduda/vim_current_word
 dpelle/vim-LanguageTool
 dracula/vim as dracula-vim
@@ -158,6 +162,7 @@ gennaro-tedesco/nvim-peekup
 gentoo/gentoo-syntax
 GEverding/vim-hocon
 gfanto/fzf-lsp.nvim@main
+ggandor/lightspeed.nvim@main
 gibiansky/vim-textobj-haskell
 gioele/vim-autoswap
 gleam-lang/gleam.vim
@@ -299,6 +304,7 @@ kevinhwang91/rnvimr@main
 kien/rainbow_parentheses.vim
 knubie/vim-kitty-navigator
 konfekt/fastfold
+Konfekt/vim-alias
 konfekt/vim-DetectSpellLang
 kosayoda/nvim-lightbulb
 kristijanhusak/defx-git
@@ -311,6 +317,7 @@ kristijanhusak/vim-hybrid-material
 kshenoy/vim-signature
 kyazdani42/nvim-tree.lua
 kyazdani42/nvim-web-devicons
+l3mon4d3/luasnip
 lambdalisue/fern.vim
 lambdalisue/gina.vim
 lambdalisue/suda.vim
@@ -340,7 +347,6 @@ LucHermitte/lh-vim-lib
 ludovicchabant/vim-gutentags
 ludovicchabant/vim-lawrencium
 lukas-reineke/indent-blankline.nvim
-lukas-reineke/indent-blankline.nvim@lua as indent-blankline-nvim-lua
 lukaszkorecki/workflowish
 lumiliet/vim-twig
 luochen1990/rainbow
@@ -390,6 +396,7 @@ mfussenegger/nvim-dap
 mfussenegger/nvim-jdtls
 mg979/vim-visual-multi
 mg979/vim-xtabline
+mhartington/formatter.nvim
 mhartington/oceanic-next
 mhinz/vim-crates
 mhinz/vim-grepper
@@ -483,6 +490,7 @@ nvim-treesitter/playground
 oberblastmeister/termwrapper.nvim
 ocaml/vim-ocaml
 octol/vim-cpp-enhanced-highlight
+ojroques/nvim-bufdel@main
 ojroques/vim-oscyank@main
 Olical/aniseed
 Olical/conjure
@@ -722,6 +730,7 @@ urbit/hoon.vim
 Valloric/MatchTagAlways
 Valodim/deoplete-notmuch
 vhda/verilog_systemverilog.vim
+vhyrro/neorg@main
 vigoux/LanguageTool.nvim
 vim-airline/vim-airline
 vim-airline/vim-airline-themes

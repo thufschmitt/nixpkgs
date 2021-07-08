@@ -22,6 +22,8 @@ let
 
     alcotest-lwt = callPackage ../development/ocaml-modules/alcotest/lwt.nix {};
 
+    alcotest-mirage = callPackage ../development/ocaml-modules/alcotest/mirage.nix {};
+
     angstrom = callPackage ../development/ocaml-modules/angstrom { };
 
     angstrom-async = callPackage ../development/ocaml-modules/angstrom-async { };
@@ -118,12 +120,8 @@ let
       then callPackage ../development/ocaml-modules/camomile { }
       else callPackage ../development/ocaml-modules/camomile/0.8.5.nix { };
 
-    camlimages_4_1_2 =
-      if lib.versionOlder "4.02" ocaml.version
-      then null
-      else callPackage ../development/ocaml-modules/camlimages/4.1.2.nix {
-      libpng = pkgs.libpng12;
-    };
+    camlimages_4_2_4 = callPackage ../development/ocaml-modules/camlimages/4.2.4.nix { };
+
     camlimages = callPackage ../development/ocaml-modules/camlimages { };
 
     benchmark = callPackage ../development/ocaml-modules/benchmark { };
@@ -217,6 +215,8 @@ let
 
     cstruct = callPackage ../development/ocaml-modules/cstruct {};
 
+    cstruct-async = callPackage ../development/ocaml-modules/cstruct/async.nix { };
+
     cstruct-lwt = callPackage ../development/ocaml-modules/cstruct/lwt.nix { };
 
     cstruct-sexp = callPackage ../development/ocaml-modules/cstruct/sexp.nix {};
@@ -275,6 +275,8 @@ let
     dolog = callPackage ../development/ocaml-modules/dolog { };
 
     domain-name = callPackage ../development/ocaml-modules/domain-name { };
+
+    dose3 = callPackage ../development/ocaml-modules/dose3 { };
 
     dtoa = callPackage ../development/ocaml-modules/dtoa { };
 
@@ -607,8 +609,10 @@ let
     };
 
     lwt = callPackage ../development/ocaml-modules/lwt {
-      ocaml-migrate-parsetree = ocaml-migrate-parsetree-2-1;
+      ocaml-migrate-parsetree = ocaml-migrate-parsetree-2;
     };
+
+    lwt-canceler = callPackage ../development/ocaml-modules/lwt-canceler { };
 
     ocaml_lwt = lwt;
 
@@ -827,6 +831,7 @@ let
     gettext-stub = callPackage ../development/ocaml-modules/ocaml-gettext/stub.nix { };
 
     ocamlgraph = callPackage ../development/ocaml-modules/ocamlgraph { };
+    ocamlgraph_gtk = callPackage ../development/ocaml-modules/ocamlgraph/gtk.nix { };
 
     ocaml_http = callPackage ../development/ocaml-modules/http { };
 
@@ -842,12 +847,12 @@ let
 
     ocaml-migrate-parsetree-1-8 = callPackage ../development/ocaml-modules/ocaml-migrate-parsetree/1.8.x.nix { };
 
-    ocaml-migrate-parsetree-2-1 = callPackage ../development/ocaml-modules/ocaml-migrate-parsetree/2.1.x.nix { };
+    ocaml-migrate-parsetree-2 = callPackage ../development/ocaml-modules/ocaml-migrate-parsetree/2.x.nix { };
 
     ocamlmod = callPackage ../development/tools/ocaml/ocamlmod { };
 
     ocaml-monadic = callPackage ../development/ocaml-modules/ocaml-monadic {
-      ocaml-migrate-parsetree = ocaml-migrate-parsetree-2-1;
+      ocaml-migrate-parsetree = ocaml-migrate-parsetree-2;
     };
 
     ocaml_mysql = callPackage ../development/ocaml-modules/mysql { };
@@ -1032,6 +1037,8 @@ let
 
     tls = callPackage ../development/ocaml-modules/tls { };
 
+    tls-async = callPackage ../development/ocaml-modules/tls/async.nix { };
+
     tls-mirage = callPackage ../development/ocaml-modules/tls/mirage.nix { };
 
     torch = callPackage ../development/ocaml-modules/torch {
@@ -1147,6 +1154,8 @@ let
     reason-native = lib.recurseIntoAttrs (callPackage ../development/ocaml-modules/reason-native { });
 
     rope = callPackage ../development/ocaml-modules/rope { };
+
+    routes = callPackage ../development/ocaml-modules/routes { };
 
     rpclib = callPackage ../development/ocaml-modules/rpclib { };
 

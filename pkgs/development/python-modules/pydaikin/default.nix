@@ -12,14 +12,14 @@
 
 buildPythonPackage rec {
   pname = "pydaikin";
-  version = "2.4.2";
+  version = "2.4.4";
   disabled = pythonOlder "3.6";
 
   src = fetchFromBitbucket {
     owner = "mustang51";
     repo = pname;
     rev = "v${version}";
-    sha256 = "13cslszjhd1x7j0ja0n0wpy62hb2sdmkrmjl3qhwqfggps2w2wy1";
+    sha256 = "sha256-G7SShq2zjd9KGM7t1KsAMehqm2onB5cYdcOO3k8Sb30=";
   };
 
   propagatedBuildInputs = [
@@ -28,7 +28,7 @@ buildPythonPackage rec {
     urllib3
   ];
 
-  # while they have tests, they do not run them in their CI and they fail as of 2.4.2
+  # while they have tests, they do not run them in their CI and they fail as of 2.4.4
   # AttributeError: 'DaikinBRP069' object has no attribute 'last_hour_cool_energy_consumption'
   doCheck = false;
 

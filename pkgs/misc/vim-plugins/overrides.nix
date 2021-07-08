@@ -621,7 +621,7 @@ self: super: {
             libiconv
           ];
 
-          cargoSha256 = "sha256-IKSnXNFdtykuajOxpw5CYsw2q/mkVLkRtPC49hiXsPc=";
+          cargoSha256 = "sha256-hcbNjp9KLJO0RANOvtopvdiK0w9ESUXk0KOTPvVcCX4=";
         };
       in
       ''
@@ -755,12 +755,24 @@ self: super: {
     dependencies = with self; [ vim-addon-mw-utils tlib_vim ];
   });
 
+  vim-speeddating = super.vim-speeddating.overrideAttrs (old: {
+    dependencies = with self; [ vim-repeat ];
+  });
+
   vim-stylish-haskell = super.vim-stylish-haskell.overrideAttrs (old: {
     postPatch = old.postPatch or "" + ''
       substituteInPlace ftplugin/haskell/stylish-haskell.vim --replace \
         'g:stylish_haskell_command = "stylish-haskell"' \
         'g:stylish_haskell_command = "${stylish-haskell}/bin/stylish-haskell"'
     '';
+  });
+
+  vim-surround = super.vim-surround.overrideAttrs (old: {
+    dependencies = with self; [ vim-repeat ];
+  });
+
+  vim-unimpaired = super.vim-unimpaired.overrideAttrs (old: {
+    dependencies = with self; [ vim-repeat ];
   });
 
   vim-wakatime = super.vim-wakatime.overrideAttrs (old: {
