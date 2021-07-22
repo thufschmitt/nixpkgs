@@ -2469,6 +2469,12 @@
     githubId = 452652;
     name = "Kosyrev Serge";
   };
+  DeeUnderscore = {
+    email = "d.anzorge@gmail.com";
+    github = "DeeUnderscore";
+    githubId = 156239;
+    name = "D Anzorge";
+  };
   delan = {
     name = "Delan Azabani";
     email = "delan@azabani.com";
@@ -4212,6 +4218,12 @@
     github = "henrytill";
     githubId = 6430643;
     name = "Henry Till";
+  };
+  heph2 = {
+    email = "srht@mrkeebs.eu";
+    github = "heph2";
+    githubId = 87579883;
+    name = "Marco";
   };
   herberteuler = {
     email = "herberteuler@gmail.com";

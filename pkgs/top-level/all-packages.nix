@@ -4325,9 +4325,7 @@ in
 
   duplicati = callPackage ../tools/backup/duplicati { };
 
-  duplicity = callPackage ../tools/backup/duplicity {
-    pythonPackages = python3Packages;
-  };
+  duplicity = callPackage ../tools/backup/duplicity { };
 
   duply = callPackage ../tools/backup/duply { };
 
@@ -4824,10 +4822,6 @@ in
   firebird-emu = libsForQt5.callPackage ../misc/emulators/firebird-emu { };
 
   flamerobin = callPackage ../applications/misc/flamerobin { };
-
-  flashtool = pkgsi686Linux.callPackage ../development/mobile/flashtool {
-    inherit (androidenv.androidPkgs_9_0) platform-tools;
-  };
 
   flashrom = callPackage ../tools/misc/flashrom { };
 
@@ -9252,6 +9246,8 @@ in
 
   teler = callPackage ../tools/security/teler { };
 
+  telescope = callPackage ../applications/networking/browsers/telescope { };
+
   termius = callPackage ../applications/networking/termius { };
 
   termplay = callPackage ../tools/misc/termplay { };
@@ -9586,7 +9582,7 @@ in
 
   unrtf = callPackage ../tools/text/unrtf { };
 
-  unrpa = with python3Packages; toPythonApplication unrpa;
+  unrpa = with python38Packages; toPythonApplication unrpa;
 
   untex = callPackage ../tools/text/untex { };
 
@@ -12589,7 +12585,7 @@ in
   # When switching these sets, please update docs at ../../doc/languages-frameworks/python.md
   python = python2;
   python2 = python27;
-  python3 = python38;
+  python3 = python39;
   pypy = pypy2;
   pypy2 = pypy27;
   pypy3 = pypy37;
@@ -12812,8 +12808,6 @@ in
   wasm = ocamlPackages.wasm;
 
   wasm3 = callPackage ../development/interpreters/wasm3 { };
-
-  proglodyte-wasm = callPackage ../development/interpreters/proglodyte-wasm { };
 
 
   ### DEVELOPMENT / MISC
@@ -13209,6 +13203,8 @@ in
   buildkite-agent = buildkite-agent3;
   buildkite-agent2 = throw "pkgs.buildkite-agent2 has been discontinued. Please use pkgs.buildkite-agent (v3.x)";
   buildkite-agent3 = callPackage ../development/tools/continuous-integration/buildkite-agent { };
+
+  buildkite-agent-metrics = callPackage ../servers/monitoring/buildkite-agent-metrics { };
 
   buildkite-cli = callPackage ../development/tools/continuous-integration/buildkite-cli { };
 
@@ -17102,7 +17098,9 @@ in
 
   libtifiles2 = callPackage ../development/libraries/libtifiles2 { };
 
-  libtiff = callPackage ../development/libraries/libtiff { };
+  libtiff = if stdenv.isDarwin && stdenv.isAarch64
+    then callPackage ../development/libraries/libtiff/aarch64-darwin.nix { }
+    else callPackage ../development/libraries/libtiff { };
 
   libtiger = callPackage ../development/libraries/libtiger { };
 
@@ -19232,14 +19230,14 @@ in
   ### DEVELOPMENT / PERL MODULES
 
   perlInterpreters = callPackages ../development/interpreters/perl {};
-  inherit (perlInterpreters) perl530 perl532 perldevel;
+  inherit (perlInterpreters) perl532 perl534 perldevel;
 
-  perl530Packages = recurseIntoAttrs perl530.pkgs;
   perl532Packages = recurseIntoAttrs perl532.pkgs;
+  perl534Packages = recurseIntoAttrs perl534.pkgs;
   perldevelPackages = perldevel.pkgs;
 
-  perl = perl532;
-  perlPackages = perl532Packages;
+  perl = perl534;
+  perlPackages = perl534Packages;
 
   ack = perlPackages.ack;
 
@@ -23451,7 +23449,7 @@ in
 
   confclerk = callPackage ../applications/misc/confclerk { };
 
-  copyq = libsForQt514.callPackage ../applications/misc/copyq { };
+  copyq = libsForQt5.callPackage ../applications/misc/copyq { };
 
   corectrl = libsForQt5.callPackage ../applications/misc/corectrl { };
 
@@ -28537,6 +28535,8 @@ in
   dogecoin  = callPackage ../applications/blockchains/dogecoin.nix { boost = boost165; withGui = true; };
   dogecoind = callPackage ../applications/blockchains/dogecoin.nix { boost = boost165; withGui = false; };
 
+  eclair = callPackage ../applications/blockchains/eclair.nix { };
+
   electrs = callPackage ../applications/blockchains/electrs.nix { };
 
   elements  = libsForQt5.callPackage ../applications/blockchains/elements.nix { miniupnpc = miniupnpc_2; withGui = true; };
@@ -31171,7 +31171,6 @@ in
   inherit (callPackage ../tools/package-management/nix {
       storeDir = config.nix.storeDir or "/nix/store";
       stateDir = config.nix.stateDir or "/nix/var";
-      boehmgc = boehmgc.override { enableLargeConfig = true; };
       inherit (darwin.apple_sdk.frameworks) Security;
       })
     nix
