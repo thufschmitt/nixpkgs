@@ -1155,6 +1155,8 @@ in
 
   argyllcms = callPackage ../tools/graphics/argyllcms {};
 
+  arj = callPackage ../tools/archivers/arj { };
+
   arp-scan = callPackage ../tools/misc/arp-scan { };
 
   inherit (callPackages ../data/fonts/arphic {})
@@ -6082,6 +6084,8 @@ in
   };
 
   itm-tools = callPackage ../development/tools/misc/itm-tools { };
+
+  iwgtk = callPackage ../tools/networking/iwgtk { };
 
   ix = callPackage ../tools/misc/ix { };
 
@@ -14348,6 +14352,8 @@ in
   todoist = callPackage ../applications/misc/todoist { };
 
   todoist-electron = callPackage ../applications/misc/todoist-electron { };
+
+  toil = callPackage ../applications/science/misc/toil { };
 
   travis = callPackage ../development/tools/misc/travis { };
 
@@ -25905,6 +25911,8 @@ in
 
   nootka = qt5.callPackage ../applications/audio/nootka { };
   nootka-unstable = qt5.callPackage ../applications/audio/nootka/unstable.nix { };
+
+  nwg-drawer = callPackage ../applications/misc/nwg-drawer { };
 
   nwg-launchers = callPackage ../applications/misc/nwg-launchers { };
 
