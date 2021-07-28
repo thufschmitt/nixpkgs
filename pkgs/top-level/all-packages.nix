@@ -6398,6 +6398,8 @@ in
 
   libscrypt = callPackage ../development/libraries/libscrypt { };
 
+  libcsys = libsForQt5.callPackage ../development/libraries/libcsys { };
+
   libcprime = libsForQt5.callPackage ../development/libraries/libcprime { };
 
   libcloudproviders = callPackage ../development/libraries/libcloudproviders { };
@@ -23490,6 +23492,8 @@ in
 
   copyq = libsForQt5.callPackage ../applications/misc/copyq { };
 
+  coreaction = libsForQt5.callPackage ../applications/misc/coreaction { };
+
   corectrl = libsForQt5.callPackage ../applications/misc/corectrl { };
 
   coriander = callPackage ../applications/video/coriander {
@@ -24599,7 +24603,9 @@ in
 
   gollum = callPackage ../applications/misc/gollum { };
 
-  gonic = callPackage ../servers/gonic { };
+  gonic = callPackage ../servers/gonic {
+    inherit (darwin.apple_sdk.frameworks) AppKit AudioToolbox;
+  };
 
   googleearth = callPackage ../applications/misc/googleearth { };
 
@@ -28916,6 +28922,8 @@ in
   easyrpg-player = callPackage ../games/easyrpg-player { };
 
   eboard = callPackage ../games/eboard { };
+
+  ecwolf = callPackage ../games/ecwolf { };
 
   eduke32 = callPackage ../games/eduke32 { };
 
