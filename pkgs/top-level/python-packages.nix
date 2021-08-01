@@ -1212,6 +1212,10 @@ in {
 
   brotli = callPackage ../development/python-modules/brotli { };
 
+  brotlicffi = callPackage ../development/python-modules/brotlicffi {
+    inherit (pkgs) brotli;
+  };
+
   brotlipy = callPackage ../development/python-modules/brotlipy { };
 
   brottsplatskartan = callPackage ../development/python-modules/brottsplatskartan { };
@@ -2325,6 +2329,8 @@ in {
   enum-compat = callPackage ../development/python-modules/enum-compat { };
 
   env-canada = callPackage ../development/python-modules/env-canada { };
+
+  environmental-override = callPackage ../development/python-modules/environmental-override {};
 
   envisage = callPackage ../development/python-modules/envisage { };
 
@@ -4514,7 +4520,7 @@ in {
   mlxtend = callPackage ../development/python-modules/mlxtend { };
 
   mlt = toPythonModule (pkgs.mlt.override {
-    inherit python;
+    python3 = python;
     enablePython = true;
   });
 
@@ -5604,7 +5610,7 @@ in {
 
   promise = callPackage ../development/python-modules/promise { };
 
-  prompt_toolkit = callPackage ../development/python-modules/prompt_toolkit { };
+  prompt-toolkit = callPackage ../development/python-modules/prompt-toolkit { };
 
   property-manager = callPackage ../development/python-modules/property-manager { };
 
@@ -8285,6 +8291,8 @@ in {
   sphinx-serve = callPackage ../development/python-modules/sphinx-serve { };
 
   sphinx-testing = callPackage ../development/python-modules/sphinx-testing { };
+
+  sphinxext-opengraph = callPackage ../development/python-modules/sphinxext-opengraph { };
 
   spidev = callPackage ../development/python-modules/spidev { };
 

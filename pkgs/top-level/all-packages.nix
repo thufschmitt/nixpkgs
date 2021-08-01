@@ -870,6 +870,8 @@ in
 
   albert = libsForQt5.callPackage ../applications/misc/albert {};
 
+  arch-install-scripts = callPackage ../tools/misc/arch-install-scripts {};
+
   auditwheel = callPackage ../tools/package-management/auditwheel { };
 
   amidst = callPackage ../tools/games/minecraft/amidst { };
@@ -2001,8 +2003,8 @@ in
   };
 
   libtensorflow =
-    if python.pkgs.tensorflow ? libtensorflow
-    then python.pkgs.tensorflow.libtensorflow
+    if python3.pkgs.tensorflow ? libtensorflow
+    then python3.pkgs.tensorflow.libtensorflow
     else libtensorflow-bin;
 
   libtorch-bin = callPackage ../development/libraries/science/math/libtorch/bin.nix {
@@ -3537,9 +3539,7 @@ in
   birdfont = callPackage ../tools/misc/birdfont { };
   xmlbird = callPackage ../tools/misc/birdfont/xmlbird.nix { stdenv = gccStdenv; };
 
-  blastem = callPackage ../misc/emulators/blastem {
-    inherit (python27Packages) pillow;
-  };
+  blastem = callPackage ../misc/emulators/blastem { };
 
   blueberry = callPackage ../tools/bluetooth/blueberry { };
 
@@ -3758,7 +3758,7 @@ in
   convertlit = callPackage ../tools/text/convertlit { };
 
   collectd = callPackage ../tools/system/collectd {
-    libsigrok = libsigrok-0-3-0; # not compatible with >= 0.4.0 yet
+    libsigrok = libsigrok_0_3; # not compatible with >= 0.4.0 yet
     jdk = jdk8; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
   };
 
@@ -3969,6 +3969,10 @@ in
   codebraid = callPackage ../tools/misc/codebraid { };
 
   compass = callPackage ../development/tools/compass { };
+
+  cone = callPackage ../development/compilers/cone {
+    llvmPackages = llvmPackages_7;
+  };
 
   conda = callPackage ../tools/package-management/conda { };
 
@@ -4232,6 +4236,8 @@ in
   };
 
   diffstat = callPackage ../tools/text/diffstat { };
+
+  difftastic = callPackage ../tools/text/difftastic { };
 
   diffutils = callPackage ../tools/text/diffutils { };
 
@@ -8292,6 +8298,8 @@ in
 
   openmpi = callPackage ../development/libraries/openmpi { };
 
+  ouch = callPackage ../tools/compression/ouch { };
+
   mpi = openmpi; # this attribute should used to build MPI applications
 
   ucx = callPackage ../development/libraries/ucx {};
@@ -8561,7 +8569,7 @@ in
 
   rpi-imager = libsForQt5.callPackage ../tools/misc/rpi-imager { };
 
-  rpiboot-unstable = callPackage ../development/misc/rpiboot/unstable.nix { };
+  rpiboot = callPackage ../development/misc/rpiboot { };
 
   rpm = callPackage ../tools/package-management/rpm {
     python = python3;
@@ -9051,6 +9059,8 @@ in
   srt-live-server = callPackage ../applications/video/srt-live-server { };
 
   srt-to-vtt-cl = callPackage ../tools/cd-dvd/srt-to-vtt-cl { };
+
+  srtrelay = callPackage ../applications/video/srtrelay { };
 
   sourcehut = callPackage ../applications/version-management/sourcehut { };
 
@@ -10672,6 +10682,8 @@ in
 
   aldor = callPackage ../development/compilers/aldor { };
 
+  algol68g = callPackage ../development/compilers/algol68g { };
+
   aliceml = callPackage ../development/compilers/aliceml { };
 
   armips = callPackage ../development/compilers/armips { };
@@ -11842,6 +11854,8 @@ in
 
   manticore = callPackage ../development/compilers/manticore { };
 
+  marst = callPackage ../development/compilers/marst { };
+
   mercury = callPackage ../development/compilers/mercury {
     jdk = openjdk8; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
   };
@@ -12598,7 +12612,7 @@ in
     stdenv = if stdenv.cc.isClang then llvmPackages_5.stdenv else stdenv;
   };
 
-  me_cleaner = pythonPackages.callPackage ../tools/misc/me_cleaner { };
+  me_cleaner = callPackage ../tools/misc/me_cleaner { };
 
   mesos-dns = callPackage ../servers/mesos-dns { };
 
@@ -13091,6 +13105,8 @@ in
 
   automaticcomponenttoolkit = callPackage ../development/tools/misc/automaticcomponenttoolkit { };
 
+  aviator = callPackage ../development/tools/misc/aviator { };
+
   awf = callPackage ../development/tools/misc/awf { };
 
   aws-adfs = with python3Packages; toPythonApplication aws-adfs;
@@ -13500,7 +13516,7 @@ in
 
   libsigrok = callPackage ../development/tools/libsigrok { };
   # old version:
-  libsigrok-0-3-0 = libsigrok.override {
+  libsigrok_0_3 = libsigrok.override {
     version = "0.3.0";
     sha256 = "0l3h7zvn3w4c1b9dgvl3hirc4aj1csfkgbk87jkpl7bgl03nk4j3";
   };
@@ -13641,7 +13657,7 @@ in
   ffuf = callPackage ../tools/security/ffuf { };
 
   flow = callPackage ../development/tools/analysis/flow {
-    ocamlPackages = ocaml-ng.ocamlPackages_4_09;
+    ocamlPackages = ocaml-ng.ocamlPackages_4_10;
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
@@ -14345,6 +14361,8 @@ in
   spoofer-gui = callPackage ../tools/networking/spoofer { withGUI = true; };
 
   spooles = callPackage ../development/libraries/science/math/spooles {};
+
+  spruce = callPackage ../development/tools/misc/spruce { };
 
   sqlcheck = callPackage ../development/tools/database/sqlcheck { };
 
@@ -17205,9 +17223,12 @@ in
 
   libtorrent-rasterbar-1_2_x = callPackage ../development/libraries/libtorrent-rasterbar/1.2.nix {
     inherit (darwin.apple_sdk.frameworks) SystemConfiguration;
+    python = python2;
   };
 
-  libtorrent-rasterbar-1_1_x = callPackage ../development/libraries/libtorrent-rasterbar/1.1.nix { };
+  libtorrent-rasterbar-1_1_x = callPackage ../development/libraries/libtorrent-rasterbar/1.1.nix {
+    python = python2;
+  };
 
   libtorrent-rasterbar = libtorrent-rasterbar-2_0_x;
 
@@ -17620,7 +17641,7 @@ in
 
   mvapich = callPackage ../development/libraries/mvapich { };
 
-  mygpoclient = pythonPackages.mygpoclient;
+  mygpoclient = with python3.pkgs; toPythonApplication mygpoclient;
 
   mygui = callPackage ../development/libraries/mygui {
     ogre = ogre1_9;
@@ -17832,6 +17853,7 @@ in
 
   opencv4 = callPackage ../development/libraries/opencv/4.x.nix {
     inherit (darwin.apple_sdk.frameworks) AVFoundation Cocoa VideoDecodeAcceleration CoreMedia MediaToolbox;
+    pythonPackages = python3Packages;
   };
 
   opencv = opencv4;
@@ -20149,9 +20171,11 @@ in
     postgresql_13
     postgresql_14
   ;
-  postgresql = postgresql_11.override { this = postgresql; };
+  postgresql = postgresql_13.override { this = postgresql; };
   postgresqlPackages = recurseIntoAttrs postgresql.pkgs;
-  postgresql11Packages = pkgs.postgresqlPackages;
+  postgresql11Packages = recurseIntoAttrs postgresql_11.pkgs;
+  postgresql12Packages = recurseIntoAttrs postgresql_12.pkgs;
+  postgresql13Packages = pkgs.postgresqlPackages;
 
   postgresql_jdbc = callPackage ../development/java-modules/postgresql_jdbc { };
 
@@ -20293,10 +20317,7 @@ in
 
   deadpixi-sam-unstable = callPackage ../applications/editors/deadpixi-sam { };
 
-  samba4 = callPackage ../servers/samba/4.x.nix {
-    rpcgen = netbsd.rpcgen;
-    python = python3;
-  };
+  samba4 = callPackage ../servers/samba/4.x.nix { };
 
   samba = samba4;
 
@@ -25207,6 +25228,7 @@ in
     stdenv = gcc6Stdenv;
     boost = boost155.override {
       enablePython = true;
+      python = python2;
       stdenv = gcc6Stdenv;
       buildPackages = buildPackages // {
         stdenv = gcc6Stdenv;
@@ -27044,8 +27066,6 @@ in
 
   skypeforlinux = callPackage ../applications/networking/instant-messengers/skypeforlinux { };
 
-  skype4pidgin = callPackage ../applications/networking/instant-messengers/pidgin-plugins/skype4pidgin { };
-
   SkypeExport = callPackage ../applications/networking/instant-messengers/SkypeExport { };
 
   slmenu = callPackage ../applications/misc/slmenu {};
@@ -27650,7 +27670,7 @@ in
 
   umurmur = callPackage ../applications/networking/umurmur { };
 
-  udocker = pythonPackages.callPackage ../tools/virtualization/udocker { };
+  udocker = callPackage ../tools/virtualization/udocker { };
 
   uefitoolPackages = recurseIntoAttrs (callPackage ../tools/system/uefitool/variants.nix {});
   uefitool = uefitoolPackages.new-engine;
@@ -29480,6 +29500,12 @@ in
 
   rocksndiamonds = callPackage ../games/rocksndiamonds { };
 
+  rott = callPackage ../games/rott { };
+
+  rott-shareware = rott.override {
+    buildShareware = true;
+  };
+
   rrootage = callPackage ../games/rrootage { };
 
   saga = libsForQt5.callPackage ../applications/gis/saga {
@@ -29938,6 +29964,8 @@ in
   };
 
   chemtool = callPackage ../applications/science/chemistry/chemtool { };
+
+  cp2k = callPackage ../applications/science/chemistry/cp2k { };
 
   d-seams = callPackage ../applications/science/chemistry/d-seams {};
 
@@ -30803,7 +30831,9 @@ in
 
   scotch = callPackage ../applications/science/math/scotch { };
 
-  mininet = callPackage ../tools/virtualization/mininet { };
+  mininet = callPackage ../tools/virtualization/mininet {
+    python = python3;
+  };
 
   msieve = callPackage ../applications/science/math/msieve { };
 
