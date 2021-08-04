@@ -4541,6 +4541,12 @@
     githubId = 592849;
     name = "Ilya Kolpakov";
   };
+  ilyakooo0 = {
+    name = "Ilya Kostyuchenko";
+    email = "ilyakooo0@gmail.com";
+    github = "ilyakooo0";
+    githubId = 6209627;
+  };
   imalison = {
     email = "IvanMalison@gmail.com";
     github = "IvanMalison";
@@ -11006,6 +11012,12 @@
       fingerprint = "E631 8869 586F 99B4 F6E6  D785 5942 58F0 389D 2802";
     }];
   };
+  twitchyliquid64 = {
+    name = "Tom";
+    email = "twitchyliquid64@ciphersink.net";
+    github = "twitchyliquid64";
+    githubId = 6328589;
+  };
   typetetris = {
     email = "ericwolf42@mail.com";
     github = "typetetris";
@@ -11327,10 +11339,6 @@
     github = "Vonfry";
     githubId = 3413119;
     name = "Vonfry";
-  };
-  vozz = {
-    email = "oliver.huntuk@gmail.com";
-    name = "Oliver Hunt";
   };
   vq = {
     email = "vq@erq.se";
