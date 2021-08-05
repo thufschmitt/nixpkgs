@@ -1412,6 +1412,12 @@
     githubId = 10221570;
     name = "Bo Bakker";
   };
+  bobby285271 = {
+    name = "Bobby Rong";
+    email = "rjl931189261@126.com";
+    github = "bobby285271";
+    githubId = 20080233;
+  };
   bobvanderlinden = {
     email = "bobvanderlinden@gmail.com";
     github = "bobvanderlinden";
@@ -1904,6 +1910,12 @@
     github = "chrisjefferson";
     githubId = 811527;
     name = "Christopher Jefferson";
+  };
+  chrispickard = {
+    email = "chrispickard9@gmail.com";
+    github = "chrispickard";
+    githubId = 1438690;
+    name = "Chris Pickard";
   };
   chrisrosset = {
     email = "chris@rosset.org.uk";
