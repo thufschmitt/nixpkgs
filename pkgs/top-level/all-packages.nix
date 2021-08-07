@@ -369,6 +369,7 @@ in
   dockerTools = callPackage ../build-support/docker {
     writePython3 = buildPackages.writers.writePython3;
   };
+  tarsum = callPackage ../build-support/docker/tarsum.nix { };
 
   snapTools = callPackage ../build-support/snap { };
 
@@ -1510,6 +1511,8 @@ in
 
   ecdsautils = callPackage ../tools/security/ecdsautils { };
 
+  echidna = haskell.lib.justStaticExecutables (haskellPackages.callPackage (../tools/security/echidna) { });
+
   sedutil = callPackage ../tools/security/sedutil { };
 
   elvish = callPackage ../shells/elvish { };
@@ -2040,7 +2043,9 @@ in
 
   boca = callPackage ../development/libraries/boca { };
 
-  bochs = callPackage ../applications/virtualization/bochs { };
+  bochs = callPackage ../applications/virtualization/bochs {
+    wxGTK = wxGTK30;
+  };
 
   bubblewrap = callPackage ../tools/admin/bubblewrap { };
 
@@ -2556,6 +2561,8 @@ in
 
   dgen-sdl = callPackage ../misc/emulators/dgen-sdl { };
 
+  dnschef = python3Packages.callPackage ../tools/networking/dnschef { };
+
   doitlive = callPackage ../tools/misc/doitlive { };
 
   dokuwiki = callPackage ../servers/web-apps/dokuwiki { };
@@ -2634,6 +2641,9 @@ in
 
   element-desktop = callPackage ../applications/networking/instant-messengers/element/element-desktop.nix {
     inherit (darwin.apple_sdk.frameworks) Security AppKit CoreServices;
+  };
+  element-desktop-wayland = element-desktop.override {
+    useWayland = true;
   };
 
   element-web = callPackage ../applications/networking/instant-messengers/element/element-web.nix {
@@ -2987,6 +2997,8 @@ in
   languagetool = callPackage ../tools/text/languagetool {  };
 
   lepton = callPackage ../tools/graphics/lepton { };
+
+  lepton-eda = callPackage ../applications/science/electronics/lepton-eda { };
 
   lexicon = callPackage ../tools/admin/lexicon { };
 
@@ -8957,6 +8969,8 @@ in
     libpng = libpng12;
   };
 
+  snmpcheck = callPackage ../tools/networking/snmpcheck {};
+
   sniffglue = callPackage ../tools/networking/sniffglue { };
 
   snort = callPackage ../applications/networking/ids/snort { };
@@ -9047,6 +9061,8 @@ in
   solanum = callPackage ../servers/irc/solanum {
     autoreconfHook = buildPackages.autoreconfHook269;
   };
+
+  solc-select = with python3Packages; toPythonApplication solc-select;
 
   sourceHighlight = callPackage ../tools/text/source-highlight { };
 
@@ -9844,6 +9860,8 @@ in
   sentry-cli = callPackage ../development/tools/sentry-cli {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
+
+  sentry-native = callPackage ../development/libraries/sentry-native { };
 
   vtun = callPackage ../tools/networking/vtun {
     openssl = openssl_1_0_2;
@@ -10900,6 +10918,8 @@ in
   flutterPackages =
     recurseIntoAttrs (callPackage ../development/compilers/flutter { });
   flutter = flutterPackages.stable;
+
+  fnlfmt = callPackage ../development/tools/fnlfmt { };
 
   fpc = callPackage ../development/compilers/fpc { };
 
@@ -12155,7 +12175,9 @@ in
     inherit (darwin.apple_sdk.frameworks) Security;
   };
   cargo-rr = callPackage ../development/tools/rust/cargo-rr { };
-  cargo-tarpaulin = callPackage ../development/tools/analysis/cargo-tarpaulin { };
+  cargo-tarpaulin = callPackage ../development/tools/analysis/cargo-tarpaulin {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
   cargo-update = callPackage ../tools/package-management/cargo-update {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
@@ -13121,10 +13143,9 @@ in
   apacheAnt_1_9 = callPackage ../development/tools/build-managers/apache-ant/1.9.nix { };
   ant = apacheAnt;
 
-  apacheKafka = apacheKafka_2_6;
-  apacheKafka_2_4 = callPackage ../servers/apache-kafka { majorVersion = "2.4"; };
-  apacheKafka_2_5 = callPackage ../servers/apache-kafka { majorVersion = "2.5"; };
-  apacheKafka_2_6 = callPackage ../servers/apache-kafka { majorVersion = "2.6"; };
+  apacheKafka = apacheKafka_2_8;
+  apacheKafka_2_7 = callPackage ../servers/apache-kafka { majorVersion = "2.7"; };
+  apacheKafka_2_8 = callPackage ../servers/apache-kafka { majorVersion = "2.8"; };
 
   kt = callPackage ../tools/misc/kt {};
 
@@ -14455,11 +14476,17 @@ in
 
   c2ffi = callPackage ../development/tools/misc/c2ffi { };
 
+  c3c = callPackage ../development/compilers/c3c {
+    llvmPackages = llvmPackages_11;
+  };
+
   swfmill = callPackage ../tools/video/swfmill { };
 
   swftools = callPackage ../tools/video/swftools {
     stdenv = gccStdenv;
   };
+
+  szyszka = callPackage ../tools/misc/szyszka { };
 
   taplo-cli = callPackage ../development/tools/taplo-cli {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -15671,6 +15698,7 @@ in
 
   goocanvas = callPackage ../development/libraries/goocanvas { };
   goocanvas2 = callPackage ../development/libraries/goocanvas/2.x.nix { };
+  goocanvas3 = callPackage ../development/libraries/goocanvas/3.x.nix { };
   goocanvasmm2 = callPackage ../development/libraries/goocanvasmm { };
 
   gflags = callPackage ../development/libraries/gflags { };
@@ -15834,6 +15862,8 @@ in
     pango = pango.override { cairo = cairo.override { x11Support = true; }; x11Support = true; };
     gdktarget = "x11";
   };
+
+  gtkextra = callPackage ../development/libraries/gtkextra { };
 
   gtk3 = callPackage ../development/libraries/gtk/3.x.nix {
     inherit (darwin.apple_sdk.frameworks) AppKit Cocoa;
@@ -16240,6 +16270,8 @@ in
   lmdb = callPackage ../development/libraries/lmdb { };
 
   lmdbxx = callPackage ../development/libraries/lmdbxx { };
+
+  lemon-graph = callPackage ../development/libraries/lemon-graph { };
 
   levmar = callPackage ../development/libraries/levmar { };
 
@@ -17389,6 +17421,8 @@ in
   libva1 = callPackage ../development/libraries/libva/1.0.0.nix { };
   libva1-minimal = libva1.override { minimal = true; };
 
+  libvarlink = callPackage ../development/libraries/libvarlink { };
+
   libvdpau = callPackage ../development/libraries/libvdpau { };
 
   libmodulemd = callPackage ../development/libraries/libmodulemd { };
@@ -18275,8 +18309,6 @@ in
 
   qtEnv = qt5.env;
   qt5Full = qt5.full;
-
-  qtkeychain = callPackage ../development/libraries/qtkeychain { };
 
   qtscriptgenerator = callPackage ../development/libraries/qtscriptgenerator { };
 
@@ -19824,6 +19856,8 @@ in
   mailman-rss = callPackage ../development/python-modules/mailman-rss { };
 
   mailman-web = with python3.pkgs; toPythonApplication mailman-web;
+
+  maker-panel = callPackage ../tools/misc/maker-panel { };
 
   mastodon = callPackage ../servers/mastodon { };
 
@@ -22917,6 +22951,8 @@ in
 
   recursive = callPackage ../data/fonts/recursive { };
 
+  rubik = callPackage ../data/fonts/rubik { };
+
   rhodium-libre = callPackage ../data/fonts/rhodium-libre { };
 
   rictydiminished-with-firacode = callPackage ../data/fonts/rictydiminished-with-firacode { };
@@ -23320,8 +23356,6 @@ in
   };
 
   autopanosiftc = callPackage ../applications/graphics/autopanosiftc { };
-
-  aesop = callPackage ../applications/office/aesop { };
 
   AusweisApp2 = libsForQt5.callPackage ../applications/misc/ausweisapp2 { };
 
@@ -23981,8 +24015,6 @@ in
   inherit (gnome) empathy;
 
   enhanced-ctorrent = callPackage ../applications/networking/enhanced-ctorrent { };
-
-  envelope = callPackage ../applications/office/envelope { };
 
   eolie = callPackage ../applications/networking/browsers/eolie { };
 
@@ -25856,6 +25888,8 @@ in
     ocamlPackages = ocaml-ng.ocamlPackages_4_08;
   };
 
+  mlvwm = callPackage ../applications/window-managers/mlvwm { };
+
   MMA = callPackage ../applications/audio/MMA { };
 
   mmex = callPackage ../applications/office/mmex {
@@ -27515,7 +27549,7 @@ in
 
   taskopen = callPackage ../applications/misc/taskopen { };
 
-  tdesktop = qt5.callPackage ../applications/networking/instant-messengers/telegram/tdesktop {
+  tdesktop = libsForQt5.callPackage ../applications/networking/instant-messengers/telegram/tdesktop {
     inherit (xorg) libpthreadstubs libXdmcp;
   };
 
@@ -27892,8 +27926,6 @@ in
 
   neovim-qt-unwrapped = libsForQt5.callPackage ../applications/editors/neovim/neovim-qt.nix { };
   neovim-qt = libsForQt5.callPackage ../applications/editors/neovim/qt.nix { };
-
-  olifant = callPackage ../applications/misc/olifant { };
 
   gnvim-unwrapped = callPackage ../applications/editors/neovim/gnvim {
     gtk = pkgs.gtk3;

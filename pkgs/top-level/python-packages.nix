@@ -189,6 +189,8 @@ in {
 
   adal = callPackage ../development/python-modules/adal { };
 
+  adax = callPackage ../development/python-modules/adax { };
+
   adb-enhanced = callPackage ../development/python-modules/adb-enhanced { };
 
   adb-homeassistant = callPackage ../development/python-modules/adb-homeassistant { };
@@ -1874,6 +1876,8 @@ in {
 
   decopatch = callPackage ../development/python-modules/decopatch { };
 
+  deemix = callPackage ../development/python-modules/deemix { };
+
   deep_merge = callPackage ../development/python-modules/deep_merge { };
 
   deepdiff = callPackage ../development/python-modules/deepdiff { };
@@ -1881,6 +1885,8 @@ in {
   deepmerge = callPackage ../development/python-modules/deepmerge { };
 
   deeptoolsintervals = callPackage ../development/python-modules/deeptoolsintervals { };
+
+  deezer-py = callPackage ../development/python-modules/deezer-py { };
 
   deezer-python = callPackage ../development/python-modules/deezer-python { };
 
@@ -2291,6 +2297,8 @@ in {
   emailthreads = callPackage ../development/python-modules/emailthreads { };
 
   email_validator = callPackage ../development/python-modules/email-validator { };
+
+  embrace = callPackage ../development/python-modules/embrace { };
 
   emcee = callPackage ../development/python-modules/emcee { };
 
@@ -3384,6 +3392,10 @@ in {
   httptools = callPackage ../development/python-modules/httptools { };
 
   httpx = callPackage ../development/python-modules/httpx { };
+
+  httpx-ntlm = callPackage ../development/python-modules/httpx-ntlm { };
+
+  httpx-socks = callPackage ../development/python-modules/httpx-socks { };
 
   huawei-lte-api = callPackage ../development/python-modules/huawei-lte-api { };
 
@@ -4984,6 +4996,8 @@ in {
 
   onnx = callPackage ../development/python-modules/onnx { };
 
+  open-garage = callPackage ../development/python-modules/open-garage { };
+
   openant = callPackage ../development/python-modules/openant { };
 
   openapi-schema-validator = callPackage ../development/python-modules/openapi-schema-validator { };
@@ -5990,6 +6004,8 @@ in {
 
   pyfakefs = callPackage ../development/python-modules/pyfakefs { };
 
+  pyfakewebcam = callPackage ../development/python-modules/pyfakewebcam { };
+
   pyfantom = callPackage ../development/python-modules/pyfantom { };
 
   pyfcm = callPackage ../development/python-modules/pyfcm { };
@@ -6448,6 +6464,8 @@ in {
   pyprof2calltree = callPackage ../development/python-modules/pyprof2calltree { };
 
   pyproj = callPackage ../development/python-modules/pyproj { };
+
+  pyprosegur = callPackage ../development/python-modules/pyprosegur { };
 
   pyptlib = callPackage ../development/python-modules/pyptlib { };
 
@@ -7321,6 +7339,8 @@ in {
 
   pyvera = callPackage ../development/python-modules/pyvera { };
 
+  pyverilog = callPackage ../development/python-modules/pyverilog { };
+
   pyvesync = callPackage ../development/python-modules/pyvesync { };
 
   pyvex = callPackage ../development/python-modules/pyvex { };
@@ -8161,6 +8181,8 @@ in {
   solaredge = callPackage ../development/python-modules/solaredge { };
 
   solax = callPackage ../development/python-modules/solax { };
+
+  solc-select = callPackage ../development/python-modules/solc-select { };
 
   solo-python = disabledIf (!pythonAtLeast "3.6") (callPackage ../development/python-modules/solo-python { });
 
