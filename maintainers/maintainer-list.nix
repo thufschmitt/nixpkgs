@@ -390,6 +390,12 @@
     githubId = 1318982;
     name = "Anders Claesson";
   };
+  akho = {
+    name = "Alexander Khodyrev";
+    email = "a@akho.name";
+    github = "akho";
+    githubId = 104951;
+  };
   akru = {
     email = "mail@akru.me";
     github = "akru";
@@ -8561,6 +8567,12 @@
     name = "Polygon";
     github = "polygon";
     githubId = 51489;
+  };
+  polykernel = {
+    email = "81340136+polykernel@users.noreply.github.com";
+    github = "polykernel";
+    githubId = 81340136;
+    name = "polykernel";
   };
   polyrod = {
     email = "dc1mdp@gmail.com";

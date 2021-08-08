@@ -24057,6 +24057,8 @@ in
 
   expenses = callPackage ../applications/misc/expenses { };
 
+  fnott = callPackage ../applications/misc/fnott { };
+
   go-libp2p-daemon = callPackage ../servers/go-libp2p-daemon { };
 
   go-motion = callPackage ../development/tools/go-motion { };
@@ -28505,6 +28507,8 @@ in
   apvlv = callPackage ../applications/misc/apvlv { };
 
   xpdf = libsForQt5.callPackage ../applications/misc/xpdf { };
+
+  xplugd = callPackage ../tools/X11/xplugd { };
 
   xpointerbarrier = callPackage ../tools/X11/xpointerbarrier {};
 
