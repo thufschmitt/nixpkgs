@@ -2289,6 +2289,12 @@
       fingerprint = "1C4E F4FE 7F8E D8B7 1E88 CCDF BAB1 D15F B7B4 D4CE";
     }];
   };
+  d-xo = {
+    email = "hi@d-xo.org";
+    github = "d-xo";
+    githubId = 6689924;
+    name = "David Terry";
+  };
   dadada = {
     name = "dadada";
     email = "dadada@dadada.li";
@@ -3242,6 +3248,12 @@
       longkeyid = "rsa4096/0x6C79278F3FCDCC02";
       fingerprint = "2D37 1AD2 7E2B BC77 97E1  B759 6C79 278F 3FCD CC02";
     }];
+  };
+  ereslibre = {
+    email = "ereslibre@ereslibre.es";
+    github = "ereslibre";
+    githubId = 8706;
+    name = "Rafael Fernández López";
   };
   ericbmerritt = {
     email = "eric@afiniate.com";
@@ -6710,6 +6722,12 @@
     githubId = 35892750;
     name = "Maxine Aubrey";
   };
+  maxhille = {
+    email = "mh@lambdasoup.com";
+    github = "maxhille";
+    githubId = 693447;
+    name = "Max Hille";
+  };
   maxhbr = {
     email = "nixos@maxhbr.dev";
     github = "maxhbr";
@@ -6964,6 +6982,12 @@
       longkeyid = "rsa4096/0x003F2096411B5F92";
       fingerprint = "3DEE 1C55 6E1C 3DC5 54F5  875A 003F 2096 411B 5F92";
     }];
+  };
+  michaeladler = {
+    email = "therisen06@gmail.com";
+    github = "michaeladler";
+    githubId = 1575834;
+    name = "Michael Adler";
   };
   michaelpj = {
     email = "michaelpj@gmail.com";
@@ -9656,6 +9680,12 @@
     githubId = 1567527;
     name = "Sebastian Hyberts";
   };
+  sebtm = {
+    email = "mail@sebastian-sellmeier.de";
+    github = "sebtm";
+    githubId = 17243347;
+    name = "Sebastian Sellmeier";
+  };
   sellout = {
     email = "greg@technomadic.org";
     github = "sellout";
@@ -11709,12 +11739,6 @@
     github = "xworld21";
     githubId = 1962985;
     name = "Vincenzo Mantova";
-  };
-  xwvvvvwx = {
-    email = "davidterry@posteo.de";
-    github = "xwvvvvwx";
-    githubId = 6689924;
-    name = "David Terry";
   };
   xzfc = {
     email = "xzfcpw@gmail.com";
