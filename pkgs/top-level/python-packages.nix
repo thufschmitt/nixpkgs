@@ -397,6 +397,8 @@ in {
 
   alarmdecoder = callPackage ../development/python-modules/alarmdecoder { };
 
+  alectryon = callPackage ../development/python-modules/alectryon { };
+
   alembic = callPackage ../development/python-modules/alembic { };
 
   algebraic-data-types = callPackage ../development/python-modules/algebraic-data-types { };
@@ -3582,6 +3584,8 @@ in {
   inkex = callPackage ../development/python-modules/inkex { };
 
   inotify-simple = callPackage ../development/python-modules/inotify-simple { };
+
+  inotifyrecursive = callPackage ../development/python-modules/inotifyrecursive { };
 
   inquirer = callPackage ../development/python-modules/inquirer { };
 
@@ -8743,6 +8747,8 @@ in {
   tidylib = callPackage ../development/python-modules/pytidylib { };
 
   tifffile = callPackage ../development/python-modules/tifffile { };
+
+  tika = callPackage ../development/python-modules/tika { };
 
   tiledb = callPackage ../development/python-modules/tiledb {
     inherit (pkgs) tiledb;

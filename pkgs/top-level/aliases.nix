@@ -183,6 +183,14 @@ mapAliases ({
   deepin = throw "deepin was a work in progress and it has been canceled and removed https://github.com/NixOS/nixpkgs/issues/94870"; # added 2020-08-31
   deepspeech = throw "deepspeech was removed in favor of stt. https://github.com/NixOS/nixpkgs/issues/119496"; # added 2021-05-05
   deltachat-electron = deltachat-desktop; # added 2021-07-18
+  deluge-1_x = throw ''
+    Deluge 1.x (deluge-1_x) is no longer supported.
+    Please use Deluge 2.x (deluge-2_x) instead, for example:
+
+        services.deluge.package = pkgs.deluge-2_x;
+
+    Note that it is NOT possible to switch back to Deluge 1.x after this change.
+  ''; # added 2021-08-18
   desktop_file_utils = desktop-file-utils; # added 2018-02-25
   devicemapper = lvm2; # added 2018-04-25
   digikam5 = digikam; # added 2017-02-18
@@ -567,6 +575,7 @@ mapAliases ({
   owncloudclient = owncloud-client;  # added 2016-08
   ocz-ssd-guru = throw "ocz-ssd-guru has been removed due to there being no source available"; # added 2021-07-12
   p11_kit = p11-kit; # added 2018-02-25
+  paperless = paperless-ng; # added 2021-06-06
   parity = openethereum; # added 2020-08-01
   parquet-cpp = arrow-cpp; # added 2018-09-08
   pass-otp = pass.withExtensions (ext: [ext.pass-otp]); # added 2018-05-04

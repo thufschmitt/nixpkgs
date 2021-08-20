@@ -971,8 +971,6 @@ with pkgs;
 
   logseq = callPackage ../applications/misc/logseq { };
 
-  lua-format = callPackage ../tools/misc/lua-format { };
-
   lxterminal = callPackage ../applications/terminal-emulators/lxterminal { };
 
   microcom = callPackage ../applications/terminal-emulators/microcom { };
@@ -1674,6 +1672,8 @@ with pkgs;
 
   lsix = callPackage ../tools/graphics/lsix { };
 
+  mdr = callPackage ../tools/misc/mdr { };
+
   mpdevil = callPackage ../applications/audio/mpdevil { };
 
   pacparser = callPackage ../tools/networking/pacparser { };
@@ -2174,7 +2174,9 @@ with pkgs;
     '';
   });
 
-  caddy = callPackage ../servers/caddy { };
+  caddy = callPackage ../servers/caddy {
+    buildGoModule = buildGo115Module;
+  };
 
   traefik = callPackage ../servers/traefik { };
 
@@ -4195,10 +4197,6 @@ with pkgs;
     pythonPackages = python3Packages;
     libtorrent-rasterbar = libtorrent-rasterbar-1_2_x.override { python = python3; };
   };
-  deluge-1_x = callPackage ../applications/networking/p2p/deluge/1.nix {
-    pythonPackages = python2Packages;
-    libtorrent-rasterbar = libtorrent-rasterbar-1_1_x;
-  };
   deluge = deluge-2_x;
 
   desktop-file-utils = callPackage ../tools/misc/desktop-file-utils { };
@@ -4254,7 +4252,7 @@ with pkgs;
   };
 
   diffoscope = diffoscopeMinimal.override {
-    enableBloat = true;
+    enableBloat = !stdenv.isDarwin;
   };
 
   diffr = callPackage ../tools/text/diffr {
@@ -7328,10 +7326,12 @@ with pkgs;
 
   netatalk = callPackage ../tools/filesystems/netatalk { };
 
-  netcdf = callPackage ../development/libraries/netcdf { };
+  netcdf = callPackage ../development/libraries/netcdf {
+    hdf5 = hdf5.override { usev110Api = true; };
+  };
 
   netcdf-mpi = appendToName "mpi" (netcdf.override {
-    hdf5 = hdf5-mpi;
+    hdf5 = hdf5-mpi.override { usev110Api = true; };
   });
 
   netcdfcxx4 = callPackage ../development/libraries/netcdf-cxx4 { };
@@ -7436,25 +7436,20 @@ with pkgs;
 
   noip = callPackage ../tools/networking/noip { };
 
-  nomad = nomad_1_0;
+  nomad = nomad_1_1;
 
   # Nomad never updates major go versions within a release series and is unsupported
   # on Go versions that it did not ship with. Due to historic bugs when compiled
   # with different versions we pin Go for all versions.
   # Upstream partially documents used Go versions here
   # https://github.com/hashicorp/nomad/blob/master/contributing/golang.md
-  nomad_0_12 = callPackage ../applications/networking/cluster/nomad/0.12.nix {
-    buildGoPackage = buildGo114Package;
-    inherit (linuxPackages) nvidia_x11;
-    nvidiaGpuSupport = config.cudaSupport or false;
-  };
   nomad_1_0 = callPackage ../applications/networking/cluster/nomad/1.0.nix {
     buildGoPackage = buildGo115Package;
     inherit (linuxPackages) nvidia_x11;
     nvidiaGpuSupport = config.cudaSupport or false;
   };
   nomad_1_1 = callPackage ../applications/networking/cluster/nomad/1.1.nix {
-    buildGoPackage = buildGo116Package;
+    buildGoModule = buildGo116Module;
     inherit (linuxPackages) nvidia_x11;
     nvidiaGpuSupport = config.cudaSupport or false;
   };
@@ -7894,7 +7889,7 @@ with pkgs;
 
   pamtester = callPackage ../tools/security/pamtester { };
 
-  paperless = callPackage ../applications/office/paperless { };
+  paperless-ng = callPackage ../applications/office/paperless-ng { };
 
   paperwork = callPackage ../applications/office/paperwork/paperwork-gtk.nix { };
 
@@ -7972,6 +7967,8 @@ with pkgs;
   pciutils = callPackage ../tools/system/pciutils {
     inherit (darwin.apple_sdk.frameworks) IOKit;
   };
+
+  otpauth = callPackage ../tools/security/otpauth { };
 
   pcsclite = callPackage ../tools/security/pcsclite {
     inherit (darwin.apple_sdk.frameworks) IOKit;
@@ -9299,6 +9296,8 @@ with pkgs;
 
   znapzend = callPackage ../tools/backup/znapzend { };
 
+  tar2ext4 = callPackage ../tools/filesystems/tar2ext4 { };
+
   targetcli = callPackage ../os-specific/linux/targetcli { };
 
   target-isns = callPackage ../os-specific/linux/target-isns { };
@@ -9322,6 +9321,8 @@ with pkgs;
   tcptraceroute = callPackage ../tools/networking/tcptraceroute { };
 
   tboot = callPackage ../tools/security/tboot { };
+
+  tagutil = callPackage ../applications/audio/tagutil { };
 
   tcpdump = callPackage ../tools/networking/tcpdump { };
 
@@ -12852,6 +12853,8 @@ with pkgs;
   pythonDocs = recurseIntoAttrs (callPackage ../development/interpreters/python/cpython/docs {});
 
   pypi2nix = callPackage ../development/tools/pypi2nix {};
+
+  pypi-mirror = callPackage ../development/tools/pypi-mirror {};
 
   setupcfg2nix = python3Packages.callPackage ../development/tools/setupcfg2nix {};
 
@@ -18287,45 +18290,27 @@ with pkgs;
     (import ../development/libraries/qt-5/5.12) {
       inherit newScope;
       inherit lib stdenv fetchurl fetchpatch fetchFromGitHub makeSetupHook makeWrapper;
-      inherit bison;
-      inherit cups;
-      inherit dconf;
-      inherit harfbuzz;
-      inherit libGL;
-      inherit perl;
-      inherit gtk3;
+      inherit bison cups dconf harfbuzz libGL perl gtk3;
       inherit (gst_all_1) gstreamer gst-plugins-base;
-      inherit llvmPackages_5;
+      inherit llvmPackages_5 darwin;
     });
 
   qt514 = recurseIntoAttrs (makeOverridable
     (import ../development/libraries/qt-5/5.14) {
       inherit newScope;
       inherit lib stdenv fetchurl fetchpatch fetchFromGitHub makeSetupHook makeWrapper;
-      inherit bison;
-      inherit cups;
-      inherit dconf;
-      inherit harfbuzz;
-      inherit libGL;
-      inherit perl;
-      inherit gtk3;
+      inherit bison cups dconf harfbuzz libGL perl gtk3;
       inherit (gst_all_1) gstreamer gst-plugins-base;
-      inherit llvmPackages_5;
+      inherit llvmPackages_5 darwin;
     });
 
   qt515 = recurseIntoAttrs (makeOverridable
     (import ../development/libraries/qt-5/5.15) {
       inherit newScope;
       inherit lib stdenv fetchurl fetchpatch fetchgit fetchFromGitHub makeSetupHook makeWrapper;
-      inherit bison;
-      inherit cups;
-      inherit dconf;
-      inherit harfbuzz;
-      inherit libGL;
-      inherit perl;
-      inherit gtk3;
+      inherit bison cups dconf harfbuzz libGL perl gtk3;
       inherit (gst_all_1) gstreamer gst-plugins-base;
-      inherit llvmPackages_5;
+      inherit llvmPackages_5 darwin;
     });
 
   libsForQt512 = recurseIntoAttrs (import ./qt5-packages.nix {
@@ -23319,6 +23304,8 @@ with pkgs;
 
   anup = callPackage ../applications/misc/anup {};
 
+  anytype = callPackage ../applications/misc/anytype { };
+
   ao = libfive;
 
   apache-directory-studio = callPackage ../applications/networking/apache-directory-studio {};
@@ -27705,8 +27692,8 @@ with pkgs;
 
   thunderbolt = callPackage ../os-specific/linux/thunderbolt {};
 
-  thunderbird-bin = thunderbird-bin-78;
-  thunderbird-bin-78 = callPackage ../applications/networking/mailreaders/thunderbird-bin { };
+  thunderbird-bin = thunderbird-bin-91;
+  thunderbird-bin-91 = callPackage ../applications/networking/mailreaders/thunderbird-bin { };
 
   ticpp = callPackage ../development/libraries/ticpp { };
 
