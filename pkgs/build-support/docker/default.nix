@@ -750,11 +750,21 @@ rec {
         root:x:0:
         nobody:x:65534:
       '')
+      (writeTextDir "etc/nsswitch.conf" ''
+        hosts: files dns
+      '')
       (runCommand "var-empty" { } ''
         mkdir -p $out/var/empty
       '')
     ];
   };
+
+  # This provides a /usr/bin/env, for shell scripts using the
+  # "#!/usr/bin/env executable" shebang.
+  usrBinEnv = runCommand "usr-bin-env" { } ''
+    mkdir -p $out/usr/bin
+    ln -s ${pkgs.coreutils}/bin/env $out/usr/bin
+  '';
 
   # This provides /bin/sh, pointing to bashInteractive.
   binSh = runCommand "bin-sh" { } ''
