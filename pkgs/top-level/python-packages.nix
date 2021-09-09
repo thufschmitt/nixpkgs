@@ -1373,6 +1373,8 @@ in {
 
   cert-chain-resolver = callPackage ../development/python-modules/cert-chain-resolver { };
 
+  certauth = callPackage ../development/python-modules/certauth { };
+
   certbot = callPackage ../development/python-modules/certbot { };
 
   certbot-dns-cloudflare = callPackage ../development/python-modules/certbot-dns-cloudflare { };
@@ -2564,7 +2566,9 @@ in {
 
   fints = callPackage ../development/python-modules/fints { };
 
-  fiona = callPackage ../development/python-modules/fiona { };
+  fiona = callPackage ../development/python-modules/fiona {
+    gdal = pkgs.gdal_2;
+  };
 
   fipy = callPackage ../development/python-modules/fipy { };
 
@@ -5696,6 +5700,8 @@ in {
 
   protobuf3-to-dict = callPackage ../development/python-modules/protobuf3-to-dict { };
 
+  protonup = callPackage ../development/python-modules/protonup { };
+
   prov = callPackage ../development/python-modules/prov { };
 
   prox-tv = callPackage ../development/python-modules/prox-tv { };
@@ -7831,6 +7837,8 @@ in {
 
   rst2ansi = callPackage ../development/python-modules/rst2ansi { };
 
+  rstcheck = callPackage ../development/python-modules/rstcheck { };
+
   rtmidi-python = callPackage ../development/python-modules/rtmidi-python { };
 
   rtoml = callPackage ../development/python-modules/rtoml { };
@@ -9213,6 +9221,8 @@ in {
   verboselogs = callPackage ../development/python-modules/verboselogs { };
 
   versioneer = callPackage ../development/python-modules/versioneer { };
+
+  versiontag = callPackage ../development/python-modules/versiontag { };
 
   versiontools = callPackage ../development/python-modules/versiontools { };
 
