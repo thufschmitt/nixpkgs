@@ -5277,6 +5277,10 @@ with pkgs;
 
   git-cinnabar = callPackage ../applications/version-management/git-and-tools/git-cinnabar { };
 
+  git-cliff = callPackage ../applications/version-management/git-and-tools/git-cliff {
+    inherit (pkgs.darwin.apple_sdk.frameworks) Security;
+  };
+
   git-codeowners = callPackage ../applications/version-management/git-and-tools/git-codeowners { };
 
   git-codereview = callPackage ../applications/version-management/git-and-tools/git-codereview { };
@@ -8767,6 +8771,8 @@ with pkgs;
 
   sacad = callPackage ../tools/misc/sacad { };
 
+  sad = callPackage ../tools/text/sad { };
+
   safecopy = callPackage ../tools/system/safecopy { };
 
   sacd = callPackage ../tools/cd-dvd/sacd { };
@@ -9482,8 +9488,6 @@ with pkgs;
   timelapse-deflicker = callPackage ../applications/graphics/timelapse-deflicker { };
 
   timetrap = callPackage ../applications/office/timetrap { };
-
-  timetable = callPackage ../applications/office/timetable { };
 
   timekeeper = callPackage ../applications/office/timekeeper { };
 
@@ -12728,7 +12732,7 @@ with pkgs;
 
   ### LUA interpreters
   luaInterpreters = callPackage ./../development/interpreters/lua-5 {};
-  inherit (luaInterpreters) lua5_1 lua5_2 lua5_2_compat lua5_3 lua5_3_compat lua5_4 lua5_4_compat luajit_openresty luajit_2_1 luajit_2_0;
+  inherit (luaInterpreters) lua5_1 lua5_2 lua5_2_compat lua5_3 lua5_3_compat lua5_4 lua5_4_compat luajit_2_1 luajit_2_0;
 
   lua5 = lua5_2_compat;
   lua = lua5;
@@ -12938,6 +12942,8 @@ with pkgs;
   poetry2nix = callPackage ../development/tools/poetry2nix/poetry2nix {
     inherit pkgs lib;
   };
+
+  poetry2conda = python3Packages.callPackage ../development/python-modules/poetry2conda { };
 
   pipenv = callPackage ../development/tools/pipenv {};
 
@@ -26736,7 +26742,7 @@ with pkgs;
 
   vivaldi-widevine = callPackage ../applications/networking/browsers/vivaldi/widevine.nix { };
 
-  openmpt123 = callPackage ../applications/audio/openmpt123 { };
+  libopenmpt = callPackage ../applications/audio/libopenmpt { };
 
   openrazer-daemon = with python3Packages; toPythonApplication openrazer-daemon;
 
@@ -28114,12 +28120,7 @@ with pkgs;
   wrapNeovimUnstable = callPackage ../applications/editors/neovim/wrapper.nix { };
   wrapNeovim = neovim-unwrapped: lib.makeOverridable (neovimUtils.legacyWrapper neovim-unwrapped);
   neovim-unwrapped = callPackage ../applications/editors/neovim {
-    # See:
-    #   - https://github.com/NixOS/nixpkgs/issues/129099
-    #   - https://github.com/NixOS/nixpkgs/issues/128959
-    lua =
-      if (stdenv.isDarwin && stdenv.isAarch64) then luajit_openresty else
-      luajit;
+    lua = luajit;
   };
 
   neovimUtils = callPackage ../applications/editors/neovim/utils.nix { };

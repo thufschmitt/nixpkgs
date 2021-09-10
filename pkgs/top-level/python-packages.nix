@@ -3319,6 +3319,8 @@ in {
 
   heudiconv = callPackage ../development/python-modules/heudiconv { };
 
+  hg-commitsigs = callPackage ../development/python-modules/hg-commitsigs { };
+
   hg-evolve = callPackage ../development/python-modules/hg-evolve { };
 
   hglib = callPackage ../development/python-modules/hglib { };
@@ -5563,6 +5565,10 @@ in {
   poetry = callPackage ../development/python-modules/poetry { };
 
   poetry-core = callPackage ../development/python-modules/poetry-core { };
+
+  poetry-semver = callPackage ../development/python-modules/poetry-semver { };
+
+  poetry2conda = callPackage ../development/python-modules/poetry2conda { };
 
   poezio = callPackage ../applications/networking/instant-messengers/poezio { };
 
