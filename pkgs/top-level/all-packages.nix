@@ -12354,6 +12354,7 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
   cargo-readme = callPackage ../development/tools/rust/cargo-readme {};
+  cargo-sort = callPackage ../development/tools/rust/cargo-sort { };
   cargo-sweep = callPackage ../development/tools/rust/cargo-sweep { };
   cargo-sync-readme = callPackage ../development/tools/rust/cargo-sync-readme {};
   cargo-udeps = callPackage ../development/tools/rust/cargo-udeps {
@@ -24420,7 +24421,9 @@ with pkgs;
 
   foo-yc20 = callPackage ../applications/audio/foo-yc20 { };
 
-  fossil = callPackage ../applications/version-management/fossil { };
+  fossil = callPackage ../applications/version-management/fossil {
+    sqlite = sqlite.override { enableDeserialize = true; };
+  };
 
   freebayes = callPackage ../applications/science/biology/freebayes { };
 
@@ -31288,7 +31291,7 @@ with pkgs;
 
   root5 = lowPrio (callPackage ../applications/science/misc/root/5.nix {
     inherit (darwin.apple_sdk.frameworks) Cocoa OpenGL;
-    stdenv = if stdenv.cc.isClang then llvmPackages_5.stdenv else gcc8Stdenv;
+    stdenv = if stdenv.cc.isClang then llvmPackages_5.stdenv else stdenv;
   });
 
   rink = callPackage ../applications/science/misc/rink {
@@ -32009,6 +32012,8 @@ with pkgs;
   norwester-font = callPackage ../data/fonts/norwester  {};
 
   nut = callPackage ../applications/misc/nut { };
+
+  nhentai = callPackage ../applications/misc/nhentai { };
 
   nvd = callPackage ../tools/package-management/nvd { };
 
