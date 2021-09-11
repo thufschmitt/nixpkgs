@@ -532,6 +532,16 @@
       fingerprint = "B422 CFB1 C9EF 73F7 E1E2 698D F53E 3233 42F7 A6D3A";
     }];
   };
+  alyaeanyx = {
+    email = "alexandra.hollmeier@mailbox.org";
+    github = "alyaeanyx";
+    githubId = 74795488;
+    name = "Alexandra Hollmeier";
+    keys = [{
+      longkeyid = "rsa3072/0x87D1AADCD25B8DEE";
+      fingerprint = "1F73 8879 5E5A 3DFC E2B3 FA32 87D1 AADC D25B 8DEE";
+    }];
+  };
   amanjeev = {
     email = "aj@amanjeev.com";
     github = "amanjeev";
@@ -1519,12 +1529,6 @@
     github = "BrianHicks";
     githubId = 355401;
     name = "Brian Hicks";
-  };
-  bricewge = {
-    email = "bricewge@gmail.com";
-    github = "bricewge";
-    githubId = 5525646;
-    name = "Brice Waegeneire";
   };
   Br1ght0ne = {
     email = "brightone@protonmail.com";
@@ -7683,6 +7687,12 @@
     githubId = 2590830;
     name = "Sage Raflik";
   };
+  neosimsim = {
+    email = "me@abn.sh";
+    github = "neosimsim";
+    githubId = 1771772;
+    name = "Alexander Ben Nasrallah";
+  };
   nequissimus = {
     email = "tim@nequissimus.com";
     github = "nequissimus";
@@ -9594,6 +9604,12 @@
     githubId = 115821;
     name = "Sam Rose";
   };
+  samuela = {
+    email = "skainsworth@gmail.com";
+    github = "samuela";
+    githubId = 226872;
+    name = "Samuel Ainsworth";
+  };
   samueldr = {
     email = "samuel@dionne-riel.com";
     github = "samueldr";
@@ -11321,10 +11337,14 @@
     name = "Jos van den Oever";
   };
   vanilla = {
-    email = "neko@hydev.org";
+    email = "osu_vanilla@126.com";
     github = "VergeDX";
     githubId = 25173827;
     name = "Vanilla";
+    keys = [{
+      longkeyid = "rsa4096/0x4DFA2BDD7305E739";
+      fingerprint = "5C16 5178 7DE2 EE5A AF98  3EA3 4DFA 2BDD 7305 E739";
+    }];
   };
   vanschelven = {
     email = "klaas@vanschelven.com";

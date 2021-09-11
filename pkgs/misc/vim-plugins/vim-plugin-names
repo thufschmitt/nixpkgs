@@ -56,7 +56,7 @@ camspiers/lens.vim
 camspiers/snap@main
 carlitux/deoplete-ternjs
 ccarpita/rtorrent-syntax-file
-cespare/vim-toml
+cespare/vim-toml@main
 chaoren/vim-wordmotion
 chikatoike/concealedyank.vim
 chikatoike/sourcemap.vim
@@ -244,6 +244,7 @@ inkarkat/vim-ReplaceWithSameIndentRegister
 inkarkat/vim-SyntaxRange
 int3/vim-extradite
 Iron-E/nvim-highlite
+ishan9299/nvim-solarized-lua
 itchyny/calendar.vim
 itchyny/lightline.vim
 itchyny/thumbnail.vim
@@ -282,6 +283,7 @@ joonty/vim-xdebug
 joosepalviste/nvim-ts-context-commentstring@main
 josa42/coc-lua
 josa42/vim-lightline-coc
+jose-elias-alvarez/minsnip.nvim@main
 jose-elias-alvarez/null-ls.nvim@main
 joshdick/onedark.vim@main
 jpalardy/vim-slime@main
@@ -510,6 +512,7 @@ nvim-lua/lsp-status.nvim
 nvim-lua/lsp_extensions.nvim
 nvim-lua/plenary.nvim
 nvim-lua/popup.nvim
+nvim-neorg/neorg@main
 nvim-telescope/telescope-dap.nvim
 nvim-telescope/telescope-frecency.nvim
 nvim-telescope/telescope-fzf-native.nvim@main
@@ -788,7 +791,6 @@ urbit/hoon.vim
 Valloric/MatchTagAlways
 Valodim/deoplete-notmuch
 vhda/verilog_systemverilog.vim
-vhyrro/neorg@main
 vigoux/LanguageTool.nvim
 vim-airline/vim-airline
 vim-airline/vim-airline-themes
@@ -857,6 +859,7 @@ wincent/command-t
 wincent/ferret
 wincent/terminus
 windwp/nvim-autopairs
+windwp/nvim-spectre
 winston0410/cmd-parser.nvim
 winston0410/range-highlight.nvim
 wlangstroth/vim-racket

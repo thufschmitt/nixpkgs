@@ -2366,6 +2366,8 @@ in {
 
   envoy-reader = callPackage ../development/python-modules/envoy-reader { };
 
+  envoy-utils = callPackage ../development/python-modules/envoy-utils { };
+
   enzyme = callPackage ../development/python-modules/enzyme { };
 
   epc = callPackage ../development/python-modules/epc { };
@@ -3729,6 +3731,10 @@ in {
   javaobj-py3 = callPackage ../development/python-modules/javaobj-py3 { };
 
   javaproperties = callPackage ../development/python-modules/javaproperties { };
+
+  jax = callPackage ../development/python-modules/jax { };
+
+  jaxlib = callPackage ../development/python-modules/jaxlib { };
 
   JayDeBeApi = callPackage ../development/python-modules/JayDeBeApi { };
 
@@ -5504,6 +5510,8 @@ in {
 
   python-songpal = callPackage ../development/python-modules/python-songpal { };
 
+  python-swiftclient = callPackage ../development/python-modules/python-swiftclient { };
+
   python-tado = callPackage ../development/python-modules/python-tado { };
 
   pyutil = callPackage ../development/python-modules/pyutil { };
@@ -5581,6 +5589,8 @@ in {
   polyline = callPackage ../development/python-modules/polyline { };
 
   pomegranate = callPackage ../development/python-modules/pomegranate { };
+
+  pontos = callPackage ../development/python-modules/pontos { };
 
   pony = callPackage ../development/python-modules/pony { };
 
@@ -7560,6 +7570,8 @@ in {
   questionary = callPackage ../development/python-modules/questionary { };
 
   queuelib = callPackage ../development/python-modules/queuelib { };
+
+  qmk-dotty-dict = callPackage ../development/python-modules/qmk-dotty-dict {};
 
   r2pipe = callPackage ../development/python-modules/r2pipe { };
 
@@ -9609,6 +9621,8 @@ in {
   yfinance = callPackage ../development/python-modules/yfinance { };
 
   yoda = toPythonModule (pkgs.yoda.override { inherit python; });
+
+  youless-api = callPackage ../development/python-modules/youless-api { };
 
   youtube-dl = callPackage ../tools/misc/youtube-dl { };
 
