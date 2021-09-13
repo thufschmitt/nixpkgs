@@ -145,6 +145,7 @@
   ./programs/fuse.nix
   ./programs/gamemode.nix
   ./programs/geary.nix
+  ./programs/git.nix
   ./programs/gnome-disks.nix
   ./programs/gnome-documents.nix
   ./programs/gnome-terminal.nix
@@ -382,6 +383,8 @@
   ./services/display-managers/greetd.nix
   ./services/editors/emacs.nix
   ./services/editors/infinoted.nix
+  ./services/games/crossfire-server.nix
+  ./services/games/deliantra-server.nix
   ./services/games/factorio.nix
   ./services/games/freeciv.nix
   ./services/games/minecraft-server.nix
@@ -873,7 +876,6 @@
   ./services/networking/wasabibackend.nix
   ./services/networking/websockify.nix
   ./services/networking/wg-quick.nix
-  ./services/networking/wicd.nix
   ./services/networking/wireguard.nix
   ./services/networking/wpa_supplicant.nix
   ./services/networking/xandikos.nix
