@@ -7695,6 +7695,8 @@ with pkgs;
 
   nttcp = callPackage ../tools/networking/nttcp { };
 
+  ntttcp = callPackage ../tools/networking/ntttcp { };
+
   nuttcp = callPackage ../tools/networking/nuttcp { };
 
   nssmdns = callPackage ../tools/networking/nss-mdns { };
@@ -7973,7 +7975,7 @@ with pkgs;
 
   ovito = libsForQt5.callPackage ../applications/graphics/ovito { };
 
-  owncloud-client = libsForQt514.callPackage ../applications/networking/owncloud-client { };
+  owncloud-client = libsForQt5.callPackage ../applications/networking/owncloud-client { };
 
   oxefmsynth = callPackage ../applications/audio/oxefmsynth { };
 
@@ -22746,6 +22748,8 @@ with pkgs;
   scowl = callPackage ../data/misc/scowl { };
 
   seshat = callPackage ../data/fonts/seshat { };
+
+  session-desktop-appimage = callPackage ../applications/networking/instant-messengers/session-desktop-appimage { };
 
   shaderc = callPackage ../development/compilers/shaderc { };
 
