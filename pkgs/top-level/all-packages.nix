@@ -1100,6 +1100,10 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
+  amber-secret = callPackage ../tools/security/amber {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
+
   inherit (callPackages ../development/tools/ammonite {})
     ammonite_2_12
     ammonite_2_13;
@@ -12369,6 +12373,7 @@ with pkgs;
   cargo-kcov = callPackage ../tools/package-management/cargo-kcov { };
   cargo-graph = callPackage ../tools/package-management/cargo-graph { };
   cargo-license = callPackage ../tools/package-management/cargo-license { };
+  cargo-llvm-lines = callPackage ../development/tools/rust/cargo-llvm-lines { };
   cargo-outdated = callPackage ../tools/package-management/cargo-outdated {};
   cargo-release = callPackage ../tools/package-management/cargo-release {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -12394,6 +12399,9 @@ with pkgs;
   };
   cargo-cross = callPackage ../development/tools/rust/cargo-cross { };
   cargo-deny = callPackage ../development/tools/rust/cargo-deny {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
+  cargo-dephell = callPackage ../development/tools/rust/cargo-dephell {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
   cargo-diet = callPackage ../development/tools/rust/cargo-diet { };
@@ -12434,6 +12442,9 @@ with pkgs;
   cargo-spellcheck = callPackage ../development/tools/rust/cargo-spellcheck { };
   cargo-sweep = callPackage ../development/tools/rust/cargo-sweep { };
   cargo-sync-readme = callPackage ../development/tools/rust/cargo-sync-readme {};
+  cargo-tally = callPackage ../development/tools/rust/cargo-tally {
+    inherit (darwin.apple_sdk.frameworks) DiskArbitration Foundation IOKit;
+  };
   cargo-udeps = callPackage ../development/tools/rust/cargo-udeps {
     inherit (darwin.apple_sdk.frameworks) CoreServices Security SystemConfiguration;
   };
@@ -21824,6 +21835,8 @@ with pkgs;
   rfkill_udev = callPackage ../os-specific/linux/rfkill/udev.nix { };
 
   riscv-pk = callPackage ../misc/riscv-pk { };
+
+  ristate = callPackage ../tools/misc/ristate { };
 
   roccat-tools = callPackage ../os-specific/linux/roccat-tools { };
 
