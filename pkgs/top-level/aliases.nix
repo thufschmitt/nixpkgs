@@ -53,6 +53,7 @@ mapAliases ({
   aminal = throw "aminal was renamed to darktile."; # added 2021-09-28
   ammonite-repl = ammonite; # added 2017-05-02
   amsn = throw "amsn has been removed due to being unmaintained."; # added 2020-12-09
+  angelfish = libsForQt5.plasmaMobileGear.angelfish; # added 2021-10-06
   antimicro = throw "antimicro has been removed as it was broken, see antimicroX instead."; # added 2020-08-06
   arduino_core = arduino-core;  # added 2015-02-04
   ardour_5 = throw "ardour_5 has been removed. see https://github.com/NixOS/nixpkgs/issues/139549"; # added 2021-09-28
@@ -163,6 +164,7 @@ mapAliases ({
   cupsBjnp = cups-bjnp; # added 2016-01-02
   cups_filters = cups-filters; # added 2016-08
   cups-googlecloudprint = throw "Google Cloudprint is officially discontinued since Jan 2021, more info https://support.google.com/chrome/a/answer/9633006";
+  curaLulzbot = throw "curaLulzbot has been removed due to insufficient upstream support for a modern dependency chain"; # added 2021-10-23
   cquery = throw "cquery has been removed because it is abandoned by upstream. Consider switching to clangd or ccls instead."; # added 2020-06-15
   cv = progress; # added 2015-09-06
   cvs_fast_export = cvs-fast-export; # added 2021-06-10
@@ -390,6 +392,7 @@ mapAliases ({
   keepassx2-http = keepassx-reboot; # added 2016-10-17
   kexectools = kexec-tools; # added 2021-09-03
   keybase-go = keybase;  # added 2016-08-24
+  keysmith = libsForQt5.plasmaMobileGear.keysmith; # added 2021-07-14
   kinetic-cpp-client = throw "kinetic-cpp-client has been removed from nixpkgs, as it's abandoned."; # 2020-04-28
   kicad-with-packages3d = kicad; # added 2019-11-25
   kindlegen = throw "kindlegen has been removed from nixpkgs, as it's abandoned and no longer available for download."; # 2021-03-09

@@ -741,6 +741,7 @@
   angustrau = {
     name = "Angus Trau";
     email = "nix@angus.ws";
+    matrix = "@angustrau:matrix.org";
     github = "angustrau";
     githubId = 13267947;
   };
@@ -3115,6 +3116,7 @@
   };
   earvstedt = {
     email = "erik.arvstedt@gmail.com";
+    matrix = "@erikarvstedt:matrix.org";
     github = "erikarvstedt";
     githubId = 36110478;
     name = "Erik Arvstedt";
@@ -3725,6 +3727,13 @@
     github = "fdns";
     githubId = 541748;
     name = "Felipe Espinoza";
+  };
+  fedx-sudo = {
+    email = "fedx-sudo@pm.me";
+    github = "Fedx-sudo";
+    githubId = 66258975;
+    name = "Fedx sudo";
+    matrix = "fedx:matrix.org";
   };
   fehnomenal = {
     email = "fehnomenal@fehn.systems";
@@ -4816,6 +4825,7 @@
   };
   ilkecan = {
     email = "ilkecan@protonmail.com";
+    matrix = "@ilkecan:matrix.org";
     github = "ilkecan";
     githubId = 40234257;
     name = "ilkecan bozdogan";
@@ -6344,6 +6354,12 @@
     github = "lucc";
     githubId = 1104419;
     name = "Lucas Hoffmann";
+  };
+  lucasew = {
+    email = "lucas59356@gmail.com";
+    github = "lucasew";
+    githubId = 15693688;
+    name = "Lucas Eduardo Wendt";
   };
   lde = {
     email = "lilian.deloche@puck.fr";
@@ -8782,6 +8798,7 @@
   };
   peterhoeg = {
     email = "peter@hoeg.com";
+    matrix = "@peter:hoeg.com";
     github = "peterhoeg";
     githubId = 722550;
     name = "Peter Hoeg";
@@ -9652,6 +9669,7 @@
   };
   rnhmjoj = {
     email = "rnhmjoj@inventati.org";
+    matrix = "@rnhmjoj:maxwell.ydns.eu";
     github = "rnhmjoj";
     githubId = 2817565;
     name = "Michele Guerini Rocco";
@@ -9753,6 +9771,7 @@
   };
   roosemberth = {
     email = "roosembert.palacios+nixpkgs@posteo.ch";
+    matrix = "@roosemberth:orbstheorem.ch";
     github = "roosemberth";
     githubId = 3621083;
     name = "Roosembert (Roosemberth) Palacios";
@@ -9893,6 +9912,7 @@
   };
   ryantm = {
     email = "ryan@ryantm.com";
+    matrix = "@ryantm:matrix.org";
     github = "ryantm";
     githubId = 4804;
     name = "Ryan Mulligan";
@@ -12069,6 +12089,12 @@
       longkeyid = "rsa4096/0x11F7BAEA856743FF";
       fingerprint = "2145 955E 3F5E 0C95 3458  41B5 11F7 BAEA 8567 43FF";
     }];
+  };
+  wentasah = {
+    name = "Michal Sojka";
+    email = "wsh@2x.cz";
+    github = "wentasah";
+    githubId = 140542;
   };
   wheelsandmetal = {
     email = "jakob@schmutz.co.uk";
