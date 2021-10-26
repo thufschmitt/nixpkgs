@@ -1080,6 +1080,12 @@
     githubId = 354741;
     name = "Austin Butler";
   };
+  autophagy = {
+    email = "mail@autophagy.io";
+    github = "autophagy";
+    githubId = 12958979;
+    name = "Mika Naylor";
+  };
   avaq = {
     email = "nixpkgs@account.avaq.it";
     github = "avaq";
@@ -10813,6 +10819,12 @@
     github = "steveej";
     githubId = 1181362;
     name = "Stefan Junker";
+  };
+  stevenroose = {
+    email = "github@stevenroose.org";
+    github = "stevenroose";
+    githubId = 853468;
+    name = "Steven Roose";
   };
   stianlagstad = {
     email = "stianlagstad@gmail.com";
