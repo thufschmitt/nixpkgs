@@ -2143,6 +2143,12 @@
     githubId = 199180;
     name = "Claes Wallin";
   };
+  cleeyv = {
+    email = "cleeyv@riseup.net";
+    github = "cleeyv";
+    githubId = 71959829;
+    name = "Cleeyv";
+  };
   cleverca22 = {
     email = "cleverca22@gmail.com";
     matrix = "@cleverca22:matrix.org";
@@ -11705,6 +11711,13 @@
       longkeyid = "rsa4096/0xD276FF7467007335";
       fingerprint = "EE59 5E29 BB5B F2B3 5ED2  3F1C D276 FF74 6700 7335";
     }];
+  };
+  uniquepointer = {
+    email = "uniquepointer@mailbox.org";
+    matrix = "@uniquepointer:matrix.org";
+    github = "uniquepointer";
+    githubId = 71751817;
+    name = "uniquepointer";
   };
   unode = {
     email = "alves.rjc@gmail.com";

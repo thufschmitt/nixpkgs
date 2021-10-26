@@ -1721,6 +1721,8 @@ with pkgs;
 
   glasgow = with python3Packages; toPythonApplication glasgow;
 
+  gmid = callPackage ../servers/gemini/gmid { };
+
   gmni = callPackage ../applications/networking/browsers/gmni { };
 
   gmnisrv = callPackage ../servers/gemini/gmnisrv { };
@@ -3399,6 +3401,8 @@ with pkgs;
   playerctl = callPackage ../tools/audio/playerctl { };
 
   pn = callPackage ../tools/text/pn { };
+
+  pocket-casts = callPackage ../applications/audio/pocket-casts { };
 
   poweralertd = callPackage ../tools/misc/poweralertd { };
 
@@ -29219,6 +29223,8 @@ with pkgs;
   yokadi = python3Packages.callPackage ../applications/misc/yokadi {};
 
   yoshimi = callPackage ../applications/audio/yoshimi { };
+
+  your-editor = callPackage ../applications/editors/your-editor { };
 
   youtube-dl = with python3Packages; toPythonApplication youtube-dl;
 
