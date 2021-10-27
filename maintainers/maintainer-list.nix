@@ -2885,6 +2885,12 @@
     githubId = 28980797;
     name = "David Leslie";
   };
+  dlip = {
+    email = "dane@lipscombe.com.au";
+    github = "dlip";
+    githubId = 283316;
+    name = "Dane Lipscombe";
+  };
   dmalikov = {
     email = "malikov.d.y@gmail.com";
     github = "dmalikov";
@@ -6046,6 +6052,12 @@
     github = "karthikiyengar";
     githubId = 8260207;
     name = "Karthik Iyengar";
+  };
+  kjeremy = {
+    email = "kjeremy@gmail.com";
+    name = "Jeremy Kolb";
+    github = "kjeremy";
+    githubId = 4325700;
   };
   kkallio = {
     email = "tierpluspluslists@gmail.com";
