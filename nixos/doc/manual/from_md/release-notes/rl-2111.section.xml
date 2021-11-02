@@ -381,6 +381,13 @@
           <link xlink:href="options.html#opt-services.seafile.enable">services.seafile</link>.
         </para>
       </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://github.com/mchehab/rasdaemon">rasdaemon</link>,
+          a hardware error logging daemon. Available as
+          <link linkend="opt-hardware.rasdaemon.enable">hardware.rasdaemon</link>.
+        </para>
+      </listitem>
     </itemizedlist>
   </section>
   <section xml:id="sec-release-21.11-incompatibilities">
@@ -547,6 +554,17 @@ Superuser created successfully.
           <literal>services.geoip-updater</literal> was broken and has
           been replaced by
           <link xlink:href="options.html#opt-services.geoipupdate.enable">services.geoipupdate</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>ihatemoney</literal> has been updated to version
+          5.1.1
+          (<link xlink:href="https://github.com/spiral-project/ihatemoney/blob/5.1.1/CHANGELOG.rst">release
+          notes</link>). If you serve ihatemoney by HTTP rather than
+          HTTPS, you must set
+          <link xlink:href="options.html#opt-services.ihatemoney.secureCookie">services.ihatemoney.secureCookie</link>
+          to <literal>false</literal>.
         </para>
       </listitem>
       <listitem>

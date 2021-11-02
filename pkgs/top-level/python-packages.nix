@@ -461,6 +461,10 @@ in {
 
   angr = callPackage ../development/python-modules/angr { };
 
+  angrcli = callPackage ../development/python-modules/angrcli {
+    inherit (pkgs) coreutils;
+  };
+
   angrop = callPackage ../development/python-modules/angrop { };
 
   aniso8601 = callPackage ../development/python-modules/aniso8601 { };
@@ -691,7 +695,9 @@ in {
 
   audioread = callPackage ../development/python-modules/audioread { };
 
-  audiotools = callPackage ../development/python-modules/audiotools { };
+  audiotools = callPackage ../development/python-modules/audiotools {
+    inherit (pkgs.darwin.apple_sdk.frameworks) AudioToolbox AudioUnit CoreServices;
+  };
 
   augeas = callPackage ../development/python-modules/augeas {
     inherit (pkgs) augeas;
@@ -2102,6 +2108,8 @@ in {
 
   django-csp = callPackage ../development/python-modules/django-csp { };
 
+  django-debug-toolbar = callPackage ../development/python-modules/django-debug-toolbar { };
+
   django-discover-runner = callPackage ../development/python-modules/django-discover-runner { };
 
   django-dynamic-preferences = callPackage ../development/python-modules/django-dynamic-preferences { };
@@ -2786,6 +2794,8 @@ in {
   flask-swagger = callPackage ../development/python-modules/flask-swagger { };
 
   flask-swagger-ui = callPackage ../development/python-modules/flask-swagger-ui { };
+
+  flask-talisman = callPackage ../development/python-modules/flask-talisman { };
 
   flask_testing = callPackage ../development/python-modules/flask-testing { };
 
@@ -7505,7 +7515,7 @@ in {
 
   python-miio = callPackage ../development/python-modules/python-miio { };
 
-  python_mimeparse = callPackage ../development/python-modules/python_mimeparse { };
+  python-mimeparse = callPackage ../development/python-modules/python-mimeparse { };
 
   python-mnist = callPackage ../development/python-modules/python-mnist { };
 
