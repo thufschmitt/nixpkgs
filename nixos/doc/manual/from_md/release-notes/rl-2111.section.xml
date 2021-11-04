@@ -17,6 +17,12 @@
     <itemizedlist>
       <listitem>
         <para>
+          <literal>iptables</literal> now uses
+          <literal>nf_tables</literal> backend.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           PHP now defaults to PHP 8.0, updated from 7.4.
         </para>
       </listitem>
@@ -93,6 +99,25 @@
           <link xlink:href="https://help.gnome.org/misc/release-notes/41.0/">Release
           Notes</link> for details.
         </para>
+      </listitem>
+      <listitem>
+        <para>
+          LXD support was greatly improved:
+        </para>
+        <itemizedlist spacing="compact">
+          <listitem>
+            <para>
+              building LXD images from configurations is now directly
+              possible with just nixpkgs
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              hydra is now building nixOS LXD images that can be used
+              standalone with full nixos-rebuild support
+            </para>
+          </listitem>
+        </itemizedlist>
       </listitem>
     </itemizedlist>
   </section>
@@ -408,6 +433,14 @@
           that before NixOS 21.11, specifying either setuid or setgid
           but not owner/group resulted in wrappers owned by
           nobody/nogroup, which is unsafe.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Since <literal>iptables</literal> now uses
+          <literal>nf_tables</literal> backend and
+          <literal>ipset</literal> doesn’t support it, some applications
+          (ferm, shorewall, firehol) may have limited functionality.
         </para>
       </listitem>
       <listitem>
@@ -1201,6 +1234,13 @@ Superuser created successfully.
           <link xlink:href="options.html#opt-virtualisation.additionalPaths"><literal>virtualisation.additionalPaths</literal></link>.
         </para>
       </listitem>
+      <listitem>
+        <para>
+          The <literal>services.ddclient.password</literal> option was
+          removed, and replaced with
+          <literal>services.ddclient.passwordFile</literal>.
+        </para>
+      </listitem>
     </itemizedlist>
   </section>
   <section xml:id="sec-release-21.11-notable-changes">
@@ -1700,6 +1740,29 @@ Superuser created successfully.
           remove and re-register their account in the client to enjoy a
           better user experience and benefit from this change.
         </para>
+      </listitem>
+      <listitem>
+        <para>
+          Dokuwiki now supports caddy! However
+        </para>
+        <itemizedlist spacing="compact">
+          <listitem>
+            <para>
+              the nginx option has been removed, in the new
+              configuration, please use the
+              <literal>dokuwiki.webserver = &quot;nginx&quot;</literal>
+              instead.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              The <quote>${hostname}</quote> option has been deprecated,
+              please use
+              <literal>dokuwiki.sites = [ &quot;${hostname}&quot; ]</literal>
+              instead
+            </para>
+          </listitem>
+        </itemizedlist>
       </listitem>
     </itemizedlist>
   </section>

@@ -89,6 +89,9 @@ let
           pkgs.lib.makeBinPath [ pkgs.nodejs ]
         }
       '';
+      # See: https://github.com/NixOS/nixpkgs/issues/142196
+      # [...]/@hyperspace/cli/node_modules/.bin/node-gyp-build: /usr/bin/env: bad interpreter: No such file or directory
+      meta.broken = true;
     };
 
     mdctl-cli = super."@medable/mdctl-cli".override {
@@ -166,6 +169,10 @@ let
     insect = super.insect.override (drv: {
       nativeBuildInputs = drv.nativeBuildInputs or [] ++ [ pkgs.psc-package self.pulp ];
     });
+
+    intelephense = super.intelephense.override {
+      meta.license = pkgs.lib.licenses.unfree;
+    };
 
     jsonplaceholder = super.jsonplaceholder.override (drv: {
       buildInputs = [ nodejs ];
