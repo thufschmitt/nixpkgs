@@ -3,7 +3,7 @@
 with lib;
 
 let
-  inherit (libretro) snes9x;
+  inherit (libretro) genesis-plus-gx snes9x;
 in
 
 let self = rec {
@@ -74,11 +74,15 @@ let self = rec {
 
   libretro = callPackage ../applications/video/kodi-packages/libretro { };
 
+  libretro-genplus = callPackage ../applications/video/kodi-packages/libretro-genplus { inherit genesis-plus-gx; };
+
   libretro-snes9x = callPackage ../applications/video/kodi-packages/libretro-snes9x { inherit snes9x; };
 
   jellyfin = callPackage ../applications/video/kodi-packages/jellyfin { };
 
   joystick = callPackage ../applications/video/kodi-packages/joystick { };
+
+  keymap = callPackage ../applications/video/kodi-packages/keymap { };
 
   netflix = callPackage ../applications/video/kodi-packages/netflix { };
 
@@ -113,6 +117,8 @@ let self = rec {
   chardet = callPackage ../applications/video/kodi-packages/chardet { };
 
   dateutil = callPackage ../applications/video/kodi-packages/dateutil { };
+
+  defusedxml = callPackage ../applications/video/kodi-packages/defusedxml { };
 
   idna = callPackage ../applications/video/kodi-packages/idna { };
 

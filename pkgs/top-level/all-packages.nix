@@ -1022,10 +1022,6 @@ with pkgs;
 
   cool-retro-term = libsForQt5.callPackage ../applications/terminal-emulators/cool-retro-term { };
 
-  coreterminal = libsForQt5.callPackage ../applications/terminal-emulators/coreterminal {
-    inherit (lxqt) qtermwidget;
-  };
-
   ctx = callPackage ../applications/terminal-emulators/ctx { };
 
   darktile = callPackage ../applications/terminal-emulators/darktile { };
@@ -1537,8 +1533,6 @@ with pkgs;
 
   codeql = callPackage ../development/tools/analysis/codeql { };
 
-  corearchiver = libsForQt5.callPackage ../tools/archivers/corearchiver { };
-
   container-linux-config-transpiler = callPackage ../development/tools/container-linux-config-transpiler { };
 
   fedora-backgrounds = callPackage ../data/misc/fedora-backgrounds { };
@@ -1575,7 +1569,11 @@ with pkgs;
 
   cozy = callPackage ../applications/audio/cozy { };
 
+  cpptoml = callPackage ../development/libraries/cpptoml { };
+
   cpuid = callPackage ../os-specific/linux/cpuid { };
+
+  msr = callPackage ../os-specific/linux/msr { };
 
   ctrtool = callPackage ../tools/archivers/ctrtool { };
 
@@ -2185,6 +2183,8 @@ with pkgs;
   bmon = callPackage ../tools/misc/bmon { };
 
   bmake = callPackage ../development/tools/build-managers/bmake { };
+
+  go-mk = callPackage ../development/tools/build-managers/go-mk { };
 
   boca = callPackage ../development/libraries/boca { };
 
@@ -3321,6 +3321,8 @@ with pkgs;
 
   mq-cli = callPackage ../tools/system/mq-cli { };
 
+  mrkd = with python3Packages; toPythonApplication mrkd;
+
   n2n = callPackage ../tools/networking/n2n { };
 
   nextdns = callPackage ../applications/networking/nextdns { };
@@ -4163,15 +4165,7 @@ with pkgs;
                                                                         qtbase = qt5.qtbase;
                                                                       };
 
-  coregarage = libsForQt5.callPackage ../applications/misc/coregarage { };
-
-  coreshot = libsForQt5.callPackage ../tools/misc/coreshot { };
-
   c14 = callPackage ../applications/networking/c14 { };
-
-  corehunt = libsForQt5.callPackage ../applications/misc/corehunt { };
-
-  coretoppings = libsForQt5.callPackage ../applications/misc/coretoppings { };
 
   certstrap = callPackage ../tools/security/certstrap { };
 
@@ -4518,6 +4512,8 @@ with pkgs;
     tk = tk-8_5;
   };
 
+  picoscope = callPackage ../applications/science/electronics/picoscope { };
+
   picotts = callPackage ../tools/audio/picotts { };
 
   wgetpaste = callPackage ../tools/text/wgetpaste { };
@@ -4863,7 +4859,7 @@ with pkgs;
   # The latest version used by elasticsearch, logstash, kibana and the the beats from elastic.
   # When updating make sure to update all plugins or they will break!
   elk6Version = "6.8.3";
-  elk7Version = "7.10.2";
+  elk7Version = "7.11.1";
 
   elasticsearch6 = callPackage ../servers/search/elasticsearch/6.x.nix {
     util-linux = util-linuxMinimal;
@@ -4875,11 +4871,6 @@ with pkgs;
     jre_headless = jre8_headless; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
   };
   elasticsearch7 = callPackage ../servers/search/elasticsearch/7.x.nix {
-    util-linux = util-linuxMinimal;
-    jre_headless = jdk11_headless; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
-  };
-  elasticsearch7-oss = callPackage ../servers/search/elasticsearch/7.x.nix {
-    enableUnfree = false;
     util-linux = util-linuxMinimal;
     jre_headless = jdk11_headless; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
   };
@@ -4895,7 +4886,7 @@ with pkgs;
     elasticsearch = elasticsearch6-oss;
   };
   elasticsearch7Plugins = elasticsearchPlugins.override {
-    elasticsearch = elasticsearch7-oss;
+    elasticsearch = elasticsearch7;
   };
 
   elasticsearch-curator = callPackage ../tools/admin/elasticsearch-curator {
@@ -6704,9 +6695,6 @@ with pkgs;
     enableUnfree = false;
   };
   kibana7 = callPackage ../development/tools/misc/kibana/7.x.nix { };
-  kibana7-oss = callPackage ../development/tools/misc/kibana/7.x.nix {
-    enableUnfree = false;
-  };
   kibana = kibana6;
   kibana-oss = kibana6-oss;
 
@@ -6797,10 +6785,6 @@ with pkgs;
   libcsptr = callPackage ../development/libraries/libcsptr { };
 
   libscrypt = callPackage ../development/libraries/libscrypt { };
-
-  libcsys = libsForQt5.callPackage ../development/libraries/libcsys { };
-
-  libcprime = libsForQt5.callPackage ../development/libraries/libcprime { };
 
   libcloudproviders = callPackage ../development/libraries/libcloudproviders { };
 
@@ -7087,13 +7071,9 @@ with pkgs;
   nodejs_latest = nodejs-16_x;
   nodejs-slim_latest = nodejs-slim-16_x;
 
-  nodePackages_latest = dontRecurseIntoAttrs (callPackage ../development/node-packages/default.nix {
-    nodejs = nodejs_latest;
-  });
+  nodePackages_latest = dontRecurseIntoAttrs nodejs_latest.pkgs;
 
-  nodePackages = dontRecurseIntoAttrs (callPackage ../development/node-packages/default.nix {
-    inherit nodejs;
-  });
+  nodePackages = dontRecurseIntoAttrs nodejs.pkgs;
 
   np2kai = callPackage ../misc/emulators/np2kai { };
 
@@ -7359,6 +7339,8 @@ with pkgs;
   };
   lxcfs = callPackage ../os-specific/linux/lxcfs { };
   lxd = callPackage ../tools/admin/lxd { };
+
+  lxd-image-server = callPackage ../tools/virtualization/lxd-image-server { };
 
   lzfse = callPackage ../tools/compression/lzfse { };
 
@@ -7994,9 +7976,7 @@ with pkgs;
 
   ntopng = callPackage ../tools/networking/ntopng { };
 
-  ntp = callPackage ../tools/networking/ntp {
-    libcap = if stdenv.isLinux then libcap else null;
-  };
+  ntp = callPackage ../tools/networking/ntp { };
 
   numdiff = callPackage ../tools/text/numdiff { };
 
@@ -8056,6 +8036,8 @@ with pkgs;
   ocproxy = callPackage ../tools/networking/ocproxy { };
 
   ocserv = callPackage ../tools/networking/ocserv { };
+
+  octofetch = callPackage ../tools/misc/octofetch { };
 
   oha = callPackage ../tools/networking/oha {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -10265,6 +10247,8 @@ with pkgs;
 
   v2ray = callPackage ../tools/networking/v2ray { };
 
+  v2ray-domain-list-community = callPackage ../data/misc/v2ray-domain-list-community { };
+
   vacuum = callPackage ../applications/networking/instant-messengers/vacuum {};
 
   vampire = callPackage ../applications/science/logic/vampire {};
@@ -11167,8 +11151,8 @@ with pkgs;
     jdk = jdk8; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
   };
 
-  adoptopenjdk-bin-16-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk16-linux.nix;
-  adoptopenjdk-bin-16-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk16-darwin.nix;
+  adoptopenjdk-bin-16-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk16-linux.nix { inherit lib; };
+  adoptopenjdk-bin-16-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk16-darwin.nix { inherit lib; };
 
   adoptopenjdk-hotspot-bin-16 = if stdenv.isLinux
     then callPackage adoptopenjdk-bin-16-packages-linux.jdk-hotspot {}
@@ -11185,8 +11169,8 @@ with pkgs;
     then callPackage adoptopenjdk-bin-16-packages-linux.jre-openj9 {}
     else callPackage adoptopenjdk-bin-16-packages-darwin.jre-openj9 {};
 
-  adoptopenjdk-bin-15-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk15-linux.nix;
-  adoptopenjdk-bin-15-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk15-darwin.nix;
+  adoptopenjdk-bin-15-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk15-linux.nix { inherit lib; };
+  adoptopenjdk-bin-15-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk15-darwin.nix { inherit lib; };
 
   adoptopenjdk-hotspot-bin-15 = if stdenv.isLinux
     then callPackage adoptopenjdk-bin-15-packages-linux.jdk-hotspot {}
@@ -11203,8 +11187,8 @@ with pkgs;
     then callPackage adoptopenjdk-bin-15-packages-linux.jre-openj9 {}
     else callPackage adoptopenjdk-bin-15-packages-darwin.jre-openj9 {};
 
-  adoptopenjdk-bin-14-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk14-linux.nix;
-  adoptopenjdk-bin-14-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk14-darwin.nix;
+  adoptopenjdk-bin-14-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk14-linux.nix { inherit lib; };
+  adoptopenjdk-bin-14-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk14-darwin.nix { inherit lib; };
 
   adoptopenjdk-hotspot-bin-14 = if stdenv.isLinux
     then callPackage adoptopenjdk-bin-14-packages-linux.jdk-hotspot {}
@@ -11221,8 +11205,8 @@ with pkgs;
     then callPackage adoptopenjdk-bin-14-packages-linux.jre-openj9 {}
     else callPackage adoptopenjdk-bin-14-packages-darwin.jre-openj9 {};
 
-  adoptopenjdk-bin-13-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk13-linux.nix;
-  adoptopenjdk-bin-13-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk13-darwin.nix;
+  adoptopenjdk-bin-13-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk13-linux.nix { inherit lib; };
+  adoptopenjdk-bin-13-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk13-darwin.nix { inherit lib; };
 
   adoptopenjdk-hotspot-bin-13 = if stdenv.isLinux
     then callPackage adoptopenjdk-bin-13-packages-linux.jdk-hotspot {}
@@ -11239,8 +11223,8 @@ with pkgs;
     then callPackage adoptopenjdk-bin-13-packages-linux.jre-openj9 {}
     else callPackage adoptopenjdk-bin-13-packages-darwin.jre-openj9 {};
 
-  adoptopenjdk-bin-11-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk11-linux.nix;
-  adoptopenjdk-bin-11-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk11-darwin.nix;
+  adoptopenjdk-bin-11-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk11-linux.nix { inherit lib; };
+  adoptopenjdk-bin-11-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk11-darwin.nix { inherit lib; };
 
   adoptopenjdk-hotspot-bin-11 = if stdenv.isLinux
     then callPackage adoptopenjdk-bin-11-packages-linux.jdk-hotspot {}
@@ -11257,8 +11241,8 @@ with pkgs;
     then callPackage adoptopenjdk-bin-11-packages-linux.jre-openj9 {}
     else callPackage adoptopenjdk-bin-11-packages-darwin.jre-openj9 {};
 
-  adoptopenjdk-bin-8-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk8-linux.nix;
-  adoptopenjdk-bin-8-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk8-darwin.nix;
+  adoptopenjdk-bin-8-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk8-linux.nix { inherit lib; };
+  adoptopenjdk-bin-8-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk8-darwin.nix { inherit lib; };
 
   adoptopenjdk-hotspot-bin-8 = if stdenv.isLinux
     then callPackage adoptopenjdk-bin-8-packages-linux.jdk-hotspot {}
@@ -12807,7 +12791,9 @@ with pkgs;
   cargo-make = callPackage ../development/tools/rust/cargo-make {
     inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
   };
-  cargo-modules = callPackage ../development/tools/rust/cargo-modules { };
+  cargo-modules = callPackage ../development/tools/rust/cargo-modules {
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation CoreServices;
+  };
   cargo-msrv = callPackage ../development/tools/rust/cargo-msrv {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
@@ -12817,7 +12803,9 @@ with pkgs;
   };
   cargo-readme = callPackage ../development/tools/rust/cargo-readme {};
   cargo-sort = callPackage ../development/tools/rust/cargo-sort { };
-  cargo-spellcheck = callPackage ../development/tools/rust/cargo-spellcheck { };
+  cargo-spellcheck = callPackage ../development/tools/rust/cargo-spellcheck {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
   cargo-supply-chain = callPackage ../development/tools/rust/cargo-supply-chain {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
@@ -13323,6 +13311,13 @@ with pkgs;
   };
 
   ### END OF LUA
+
+  ### CuboCore
+  CuboCore = recurseIntoAttrs (import ./cubocore-packages.nix {
+    inherit newScope lxqt lib libsForQt5;
+  });
+
+  ### End of CuboCore
 
   lush2 = callPackage ../development/interpreters/lush {};
 
@@ -14568,7 +14563,7 @@ with pkgs;
   gradle_4_10 = res.gradleGen.gradle_4_10;
   gradle_4 = gradle_4_10;
   gradle_5 = res.gradleGen.gradle_5_6;
-  gradle_6 = res.gradleGen.gradle_6_8;
+  gradle_6 = res.gradleGen.gradle_6_9;
   gradle_7 = res.gradleGen.gradle_7;
 
   gperf = callPackage ../development/tools/misc/gperf { };
@@ -14807,8 +14802,6 @@ with pkgs;
 
   minizinc = callPackage ../development/tools/minizinc { };
   minizincide = qt514.callPackage ../development/tools/minizinc/ide.nix { };
-
-  mk = callPackage ../development/tools/build-managers/mk { };
 
   mkcert = callPackage ../development/tools/misc/mkcert { };
 
@@ -15104,6 +15097,8 @@ with pkgs;
   simpleBuildTool = sbt;
 
   sbt-extras = callPackage ../development/tools/build-managers/sbt-extras { };
+
+  scala-cli = callPackage ../development/tools/build-managers/scala-cli {};
 
   scc = callPackage ../development/tools/misc/scc { };
 
@@ -16341,6 +16336,8 @@ with pkgs;
   glibc = callPackage ../development/libraries/glibc {
     stdenv = gccStdenv; # doesn't compile without gcc
   };
+
+  mtrace = callPackage ../development/libraries/glibc/mtrace.nix { };
 
   # Provided by libc on Operating Systems that use the Extensible Linker Format.
   elf-header =
@@ -18858,7 +18855,8 @@ with pkgs;
 
   inherit (callPackages ../development/libraries/openssl { })
     openssl_1_0_2
-    openssl_1_1;
+    openssl_1_1
+    openssl_3_0;
 
   openssl-chacha = callPackage ../development/libraries/openssl/chacha.nix { };
 
@@ -20234,9 +20232,8 @@ with pkgs;
     go = buildPackages.go_1_16;
   };
   # go_1_17 has go module changes which may not be portable
-  # across different go versions and/or platforms,
-  # it also requires >=10.13 stdenv on darwin which
-  # is not currently available for x86_64-darwin
+  # across different go versions and/or platforms:
+  # https://github.com/NixOS/nixpkgs/issues/144667
   #
   # do not uncomment this without approval from the go CODEOWNERS
   #buildGo117Package = callPackage ../development/go-packages/generic {
@@ -20252,9 +20249,8 @@ with pkgs;
     go = buildPackages.go_1_16;
   };
   # go_1_17 has go module changes which may not be portable
-  # across different go versions and/or platforms,
-  # it also requires >=10.13 stdenv on darwin which
-  # is not currently available for x86_64-darwin
+  # across different go versions and/or platforms:
+  # https://github.com/NixOS/nixpkgs/issues/144667
   #
   # do not uncomment this without approval from the go CODEOWNERS
   #buildGo117Module = callPackage ../development/go-modules/generic {
@@ -23765,7 +23761,9 @@ with pkgs;
 
   antiword = callPackage ../applications/office/antiword {};
 
-  anup = callPackage ../applications/misc/anup {};
+  anup = callPackage ../applications/misc/anup {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   anytype = callPackage ../applications/misc/anytype { };
 
@@ -23856,8 +23854,6 @@ with pkgs;
   cadence = libsForQt5.callPackage ../applications/audio/cadence { };
 
   cheesecutter = callPackage ../applications/audio/cheesecutter { };
-
-  corefm = libsForQt5.callPackage ../applications/misc/corefm { };
 
   milkytracker = callPackage ../applications/audio/milkytracker { };
 
@@ -24144,6 +24140,10 @@ with pkgs;
 
   clapper = callPackage ../applications/video/clapper { };
 
+  ciscoPacketTracer7 = callPackage ../applications/networking/cisco-packet-tracer/7.nix { };
+
+  ciscoPacketTracer8 = callPackage ../applications/networking/cisco-packet-tracer/8.nix { };
+
   claws-mail-gtk2 = callPackage ../applications/networking/mailreaders/claws-mail {
     inherit (xorg) libSM;
     useGtk3 = false;
@@ -24201,8 +24201,6 @@ with pkgs;
 
   copyq = libsForQt5.callPackage ../applications/misc/copyq { };
 
-  coreaction = libsForQt5.callPackage ../applications/misc/coreaction { };
-
   corectrl = libsForQt5.callPackage ../applications/misc/corectrl { };
 
   coriander = callPackage ../applications/video/coriander {
@@ -24212,8 +24210,6 @@ with pkgs;
   corrscope = libsForQt5.callPackage ../applications/video/corrscope {
     ffmpeg = ffmpeg-full;
   };
-
-  coreimage = libsForQt5.callPackage ../applications/graphics/coreimage { };
 
   csa = callPackage ../applications/audio/csa { };
 
@@ -25932,6 +25928,8 @@ with pkgs;
 
   dupd = callPackage ../tools/misc/dupd { };
 
+  jconvolver = callPackage ../applications/audio/jconvolver { };
+
   jdupes = callPackage ../tools/misc/jdupes { };
 
   jed = callPackage ../applications/editors/jed { };
@@ -26777,6 +26775,8 @@ with pkgs;
 
   neocomp  = callPackage ../applications/window-managers/neocomp { };
 
+  nerd-font-patcher = callPackage ../applications/misc/nerd-font-patcher { };
+
   newsflash = callPackage ../applications/networking/feedreaders/newsflash { };
 
   nicotine-plus = callPackage ../applications/networking/soulseek/nicotine-plus { };
@@ -27036,6 +27036,8 @@ with pkgs;
   netbeans = callPackage ../applications/editors/netbeans {
     jdk = jdk11;
   };
+
+  netcoredbg = callPackage ../development/tools/misc/netcoredbg { };
 
   ncdu = callPackage ../tools/misc/ncdu { };
 
@@ -27989,6 +27991,8 @@ with pkgs;
 
   super-slicer-staging = (callPackage ../applications/misc/prusa-slicer/super-slicer.nix { }).staging;
 
+  snapmaker-luban = callPackage ../applications/misc/snapmaker-luban { };
+
   robustirc-bridge = callPackage ../servers/irc/robustirc-bridge { };
 
   skrooge = libsForQt5.callPackage ../applications/office/skrooge {};
@@ -28247,6 +28251,8 @@ with pkgs;
   tempo = callPackage ../servers/tracing/tempo {};
 
   temporal = callPackage ../applications/networking/cluster/temporal { };
+
+  tenacity = callPackage ../applications/audio/tenacity { wxGTK = wxGTK31-gtk3; };
 
   tendermint = callPackage ../tools/networking/tendermint { };
 
@@ -29083,6 +29089,8 @@ with pkgs;
   inherit (xorg) xcompmgr;
 
   picom = callPackage ../applications/window-managers/picom {};
+
+  picom-next = callPackage ../applications/window-managers/picom/picom-next.nix { };
 
   xd = callPackage ../applications/networking/p2p/xd {};
 
@@ -30180,7 +30188,7 @@ with pkgs;
   openarena = callPackage ../games/openarena { };
 
   opendungeons = callPackage ../games/opendungeons {
-    ogre = ogre1_9;
+    ogre = ogre1_10;
   };
 
   openlierox = callPackage ../games/openlierox { };
@@ -33014,7 +33022,9 @@ with pkgs;
 
   wiki-js = callPackage ../servers/web-apps/wiki-js { };
 
-  wiki-tui = callPackage ../misc/wiki-tui { };
+  wiki-tui = callPackage ../misc/wiki-tui {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   winePackagesFor = wineBuild: lib.makeExtensible (self: with self; {
     callPackage = newScope self;
@@ -33022,7 +33032,7 @@ with pkgs;
     inherit wineBuild;
 
     inherit (callPackage ./wine-packages.nix {})
-      minimal base full stable unstable staging fonts;
+      minimal base full stable stableFull unstable unstableFull staging stagingFull fonts;
   });
 
   winePackages = recurseIntoAttrs (winePackagesFor (config.wine.build or "wine32"));

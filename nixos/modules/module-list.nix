@@ -772,6 +772,7 @@
   ./services/networking/libreswan.nix
   ./services/networking/lldpd.nix
   ./services/networking/logmein-hamachi.nix
+  ./services/networking/lxd-image-server.nix
   ./services/networking/mailpile.nix
   ./services/networking/magic-wormhole-mailbox-server.nix
   ./services/networking/matterbridge.nix
@@ -973,6 +974,7 @@
   ./services/web-apps/atlassian/jira.nix
   ./services/web-apps/bookstack.nix
   ./services/web-apps/calibre-web.nix
+  ./services/web-apps/code-server.nix
   ./services/web-apps/convos.nix
   ./services/web-apps/cryptpad.nix
   ./services/web-apps/dex.nix

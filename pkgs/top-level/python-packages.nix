@@ -1705,6 +1705,8 @@ in {
 
   confuse = callPackage ../development/python-modules/confuse { };
 
+  confight = callPackage ../development/python-modules/confight { };
+
   connexion = callPackage ../development/python-modules/connexion { };
 
   consonance = callPackage ../development/python-modules/consonance { };
@@ -2717,6 +2719,8 @@ in {
 
   flake8 = callPackage ../development/python-modules/flake8 { };
 
+  flake8-length = callPackage ../development/python-modules/flake8-length { };
+
   flake8-debugger = callPackage ../development/python-modules/flake8-debugger { };
 
   flake8-future-import = callPackage ../development/python-modules/flake8-future-import { };
@@ -3426,6 +3430,8 @@ in {
 
   hdate = callPackage ../development/python-modules/hdate { };
 
+  ha-av = callPackage ../development/python-modules/ha-av { };
+
   ha-ffmpeg = callPackage ../development/python-modules/ha-ffmpeg { };
 
   ha-philipsjs = callPackage ../development/python-modules/ha-philipsjs{ };
@@ -3769,6 +3775,8 @@ in {
   injector = callPackage ../development/python-modules/injector { };
 
   inkex = callPackage ../development/python-modules/inkex { };
+
+  inotify = callPackage ../development/python-modules/inotify { };
 
   inotify-simple = callPackage ../development/python-modules/inotify-simple { };
 
@@ -4870,6 +4878,8 @@ in {
 
   mpyq = callPackage ../development/python-modules/mpyq { };
 
+  mrkd = callPackage ../development/python-modules/mrkd { };
+
   ms-cv = callPackage ../development/python-modules/ms-cv { };
 
   msal = callPackage ../development/python-modules/msal { };
@@ -5666,10 +5676,7 @@ in {
 
   pipdate = callPackage ../development/python-modules/pipdate { };
 
-  pip-tools = callPackage ../development/python-modules/pip-tools {
-    git = pkgs.gitMinimal;
-    inherit (pkgs) glibcLocales;
-  };
+  pip-tools = callPackage ../development/python-modules/pip-tools { };
 
   pipx = callPackage ../development/python-modules/pipx { };
 
@@ -7258,6 +7265,8 @@ in {
 
   pytest-doctestplus = callPackage ../development/python-modules/pytest-doctestplus { };
 
+  pytest-dotenv = callPackage ../development/python-modules/pytest-dotenv { };
+
   pytest-env = callPackage ../development/python-modules/pytest-env { };
 
   pytest-error-for-skips = callPackage ../development/python-modules/pytest-error-for-skips { };
@@ -8520,7 +8529,7 @@ in {
 
   simplekml = callPackage ../development/python-modules/simplekml { };
 
-  simple_di = callPackage ../development/python-modules/simple_di { };
+  simple-di = callPackage ../development/python-modules/simple_di { };
 
   simple-rest-client = callPackage ../development/python-modules/simple-rest-client { };
 
@@ -9766,6 +9775,8 @@ in {
   watchgod = callPackage ../development/python-modules/watchgod { };
 
   waterfurnace = callPackage ../development/python-modules/waterfurnace { };
+
+  watermark = callPackage ../development/python-modules/watermark { };
 
   wavedrom = callPackage ../development/python-modules/wavedrom { };
 
