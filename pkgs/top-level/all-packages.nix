@@ -11715,8 +11715,6 @@ with pkgs;
     reproducibleBuild = true;
     profiledCompiler = false;
 
-    enableLTO = !stdenv.isi686;
-
     libcCross = if stdenv.targetPlatform != stdenv.buildPlatform then libcCross else null;
     threadsCross = if stdenv.targetPlatform != stdenv.buildPlatform then threadsCross else null;
 
@@ -11729,8 +11727,6 @@ with pkgs;
     reproducibleBuild = true;
     profiledCompiler = false;
 
-    enableLTO = !stdenv.isi686;
-
     libcCross = if stdenv.targetPlatform != stdenv.buildPlatform then libcCross else null;
     threadsCross = if stdenv.targetPlatform != stdenv.buildPlatform then threadsCross else null;
 
@@ -11742,8 +11738,6 @@ with pkgs;
 
     reproducibleBuild = true;
     profiledCompiler = false;
-
-    enableLTO = !stdenv.isi686;
 
     libcCross = if stdenv.targetPlatform != stdenv.buildPlatform then libcCross else null;
     threadsCross = if stdenv.targetPlatform != stdenv.buildPlatform then threadsCross else null;
@@ -21198,6 +21192,7 @@ with pkgs;
   postgresql11Packages = recurseIntoAttrs postgresql_11.pkgs;
   postgresql12Packages = recurseIntoAttrs postgresql_12.pkgs;
   postgresql13Packages = pkgs.postgresqlPackages;
+  postgresql14Packages = recurseIntoAttrs postgresql_14.pkgs;
 
   postgresql_jdbc = callPackage ../development/java-modules/postgresql_jdbc { };
 
@@ -25651,6 +25646,8 @@ with pkgs;
     withPortAudio = stdenv.isDarwin;
   };
 
+  srain = callPackage ../applications/networking/irc/srain { };
+
   super-productivity = callPackage ../applications/office/super-productivity { };
 
   wlroots = callPackage ../development/libraries/wlroots {
@@ -28348,7 +28345,9 @@ with pkgs;
 
   timg = callPackage ../tools/graphics/timg { };
 
-  timidity = callPackage ../tools/misc/timidity { };
+  timidity = callPackage ../tools/misc/timidity {
+    inherit (darwin.apple_sdk.frameworks) CoreAudio;
+  };
 
   tint2 = callPackage ../applications/misc/tint2 { };
 
