@@ -2,7 +2,7 @@
 # Do not edit!
 
 {
-  version = "2021.11.3";
+  version = "2021.11.4";
   components = {
     "abode" = ps: with ps; [ abodepy ];
     "accuweather" = ps: with ps; [ accuweather ];
@@ -533,7 +533,7 @@
     "mold_indicator" = ps: with ps; [ ];
     "monoprice" = ps: with ps; [ ]; # missing inputs: pymonoprice
     "moon" = ps: with ps; [ ];
-    "motion_blinds" = ps: with ps; [ aiohttp-cors ifaddr ]; # missing inputs: motionblinds
+    "motion_blinds" = ps: with ps; [ aiohttp-cors ifaddr motionblinds ];
     "motioneye" = ps: with ps; [ aiohttp-cors motioneye-client ];
     "mpchc" = ps: with ps; [ ];
     "mpd" = ps: with ps; [ mpd2 ];

@@ -129,6 +129,7 @@
   ./programs/cdemu.nix
   ./programs/chromium.nix
   ./programs/clickshare.nix
+  ./programs/cnping.nix
   ./programs/command-not-found/command-not-found.nix
   ./programs/criu.nix
   ./programs/dconf.nix
@@ -610,6 +611,7 @@
   ./services/misc/uhub.nix
   ./services/misc/weechat.nix
   ./services/misc/xmr-stak.nix
+  ./services/misc/xmrig.nix
   ./services/misc/zigbee2mqtt.nix
   ./services/misc/zoneminder.nix
   ./services/misc/zookeeper.nix
