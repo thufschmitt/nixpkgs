@@ -306,7 +306,7 @@ in
     virtualisation.msize =
       mkOption {
         type = types.ints.positive;
-        default = 16384;
+        default = pkgs.vmTools.default9PMsizeBytes;
         description =
           ''
             The msize (maximum packet size) option passed to 9p file systems, in
@@ -845,7 +845,7 @@ in
         ''-append "$(cat ${config.system.build.toplevel}/kernel-params) init=${config.system.build.toplevel}/init regInfo=${regInfo}/registration ${consoles} $QEMU_KERNEL_PARAMS"''
       ])
       (mkIf cfg.useEFIBoot [
-        "-drive if=pflash,format=raw,unit=0,readonly,file=${efiFirmware}"
+        "-drive if=pflash,format=raw,unit=0,readonly=on,file=${efiFirmware}"
         "-drive if=pflash,format=raw,unit=1,file=$NIX_EFI_VARS"
       ])
       (mkIf (cfg.bios != null) [
