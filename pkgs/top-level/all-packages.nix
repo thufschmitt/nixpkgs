@@ -1841,6 +1841,8 @@ with pkgs;
 
   pacparser = callPackage ../tools/networking/pacparser { };
 
+  parquet-tools = callPackage ../tools/misc/parquet-tools { };
+
   pass = callPackage ../tools/security/pass { };
 
   passphrase2pgp = callPackage ../tools/security/passphrase2pgp { };
@@ -9958,6 +9960,10 @@ with pkgs;
   thc-hydra = callPackage ../tools/security/thc-hydra { };
 
   thc-ipv6 = callPackage ../tools/security/thc-ipv6 { };
+
+  thedesk = callPackage ../applications/misc/thedesk {
+    electron = electron_12;
+  };
 
   theharvester = callPackage ../tools/security/theharvester { };
 
@@ -25771,6 +25777,8 @@ with pkgs;
 
   hyperledger-fabric = callPackage ../tools/misc/hyperledger-fabric { };
 
+  indigenous-desktop = callPackage ../applications/networking/feedreaders/indigenous-desktop { };
+
   jackline = callPackage ../applications/networking/instant-messengers/jackline {
     ocamlPackages = ocaml-ng.ocamlPackages_4_08;
   };
@@ -25794,6 +25802,8 @@ with pkgs;
   pinboard-notes-backup = haskell.lib.compose.justStaticExecutables haskellPackages.pinboard-notes-backup;
 
   pixelnuke = callPackage ../applications/graphics/pixelnuke { };
+
+  pixeluvo = callPackage ../applications/graphics/pixeluvo { };
 
   pmbootstrap = python3Packages.callPackage ../tools/misc/pmbootstrap { };
 
@@ -32363,6 +32373,12 @@ with pkgs;
 
   mame = libsForQt514.callPackage ../misc/emulators/mame {
     inherit (darwin.apple_sdk.frameworks) CoreAudioKit ForceFeedback;
+    # TODO: remove it on mame 0.238
+    stdenv =
+      if stdenv.cc.isClang then
+        overrideCC stdenv clang_6
+      else
+        stdenv;
   };
 
   martyr = callPackage ../development/libraries/martyr { };
