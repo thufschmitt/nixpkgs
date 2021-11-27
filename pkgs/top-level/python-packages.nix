@@ -267,6 +267,8 @@ in {
 
   aiocontextvars = callPackage ../development/python-modules/aiocontextvars { };
 
+  aiocurrencylayer = callPackage ../development/python-modules/aiocurrencylayer { };
+
   aiodiscover = callPackage ../development/python-modules/aiodiscover { };
 
   aiodns = callPackage ../development/python-modules/aiodns { };
@@ -297,9 +299,7 @@ in {
 
   aiohomekit = callPackage ../development/python-modules/aiohomekit { };
 
-  aiohttp = callPackage ../development/python-modules/aiohttp {
-    pytestCheckHook = self.pytestCheckHook_6_1;
-  };
+  aiohttp = callPackage ../development/python-modules/aiohttp { };
 
   aiohttp-cors = callPackage ../development/python-modules/aiohttp-cors { };
 
@@ -968,6 +968,8 @@ in {
   azure-mgmt-servicefabric = callPackage ../development/python-modules/azure-mgmt-servicefabric { };
 
   azure-mgmt-servicefabricmanagedclusters = callPackage ../development/python-modules/azure-mgmt-servicefabricmanagedclusters { };
+
+  azure-mgmt-servicelinker = callPackage ../development/python-modules/azure-mgmt-servicelinker { };
 
   azure-mgmt-signalr = callPackage ../development/python-modules/azure-mgmt-signalr { };
 
@@ -2660,6 +2662,8 @@ in {
     inherit python;
   });
 
+  fastnumbers = callPackage ../development/python-modules/fastnumbers { };
+
   fastpair = callPackage ../development/python-modules/fastpair { };
 
   fastparquet = callPackage ../development/python-modules/fastparquet { };
@@ -2974,6 +2978,8 @@ in {
   future = callPackage ../development/python-modules/future { };
 
   future-fstrings = callPackage ../development/python-modules/future-fstrings { };
+
+  future-typing = callPackage ../development/python-modules/future-typing { };
 
   fuzzyfinder = callPackage ../development/python-modules/fuzzyfinder { };
 
@@ -5638,6 +5644,8 @@ in {
 
   pep257 = callPackage ../development/python-modules/pep257 { };
 
+  pep440 = callPackage ../development/python-modules/pep440 { };
+
   pep517 = callPackage ../development/python-modules/pep517 { };
 
   pep8 = callPackage ../development/python-modules/pep8 { };
@@ -6252,7 +6260,7 @@ in {
   pybullet = callPackage ../development/python-modules/pybullet { };
 
   pycairo = callPackage ../development/python-modules/pycairo {
-    inherit (pkgs) meson;
+    inherit (pkgs.buildPackages) meson;
   };
 
   pycallgraph = callPackage ../development/python-modules/pycallgraph { };
@@ -8559,6 +8567,8 @@ in {
 
   setproctitle = callPackage ../development/python-modules/setproctitle { };
 
+  setupmeta = callPackage ../development/python-modules/setupmeta { };
+
   setuptools-declarative-requirements = callPackage ../development/python-modules/setuptools-declarative-requirements { };
 
   setuptools-git = callPackage ../development/python-modules/setuptools-git { };
@@ -9598,6 +9608,8 @@ in {
 
   typesystem = callPackage ../development/python-modules/typesystem { };
 
+  typical = callPackage ../development/python-modules/typical { };
+
   typing = null;
 
   typing-extensions = callPackage ../development/python-modules/typing-extensions { };
@@ -9922,6 +9934,8 @@ in {
 
   weasyprint = callPackage ../development/python-modules/weasyprint { };
 
+  webargs = callPackage ../development/python-modules/webargs { };
+
   webapp2 = callPackage ../development/python-modules/webapp2 { };
 
   webassets = callPackage ../development/python-modules/webassets { };
@@ -9939,8 +9953,6 @@ in {
   webexteamssdk = callPackage ../development/python-modules/webexteamssdk { };
 
   webhelpers = callPackage ../development/python-modules/webhelpers { };
-
-  webargs = callPackage ../development/python-modules/webargs { };
 
   webob = callPackage ../development/python-modules/webob { };
 

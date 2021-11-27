@@ -1087,6 +1087,8 @@ with pkgs;
 
   nimmm = callPackage ../applications/terminal-emulators/nimmm { };
 
+  notion-app-enhanced = callPackage ../applications/office/notion-app-enhanced { };
+
   pikchr = callPackage ../tools/graphics/pikchr { };
 
   roxterm = callPackage ../applications/terminal-emulators/roxterm { };
@@ -2296,6 +2298,8 @@ with pkgs;
 
   bwm_ng = callPackage ../tools/networking/bwm-ng { };
 
+  bwbasic = callPackage ../development/interpreters/bwbasic { };
+
   byobu = callPackage ../tools/misc/byobu {
     # Choices: [ tmux screen ];
     textual-window-manager = tmux;
@@ -2427,6 +2431,8 @@ with pkgs;
 
   cfdyndns = callPackage ../applications/networking/dyndns/cfdyndns { };
 
+  cfm = callPackage ../applications/misc/cfm { };
+
   charliecloud = callPackage ../applications/virtualization/charliecloud { };
 
   chelf = callPackage ../tools/misc/chelf { };
@@ -2518,6 +2524,8 @@ with pkgs;
   cherrytree = callPackage ../applications/misc/cherrytree { };
 
   chntpw = callPackage ../tools/security/chntpw { };
+
+  chopchop = callPackage ../tools/security/chopchop { };
 
   cliphist = callPackage ../tools/wayland/cliphist { };
 
@@ -3547,6 +3555,8 @@ with pkgs;
 
   ssmsh = callPackage ../tools/admin/ssmsh { };
 
+  stacs = callPackage ../tools/security/stacs { };
+
   stagit = callPackage ../development/tools/stagit { };
 
   starboard = callPackage ../applications/networking/cluster/starboard { };
@@ -3821,6 +3831,8 @@ with pkgs;
   bogofilter = callPackage ../tools/misc/bogofilter { };
 
   bomutils = callPackage ../tools/archivers/bomutils { };
+
+  boofuzz= callPackage ../tools/security/boofuzz { };
 
   bsdbuild = callPackage ../development/tools/misc/bsdbuild { };
 
@@ -4436,7 +4448,7 @@ with pkgs;
 
   debootstrap = callPackage ../tools/misc/debootstrap { };
 
-  debugedit-unstable = callPackage ../development/tools/misc/debugedit { };
+  debugedit = callPackage ../development/tools/misc/debugedit { };
 
   deer = callPackage ../shells/zsh/zsh-deer { };
 
@@ -4639,6 +4651,8 @@ with pkgs;
   drive = callPackage ../applications/networking/drive { };
 
   driftnet = callPackage ../tools/networking/driftnet {};
+
+  driftctl = callPackage ../applications/networking/cluster/driftctl { };
 
   drill = callPackage ../tools/networking/drill {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -5946,7 +5960,7 @@ with pkgs;
   };
 
   graphviz-nox = graphviz.override {
-    xorg = null;
+    withXorg = false;
     libdevil = libdevil-nox;
   };
 
@@ -6694,6 +6708,8 @@ with pkgs;
     plugins = [ ];  # override with the list of desired plugins
   };
   kakouneUtils = callPackage ../applications/editors/kakoune/plugins/kakoune-utils.nix { };
+
+  kaffeine = libsForQt5.callPackage ../applications/video/kaffeine { };
 
   kak-lsp = callPackage ../tools/misc/kak-lsp {
     inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
@@ -9490,6 +9506,8 @@ with pkgs;
 
   slirp4netns = callPackage ../tools/networking/slirp4netns { };
 
+  slowlorust = callPackage ../tools/networking/slowlorust { };
+
   slsnif = callPackage ../tools/misc/slsnif { };
 
   slstatus = callPackage ../applications/misc/slstatus {
@@ -9590,6 +9608,8 @@ with pkgs;
 
   soundkonverter = libsForQt5.soundkonverter;
 
+  soundwireserver = callPackage ../applications/audio/soundwireserver { };
+
   sozu = callPackage ../servers/sozu { };
 
   sparsehash = callPackage ../development/libraries/sparsehash { };
@@ -9609,6 +9629,8 @@ with pkgs;
   };
 
   stdman = callPackage ../data/documentation/stdman { };
+
+  stderred = callPackage ../tools/misc/stderred { };
 
   steck = callPackage ../servers/pinnwand/steck.nix { };
 
@@ -9839,6 +9861,8 @@ with pkgs;
   sx = callPackage ../tools/X11/sx {
     inherit (xorg) xauth xorgserver;
   };
+
+  systemdgenie = libsForQt5.callPackage ../applications/system/systemdgenie { };
 
   t = callPackage ../tools/misc/t { };
 
@@ -12073,7 +12097,7 @@ with pkgs;
 
   pscid = nodePackages.pscid;
 
-  coreboot-toolchain = callPackages ../development/tools/misc/coreboot-toolchain { };
+  coreboot-toolchain = recurseIntoAttrs (callPackage ../development/tools/misc/coreboot-toolchain { });
 
   remarkable-toolchain = callPackage ../development/tools/misc/remarkable/remarkable-toolchain { };
 
@@ -12971,6 +12995,7 @@ with pkgs;
   sbcl_2_1_1 = callPackage ../development/compilers/sbcl/2.1.1.nix {};
   sbcl_2_1_2 = callPackage ../development/compilers/sbcl/2.1.2.nix {};
   sbcl_2_1_9 = callPackage ../development/compilers/sbcl/2.1.9.nix {};
+  sbcl_2_1_10 = callPackage ../development/compilers/sbcl/2.1.10.nix {};
   sbcl = sbcl_2_1_9;
 
   roswell = callPackage ../development/tools/roswell { };
@@ -13865,8 +13890,8 @@ with pkgs;
   inherit (callPackage ../development/tools/alloy {
     jre = jre8; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
   })
-    alloy4
     alloy5
+    alloy6
     alloy;
 
   altair = callPackage ../development/tools/altair-graphql-client { };
@@ -14648,14 +14673,15 @@ with pkgs;
 
   gpuvis = callPackage ../development/tools/misc/gpuvis { };
 
-  gradleGen = callPackage ../development/tools/build-managers/gradle {
-    java = jdk8; # TODO: upgrade https://github.com/NixOS/nixpkgs/pull/89731
+  gradle-packages = import ../development/tools/build-managers/gradle {
+    inherit jdk8 jdk11 jdk17;
   };
-  gradle = res.gradleGen.gradle_latest;
-  gradle_4 = res.gradleGen.gradle_4_10;
-  gradle_5 = res.gradleGen.gradle_5_6;
-  gradle_6 = res.gradleGen.gradle_6_9;
-  gradle_7 = res.gradleGen.gradle_7_3;
+  gradleGen = gradle-packages.gen;
+  gradle_4 = callPackage gradle-packages.gradle_4 { };
+  gradle_5 = callPackage gradle-packages.gradle_5 { };
+  gradle_6 = callPackage gradle-packages.gradle_6 { };
+  gradle_7 = callPackage gradle-packages.gradle_7 { };
+  gradle = gradle_7;
 
   gperf = callPackage ../development/tools/misc/gperf { };
   # 3.1 changed some parameters from int to size_t, leading to mismatches.
@@ -15723,7 +15749,7 @@ with pkgs;
 
   bicpl = callPackage ../development/libraries/science/biology/bicpl { };
 
-  bicgl = callPackage ../development/libraries/science/biology/bicgl { };
+  bicgl = callPackage ../development/libraries/science/biology/bicgl { inherit (darwin.apple_sdk.frameworks) GLUT; };
 
   # TODO(@Ericson2314): Build bionic libc from source
   bionic = if stdenv.hostPlatform.useAndroidPrebuilt
@@ -16106,7 +16132,7 @@ with pkgs;
 
   entt = callPackage ../development/libraries/entt { };
 
-  epoxy = callPackage ../development/libraries/epoxy {};
+  libepoxy = callPackage ../development/libraries/libepoxy {};
 
   libesmtp = callPackage ../development/libraries/libesmtp { };
 
@@ -19184,6 +19210,8 @@ with pkgs;
 
   pyotherside = libsForQt5.callPackage ../development/libraries/pyotherside {};
 
+  plasma-hud = callPackage ../misc/plasma-hud { };
+
   re2 = callPackage ../development/libraries/re2 { };
 
   qbs = libsForQt5.callPackage ../development/tools/build-managers/qbs { };
@@ -21547,6 +21575,8 @@ with pkgs;
 
   squid = callPackage ../servers/squid { };
 
+  duckling-proxy = callPackage ../servers/duckling-proxy { };
+
   sslh = callPackage ../servers/sslh { };
 
   thttpd = callPackage ../servers/http/thttpd { };
@@ -21756,7 +21786,7 @@ with pkgs;
 
   iucode-tool = callPackage ../os-specific/linux/microcode/iucode-tool.nix { };
 
-  inherit (callPackages ../os-specific/linux/apparmor { python = python3; })
+  inherit (callPackages ../os-specific/linux/apparmor { })
     libapparmor apparmor-utils apparmor-bin-utils apparmor-parser apparmor-pam
     apparmor-profiles apparmor-kernel-patches apparmorRulesFromClosure;
 
@@ -21990,6 +22020,8 @@ with pkgs;
   htop = callPackage ../tools/system/htop {
     inherit (darwin) IOKit;
   };
+
+  htop-vim = callPackage ../tools/system/htop/htop-vim.nix { };
 
   btop = callPackage ../tools/system/btop {
     stdenv = gcc11Stdenv;
@@ -22737,6 +22769,10 @@ with pkgs;
   trickster = callPackage ../servers/trickster/trickster.nix {};
 
   trinity = callPackage ../os-specific/linux/trinity { };
+
+  trinsic-cli = callPackage ../tools/admin/trinsic-cli {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   tunctl = callPackage ../os-specific/linux/tunctl { };
 
@@ -23997,6 +24033,8 @@ with pkgs;
 
   arion = callPackage ../applications/virtualization/arion { };
 
+  arkade = callPackage ../applications/networking/cluster/arkade { };
+
   asuka = callPackage ../applications/networking/browsers/asuka {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
@@ -24852,13 +24890,19 @@ with pkgs;
 
   keepass = callPackage ../applications/misc/keepass { };
 
+  keepass-charactercopy = callPackage ../applications/misc/keepass-plugins/charactercopy { };
+
   keepass-keeagent = callPackage ../applications/misc/keepass-plugins/keeagent { };
 
   keepass-keepasshttp = callPackage ../applications/misc/keepass-plugins/keepasshttp { };
 
   keepass-keepassrpc = callPackage ../applications/misc/keepass-plugins/keepassrpc { };
 
+  keepass-keetraytotp = callPackage ../applications/misc/keepass-plugins/keetraytotp { };
+
   keepass-otpkeyprov = callPackage ../applications/misc/keepass-plugins/otpkeyprov { };
+
+  keepass-qrcodeview = callPackage ../applications/misc/keepass-plugins/qrcodeview { };
 
   kerbrute = callPackage ../tools/security/kerbrute { };
 
@@ -26933,6 +26977,7 @@ with pkgs;
     sponsorblock = callPackage ../applications/video/mpv/scripts/sponsorblock.nix {};
     thumbnail = callPackage ../applications/video/mpv/scripts/thumbnail.nix { };
     youtube-quality = callPackage ../applications/video/mpv/scripts/youtube-quality.nix { };
+    cutter = callPackage ../applications/video/mpv/scripts/cutter.nix { };
   };
 
   mrpeach = callPackage ../applications/audio/pd-plugins/mrpeach { };
@@ -27103,8 +27148,6 @@ with pkgs;
   };
 
   yambar = callPackage ../applications/misc/yambar { };
-
-  yambar-wayland = callPackage ../applications/misc/yambar { waylandSupport = true; };
 
   polyphone = libsForQt514.callPackage ../applications/audio/polyphone { };
 
@@ -30892,7 +30935,9 @@ with pkgs;
   inherit (callPackage ../desktops/gnome/extensions { })
     gnomeExtensions
     gnome38Extensions
-    gnome40Extensions;
+    gnome40Extensions
+    gnome41Extensions
+  ;
 
   gnome-connections = callPackage ../desktops/gnome/apps/gnome-connections { };
 
@@ -32009,7 +32054,7 @@ with pkgs;
 
   android-file-transfer = libsForQt5.callPackage ../tools/filesystems/android-file-transfer { };
 
-  antimicroX = libsForQt5.callPackage ../tools/misc/antimicroX { };
+  antimicrox = libsForQt5.callPackage ../tools/misc/antimicrox { };
 
   atari800 = callPackage ../misc/emulators/atari800 { };
 
@@ -32113,6 +32158,8 @@ with pkgs;
   cups-brother-hl3140cw = pkgsi686Linux.callPackage ../misc/cups/drivers/hl3140cw { };
 
   cups-brother-hll2340dw = pkgsi686Linux.callPackage  ../misc/cups/drivers/hll2340dw { };
+
+  cups-brother-hll2350dw = callPackage  ../misc/cups/drivers/hll2350dw { };
 
   cups-drv-rastertosag-gdi = callPackage ../misc/cups/drivers/cups-drv-rastertosag-gdi { };
 
@@ -32347,11 +32394,11 @@ with pkgs;
   # Exceptions are versions that we need to keep to allow upgrades from older NixOS releases
   inherit (callPackage ../applications/networking/cluster/kops {})
     mkKops
-    kops_1_19
     kops_1_20
     kops_1_21
+    kops_1_22
     ;
-  kops = kops_1_21;
+  kops = kops_1_22;
 
   lguf-brightness = callPackage ../misc/lguf-brightness { };
 

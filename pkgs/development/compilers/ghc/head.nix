@@ -21,7 +21,7 @@
 , # LLVM is conceptually a run-time-only depedendency, but for
   # non-x86, we need LLVM to bootstrap later stages, so it becomes a
   # build-time dependency too.
-  buildLlvmPackages, llvmPackages
+  buildTargetLlvmPackages, llvmPackages
 
 , # If enabled, GHC will be built with the GPL-free but slightly slower native
   # bignum backend instead of the faster but GPLed gmp backend.
@@ -37,9 +37,6 @@
 , # Whether to build dynamic libs for the standard library (on the target
   # platform). Static libs are always built.
   enableShared ? !stdenv.targetPlatform.isWindows && !stdenv.targetPlatform.useiOSPrebuilt
-
-, # Whether to build terminfo.
-  enableTerminfo ? !stdenv.targetPlatform.isWindows
 
 , version ? "9.3.20211111"
 , # What flavour to build. An empty string indicates no
@@ -116,18 +113,24 @@ let
     GhcRtsHcOpts += -fPIC
   '' + lib.optionalString targetPlatform.useAndroidPrebuilt ''
     EXTRA_CC_OPTS += -std=gnu99
+  ''
+  # While split sections are now enabled by default in ghc 8.8 for windows,
+  # they seem to lead to `too many sections` errors when building base for
+  # profiling.
+  + lib.optionalString targetPlatform.isWindows ''
+    SplitSections = NO
   '';
 
   # Splicer will pull out correct variations
-  libDeps = platform: lib.optional enableTerminfo ncurses
-    ++ [libffi]
+  libDeps = platform:
+       [libffi ncurses]
     ++ lib.optional (!enableNativeBignum) gmp
     ++ lib.optional (platform.libc != "glibc" && !targetPlatform.isWindows) libiconv
     ++ lib.optional enableDwarf elfutils;
 
   toolsForTarget = [
     pkgsBuildTarget.targetPackages.stdenv.cc
-  ] ++ lib.optional useLLVM buildLlvmPackages.llvm;
+  ] ++ lib.optional useLLVM buildTargetLlvmPackages.llvm;
 
   targetCC = builtins.head toolsForTarget;
 
