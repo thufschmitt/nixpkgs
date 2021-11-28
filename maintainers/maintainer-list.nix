@@ -3084,6 +3084,12 @@
       fingerprint = "85F3 72DF 4AF3 EF13 ED34  72A3 0AAF 2901 E804 0715";
     }];
   };
+  drzoidberg = {
+    email = "jakob@mast3rsoft.com";
+    github = "jakobneufeld";
+    githubId = 24791219;
+    name = "Jakob Neufeld";
+  };
   dschrempf = {
     name = "Dominik Schrempf";
     email = "dominik.schrempf@gmail.com";
@@ -3907,6 +3913,12 @@
     github = "flokli";
     githubId = 183879;
     name = "Florian Klink";
+  };
+  florentc = {
+    email = "florentc@users.noreply.github.com";
+    github = "florentc";
+    githubId = 1149048;
+    name = "Florent Ch.";
   };
   FlorianFranzen = {
     email = "Florian.Franzen@gmail.com";
@@ -5003,6 +5015,12 @@
     github = "imuli";
     githubId = 4085046;
     name = "Imuli";
+  };
+  ineol = {
+    email = "leo.stefanesco@gmail.com";
+    github = "ineol";
+    githubId = 37965;
+    name = "Léo Stefanesco";
   };
   infinisil = {
     email = "contact@infinisil.com";

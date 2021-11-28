@@ -17,8 +17,8 @@
 , wheel
 , opt-einsum
 , backports_weakref
-, tensorflow-estimator_2
-, tensorflow-tensorboard_2
+, tensorflow-estimator
+, tensorflow-tensorboard
 , cudaSupport ? false
 , cudatoolkit
 , cudnn
@@ -42,14 +42,10 @@ assert ! (stdenv.isDarwin && cudaSupport);
 
 let
   packages = import ./binary-hashes.nix;
-  metadataPatch = ./relax-dependencies-metadata.patch;
-  patch = ./relax-dependencies.patch;
 in buildPythonPackage {
   pname = "tensorflow" + lib.optionalString cudaSupport "-gpu";
   inherit (packages) version;
   format = "wheel";
-
-  disabled = pythonAtLeast "3.9";
 
   src = let
     pyVerNoDot = lib.strings.stringAsChars (x: if x == "." then "" else x) python.pythonVersion;
@@ -74,8 +70,8 @@ in buildPythonPackage {
     opt-einsum
     google-pasta
     wrapt
-    tensorflow-estimator_2
-    tensorflow-tensorboard_2
+    tensorflow-estimator
+    tensorflow-tensorboard
     keras-applications
     keras-preprocessing
     h5py
@@ -93,13 +89,18 @@ in buildPythonPackage {
     pushd dist
 
     wheel unpack --dest unpacked ./*.whl
+    rm ./*.whl
     (
       cd unpacked/tensorflow*
-      # relax too strict versions in setup.py
-      patch -p 1 < ${patch}
-      cd *.dist-info
-      # relax too strict versions in *.dist-info/METADATA
-      patch -p 3 < ${metadataPatch}
+      # Adjust dependency requirements:
+      # - Relax gast version requirement that doesn't match what we have packaged
+      # - The purpose of python3Packages.libclang is not clear at the moment and we don't have it packaged yet
+      # - keras and tensorlow-io-gcs-filesystem will be considered as optional for now.
+      sed -i *.dist-info/METADATA \
+        -e "s/Requires-Dist: gast.*/Requires-Dist: gast/" \
+        -e "/Requires-Dist: libclang/d" \
+        -e "/Requires-Dist: keras/d" \
+        -e "/Requires-Dist: tensorflow-io-gcs-filesystem/d"
     )
     wheel pack ./unpacked/tensorflow*
 

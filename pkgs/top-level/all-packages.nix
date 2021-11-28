@@ -337,6 +337,8 @@ with pkgs;
 
   protoc-gen-go-grpc = callPackage ../development/tools/protoc-gen-go-grpc { };
 
+  protoc-gen-go-vtproto = callPackage ../development/tools/protoc-gen-go-vtproto { };
+
   protoc-gen-grpc-web = callPackage ../development/tools/protoc-gen-grpc-web { };
 
   protoc-gen-twirp = callPackage ../development/tools/protoc-gen-twirp { };
@@ -2571,6 +2573,10 @@ with pkgs;
 
   clipster = callPackage ../tools/misc/clipster { };
 
+  clockify = callPackage ../applications/office/clockify {
+    electron = electron_11;
+  };
+
   contrast = callPackage ../applications/accessibility/contrast { };
 
   cplex = callPackage ../applications/science/math/cplex (config.cplex or {});
@@ -3288,7 +3294,9 @@ with pkgs;
 
   medusa = callPackage ../tools/security/medusa { };
 
-  megasync = libsForQt515.callPackage ../applications/misc/megasync { };
+  megasync = libsForQt5.callPackage ../applications/misc/megasync {
+    ffmpeg = ffmpeg-full;
+  };
 
   megacmd = callPackage ../applications/misc/megacmd { };
 
@@ -4453,7 +4461,7 @@ with pkgs;
   deer = callPackage ../shells/zsh/zsh-deer { };
 
   delta = callPackage ../applications/version-management/git-and-tools/delta {
-    inherit (darwin.apple_sdk.frameworks) Security;
+    inherit (darwin.apple_sdk.frameworks) DiskArbitration Foundation Security;
   };
 
   deno = callPackage ../development/web/deno {
@@ -5964,14 +5972,6 @@ with pkgs;
     libdevil = libdevil-nox;
   };
 
-  /* Readded by Michael Raskin. There are programs in the wild
-   * that do want 2.32 but not 2.0 or 2.36. Please give a day's notice for
-   * objections before removal. The feature is libgraph.
-   */
-  graphviz_2_32 = (callPackage ../tools/graphics/graphviz/2.32.nix {
-    inherit (darwin.apple_sdk.frameworks) ApplicationServices;
-  }).overrideAttrs(x: { configureFlags = x.configureFlags ++ ["--with-cgraph=no"];});
-
   grin = callPackage ../tools/text/grin { };
 
   ripgrep = callPackage ../tools/text/ripgrep {
@@ -6320,6 +6320,8 @@ with pkgs;
   http-prompt = callPackage ../tools/networking/http-prompt { };
 
   http-getter = callPackage ../applications/networking/flent/http-getter.nix { };
+
+  httpdirfs = callPackage ../tools/filesystems/httpdirfs { };
 
   httpdump = callPackage ../tools/security/httpdump { };
 
@@ -8826,6 +8828,8 @@ with pkgs;
   pympress = callPackage ../applications/office/pympress { };
 
   pyspread = libsForQt5.callPackage ../applications/office/pyspread { };
+
+  teapot = callPackage ../applications/office/teapot { };
 
   pythonIRClib = pythonPackages.pythonIRClib;
 
@@ -12348,6 +12352,7 @@ with pkgs;
     });
   graalvm11-ce = graalvmCEPackages.graalvm11-ce;
   graalvm17-ce = graalvmCEPackages.graalvm17-ce;
+  buildGraalvmNativeImage = callPackage ../build-support/build-graalvm-native-image { };
 
   inherit (callPackages ../development/compilers/graalvm/enterprise-edition.nix { })
     graalvm8-ee
@@ -15175,6 +15180,8 @@ with pkgs;
 
   rnix-lsp = callPackage ../development/tools/rnix-lsp { };
 
+  rnginline = with python3Packages; toPythonApplication rnginline;
+
   rolespec = callPackage ../development/tools/misc/rolespec { };
 
   rr = callPackage ../development/tools/analysis/rr { };
@@ -16148,9 +16155,8 @@ with pkgs;
 
   faad2 = callPackage ../development/libraries/faad2 { };
 
-  factor-lang = callPackage ../development/compilers/factor-lang {
-    inherit (gnome2) gtkglext;
-  };
+  factor-lang-scope = callPackage ../development/compilers/factor-lang/scope.nix { };
+  factor-lang = factor-lang-scope.interpreter;
 
   far2l = callPackage ../applications/misc/far2l {
     stdenv = if stdenv.cc.isClang then llvmPackages.stdenv else stdenv;
@@ -16193,6 +16199,7 @@ with pkgs;
   ffmpeg-full = callPackage ../development/libraries/ffmpeg-full {
     svt-av1 = if stdenv.isAarch64 then null else svt-av1;
     rav1e = null; # We already have SVT-AV1 for faster encoding
+    rtmpdump = null; # Prefer the built-in RTMP implementation
     # The following need to be fixed on Darwin
     libjack2 = if stdenv.isDarwin then null else libjack2;
     libmodplug = if stdenv.isDarwin then null else libmodplug;
@@ -16353,6 +16360,8 @@ with pkgs;
   gensio = callPackage ../development/libraries/gensio {};
 
   geoclue2 = callPackage ../development/libraries/geoclue {};
+
+  geoclue2-with-demo-agent = geoclue2.override { withDemoAgent = true; };
 
   geocode-glib = callPackage ../development/libraries/geocode-glib {};
 
@@ -18802,7 +18811,7 @@ with pkgs;
   nghttp2 = callPackage ../development/libraries/nghttp2 { };
   libnghttp2 = nghttp2.lib;
 
-  nix-plugins = callPackage ../development/libraries/nix-plugins { nix = nix_2_3; };
+  nix-plugins = callPackage ../development/libraries/nix-plugins { };
 
   nika-fonts = callPackage ../data/fonts/nika-fonts { };
 
@@ -20120,6 +20129,8 @@ with pkgs;
   wildmidi = callPackage ../development/libraries/wildmidi { };
 
   wiredtiger = callPackage ../development/libraries/wiredtiger { };
+
+  wlr-protocols = callPackage ../development/libraries/wlroots/protocols.nix { };
 
   wt = wt4;
   inherit (callPackages ../development/libraries/wt {})
@@ -25667,10 +25678,6 @@ with pkgs;
 
   guardian-agent = callPackage ../tools/networking/guardian-agent { };
 
-  guitone = callPackage ../applications/version-management/guitone {
-    graphviz = graphviz_2_32;
-  };
-
   gv = callPackage ../applications/misc/gv { };
 
   gvisor = callPackage ../applications/virtualization/gvisor {
@@ -30311,10 +30318,16 @@ with pkgs;
 
   methane = callPackage ../games/methane { };
 
-  mindustry = callPackage ../games/mindustry { };
-  mindustry-wayland = callPackage ../games/mindustry { glew = glew-egl; };
+  mindustry = callPackage ../games/mindustry {
+    jdk = adoptopenjdk-hotspot-bin-15;
+  };
+  mindustry-wayland = callPackage ../games/mindustry {
+    jdk = adoptopenjdk-hotspot-bin-15;
+    glew = glew-egl;
+  };
 
   mindustry-server = callPackage ../games/mindustry {
+    jdk = adoptopenjdk-hotspot-bin-15;
     enableClient = false;
     enableServer = true;
   };
@@ -30364,6 +30377,8 @@ with pkgs;
   neverball = callPackage ../games/neverball { };
 
   nexuiz = callPackage ../games/nexuiz { };
+
+  nux = callPackage ../tools/misc/nux { };
 
   ninvaders = callPackage ../games/ninvaders { };
 
@@ -30503,8 +30518,6 @@ with pkgs;
   randtype = callPackage ../games/randtype { };
 
   redeclipse = callPackage ../games/redeclipse { };
-
-  residualvm = callPackage ../games/residualvm { };
 
   rftg = callPackage ../games/rftg { };
 

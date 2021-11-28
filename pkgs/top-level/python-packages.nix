@@ -659,6 +659,8 @@ in {
 
   asyncio-nats-client = callPackage ../development/python-modules/asyncio-nats-client { };
 
+  asyncmy = callPackage ../development/python-modules/asyncmy { };
+
   asyncio-throttle = callPackage ../development/python-modules/asyncio-throttle { };
 
   asyncpg = callPackage ../development/python-modules/asyncpg { };
@@ -3276,6 +3278,8 @@ in {
 
   google-i18n-address = callPackage ../development/python-modules/google-i18n-address { };
 
+  google-nest-sdm = callPackage ../development/python-modules/google-nest-sdm { };
+
   googlemaps = callPackage ../development/python-modules/googlemaps { };
 
   google-pasta = callPackage ../development/python-modules/google-pasta { };
@@ -5841,6 +5845,8 @@ in {
 
   python-glanceclient = callPackage ../development/python-modules/python-glanceclient { };
 
+  python-google-nest = callPackage ../development/python-modules/python-google-nest { };
+
   python-heatclient = callPackage ../development/python-modules/python-heatclient { };
 
   python-ipmi = callPackage ../development/python-modules/python-ipmi { };
@@ -8276,6 +8282,8 @@ in {
 
   rnc2rng = callPackage ../development/python-modules/rnc2rng { };
 
+  rnginline = callPackage ../development/python-modules/rnginline { };
+
   robomachine = callPackage ../development/python-modules/robomachine { };
 
   roboschool = callPackage ../development/python-modules/roboschool {
@@ -9219,15 +9227,14 @@ in {
 
   tensorboardx = callPackage ../development/python-modules/tensorboardx { };
 
-  tensorflow-bin_2 = callPackage ../development/python-modules/tensorflow/bin.nix {
+  tensorflow-bin = callPackage ../development/python-modules/tensorflow/bin.nix {
     cudaSupport = pkgs.config.cudaSupport or false;
     cudatoolkit = pkgs.cudatoolkit_11_0;
     cudnn = pkgs.cudnn_cudatoolkit_11_0;
   };
 
-  tensorflow-bin = self.tensorflow-bin_2;
-
-  tensorflow-build_2 = callPackage ../development/python-modules/tensorflow {
+  tensorflow-build = callPackage ../development/python-modules/tensorflow {
+    inherit (pkgs.darwin) cctools;
     cudaSupport = pkgs.config.cudaSupport or false;
     cudatoolkit = pkgs.cudatoolkit_11_0;
     cudnn = pkgs.cudnn_cudatoolkit_11_0;
@@ -9238,20 +9245,13 @@ in {
     lmdb-core = pkgs.lmdb;
   };
 
-  tensorflow-build = self.tensorflow-build_2;
-
-  tensorflow-estimator_2 = callPackage ../development/python-modules/tensorflow-estimator { };
-
-  tensorflow-estimator = self.tensorflow-estimator_2;
+  tensorflow-estimator = callPackage ../development/python-modules/tensorflow-estimator { };
 
   tensorflow-probability = callPackage ../development/python-modules/tensorflow-probability { };
 
-  tensorflow = self.tensorflow_2;
-  tensorflow_2 = self.tensorflow-build_2;
+  tensorflow = self.tensorflow-build;
 
-  tensorflow-tensorboard_2 = callPackage ../development/python-modules/tensorflow-tensorboard { };
-
-  tensorflow-tensorboard = self.tensorflow-tensorboard_2;
+  tensorflow-tensorboard = callPackage ../development/python-modules/tensorflow-tensorboard { };
 
   tensorflowWithCuda = self.tensorflow.override {
     cudaSupport = true;
@@ -9417,6 +9417,8 @@ in {
   tokenize-rt = toPythonModule (callPackage ../development/python-modules/tokenize-rt { });
 
   tokenlib = callPackage ../development/python-modules/tokenlib { };
+
+  tololib = callPackage ../development/python-modules/tololib { };
 
   toml = callPackage ../development/python-modules/toml { };
 
