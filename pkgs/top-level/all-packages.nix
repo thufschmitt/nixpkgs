@@ -2280,6 +2280,8 @@ with pkgs;
 
   btrfs-progs = callPackage ../tools/filesystems/btrfs-progs { };
 
+  btrfs-snap = callPackage ../tools/filesystems/btrfs-snap { };
+
   btlejack = python3Packages.callPackage ../applications/radio/btlejack { };
 
   btrbk = callPackage ../tools/backup/btrbk {
@@ -12074,7 +12076,15 @@ with pkgs;
   # current default compiler is”, if you bump this:
   haskellPackages = dontRecurseIntoAttrs haskell.packages.ghc8107;
 
-  inherit (haskellPackages) ghc;
+  # haskellPackages.ghc is build->host (it exposes the compiler used to build the
+  # set, similarly to stdenv.cc), but pkgs.ghc should be host->target to be more
+  # consistent with the gcc, gnat, clang etc. derivations
+  #
+  # We use targetPackages.haskellPackages.ghc if available since this also has
+  # the withPackages wrapper available. In the final cross-compiled package set
+  # however, targetPackages won't be populated, so we need to fall back to the
+  # plain, cross-compiled compiler (which is only theoretical at the moment).
+  ghc = targetPackages.haskellPackages.ghc or haskell.compiler.ghc8107;
 
   cabal-install = haskell.lib.compose.justStaticExecutables haskellPackages.cabal-install;
 
@@ -15959,6 +15969,8 @@ with pkgs;
   ctpp2 = callPackage ../development/libraries/ctpp2 { };
 
   ctpl = callPackage ../development/libraries/ctpl { };
+
+  cppe = callPackage ../development/libraries/science/chemistry/cppe { };
 
   cppdb = callPackage ../development/libraries/cppdb { };
 
@@ -25530,6 +25542,8 @@ with pkgs;
 
   lollypop = callPackage ../applications/audio/lollypop { };
 
+  losslessaudiochecker = callPackage ../applications/audio/losslessaudiochecker { };
+
   m32edit = callPackage ../applications/audio/midas/m32edit.nix {};
 
   manim = python3Packages.callPackage ../applications/video/manim {
@@ -29689,8 +29703,6 @@ with pkgs;
   dcrd = callPackage ../applications/blockchains/dcrd { };
   dcrwallet = callPackage ../applications/blockchains/dcrwallet { };
 
-  dero = callPackage ../applications/blockchains/dero { boost = boost165; };
-
   digibyte = libsForQt514.callPackage ../applications/blockchains/digibyte { withGui = true; };
   digibyted = callPackage ../applications/blockchains/digibyte { withGui = false; };
 
@@ -29752,16 +29764,16 @@ with pkgs;
 
   lndmanage = callPackage ../applications/blockchains/lndmanage { };
 
-  monero = callPackage ../applications/blockchains/monero {
+  monero-cli = callPackage ../applications/blockchains/monero-cli {
     inherit (darwin.apple_sdk.frameworks) CoreData IOKit PCSC;
     boost = boost17x;
   };
 
-  oxen = callPackage ../applications/blockchains/oxen {
+  monero-gui = libsForQt5.callPackage ../applications/blockchains/monero-gui {
     boost = boost17x;
   };
 
-  monero-gui = libsForQt5.callPackage ../applications/blockchains/monero-gui {
+  oxen = callPackage ../applications/blockchains/oxen {
     boost = boost17x;
   };
 
@@ -31857,7 +31869,9 @@ with pkgs;
   gap-full = lowPrio (gap.override { packageSet = "full"; });
 
   geogebra = callPackage ../applications/science/math/geogebra { };
-  geogebra6 = callPackage ../applications/science/math/geogebra/geogebra6.nix { };
+  geogebra6 = callPackage ../applications/science/math/geogebra/geogebra6.nix {
+    electron = electron_12;
+   };
 
   maxima = callPackage ../applications/science/math/maxima {
     ecl = null;
@@ -32227,6 +32241,8 @@ with pkgs;
 
   electricsheep = callPackage ../misc/screensavers/electricsheep { };
 
+  aaphoto = callPackage ../tools/graphics/aaphoto {};
+
   flam3 = callPackage ../tools/graphics/flam3 { };
 
   glee = callPackage ../tools/graphics/glee { };
@@ -32433,12 +32449,6 @@ with pkgs;
 
   mame = libsForQt514.callPackage ../misc/emulators/mame {
     inherit (darwin.apple_sdk.frameworks) CoreAudioKit ForceFeedback;
-    # TODO: remove it on mame 0.238
-    stdenv =
-      if stdenv.cc.isClang then
-        overrideCC stdenv clang_6
-      else
-        stdenv;
   };
 
   martyr = callPackage ../development/libraries/martyr { };
