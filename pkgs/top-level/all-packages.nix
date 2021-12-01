@@ -204,6 +204,8 @@ with pkgs;
 
   bacnet-stack = callPackage ../tools/networking/bacnet-stack {};
 
+  bakelite = callPackage ../tools/backup/bakelite { };
+
   breakpad = callPackage ../development/misc/breakpad { };
 
   buf = callPackage ../development/tools/buf { };
@@ -975,6 +977,8 @@ with pkgs;
   metapixel = callPackage ../tools/graphics/metapixel { };
 
   pferd = callPackage ../tools/misc/pferd {};
+
+  qflipper = callPackage ../tools/misc/qflipper { };
 
   quich = callPackage ../tools/misc/quich { } ;
 
@@ -3242,6 +3246,8 @@ with pkgs;
 
   libxnd = callPackage ../development/libraries/libxnd { };
 
+  lifeograph = callPackage ../applications/editors/lifeograph { };
+
   link-grammar = callPackage ../tools/text/link-grammar { };
 
   linuxptp = callPackage ../os-specific/linux/linuxptp { };
@@ -3277,6 +3283,8 @@ with pkgs;
   kaggle = with python3Packages; toPythonApplication kaggle;
 
   lynis = callPackage ../tools/security/lynis { };
+
+  maigret = callPackage ../tools/security/maigret { };
 
   mapcidr = callPackage ../tools/misc/mapcidr { };
 
@@ -5624,9 +5632,7 @@ with pkgs;
 
   git-fast-export = callPackage ../applications/version-management/git-and-tools/fast-export { };
 
-  git-filter-repo = callPackage ../applications/version-management/git-and-tools/git-filter-repo {
-    pythonPackages = python3Packages;
-  };
+  git-filter-repo = with python3Packages; toPythonApplication git-filter-repo;
 
   git-gone = callPackage ../applications/version-management/git-and-tools/git-gone {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -8951,6 +8957,8 @@ with pkgs;
   quickjs = callPackage ../development/interpreters/quickjs { };
 
   quickserve = callPackage ../tools/networking/quickserve { };
+
+  quictls = callPackage ../development/libraries/quictls { };
 
   quicktun = callPackage ../tools/networking/quicktun { };
 
@@ -12466,6 +12474,8 @@ with pkgs;
   kotlin = callPackage ../development/compilers/kotlin { };
   kotlin-native = callPackage ../development/compilers/kotlin/native.nix { };
 
+  kotlin-language-server = callPackage ../development/tools/kotlin-language-server {};
+
   lazarus = callPackage ../development/compilers/fpc/lazarus.nix {
     fpc = fpc;
   };
@@ -13464,8 +13474,6 @@ with pkgs;
 
   ### End of CuboCore
 
-  lush2 = callPackage ../development/interpreters/lush {};
-
   maude = callPackage ../development/interpreters/maude {
     stdenv = if stdenv.cc.isClang then llvmPackages_5.stdenv else stdenv;
   };
@@ -14392,7 +14400,8 @@ with pkgs;
   cvehound = callPackage ../development/tools/analysis/cvehound { };
 
   cvise = python3Packages.callPackage ../development/tools/misc/cvise {
-    inherit (llvmPackages_11) llvm libclang;
+    # cvise keeps up with fresh llvm releases and supports wide version range
+    inherit (llvmPackages_latest) llvm libclang;
   };
 
   cwltool = callPackage ../applications/science/misc/cwltool { };
@@ -18831,6 +18840,10 @@ with pkgs;
   nghttp2 = callPackage ../development/libraries/nghttp2 { };
   libnghttp2 = nghttp2.lib;
 
+  nghttp3 = callPackage ../development/libraries/nghttp3 { };
+
+  ngtcp2 = callPackage ../development/libraries/ngtcp2 { };
+
   nix-plugins = callPackage ../development/libraries/nix-plugins { };
 
   nika-fonts = callPackage ../data/fonts/nika-fonts { };
@@ -21624,7 +21637,9 @@ with pkgs;
 
   syncserver = callPackage ../servers/syncserver { };
 
-  tailscale = callPackage ../servers/tailscale { };
+  tailscale = callPackage ../servers/tailscale {
+    buildGoModule = buildGo117Module;
+  };
 
   thanos = callPackage ../servers/monitoring/thanos { };
 
@@ -21700,6 +21715,8 @@ with pkgs;
   wallabag = callPackage ../servers/web-apps/wallabag { };
 
   webdav = callPackage ../servers/webdav { };
+
+  webdav-server-rs = callPackage ../servers/webdav-server-rs { };
 
   webmetro = callPackage ../servers/webmetro { };
 
@@ -23988,6 +24005,8 @@ with pkgs;
   akira-unstable = callPackage ../applications/graphics/akira { };
 
   alembic = callPackage ../development/libraries/alembic {};
+
+  alfaview = callPackage ../applications/networking/instant-messengers/alfaview { };
 
   alchemy = callPackage ../applications/graphics/alchemy { };
 
@@ -26411,7 +26430,28 @@ with pkgs;
   linkerd_edge = callPackage ../applications/networking/cluster/linkerd/edge.nix { };
   linkerd_stable = linkerd;
 
-  kumactl = callPackage ../applications/networking/cluster/kumactl { };
+  kuma = callPackage ../applications/networking/cluster/kuma { isFull = true; };
+  kuma-experimental = callPackage ../applications/networking/cluster/kuma {
+    isFull = true;
+    enableGateway = true;
+    pname = "kuma-experimental";
+  };
+  kumactl = callPackage ../applications/networking/cluster/kuma {
+    components = ["kumactl"];
+    pname = "kumactl";
+  };
+  kuma-cp = callPackage ../applications/networking/cluster/kuma {
+    components = ["kuma-cp"];
+    pname = "kuma-cp";
+  };
+  kuma-dp = callPackage ../applications/networking/cluster/kuma {
+    components = ["kuma-dp"];
+    pname = "kuma-dp";
+  };
+  kuma-prometheus-sd = callPackage ../applications/networking/cluster/kuma {
+    components = ["kuma-prometheus-sd"];
+    pname = "kuma-prometheus-sd";
+  };
 
   kile-wl = callPackage ../applications/misc/kile-wl { };
 
@@ -31581,7 +31621,7 @@ with pkgs;
   cadical = callPackage ../applications/science/logic/cadical {};
 
   inherit (callPackage ./coq-packages.nix {
-    inherit (ocaml-ng) ocamlPackages_4_05 ocamlPackages_4_09 ocamlPackages_4_10;
+    inherit (ocaml-ng) ocamlPackages_4_05 ocamlPackages_4_09 ocamlPackages_4_10 ocamlPackages_4_12;
   }) mkCoqPackages
     coqPackages_8_5  coq_8_5
     coqPackages_8_6  coq_8_6
@@ -31892,12 +31932,10 @@ with pkgs;
    };
 
   maxima = callPackage ../applications/science/math/maxima {
-    ecl = null;
+    lisp-compiler = sbcl;
   };
   maxima-ecl = maxima.override {
-    inherit ecl;
-    ecl-fasl = true;
-    sbcl = null;
+    lisp-compiler = ecl;
   };
 
   mxnet = callPackage ../applications/science/math/mxnet {
