@@ -33,6 +33,7 @@ in
   ### Deprecated aliases - for backward compatibility
 
 mapAliases ({
+  _0x0 = throw "0x0 upstream is abandoned and no longer exists: https://gitlab.com/somasis/scripts/";
   PPSSPP = ppsspp; # added 2017-10-01
   QmidiNet = qmidinet;  # added 2016-05-22
   accounts-qt = libsForQt5.accounts-qt; # added 2015-12-19
@@ -838,6 +839,7 @@ mapAliases ({
   sdlmame = mame; # added 2019-10-30
   seeks = throw "seeks has been removed from nixpkgs, as it was unmaintained"; # added 2020-06-21
   seg3d = throw "seg3d has been removed from nixpkgs (2019-11-10)";
+  sepolgen = throw "sepolgen was merged into selinux-python"; # added 2021-11-11
   shared_mime_info = shared-mime-info; # added 2018-02-25
   skrooge2 = skrooge; # added 2017-02-18
   sky = throw "sky has been removed from nixpkgs (2020-09-16)";
@@ -1215,6 +1217,8 @@ mapAliases ({
     qqc2-breeze-style
     sddm-kcm systemsettings
     xdg-desktop-portal-kde
+    plasma-phone-components
+    plasma-nano
   ;
   inherit (plasma5Packages.thirdParty)
     plasma-applet-caffeine-plus

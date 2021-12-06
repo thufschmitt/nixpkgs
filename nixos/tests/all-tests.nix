@@ -315,8 +315,8 @@ in
   nginx-sso = handleTest ./nginx-sso.nix {};
   nginx-variants = handleTest ./nginx-variants.nix {};
   nitter = handleTest ./nitter.nix {};
-  nix-serve = handleTest ./nix-ssh-serve.nix {};
-  nix-ssh-serve = handleTest ./nix-ssh-serve.nix {};
+  nix-serve = handleTest ./nix-serve.nix {};
+  nix-serve-ssh = handleTest ./nix-serve-ssh.nix {};
   nixops = handleTest ./nixops/default.nix {};
   nixos-generate-config = handleTest ./nixos-generate-config.nix {};
   node-red = handleTest ./node-red.nix {};
@@ -432,6 +432,7 @@ in
   sslh = handleTest ./sslh.nix {};
   sssd = handleTestOn ["x86_64-linux"] ./sssd.nix {};
   sssd-ldap = handleTestOn ["x86_64-linux"] ./sssd-ldap.nix {};
+  step-ca = handleTestOn ["x86_64-linux"] ./step-ca.nix {};
   strongswan-swanctl = handleTest ./strongswan-swanctl.nix {};
   sudo = handleTest ./sudo.nix {};
   sway = handleTest ./sway.nix {};
