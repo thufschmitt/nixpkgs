@@ -5088,6 +5088,13 @@
       fingerprint = "1412 816B A9FA F62F D051 1975 D3E1 B013 B463 1293";
     }];
   };
+  ius = {
+    email = "j.de.gram@gmail.com";
+    name = "Joerie de Gram";
+    matrix = "@ius:nltrix.net";
+    github = "ius";
+    githubId = 529626;
+  };
   ivan = {
     email = "ivan@ludios.org";
     github = "ivan";
@@ -6217,6 +6224,12 @@
   kkallio = {
     email = "tierpluspluslists@gmail.com";
     name = "Karn Kallio";
+  };
+  klden = {
+    name = "Kenzyme Le";
+    email = "kl@kenzymele.com";
+    github = "klDen";
+    githubId = 5478260;
   };
   klntsky = {
     email = "klntsky@gmail.com";
@@ -8494,6 +8507,12 @@
     github = "nixy";
     githubId = 7588406;
     name = "Andrew R. M.";
+  };
+  nkalupahana = {
+    email = "hello@nisa.la";
+    github = "nkalupahana";
+    githubId = 7347290;
+    name = "Nisala Kalupahana";
   };
   nloomans = {
     email = "noah@nixos.noahloomans.com";

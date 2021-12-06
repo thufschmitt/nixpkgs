@@ -206,6 +206,8 @@ with pkgs;
 
   bakelite = callPackage ../tools/backup/bakelite { };
 
+  beyond-identity = callPackage ../tools/security/beyond-identity {};
+
   breakpad = callPackage ../development/misc/breakpad { };
 
   buf = callPackage ../development/tools/buf { };
@@ -274,6 +276,8 @@ with pkgs;
   conftest = callPackage ../development/tools/conftest { };
 
   corgi = callPackage ../development/tools/corgi { };
+
+  colmena = callPackage ../tools/admin/colmena { };
 
   colobot = callPackage ../games/colobot {};
 
@@ -1703,6 +1707,8 @@ with pkgs;
 
   foxdot = with python3Packages; toPythonApplication foxdot;
 
+  fspy = callPackage ../applications/misc/fspy { };
+
   fxlinuxprintutil = callPackage ../tools/misc/fxlinuxprintutil { };
 
   genann = callPackage ../development/libraries/genann { };
@@ -1712,8 +1718,6 @@ with pkgs;
   };
 
   genymotion = callPackage ../development/mobile/genymotion { };
-
-  gaia = callPackage ../development/libraries/gaia { };
 
   galene = callPackage ../servers/web-apps/galene {
     buildGoModule = buildGo115Module;
@@ -3149,6 +3153,8 @@ with pkgs;
   heatseeker = callPackage ../tools/misc/heatseeker { };
 
   hebcal = callPackage ../tools/misc/hebcal {};
+
+  heroic = callPackage ../games/heroic {};
 
   hexio = callPackage ../development/tools/hexio { };
 
@@ -13495,7 +13501,7 @@ with pkgs;
   python3 = python39;
   pypy = pypy2;
   pypy2 = pypy27;
-  pypy3 = pypy37;
+  pypy3 = pypy38;
 
   # Python interpreter that is build with all modules, including tkinter.
   # These are for compatibility and should not be used inside Nixpkgs.
@@ -13545,7 +13551,7 @@ with pkgs;
   python3Packages = python3.pkgs;
 
   pythonInterpreters = callPackage ./../development/interpreters/python { };
-  inherit (pythonInterpreters) python27 python37 python38 python39 python310 python3Minimal pypy27 pypy37;
+  inherit (pythonInterpreters) python27 python37 python38 python39 python310 python3Minimal pypy27 pypy38;
 
   # Python package sets.
   python27Packages = python27.pkgs;
@@ -14788,6 +14794,8 @@ with pkgs;
   krew = callPackage ../development/tools/krew { };
 
   kube-aws = callPackage ../development/tools/kube-aws { };
+
+  kubeaudit = callPackage ../tools/security/kubeaudit { };
 
   kubectx = callPackage ../development/tools/kubectx { };
 
@@ -22378,6 +22386,8 @@ with pkgs;
   nvmet-cli = callPackage ../os-specific/linux/nvmet-cli { };
 
   system76-firmware = callPackage ../os-specific/linux/firmware/system76-firmware { };
+
+  ocf-resource-agents = callPackage ../os-specific/linux/ocf-resource-agents { };
 
   open-vm-tools = callPackage ../applications/virtualization/open-vm-tools { };
   open-vm-tools-headless = open-vm-tools.override { withX = false; };
@@ -33405,9 +33415,7 @@ with pkgs;
 
   xzoom = callPackage ../tools/X11/xzoom {};
 
-  yabai = callPackage ../os-specific/darwin/yabai {
-    inherit (darwin.apple_sdk.frameworks) Carbon Cocoa ScriptingBridge;
-  };
+  yabai = callPackage ../os-specific/darwin/yabai { };
 
   yabause = libsForQt5.callPackage ../misc/emulators/yabause {
     freeglut = null;
