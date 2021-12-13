@@ -27,7 +27,7 @@
 
 buildPythonPackage rec {
   pname = "ocrmypdf";
-  version = "13.1.0";
+  version = "13.1.1";
 
   src = fetchFromGitHub {
     owner = "jbarlow83";
@@ -39,7 +39,7 @@ buildPythonPackage rec {
     extraPostFetch = ''
       rm "$out/.git_archival.txt"
     '';
-    sha256 = "sha256-K8amHifxaR/tRiQODWVZcOd5nL5zzjd8C7h5whl/HoQ=";
+    sha256 = "sha256-NIh7eTsXQPNhrNWrTMFG7v4SFsicj1B4szEXcp5fXB4=";
   };
 
   SETUPTOOLS_SCM_PRETEND_VERSION = version;
@@ -88,7 +88,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/jbarlow83/OCRmyPDF";
     description = "Adds an OCR text layer to scanned PDF files, allowing them to be searched";
     license = with licenses; [ mpl20 mit ];
-    platforms = platforms.linux;
     maintainers = with maintainers; [ kiwi dotlambda ];
     changelog = "https://github.com/jbarlow83/OCRmyPDF/blob/v${version}/docs/release_notes.rst";
   };
