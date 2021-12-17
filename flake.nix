@@ -106,6 +106,7 @@
           subversion
           vim
           firefox
+          libreoffice
           pandoc;
         myRev = legacyPackages.x86_64-linux.runCommand "my-rev" {} ''
           echo ${self.rev or "Unknown"} > $out
