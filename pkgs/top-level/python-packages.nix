@@ -5826,7 +5826,11 @@ in {
 
   netmap = callPackage ../development/python-modules/netmap { };
 
+  openai = callPackage ../development/python-modules/openai { };
+
   openapi-core = callPackage ../development/python-modules/openapi-core { };
+
+  pandas-stubs = callPackage ../development/python-modules/pandas-stubs { };
 
   parameterizedtestcase = callPackage ../development/python-modules/parameterizedtestcase { };
 
@@ -10396,6 +10400,8 @@ in {
   yalexs = callPackage ../development/python-modules/yalexs { };
 
   yamale = callPackage ../development/python-modules/yamale { };
+
+  yamlfix = callPackage ../development/python-modules/yamlfix { };
 
   yamllint = callPackage ../development/python-modules/yamllint { };
 
