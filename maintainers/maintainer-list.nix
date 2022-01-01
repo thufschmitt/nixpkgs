@@ -1696,6 +1696,12 @@
       fingerprint = "BF4FCB85C69989B4ED95BF938AE74787A4B7C07E";
     }];
   };
+  broke = {
+    email = "broke@in-fucking.space";
+    github = "broke";
+    githubId = 1071610;
+    name = "Gunnar Nitsche";
+  };
   bryanasdev000 = {
     email = "bryanasdev000@gmail.com";
     matrix = "@bryanasdev000:matrix.org";
@@ -2133,6 +2139,12 @@
     github = "ciil";
     githubId = 3956062;
     name = "Simon Lackerbauer";
+  };
+  cirno-999 = {
+    email = "reverene@protonmail.com";
+    github = "cirno-999";
+    githubId = 73712874;
+    name = "cirno-999";
   };
   citadelcore = {
     email = "alex@arctarus.co.uk";
@@ -3388,6 +3400,12 @@
     github = "electrified";
     githubId = 103082;
     name = "Ed Brindley";
+  };
+  elliot = {
+    email = "hack00mind@gmail.com";
+    github = "Eliot00";
+    githubId = 18375468;
+    name = "Elliot Xu";
   };
   elliottvillars = {
     email = "elliottvillars@gmail.com";
@@ -7065,6 +7083,12 @@
       longkeyid = "rsa2048/0x6A37DF9483188492";
       fingerprint = "BA3A 5886 AE6D 526E 20B4  57D6 6A37 DF94 8318 8492";
     }];
+  };
+  lux = {
+    email = "lux@lux.name";
+    githubId = 1208273;
+    matrix = "@lux:ontheblueplanet.com";
+    name = "Lux";
   };
   luz = {
     email = "luz666@daum.net";
@@ -12827,6 +12851,12 @@
     githubId = 2242427;
     name = "Yoann Ono";
   };
+  yana = {
+    email = "yana@riseup.net";
+    github = "alpakido";
+    githubId = 1643293;
+    name = "Yana Timoshenko";
+  };
   yarny = {
     email = "41838844+Yarny0@users.noreply.github.com";
     github = "Yarny0";
@@ -12845,12 +12875,6 @@
     github = "yayayayaka";
     githubId = 73759599;
     name = "Lara A.";
-  };
-  yegortimoshenko = {
-    email = "yegortimoshenko@riseup.net";
-    github = "yegortimoshenko";
-    githubId = 1643293;
-    name = "Yegor Timoshenko";
   };
   yesbox = {
     email = "jesper.geertsen.jonsson@gmail.com";
@@ -13409,6 +13433,12 @@
     matrix = "@zeri:matrix.org";
     github = "zeri42";
     githubId = 68825133;
+  };
+  zombiezen = {
+    name = "Ross Light";
+    email = "ross@zombiezen.com";
+    github = "zombiezen";
+    githubId = 181535;
   };
   zseri = {
     name = "zseri";

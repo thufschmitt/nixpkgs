@@ -288,9 +288,6 @@ with self; with super; {
 
   mock = callPackage ../development/python-modules/mock/2.nix { };
 
-  # Needed here because moinmoin is loaded as a Python library.
-  moinmoin = callPackage ../development/python-modules/moinmoin { };
-
   monosat = disabled super.monosat;
 
   more-itertools = callPackage ../development/python-modules/more-itertools/2.7.nix { };
@@ -437,8 +434,6 @@ with self; with super; {
 
   pydns = callPackage ../development/python-modules/pydns { };
 
-  pydocstyle = callPackage ../development/python-modules/pydocstyle/2.nix { };
-
   pyechonest = callPackage ../development/python-modules/pyechonest { };
 
   pyexcelerator = callPackage ../development/python-modules/pyexcelerator { };
@@ -460,6 +455,8 @@ with self; with super; {
   };
 
   pyhamcrest = callPackage ../development/python-modules/pyhamcrest/1.nix { };
+
+  pyjwt = callPackage ../development/python-modules/pyjwt/1.nix { };
 
   pykickstart = callPackage ../development/python-modules/pykickstart { };
 
