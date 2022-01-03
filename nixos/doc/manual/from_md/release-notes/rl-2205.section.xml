@@ -81,6 +81,14 @@
           <link xlink:href="options.html#opt-services.maddy.enable">services.maddy</link>.
         </para>
       </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://tetrd.app">tetrd</link>, share your
+          internet connection from your device to your PC and vice versa
+          through a USB cable. Available at
+          <link linkend="opt-services.tetrd.enable">services.tetrd</link>.
+        </para>
+      </listitem>
     </itemizedlist>
   </section>
   <section xml:id="sec-release-22.05-incompatibilities">
@@ -280,7 +288,7 @@
       <listitem>
         <para>
           The option
-          <link linkend="opt-services.ssh.enableAskPassword">services.ssh.enableAskPassword</link>
+          <link linkend="opt-programs.ssh.enableAskPassword">programs.ssh.enableAskPassword</link>
           was added, decoupling the setting of
           <literal>SSH_ASKPASS</literal> from
           <literal>services.xserver.enable</literal>. This allows easy
