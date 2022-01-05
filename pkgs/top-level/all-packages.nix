@@ -244,7 +244,7 @@ with pkgs;
 
   castxml = callPackage ../development/tools/castxml {
     inherit (llvmPackages) libclang llvm;
-    inherit (python3Packages) sphinx;
+    inherit (python3.pkgs) sphinx;
   };
 
   catatonit = callPackage ../applications/virtualization/catatonit { };
@@ -908,6 +908,8 @@ with pkgs;
   aether-lv2 = callPackage ../applications/audio/aether-lv2 { };
 
   acme-client = callPackage ../tools/networking/acme-client { stdenv = gccStdenv; };
+
+  adrgen = callPackage ../tools/misc/adrgen { };
 
   adriconf = callPackage ../tools/graphics/adriconf { };
 
@@ -2550,7 +2552,7 @@ with pkgs;
 
   colpack = callPackage ../applications/science/math/colpack { };
 
-  commitizen = callPackage ../applications/version-management/commitizen {};
+  cz-cli = callPackage ../applications/version-management/cz-cli {};
 
   common-licenses = callPackage ../data/misc/common-licenses {};
 
@@ -7099,6 +7101,8 @@ with pkgs;
 
   mathpix-snipping-tool = callPackage ../tools/misc/mathpix-snipping-tool { };
 
+  matrix-conduit = callPackage ../servers/matrix-conduit { };
+
   /* Python 3.8 is currently broken with matrix-synapse since `python38Packages.bleach` fails
     (https://github.com/NixOS/nixpkgs/issues/76093) */
   matrix-synapse = callPackage ../servers/matrix-synapse { /*python3 = python38;*/ };
@@ -8362,6 +8366,8 @@ with pkgs;
     opendylan-bootstrap = opendylan_bin;
   };
 
+  openfec = callPackage ../development/libraries/openfec { };
+
   ophis = python3Packages.callPackage ../development/compilers/ophis { };
 
   opendylan_bin = callPackage ../development/compilers/opendylan/bin.nix { };
@@ -9299,6 +9305,8 @@ with pkgs;
 
   rmtrash = callPackage ../tools/misc/rmtrash { };
 
+  roc-toolkit = callPackage ../development/libraries/audio/roc-toolkit { };
+
   rockbox_utility = libsForQt5.callPackage ../tools/misc/rockbox-utility { };
 
   rosegarden = libsForQt514.callPackage ../applications/audio/rosegarden { };
@@ -9599,6 +9607,8 @@ with pkgs;
   sieve-connect = callPackage ../applications/networking/sieve-connect {};
 
   sigal = callPackage ../applications/misc/sigal { };
+
+  sigi = callPackage ../applications/misc/sigi { };
 
   sigil = libsForQt5.callPackage ../applications/editors/sigil { };
 
@@ -12288,6 +12298,10 @@ with pkgs;
   remarkable-toolchain = callPackage ../development/tools/misc/remarkable/remarkable-toolchain { };
 
   remarkable2-toolchain = callPackage ../development/tools/misc/remarkable/remarkable2-toolchain { };
+
+  t-rex = callPackage ../servers/t-rex {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   tacacsplus = callPackage ../servers/tacacsplus { };
 
@@ -27156,6 +27170,7 @@ with pkgs;
     mopidy-mopify
     mopidy-mpd
     mopidy-mpris
+    mopidy-muse
     mopidy-musicbox-webclient
     mopidy-podcast
     mopidy-scrobbler
@@ -29275,7 +29290,12 @@ with pkgs;
 
   vkeybd = callPackage ../applications/audio/vkeybd {};
 
-  vlc = libsForQt5.callPackage ../applications/video/vlc {};
+  vlc = libsForQt5.callPackage ../applications/video/vlc {
+    # Newest libcaca changed the API, and libvlc didn't catch it. Until next
+    # version arrives, it is safer to disable it.
+    # Upstream thread: https://code.videolan.org/videolan/vlc/-/issues/26389
+    libcaca = null;
+  };
 
   vlc_qt5 = vlc;
 
@@ -30125,7 +30145,7 @@ with pkgs;
 
   wasabiwallet = callPackage ../applications/blockchains/wasabiwallet { };
 
-  wasabibackend = callPackage ../applications/blockchains/wasabibackend { Nuget = dotnetPackages.Nuget; };
+  wasabibackend = callPackage ../applications/blockchains/wasabibackend { };
 
   wownero = callPackage ../applications/blockchains/wownero {
     boost = boost175;
@@ -30740,6 +30760,8 @@ with pkgs;
   openmw-tes3mp = libsForQt5.callPackage ../games/openmw/tes3mp.nix { };
 
   portmod = callPackage ../games/portmod { };
+
+  tlauncher = callPackage ../games/tlauncher {};
 
   tr-patcher = callPackage ../games/tr-patcher { };
 
@@ -33184,9 +33206,7 @@ with pkgs;
 
   fsuae = callPackage ../misc/emulators/fs-uae { };
 
-  fsuae-launcher = callPackage ../misc/emulators/fs-uae-launcher {
-    inherit (python3Packages) pyqt5 setuptools requests;
-  };
+  fsuae-launcher = callPackage ../misc/emulators/fs-uae/launcher.nix { };
 
   putty = callPackage ../applications/networking/remote/putty {
     gtk2 = gtk2-x11;

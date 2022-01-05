@@ -95,6 +95,12 @@
     githubId = 7414843;
     name = "Nicholas von Klitzing";
   };
+  _13r0ck = {
+    name = "Brock Szuszczewicz";
+    email = "bnr@tuta.io";
+    github = "13r0ck";
+    githubId = 58987761;
+  };
   _3noch = {
     email = "eacameron@gmail.com";
     github = "3noch";
@@ -4759,6 +4765,12 @@
     email = "yuya.kusakabe@gmail.com";
     github = "higebu";
     githubId = 733288;
+  };
+  hiljusti = {
+    name = "J.R. Hill";
+    email = "hiljusti@so.dang.cool";
+    github = "hiljusti";
+    githubId = 17605298;
   };
   hinton = {
     email = "t@larkery.com";
