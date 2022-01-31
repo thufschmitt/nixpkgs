@@ -58,6 +58,9 @@ stdenv.mkDerivation rec {
   postPatch = ''
     substituteInPlace src/filemanager/ext.c \
       --replace /bin/rm ${coreutils}/bin/rm
+
+    substituteInPlace misc/ext.d/misc.sh.in \
+      --replace /bin/cat ${coreutils}/bin/cat
   '';
 
   preFixup = ''
@@ -91,6 +94,5 @@ stdenv.mkDerivation rec {
     maintainers = with maintainers; [ sander ];
     platforms = with platforms; linux ++ darwin;
     repositories.git = "https://github.com/MidnightCommander/mc.git";
-    updateWalker = true;
   };
 }

@@ -19,7 +19,7 @@
 
 buildPythonPackage rec {
   pname = "fastapi";
-  version = "0.70.1";
+  version = "0.73.0";
   format = "flit";
 
   disabled = pythonOlder "3.6";
@@ -28,7 +28,7 @@ buildPythonPackage rec {
     owner = "tiangolo";
     repo = pname;
     rev = version;
-    sha256 = "sha256-iwjxcAe8h38PPTTDGCxIJSB7zCS0FA0gOcKUjPpk3yg=";
+    sha256 = "0v3w9b8107b3g2rgy5y58f0p64inhwl1j9cybp627myypwpqx4b7";
   };
 
   propagatedBuildInputs = [
@@ -64,6 +64,8 @@ buildPythonPackage rec {
   disabledTestPaths = [
     # Disabled tests require orjson which requires rust nightly
     "tests/test_default_response_class.py"
+    # Don't test docs and examples
+    "docs_src"
   ];
 
   disabledTests = [

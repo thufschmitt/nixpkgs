@@ -5,6 +5,7 @@
 , pydevccu
 , pytest-aiohttp
 , pytestCheckHook
+, python-slugify
 , pythonOlder
 , voluptuous
 , websocket-client
@@ -13,7 +14,7 @@
 
 buildPythonPackage rec {
   pname = "hahomematic";
-  version = "0.12.0";
+  version = "0.27.2";
   format = "setuptools";
 
   disabled = pythonOlder "3.9";
@@ -22,11 +23,12 @@ buildPythonPackage rec {
     owner = "danielperna84";
     repo = pname;
     rev = version;
-    sha256 = "sha256-A7fuTSrXMTK0oz87htylWKb868+YR7FXYYEC3hSgG7o=";
+    sha256 = "sha256-XBGA3wRZdl8rJ1hLLPPLK7E87Ggoly+kePbLY4x9/ZE=";
   };
 
   propagatedBuildInputs = [
     aiohttp
+    python-slugify
     voluptuous
   ];
 
