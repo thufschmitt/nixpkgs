@@ -69,7 +69,8 @@ let
           set -e
           set +o pipefail
           NIX_CONF_DIR=$PWD \
-            ${cfg.package}/bin/nix show-config ${optionalString (isNixAtLeast "2.3pre") "--no-net --option experimental-features nix-command"} \
+            ${cfg.package}/bin/nix show-config ${optionalString (isNixAtLeast "2.3pre") "--no-net"} \
+              ${optionalString (isNixAtLeast "2.4pre") "--option experimental-features nix-command"} \
             |& sed -e 's/^warning:/error:/' \
             | (! grep '${if cfg.checkConfig then "^error:" else "^error: unknown setting"}')
           set -o pipefail
@@ -88,7 +89,7 @@ let
     requireSignedBinaryCaches = "require-sigs";
     trustedUsers = "trusted-users";
     allowedUsers = "allowed-users";
-    systemFeatures = "system-feature";
+    systemFeatures = "system-features";
   };
 
   semanticConfType = with types;
@@ -679,7 +680,7 @@ in
               (if machine.sshKey != null then machine.sshKey else "-")
               (toString machine.maxJobs)
               (toString machine.speedFactor)
-              (concatStringsSep "," machine.supportedFeatures)
+              (concatStringsSep "," (machine.supportedFeatures ++ machine.mandatoryFeatures))
               (concatStringsSep "," machine.mandatoryFeatures)
             ]
             ++ optional (isNixAtLeast "2.4pre") (if machine.publicHostKey != null then machine.publicHostKey else "-")))
@@ -761,7 +762,7 @@ in
     nix.settings = mkMerge [
       {
         trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
-        substituters = [ "https://cache.nixos.org/" ];
+        substituters = mkAfter [ "https://cache.nixos.org/" ];
 
         system-features = mkDefault (
           [ "nixos-test" "benchmark" "big-parallel" "kvm" ] ++
