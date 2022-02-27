@@ -7824,7 +7824,9 @@ with pkgs;
 
   mdp = callPackage ../applications/misc/mdp { };
 
-  mednafen = callPackage ../applications/emulators/mednafen { };
+  mednafen = callPackage ../applications/emulators/mednafen {
+    inherit (darwin) libiconv;
+  };
 
   mednafen-server = callPackage ../applications/emulators/mednafen/server.nix { };
 
@@ -15015,6 +15017,8 @@ with pkgs;
   gradle_7 = callPackage gradle-packages.gradle_7 { };
   gradle = gradle_7;
 
+  grcov = callPackage ../development/tools/misc/grcov { };
+
   gperf = callPackage ../development/tools/misc/gperf { };
   # 3.1 changed some parameters from int to size_t, leading to mismatches.
   gperf_3_0 = callPackage ../development/tools/misc/gperf/3.0.x.nix { };
@@ -19117,6 +19121,8 @@ with pkgs;
 
   mythes = callPackage ../development/libraries/mythes { };
 
+  nanodbc = callPackage ../development/libraries/nanodbc { };
+
   nanoflann = callPackage ../development/libraries/nanoflann { };
 
   nanomsg = callPackage ../development/libraries/nanomsg { };
@@ -19528,6 +19534,8 @@ with pkgs;
     inherit (python3Packages)
     buildPythonApplication click future six;
   };
+
+  pru = callPackage ../tools/text/pru { };
 
   prospector = callPackage ../development/tools/prospector { };
 
@@ -20048,8 +20056,6 @@ with pkgs;
 
   sope = callPackage ../development/libraries/sope { };
 
-  soprano = callPackage ../development/libraries/soprano { };
-
   sord = callPackage ../development/libraries/sord {};
 
   soundtouch = callPackage ../development/libraries/soundtouch {};
@@ -20498,20 +20504,26 @@ with pkgs;
   wxformbuilder = callPackage ../development/tools/wxformbuilder { };
 
   wxGTK = wxGTK28;
-
   wxGTK30 = wxGTK30-gtk2;
   wxGTK31 = wxGTK31-gtk2;
 
   wxGTK28 = callPackage ../development/libraries/wxwidgets/2.8 { };
 
-  wxGTK29 = callPackage ../development/libraries/wxwidgets/2.9 { };
+  wxGTK29 = callPackage ../development/libraries/wxwidgets/2.9 {
+    inherit (darwin.stubs) setfile;
+    inherit (darwin.apple_sdk.frameworks) AGL Carbon Cocoa Kernel QuickTime;
+  };
 
   wxGTK30-gtk2 = callPackage ../development/libraries/wxwidgets/3.0 {
     withGtk2 = true;
+    inherit (darwin.stubs) setfile;
+    inherit (darwin.apple_sdk.frameworks) AGL Carbon Cocoa Kernel QTKit;
   };
 
   wxGTK30-gtk3 = callPackage ../development/libraries/wxwidgets/3.0 {
     withGtk2 = false;
+    inherit (darwin.stubs) setfile;
+    inherit (darwin.apple_sdk.frameworks) AGL Carbon Cocoa Kernel QTKit;
   };
 
   wxGTK31-gtk2 = callPackage ../development/libraries/wxwidgets/3.1 {
@@ -22047,16 +22059,6 @@ with pkgs;
   virtualenv = with python3Packages; toPythonApplication virtualenv;
 
   virtualenv-clone = with python3Packages; toPythonApplication virtualenv-clone;
-
-  virtuoso6 = callPackage ../servers/sql/virtuoso/6.x.nix {
-    openssl = openssl_1_0_2;
-  };
-
-  virtuoso7 = callPackage ../servers/sql/virtuoso/7.x.nix {
-    openssl = openssl_1_0_2;
-  };
-
-  virtuoso = virtuoso6;
 
   vsftpd = callPackage ../servers/ftp/vsftpd { };
 
@@ -23804,6 +23806,8 @@ with pkgs;
     inherit (plasma5Packages) breeze-icons;
   };
 
+  lxgw-wenkai = callPackage ../data/fonts/lxgw-wenkai { };
+
   maia-icon-theme = libsForQt5.callPackage ../data/icons/maia-icon-theme { };
 
   mailcap = callPackage ../data/misc/mailcap { };
@@ -24088,6 +24092,8 @@ with pkgs;
   solarc-gtk-theme = callPackage ../data/themes/solarc { };
 
   soundfont-fluid = callPackage ../data/soundfonts/fluid { };
+
+  soundfont-ydp-grand = callPackage ../data/soundfonts/ydp-grand { };
 
   spdx-license-list-data = callPackage ../data/misc/spdx-license-list-data { };
 
@@ -29608,11 +29614,11 @@ with pkgs;
   vscode-fhs = vscode.fhs;
   vscode-fhsWithPackages = vscode.fhsWithPackages;
 
-  vscode-with-extensions = callPackage ../applications/editors/vscode/with-extensions.nix {};
+  vscode-with-extensions = callPackage ../applications/editors/vscode/with-extensions.nix { };
 
-  vscode-utils = callPackage ../misc/vscode-extensions/vscode-utils.nix {};
+  vscode-utils = callPackage ../applications/editors/vscode/extensions/vscode-utils.nix { };
 
-  vscode-extensions = recurseIntoAttrs (callPackage ../misc/vscode-extensions {});
+  vscode-extensions = recurseIntoAttrs (callPackage ../applications/editors/vscode/extensions { });
 
   vscodium = callPackage ../applications/editors/vscode/vscodium.nix { };
   vscodium-fhs = vscodium.fhs;
@@ -33177,6 +33183,8 @@ with pkgs;
 
   jstest-gtk = callPackage ../tools/misc/jstest-gtk { };
 
+  k40-whisperer = callPackage ../applications/misc/k40-whisperer { };
+
   keynav = callPackage ../tools/X11/keynav { };
 
   kgx = callPackage ../applications/terminal-emulators/kgx { };
@@ -33993,12 +34001,11 @@ with pkgs;
 
   viewnior = callPackage ../applications/graphics/viewnior { };
 
-
-  vimUtils = callPackage ../misc/vim-plugins/vim-utils.nix {
+  vimUtils = callPackage ../applications/editors/vim/plugins/vim-utils.nix {
     inherit (lua51Packages) hasLuaModule;
   };
 
-  vimPlugins = recurseIntoAttrs (callPackage ../misc/vim-plugins {
+  vimPlugins = recurseIntoAttrs (callPackage ../applications/editors/vim/plugins {
     llvmPackages = llvmPackages_6;
     luaPackages = lua51Packages;
   });
