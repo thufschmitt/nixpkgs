@@ -1210,9 +1210,7 @@ in {
 
   binwalk = callPackage ../development/python-modules/binwalk { };
 
-  binwalk-full = appendToName "full" (self.binwalk.override {
-    visualizationSupport = true;
-  });
+  binwalk-full = self.binwalk.override { visualizationSupport = true; };
 
   biopython = callPackage ../development/python-modules/biopython { };
 
@@ -8594,6 +8592,8 @@ in {
   rdkit = callPackage ../development/python-modules/rdkit { };
 
   re-assert = callPackage ../development/python-modules/re-assert { };
+
+  readability-lxml = callPackage ../development/python-modules/readability-lxml { };
 
   readchar = callPackage ../development/python-modules/readchar { };
 
