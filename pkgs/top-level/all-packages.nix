@@ -26485,6 +26485,8 @@ with pkgs;
 
   i3-resurrect = python3Packages.callPackage ../applications/window-managers/i3/i3-resurrect.nix { };
 
+  i3-swallow = python3Packages.callPackage ../applications/window-managers/i3/swallow.nix { };
+
   i3blocks = callPackage ../applications/window-managers/i3/blocks.nix { };
 
   i3blocks-gaps = callPackage ../applications/window-managers/i3/blocks-gaps.nix { };
@@ -30169,8 +30171,6 @@ with pkgs;
 
   zammad = callPackage ../applications/networking/misc/zammad { };
 
-  zanshin = libsForQt5.callPackage ../applications/office/zanshin { };
-
   zathuraPkgs = callPackage ../applications/misc/zathura { };
   zathura = zathuraPkgs.zathuraWrapper;
 
@@ -32122,6 +32122,8 @@ with pkgs;
 
   lapack-reference = callPackage ../development/libraries/science/math/liblapack { };
   liblapack = lapack-reference;
+
+  libamplsolver = callPackage ../development/libraries/science/math/libamplsolver { };
 
   libbraiding = callPackage ../development/libraries/science/math/libbraiding { };
 
