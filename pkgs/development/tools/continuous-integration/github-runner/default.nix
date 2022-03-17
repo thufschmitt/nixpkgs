@@ -43,13 +43,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "github-runner";
-  version = "2.288.0";
+  version = "2.288.1";
 
   src = fetchFromGitHub {
     owner = "actions";
     repo = "runner";
     rev = "v${version}";
-    hash = "sha256-vl8p+isoK+yczmsMO2YjnmJQW/k0jLgCUbhQa/wG650=";
+    hash = "sha256-bP+6aAKnu6PxN9eppFXsqOSVSGQ6Lv+gEF2MdEz52WE=";
   };
 
   nativeBuildInputs = [
@@ -101,11 +101,6 @@ stdenv.mkDerivation rec {
 
   configurePhase = ''
     runHook preConfigure
-
-    # Set up Nuget dependencies
-    export HOME=$(mktemp -d)
-    export DOTNET_CLI_TELEMETRY_OPTOUT=1
-    export DOTNET_NOLOGO=1
 
     # Never use nuget.org
     nuget sources Disable -Name "nuget.org"

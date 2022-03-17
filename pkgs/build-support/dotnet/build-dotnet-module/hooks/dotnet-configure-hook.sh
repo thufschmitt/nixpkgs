@@ -9,14 +9,11 @@ dotnetConfigureHook() {
         parallelFlag="--disable-parallel"
     fi
 
-    export HOME=$(mktemp -d)
-
     for project in ${projectFile[@]} ${testProjectFile[@]}; do
         env \
             dotnet restore "$project" \
                 -p:ContinuousIntegrationBuild=true \
                 -p:Deterministic=true \
-                -p:RestoreUseStaticGraphEvaluation=true \
                 --source "@nugetSource@/lib" \
                 ${parallelFlag-} \
                 "${dotnetRestoreFlags[@]}" \
