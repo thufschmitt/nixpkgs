@@ -284,6 +284,13 @@
       </listitem>
       <listitem>
         <para>
+          <link xlink:href="https://github.com/Mic92/nix-ld">nix-ld</link>,
+          Run unpatched dynamic binaries on NixOS. Available as
+          <link xlink:href="options.html#opt-programs.nix-ld.enable">programs.nix-ld</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           <link xlink:href="https://timetagger.app">timetagger</link>,
           an open source time-tracker with an intuitive user experience
           and powerful reporting.
@@ -817,6 +824,16 @@
           default scripted network backend by setting
           <literal>networking.useNetworkd</literal> to
           <literal>true</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The <literal>miller</literal> package has been upgraded from
+          5.10.3 to
+          <link xlink:href="https://github.com/johnkerl/miller/releases/tag/v6.2.0">6.2.0</link>.
+          See
+          <link xlink:href="https://miller.readthedocs.io/en/latest/new-in-miller-6">What’s
+          new in Miller 6</link>.
         </para>
       </listitem>
       <listitem>
