@@ -11292,11 +11292,11 @@ with pkgs;
   valum = callPackage ../development/web/valum { };
 
   inherit (callPackages ../servers/varnish { })
-    varnish60 varnish70;
+    varnish60 varnish71;
   inherit (callPackages ../servers/varnish/packages.nix { })
-    varnish60Packages varnish70Packages;
+    varnish60Packages varnish71Packages;
 
-  varnishPackages = varnish70Packages;
+  varnishPackages = varnish71Packages;
   varnish = varnishPackages.varnish;
 
   hitch = callPackage ../servers/hitch { };
@@ -25973,11 +25973,6 @@ with pkgs;
   firefoxPackages = recurseIntoAttrs (callPackage ../applications/networking/browsers/firefox/packages.nix {
     callPackage = newScope {
       inherit (rustPackages) cargo rustc;
-      gnused = gnused_422;
-      inherit (darwin.apple_sdk.frameworks) CoreMedia ExceptionHandling
-                                            Kerberos AVFoundation MediaToolbox
-                                            CoreLocation Foundation AddressBook;
-      inherit (darwin) libobjc;
     };
   });
 
@@ -29462,11 +29457,6 @@ with pkgs;
   thunderbirdPackages = recurseIntoAttrs (callPackage ../applications/networking/mailreaders/thunderbird/packages.nix {
     callPackage = newScope {
       inherit (rustPackages) cargo rustc;
-      gnused = gnused_422;
-      inherit (darwin.apple_sdk.frameworks) CoreMedia ExceptionHandling
-                                            Kerberos AVFoundation MediaToolbox
-                                            CoreLocation Foundation AddressBook;
-      inherit (darwin) libobjc;
     };
   });
 
@@ -33276,6 +33266,8 @@ with pkgs;
   cups-brother-hll2340dw = pkgsi686Linux.callPackage  ../misc/cups/drivers/hll2340dw { };
 
   cups-brother-hll2350dw = callPackage  ../misc/cups/drivers/hll2350dw { };
+
+  cups-brother-mfcl2750dw = callPackage  ../misc/cups/drivers/mfcl2750dw { };
 
   cups-drv-rastertosag-gdi = callPackage ../misc/cups/drivers/cups-drv-rastertosag-gdi { };
 
