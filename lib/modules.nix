@@ -46,6 +46,7 @@ let
     showFiles
     showOption
     unknownModule
+    literalExpression
     ;
 
   showDeclPrefix = loc: decl: prefix:
@@ -140,7 +141,7 @@ rec {
       # this module is used, to avoid conflicts and allow chaining of
       # extendModules.
       internalModule = rec {
-        _file = ./modules.nix;
+        _file = "lib/modules.nix";
 
         key = _file;
 
@@ -153,8 +154,91 @@ rec {
             # a `_module.args.pkgs = import (fetchTarball { ... }) {}` won't
             # start a download when `pkgs` wasn't evaluated.
             type = types.lazyAttrsOf types.raw;
-            internal = true;
-            description = "Arguments passed to each module.";
+            # Only render documentation once at the root of the option tree,
+            # not for all individual submodules.
+            internal = prefix != [];
+            # TODO: Change the type of this option to a submodule with a
+            # freeformType, so that individual arguments can be documented
+            # separately
+            description = ''
+              Additional arguments passed to each module in addition to ones
+              like <literal>lib</literal>, <literal>config</literal>,
+              and <literal>pkgs</literal>, <literal>modulesPath</literal>.
+              </para>
+              <para>
+              This option is also available to all submodules. Submodules do not
+              inherit args from their parent module, nor do they provide args to
+              their parent module or sibling submodules. The sole exception to
+              this is the argument <literal>name</literal> which is provided by
+              parent modules to a submodule and contains the attribute name
+              the submodule is bound to, or a unique generated name if it is
+              not bound to an attribute.
+              </para>
+              <para>
+              Some arguments are already passed by default, of which the
+              following <emphasis>cannot</emphasis> be changed with this option:
+              <itemizedlist>
+               <listitem>
+                <para>
+                 <varname>lib</varname>: The nixpkgs library.
+                </para>
+               </listitem>
+               <listitem>
+                <para>
+                 <varname>config</varname>: The results of all options after merging the values from all modules together.
+                </para>
+               </listitem>
+               <listitem>
+                <para>
+                 <varname>options</varname>: The options declared in all modules.
+                </para>
+               </listitem>
+               <listitem>
+                <para>
+                 <varname>specialArgs</varname>: The <literal>specialArgs</literal> argument passed to <literal>evalModules</literal>.
+                </para>
+               </listitem>
+               <listitem>
+                <para>
+                 All attributes of <varname>specialArgs</varname>
+                </para>
+                <para>
+                 Whereas option values can generally depend on other option values
+                 thanks to laziness, this does not apply to <literal>imports</literal>, which
+                 must be computed statically before anything else.
+                </para>
+                <para>
+                 For this reason, callers of the module system can provide <literal>specialArgs</literal>
+                 which are available during import resolution.
+                </para>
+                <para>
+                 For NixOS, <literal>specialArgs</literal> includes
+                 <varname>modulesPath</varname>, which allows you to import
+                 extra modules from the nixpkgs package tree without having to
+                 somehow make the module aware of the location of the
+                 <literal>nixpkgs</literal> or NixOS directories.
+              <programlisting>
+              { modulesPath, ... }: {
+                imports = [
+                  (modulesPath + "/profiles/minimal.nix")
+                ];
+              }
+              </programlisting>
+                </para>
+               </listitem>
+              </itemizedlist>
+              </para>
+              <para>
+              For NixOS, the default value for this option includes at least this argument:
+              <itemizedlist>
+               <listitem>
+                <para>
+                 <varname>pkgs</varname>: The nixpkgs package set according to
+                 the <option>nixpkgs.pkgs</option> option.
+                </para>
+               </listitem>
+              </itemizedlist>
+            '';
           };
 
           _module.check = mkOption {
@@ -609,17 +693,9 @@ rec {
         throw "The option `${showOption loc}' in `${opt._file}' is already declared in ${showFiles res.declarations}."
       else
         let
-          /* Add the modules of the current option to the list of modules
-             already collected.  The options attribute except either a list of
-             submodules or a submodule. For each submodule, we add the file of the
-             current option declaration as the file use for the submodule.  If the
-             submodule defines any filename, then we ignore the enclosing option file. */
-          options' = toList opt.options.options;
-
           getSubModules = opt.options.type.getSubModules or null;
           submodules =
             if getSubModules != null then map (setDefaultModuleLocation opt._file) getSubModules ++ res.options
-            else if opt.options ? options then map (coerceOption opt._file) options' ++ res.options
             else res.options;
         in opt.options // res //
           { declarations = res.declarations ++ [opt._file];
@@ -802,27 +878,13 @@ rec {
       compare = a: b: (a.priority or 1000) < (b.priority or 1000);
     in sort compare defs';
 
+  # This calls substSubModules, whose entire purpose is only to ensure that
+  # option declarations in submodules have accurate position information.
+  # TODO: Merge this into mergeOptionDecls
   fixupOptionType = loc: opt:
-    let
-      options = opt.options or
-        (throw "Option `${showOption loc}' has type optionSet but has no option attribute, in ${showFiles opt.declarations}.");
-
-      # Hack for backward compatibility: convert options of type
-      # optionSet to options of type submodule.  FIXME: remove
-      # eventually.
-      f = tp:
-        if tp.name == "option set" || tp.name == "submodule" then
-          throw "The option ${showOption loc} uses submodules without a wrapping type, in ${showFiles opt.declarations}."
-        else if (tp.functor.wrapped.name or null) == "optionSet" then
-          if tp.name == "attrsOf" then types.attrsOf (types.submodule options)
-          else if tp.name == "listOf" then types.listOf  (types.submodule options)
-          else if tp.name == "nullOr" then types.nullOr  (types.submodule options)
-          else tp
-        else tp;
-    in
-      if opt.type.getSubModules or null == null
-      then opt // { type = f (opt.type or types.unspecified); }
-      else opt // { type = opt.type.substSubModules opt.options; options = []; };
+    if opt.type.getSubModules or null == null
+    then opt // { type = opt.type or types.unspecified; }
+    else opt // { type = opt.type.substSubModules opt.options; options = []; };
 
 
   /* Properties. */

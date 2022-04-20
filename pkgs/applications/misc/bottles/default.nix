@@ -20,8 +20,8 @@ let
 in
 python3Packages.buildPythonApplication rec {
   pname = "bottles";
-  version = "2022.3.14-trento-3";
-  sha256 = "0wdqj9l69a9pnray2zcfgl2yw0hmrh23njbgwgqccimch014ckdq";
+  version = "2022.4.14-trento";
+  sha256 = "0kjc1w8x4d6g2lx8x8isa2vnwacyjlh9lldf14wn4b118hsw85zs";
   # Note: Update via pkgs/applications/misc/bottles/update.py
   # mostly copypasted from pkgs/applications/networking/instant-messengers/telegram/tdesktop/update.py
 
