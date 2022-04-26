@@ -4790,8 +4790,6 @@ with pkgs;
   code-browser-gtk2 = callPackage ../applications/editors/code-browser { withGtk2 = true; };
   code-browser-gtk = callPackage ../applications/editors/code-browser { withGtk3 = true; };
 
-  c14 = callPackage ../applications/networking/c14 { };
-
   certstrap = callPackage ../tools/security/certstrap { };
 
   cfssl = callPackage ../tools/security/cfssl { };
@@ -17917,6 +17915,8 @@ with pkgs;
 
   jansson = callPackage ../development/libraries/jansson { };
 
+  jarowinkler-cpp = callPackage ../development/libraries/jarowinkler-cpp { };
+
   jasper = callPackage ../development/libraries/jasper { };
 
   jbig2dec = callPackage ../development/libraries/jbig2dec { };
@@ -20210,6 +20210,8 @@ with pkgs;
 
   rapidcheck = callPackage ../development/libraries/rapidcheck {};
 
+  rapidfuzz-cpp = callPackage ../development/libraries/rapidfuzz-cpp { };
+
   rapidjson = callPackage ../development/libraries/rapidjson {};
 
   rapidxml = callPackage ../development/libraries/rapidxml {};
@@ -20726,6 +20728,8 @@ with pkgs;
   talloc = callPackage ../development/libraries/talloc { };
 
   tagparser = callPackage ../development/libraries/tagparser { };
+
+  taskflow = callPackage ../development/libraries/taskflow { };
 
   tclap = callPackage ../development/libraries/tclap {};
 
