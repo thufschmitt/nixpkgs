@@ -344,6 +344,8 @@ in {
 
   aiolifx-effects = callPackage ../development/python-modules/aiolifx-effects { };
 
+  aiolimiter = callPackage ../development/python-modules/aiolimiter { };
+
   aiolip = callPackage ../development/python-modules/aiolip { };
 
   aiolyric = callPackage ../development/python-modules/aiolyric { };
@@ -3268,6 +3270,8 @@ in {
 
   gbulb = callPackage ../development/python-modules/gbulb { };
 
+  gcal-sync = callPackage ../development/python-modules/gcal-sync { };
+
   gcovr = callPackage ../development/python-modules/gcovr { };
 
   gcsfs = callPackage ../development/python-modules/gcsfs { };
@@ -4147,6 +4151,8 @@ in {
   insegel = callPackage ../development/python-modules/insegel { };
 
   installer = callPackage ../development/python-modules/installer { };
+
+  insteon-frontend-home-assistant = callPackage ../development/python-modules/insteon-frontend-home-assistant { };
 
   intake = callPackage ../development/python-modules/intake { };
 
@@ -5162,6 +5168,8 @@ in {
   MDP = callPackage ../development/python-modules/mdp { };
 
   measurement = callPackage ../development/python-modules/measurement { };
+
+  meater-python = callPackage ../development/python-modules/meater-python { };
 
   mecab-python3 = callPackage ../development/python-modules/mecab-python3 { };
 
@@ -7695,6 +7703,8 @@ in {
 
   py-radix = callPackage ../development/python-modules/py-radix { };
 
+  pyrainbird = callPackage ../development/python-modules/pyrainbird { };
+
   pyramid_beaker = callPackage ../development/python-modules/pyramid_beaker { };
 
   pyramid = callPackage ../development/python-modules/pyramid { };
@@ -8815,6 +8825,8 @@ in {
 
   rainbowstream = callPackage ../development/python-modules/rainbowstream { };
 
+  raincloudy = callPackage ../development/python-modules/raincloudy { };
+
   ramlfications = callPackage ../development/python-modules/ramlfications { };
 
   random2 = callPackage ../development/python-modules/random2 { };
@@ -9484,7 +9496,9 @@ in {
 
   skytemple-icons = callPackage ../development/python-modules/skytemple-icons { };
 
-  skytemple-rust = callPackage ../development/python-modules/skytemple-rust { };
+  skytemple-rust = callPackage ../development/python-modules/skytemple-rust {
+    inherit (pkgs.darwin.apple_sdk.frameworks) Foundation;
+  };
 
   skytemple-ssb-debugger = callPackage ../development/python-modules/skytemple-ssb-debugger { };
 
