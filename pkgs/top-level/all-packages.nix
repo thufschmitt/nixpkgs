@@ -750,7 +750,9 @@ with pkgs;
 
   installShellFiles = callPackage ../build-support/install-shell-files {};
 
-  lazydocker = callPackage ../tools/misc/lazydocker { };
+  lazydocker = callPackage ../tools/misc/lazydocker {
+    buildGoModule = buildGo118Module;
+  };
 
   ld-is-cc-hook = makeSetupHook { name = "ld-is-cc-hook"; }
     ../build-support/setup-hooks/ld-is-cc-hook.sh;
@@ -997,6 +999,7 @@ with pkgs;
 
   arc_unpacker = callPackage ../tools/archivers/arc_unpacker {
     boost = boost16x; # checkPhase fails with Boost 1.77
+    stdenv = if stdenv.cc.isGNU then gcc10Stdenv else stdenv;
   };
 
   adminer = callPackage ../servers/adminer { };
@@ -1998,7 +2001,9 @@ with pkgs;
 
   bonnmotion = callPackage ../development/tools/misc/bonnmotion { };
 
-  bonnie = callPackage ../tools/filesystems/bonnie { };
+  bonnie = callPackage ../tools/filesystems/bonnie {
+    stdenv = if stdenv.cc.isGNU then gcc10Stdenv else stdenv;
+  };
 
   botamusique = callPackage ../tools/audio/botamusique { };
 
@@ -2560,17 +2565,6 @@ with pkgs;
 
   axel = callPackage ../tools/networking/axel {
     libssl = openssl;
-  };
-
-  axoloti = callPackage ../applications/audio/axoloti {
-    gcc-arm-embedded = pkgsCross.arm-embedded.buildPackages.gcc;
-    binutils-arm-embedded = pkgsCross.arm-embedded.buildPackages.binutils;
-    jdk = jdk8; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
-  };
-  dfu-util-axoloti = callPackage ../applications/audio/axoloti/dfu-util.nix { };
-  libusb1-axoloti = callPackage ../applications/audio/axoloti/libusb1.nix {
-    inherit (darwin) libobjc;
-    inherit (darwin.apple_sdk.frameworks) IOKit;
   };
 
   b3sum = callPackage ../tools/security/b3sum {};
@@ -5212,8 +5206,6 @@ with pkgs;
 
   wgetpaste = callPackage ../tools/text/wgetpaste { };
 
-  dirmngr = callPackage ../tools/security/dirmngr { };
-
   dismap = callPackage ../tools/security/dismap { };
 
   dirvish  = callPackage ../tools/backup/dirvish { };
@@ -6161,7 +6153,9 @@ with pkgs;
 
   gfbgraph = callPackage ../development/libraries/gfbgraph { };
 
-  gfold = callPackage ../applications/version-management/git-and-tools/gfold { };
+  gfold = callPackage ../applications/version-management/git-and-tools/gfold {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   ggobi = callPackage ../tools/graphics/ggobi { };
 
@@ -16829,7 +16823,9 @@ with pkgs;
 
   classads = callPackage ../development/libraries/classads { };
 
-  clfft = callPackage ../development/libraries/clfft { };
+  clfft = callPackage ../development/libraries/clfft {
+    stdenv = if stdenv.cc.isGNU then gcc10Stdenv else stdenv;
+  };
 
   clipp  = callPackage ../development/libraries/clipp { };
 
@@ -16881,8 +16877,6 @@ with pkgs;
   cosmopolitan = callPackage ../development/libraries/cosmopolitan { };
 
   python-cosmopolitan = callPackage ../development/interpreters/python-cosmopolitan { };
-
-  ctl = callPackage ../development/libraries/ctl { };
 
   ctpp2 = callPackage ../development/libraries/ctpp2 { };
 
