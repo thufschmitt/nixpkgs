@@ -5431,7 +5431,7 @@ with pkgs;
 
   schildichat-desktop = callPackage ../applications/networking/instant-messengers/schildichat/schildichat-desktop.nix {
     inherit (darwin.apple_sdk.frameworks) Security AppKit CoreServices;
-    electron = electron_15;
+    electron = electron_17;
   };
   schildichat-desktop-wayland = writeScriptBin "schildichat-desktop" ''
     #!/bin/sh
@@ -10281,7 +10281,7 @@ with pkgs;
   silc_server = callPackage ../servers/silc-server { };
 
   sile = callPackage ../tools/typesetting/sile {
-    lua = lua5_4;
+    lua = lua5_3;
   };
 
   silver-searcher = callPackage ../tools/text/silver-searcher { };
@@ -20116,9 +20116,9 @@ with pkgs;
 
   prime-server = callPackage ../development/libraries/prime-server { };
 
-  primecount = callPackage ../development/libraries/science/math/primecount { };
+  primecount = callPackage ../applications/science/math/primecount { };
 
-  primesieve = callPackage ../development/libraries/science/math/primesieve { };
+  primesieve = callPackage ../applications/science/math/primesieve { };
 
   prison = callPackage ../development/libraries/prison { };
 
@@ -34911,6 +34911,8 @@ with pkgs;
   x2x = callPackage ../tools/X11/x2x { };
 
   xboxdrv = callPackage ../misc/drivers/xboxdrv { };
+
+  xivlauncher = callPackage ../games/xivlauncher { };
 
   xortool = python3Packages.callPackage ../tools/security/xortool { };
 
