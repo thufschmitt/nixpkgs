@@ -2,7 +2,7 @@
 # Do not edit!
 
 {
-  version = "2022.5.4";
+  version = "2022.5.5";
   components = {
     "abode" = ps: with ps; [
       abodepy
@@ -2340,7 +2340,8 @@
       py17track
     ];
     "sharkiq" = ps: with ps; [
-    ]; # missing inputs: sharkiq
+      sharkiq
+    ];
     "shell_command" = ps: with ps; [
     ];
     "shelly" = ps: with ps; [
@@ -2440,7 +2441,7 @@
       paho-mqtt
     ];
     "snmp" = ps: with ps; [
-      pysnmplib
+      pysnmp
     ];
     "solaredge" = ps: with ps; [
       solaredge
@@ -2540,7 +2541,8 @@
       statsd
     ];
     "steam_online" = ps: with ps; [
-    ]; # missing inputs: steamodd
+      steamodd
+    ];
     "steamist" = ps: with ps; [
       aiohttp-cors
       aiosteamist
@@ -3617,6 +3619,7 @@
     "sentry"
     "senz"
     "seventeentrack"
+    "sharkiq"
     "shell_command"
     "shelly"
     "shopping_list"
@@ -3661,6 +3664,7 @@
     "startca"
     "statistics"
     "statsd"
+    "steam_online"
     "steamist"
     "stookalert"
     "stream"
