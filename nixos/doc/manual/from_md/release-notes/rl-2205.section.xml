@@ -1,9 +1,5 @@
 <section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="sec-release-22.05">
   <title>Release 22.05 (“Quokka”, 2022.05/??)</title>
-  <para>
-    In addition to numerous new and upgraded packages, this release has
-    the following highlights:
-  </para>
   <itemizedlist spacing="compact">
     <listitem>
       <para>
@@ -14,6 +10,10 @@
   </itemizedlist>
   <section xml:id="sec-release-22.05-highlights">
     <title>Highlights</title>
+    <para>
+      In addition to numerous new and upgraded packages, this release
+      has the following highlights:
+    </para>
     <itemizedlist>
       <listitem>
         <para>
@@ -229,6 +229,14 @@
           <link xlink:href="https://snowflake.torproject.org/">snowflake-proxy</link>,
           a system to defeat internet censorship. Available as
           <link xlink:href="options.html#opt-services.snowflake-proxy.enable">services.snowflake-proxy</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://github.com/fleaz/r53-ddns">r53-ddns</link>,
+          a small tool to run your own DDNS service via AWS Route53.
+          Available as
+          <link xlink:href="options.html#opt-services.r53-ddns.enable">services.r53-ddns</link>.
         </para>
       </listitem>
       <listitem>
@@ -573,6 +581,15 @@
           <literal>libcontainer</literal> based software such as Podman
           and Skopeo which assumes they have ownership over
           <literal>/etc/containers</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>lib.systems.supported</literal> has been removed, as
+          it was overengineered for determining the systems to support
+          in the nixpkgs flake. The list of systems exposed by the
+          nixpkgs flake can now be accessed as
+          <literal>lib.systems.flakeExposed</literal>.
         </para>
       </listitem>
       <listitem>
@@ -1643,6 +1660,19 @@
         <para>
           The <literal>vpnc</literal> package has been changed to use
           GnuTLS instead of OpenSSL by default for licensing reasons.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The default version of <literal>nextcloud</literal> is
+          <emphasis role="strong">nextcloud24</emphasis>. Please note
+          that it’s <emphasis role="strong">not</emphasis> possible to
+          upgrade <literal>nextcloud</literal> across multiple major
+          versions! This means it’s e.g. not possible to upgrade from
+          <literal>nextcloud22</literal> to
+          <literal>nextcloud24</literal> in a single deploy and most
+          <literal>21.11</literal> users will have to upgrade to
+          <literal>nextcloud23</literal> first.
         </para>
       </listitem>
       <listitem>

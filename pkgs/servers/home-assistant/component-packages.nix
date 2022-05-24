@@ -118,9 +118,9 @@
       androidtv
       pure-python-adb
     ]
-    ++ adb-shell.extras-require.async
-    ++ androidtv.extras-require.async
-    ++ pure-python-adb.extras-require.async;
+    ++ adb-shell.optional-dependencies.async
+    ++ androidtv.optional-dependencies.async
+    ++ pure-python-adb.optional-dependencies.async;
     "anel_pwrctrl" = ps: with ps; [
     ]; # missing inputs: anel_pwrctrl-homeassistant
     "anthemav" = ps: with ps; [
@@ -279,7 +279,7 @@
     "bluetooth_le_tracker" = ps: with ps; [
       pygatt
     ]
-    ++ pygatt.extras-require.GATTTOOL;
+    ++ pygatt.optional-dependencies.GATTTOOL;
     "bluetooth_tracker" = ps: with ps; [
       bt-proximity
       pybluez
@@ -1449,7 +1449,8 @@
     "logi_circle" = ps: with ps; [
       aiohttp-cors
       ha-ffmpeg
-    ]; # missing inputs: logi_circle
+      logi-circle
+    ];
     "london_air" = ps: with ps; [
     ];
     "london_underground" = ps: with ps; [
@@ -2272,9 +2273,9 @@
       wakeonlan
       zeroconf
     ]
-    ++ samsungctl.extras-require.websocket
-    ++ samsungtvws.extras-require.async
-    ++ samsungtvws.extras-require.encrypted;
+    ++ samsungctl.optional-dependencies.websocket
+    ++ samsungtvws.optional-dependencies.async
+    ++ samsungtvws.optional-dependencies.encrypted;
     "satel_integra" = ps: with ps; [
     ]; # missing inputs: satel_integra
     "scene" = ps: with ps; [
@@ -2387,7 +2388,7 @@
     "skybeacon" = ps: with ps; [
       pygatt
     ]
-    ++ pygatt.extras-require.GATTTOOL;
+    ++ pygatt.optional-dependencies.GATTTOOL;
     "skybell" = ps: with ps; [
       skybellpy
     ];
@@ -2768,7 +2769,7 @@
     "tradfri" = ps: with ps; [
       pytradfri
     ]
-    ++ pytradfri.extras-require.async;
+    ++ pytradfri.optional-dependencies.async;
     "trafikverket_ferry" = ps: with ps; [
       pytrafikverket
     ];
@@ -3453,6 +3454,7 @@
     "logbook"
     "logentries"
     "logger"
+    "logi_circle"
     "london_air"
     "lookin"
     "lovelace"

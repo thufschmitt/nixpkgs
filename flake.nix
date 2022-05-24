@@ -18,9 +18,7 @@
 
       lib = import ./lib;
 
-      systems = lib.systems.supported.hydra;
-
-      forAllSystems = f: lib.genAttrs systems (system: f system);
+      forAllSystems = f: lib.genAttrs lib.systems.flakeExposed (system: f system);
 
       legacyPackages = forAllSystems (system: import ./. { inherit system; config.contentAddressedByDefault = true; });
 
