@@ -1,4 +1,5 @@
-{ lib
+{ stdenv
+, lib
 , billiard
 , boto3
 , buildPythonPackage
@@ -24,14 +25,14 @@
 
 buildPythonPackage rec {
   pname = "celery";
-  version = "5.2.6";
+  version = "5.2.7";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-0TmMrfMPV2Jms0Nw4o6IAwbsVfektjB1SbCunBVmNIE=";
+    hash = "sha256-+vvYKTTTD4oAT4Ho96Bi4xQToj1ES+juMyZVORWVjG0=";
   };
 
   propagatedBuildInputs = [
@@ -57,11 +58,6 @@ buildPythonPackage rec {
     pytestCheckHook
   ];
 
-  postPatch = ''
-    substituteInPlace requirements/default.txt \
-      --replace "setuptools>=59.1.1,<59.7.0" "setuptools"
-  '';
-
   disabledTestPaths = [
     # test_eventlet touches network
     "t/unit/concurrency/test_eventlet.py"
@@ -84,6 +80,7 @@ buildPythonPackage rec {
   };
 
   meta = with lib; {
+    broken = stdenv.isDarwin;
     description = "Distributed task queue";
     homepage = "https://github.com/celery/celery/";
     license = licenses.bsd3;
