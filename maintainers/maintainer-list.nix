@@ -9093,6 +9093,12 @@
     githubId = 3747396;
     name = "Nathan Isom";
   };
+  necrophcodr = {
+    email = "nc@scalehost.eu";
+    github = "necrophcodr";
+    githubId = 575887;
+    name = "Steffen Rytter Postas";
+  };
   neilmayhew = {
     email = "nix@neil.mayhew.name";
     github = "neilmayhew";
@@ -11476,6 +11482,12 @@
     github = "scode";
     githubId = 59476;
     name = "Peter Schuller";
+  };
+  scoder12 = {
+    name = "Spencer Pogorzelski";
+    email = "34356756+Scoder12@users.noreply.github.com";
+    github = "scoder12";
+    githubId = 34356756;
   };
   scolobb = {
     email = "sivanov@colimite.fr";
@@ -14783,5 +14795,11 @@
     name = "Jinnah Ali-Clarke";
     github = "jali-clarke";
     githubId = 17733984;
+  };
+  npatsakula = {
+    email = "nikita.patsakula@gmail.com";
+    name = "Patsakula Nikita";
+    github = "npatsakula";
+    githubId = 23001619;
   };
 }
