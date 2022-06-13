@@ -675,6 +675,8 @@ in {
 
   asgiref = callPackage ../development/python-modules/asgiref { };
 
+  asks = callPackage ../development/python-modules/asks { };
+
   asmog = callPackage ../development/python-modules/asmog { };
 
   asn1 = callPackage ../development/python-modules/asn1 { };
@@ -2066,6 +2068,8 @@ in {
   daemonize = callPackage ../development/python-modules/daemonize { };
 
   daemonocle = callPackage ../development/python-modules/daemonocle { };
+
+  dalle-mini = callPackage ../development/python-modules/dalle-mini { };
 
   daphne = callPackage ../development/python-modules/daphne { };
 
@@ -4743,6 +4747,8 @@ in {
 
   kmapper = callPackage ../development/python-modules/kmapper { };
 
+  kml2geojson = callPackage ../development/python-modules/kml2geojson { };
+
   kmsxx = toPythonModule (pkgs.kmsxx.override {
     withPython = true;
   });
@@ -6439,6 +6445,8 @@ in {
 
   openapi-core = callPackage ../development/python-modules/openapi-core { };
 
+  overly = callPackage ../development/python-modules/overly { };
+
   pandas-stubs = callPackage ../development/python-modules/pandas-stubs { };
 
   parameterizedtestcase = callPackage ../development/python-modules/parameterizedtestcase { };
@@ -6551,6 +6559,8 @@ in {
   pyatag = callPackage ../development/python-modules/pyatag { };
 
   pyatome = callPackage ../development/python-modules/pyatome { };
+
+  pycketcasts = callPackage ../development/python-modules/pycketcasts { };
 
   pycontrol4 = callPackage ../development/python-modules/pycontrol4 { };
 
@@ -9258,6 +9268,10 @@ in {
 
   rlp = callPackage ../development/python-modules/rlp { };
 
+  rmcl = callPackage ../development/python-modules/rmcl { };
+
+  rmrl = callPackage ../development/python-modules/rmrl { };
+
   rnc2rng = callPackage ../development/python-modules/rnc2rng { };
 
   rnginline = callPackage ../development/python-modules/rnginline { };
@@ -9423,6 +9437,8 @@ in {
   sanic-routing = callPackage ../development/python-modules/sanic-routing { };
 
   sanic-testing = callPackage ../development/python-modules/sanic-testing { };
+
+  sansio-multipart = callPackage ../development/python-modules/sansio-multipart { };
 
   sarif-om = callPackage ../development/python-modules/sarif-om { };
 
@@ -10800,6 +10816,8 @@ in {
 
   ukrainealarm = callPackage ../development/python-modules/ukrainealarm { };
 
+  ultraheat-api = callPackage ../development/python-modules/ultraheat-api { };
+
   umalqurra = callPackage ../development/python-modules/umalqurra { };
 
   umap-learn = callPackage ../development/python-modules/umap-learn { };
@@ -11036,6 +11054,8 @@ in {
 
   vpk = callPackage ../development/python-modules/vpk { };
 
+  vqgan-jax = callPackage ../development/python-modules/vqgan-jax { };
+
   vsts = callPackage ../development/python-modules/vsts { };
 
   vsts-cd-manager = callPackage ../development/python-modules/vsts-cd-manager { };
@@ -11207,6 +11227,8 @@ in {
   winacl = callPackage ../development/python-modules/winacl { };
 
   winsspi = callPackage ../development/python-modules/winsspi { };
+
+  wktutils = callPackage ../development/python-modules/wktutils { };
 
   wled = callPackage ../development/python-modules/wled { };
 
