@@ -4550,6 +4550,8 @@ in {
 
   json-schema-for-humans = callPackage ../development/python-modules/json-schema-for-humans { };
 
+  json-stream = callPackage ../development/python-modules/json-stream { };
+
   jsonnet = buildPythonPackage { inherit (pkgs.jsonnet) name src; };
 
   jsonpatch = callPackage ../development/python-modules/jsonpatch { };
@@ -6472,6 +6474,8 @@ in {
   pi1wire = callPackage ../development/python-modules/pi1wire { };
 
   piccata = callPackage ../development/python-modules/piccata { };
+
+  pick = callPackage ../development/python-modules/pick { };
 
   pickleshare = callPackage ../development/python-modules/pickleshare { };
 
