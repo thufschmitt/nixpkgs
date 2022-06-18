@@ -3860,6 +3860,8 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
+  jwt-hack = callPackage ../tools/security/jwt-hack { } ;
+
   kapacitor = callPackage ../servers/monitoring/kapacitor { };
 
   kaldi = callPackage ../tools/audio/kaldi { };
@@ -6049,6 +6051,10 @@ with pkgs;
   fprintd-tod = callPackage ../tools/security/fprintd/tod.nix { };
 
   ferdi = callPackage ../applications/networking/instant-messengers/ferdi {
+    mkFranzDerivation = callPackage ../applications/networking/instant-messengers/franz/generic.nix { };
+  };
+
+  ferdium = callPackage ../applications/networking/instant-messengers/ferdium {
     mkFranzDerivation = callPackage ../applications/networking/instant-messengers/franz/generic.nix { };
   };
 
@@ -15865,8 +15871,6 @@ with pkgs;
 
   kubespy = callPackage ../applications/networking/cluster/kubespy { };
 
-  kubicorn = callPackage ../development/tools/kubicorn {  };
-
   kubie = callPackage ../development/tools/kubie {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
@@ -22170,7 +22174,9 @@ with pkgs;
     modules = [ nginxModules.rtmp nginxModules.dav nginxModules.moreheaders nginxModules.shibboleth ];
   };
 
-  libmodsecurity = callPackage ../tools/security/libmodsecurity { };
+  libmodsecurity = callPackage ../tools/security/libmodsecurity {
+    autoreconfHook = buildPackages.autoreconfHook269;
+  };
 
   ngircd = callPackage ../servers/irc/ngircd { };
 
@@ -24167,6 +24173,8 @@ with pkgs;
   andagii = callPackage ../data/fonts/andagii { };
 
   andika = callPackage ../data/fonts/andika { };
+
+  androguard = with python3.pkgs; toPythonApplication androguard;
 
   android-udev-rules = callPackage ../os-specific/linux/android-udev-rules { };
 
@@ -29046,8 +29054,6 @@ with pkgs;
   phrasendrescher = callPackage ../tools/security/phrasendrescher { };
 
   phrase-cli = callPackage ../tools/misc/phrase-cli { };
-
-  phraseapp-client = callPackage ../tools/misc/phraseapp-client { };
 
   pianobar = callPackage ../applications/audio/pianobar { };
 
