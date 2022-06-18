@@ -6423,7 +6423,7 @@ in {
 
   pg8000 = callPackage ../development/python-modules/pg8000 { };
 
-  pgcli = callPackage ../development/tools/database/pgcli { };
+  pgcli = callPackage ../development/python-modules/pgcli { };
 
   pglast = callPackage ../development/python-modules/pglast { };
 
@@ -9478,6 +9478,8 @@ in {
 
   schiene = callPackage ../development/python-modules/schiene { };
 
+  schwifty = callPackage ../development/python-modules/schwifty { };
+
   scikit-bio = callPackage ../development/python-modules/scikit-bio { };
 
   scikit-build = callPackage ../development/python-modules/scikit-build { };
@@ -10765,6 +10767,8 @@ in {
   types-protobuf = callPackage ../development/python-modules/types-protobuf { };
 
   types-pytz = callPackage ../development/python-modules/types-pytz { };
+
+  types-pyyaml = callPackage ../development/python-modules/types-pyyaml { };
 
   types-redis = callPackage ../development/python-modules/types-redis { };
 
