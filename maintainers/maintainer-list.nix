@@ -3518,7 +3518,7 @@
     githubId = 424946;
     name = "James Earl Douglas";
   };
-  earvstedt = {
+  erikarvstedt = {
     email = "erik.arvstedt@gmail.com";
     matrix = "@erikarvstedt:matrix.org";
     github = "erikarvstedt";
@@ -6003,6 +6003,12 @@
     githubId = 2502736;
     name = "James Hillyerd";
   };
+  jiegec = {
+    name = "Jiajie Chen";
+    email = "c@jia.je";
+    github = "jiegec";
+    githubId = 6127678;
+  };
   jiehong = {
     email = "nixos@majiehong.com";
     github = "Jiehong";
@@ -6519,6 +6525,12 @@
     github = "sofuture";
     githubId = 66669;
     name = "Jeff Zellner";
+  };
+  k3a = {
+    email = "git+nix@catmail.app";
+    name = "Mario Hros";
+    github = "k3a";
+    githubId = 966992;
   };
   k4leg = {
     name = "k4leg";
