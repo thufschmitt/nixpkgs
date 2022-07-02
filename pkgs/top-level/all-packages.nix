@@ -257,6 +257,10 @@ with pkgs;
 
   activate-linux = callPackage ../applications/misc/activate-linux { };
 
+  arti = callPackage ../tools/security/arti {
+    inherit (darwin.apple_sdk.frameworks) CoreServices;
+  };
+
   authy = callPackage ../applications/misc/authy { };
 
   authz0 = callPackage ../tools/security/authz0 { };
@@ -2264,6 +2268,8 @@ with pkgs;
 
   deltachat-cursed = callPackage ../applications/networking/instant-messengers/deltachat-cursed { };
 
+  delayarchitect = callPackage ../applications/audio/delayarchitect { };
+
   deltachat-desktop = callPackage ../applications/networking/instant-messengers/deltachat-desktop {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
@@ -2579,8 +2585,6 @@ with pkgs;
   gopass-summon-provider = callPackage ../tools/security/gopass/summon.nix {
     buildGoModule = buildGo118Module;
   };
-
-  gosca = callPackage ../development/tools/gosca { };
 
   gosh = callPackage ../tools/security/gosh { };
 
@@ -4365,6 +4369,8 @@ with pkgs;
   rare = python3Packages.callPackage ../games/rare { };
 
   reg = callPackage ../tools/virtualization/reg { };
+
+  rex = callPackage ../tools/system/rex { };
 
   river = callPackage ../applications/window-managers/river { };
 
@@ -9451,6 +9457,8 @@ with pkgs;
   pulumi-bin = callPackage ../tools/admin/pulumi { };
 
   p0f = callPackage ../tools/security/p0f { };
+
+  pngloss = callPackage ../tools/graphics/pngloss { };
 
   pngout = callPackage ../tools/graphics/pngout { };
 
@@ -16382,6 +16390,10 @@ with pkgs;
 
   reviewdog = callPackage ../development/tools/misc/reviewdog { };
 
+  revive = callPackage ../development/tools/revive {
+    buildGoModule = buildGo118Module;
+  };
+
   rman = callPackage ../development/tools/misc/rman { };
 
   rnix-lsp = callPackage ../development/tools/rnix-lsp { };
@@ -16683,6 +16695,10 @@ with pkgs;
   };
 
   java-language-server = callPackage ../development/tools/java/java-language-server { };
+
+  jprofiler = callPackage ../development/tools/java/jprofiler {
+    jdk = jdk11;
+  };
 
   jhiccup = callPackage ../development/tools/java/jhiccup { };
 
@@ -23898,8 +23914,6 @@ with pkgs;
 
   gomodifytags = callPackage ../development/tools/gomodifytags { };
 
-  go-langserver = callPackage ../development/tools/go-langserver { };
-
   gopls = callPackage ../development/tools/gopls {
     buildGoModule = buildGo118Module;
   };
@@ -28242,6 +28256,8 @@ with pkgs;
     libsoundio = null;
     portaudio = null;
   };
+
+  lokinet = callPackage ../applications/networking/p2p/lokinet { };
 
   losslesscut-bin = callPackage ../applications/video/losslesscut-bin { };
 
