@@ -4054,6 +4054,8 @@ with pkgs;
 
   lifeograph = callPackage ../applications/editors/lifeograph { };
 
+  limitcpu = callPackage ../tools/misc/limitcpu { };
+
   link-grammar = callPackage ../tools/text/link-grammar { };
 
   linuxptp = callPackage ../os-specific/linux/linuxptp { };
@@ -4982,6 +4984,8 @@ with pkgs;
   libskk = callPackage ../development/libraries/libskk {
     inherit (gnome) gnome-common;
   };
+
+  m17-cxx-demod = callPackage ../applications/radio/m17-cxx-demod { };
 
   m17n_db = callPackage ../tools/inputmethods/m17n-db { };
 
@@ -23353,6 +23357,8 @@ with pkgs;
   fscryptctl = callPackage ../os-specific/linux/fscryptctl { };
   # unstable until the first 1.x release
   fscrypt-experimental = callPackage ../os-specific/linux/fscrypt { };
+
+  fsverity-utils = callPackage ../os-specific/linux/fsverity-utils { };
 
   fwanalyzer = callPackage ../tools/filesystems/fwanalyzer { };
 
