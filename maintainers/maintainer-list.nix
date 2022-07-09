@@ -6705,6 +6705,12 @@
     githubId = 845652;
     name = "Kier Davis";
   };
+  kilimnik = {
+    email = "mail@kilimnik.de";
+    github = "killercup";
+    githubId = 5883283;
+    name = "Daniel Kilimnik";
+  };
   killercup = {
     email = "killercup@gmail.com";
     github = "killercup";
@@ -7206,10 +7212,14 @@
     name = "Daniel Kuehn";
   };
   leo60228 = {
-    email = "iakornfeld@gmail.com";
+    email = "leo@60228.dev";
+    matrix = "@leo60228:matrix.org";
     github = "leo60228";
     githubId = 8355305;
     name = "leo60228";
+    keys = [{
+      fingerprint = "5BE4 98D5 1C24 2CCD C21A  4604 AC6F 4BA0 78E6 7833";
+    }];
   };
   leona = {
     email = "nix@leona.is";
@@ -12648,6 +12658,7 @@
     github = "thiagokokada";
     githubId = 844343;
     name = "Thiago K. Okada";
+    matrix = "@k0kada:matrix.org";
   };
   thibaultlemaire = {
     email = "thibault.lemaire@protonmail.com";

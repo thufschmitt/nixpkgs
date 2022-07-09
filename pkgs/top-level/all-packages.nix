@@ -472,6 +472,10 @@ with pkgs;
 
   protoc-gen-grpc-web = callPackage ../development/tools/protoc-gen-grpc-web { };
 
+  protoc-gen-connect-go = callPackage ../development/tools/protoc-gen-connect-go {
+    buildGoModule = buildGo118Module;
+  };
+
   protoc-gen-twirp = callPackage ../development/tools/protoc-gen-twirp { };
 
   protoc-gen-twirp_php = callPackage ../development/tools/protoc-gen-twirp_php { };
@@ -776,6 +780,8 @@ with pkgs;
   fetchipfs = import ../build-support/fetchipfs {
     inherit curl stdenv;
   };
+
+  fetchit = callPackage ../applications/networking/cluster/fetchit { };
 
   fetchzip = callPackage ../build-support/fetchzip { }
     // {
@@ -4595,21 +4601,17 @@ with pkgs;
   arpoison = callPackage ../tools/networking/arpoison { };
 
   asciidoc = callPackage ../tools/typesetting/asciidoc {
-    inherit (python3.pkgs) matplotlib numpy aafigure recursivePthLoader;
+    inherit (python3.pkgs) pygments matplotlib numpy aafigure recursivePthLoader;
+    texlive = texlive.combine { inherit (texlive) scheme-minimal dvipng; };
+    w3m = w3m-batch;
     enableStandardFeatures = false;
   };
 
   asciidoc-full = asciidoc.override {
-    inherit (python3.pkgs) pygments;
-    texlive = texlive.combine { inherit (texlive) scheme-minimal dvipng; };
-    w3m = w3m-batch;
     enableStandardFeatures = true;
   };
 
   asciidoc-full-with-plugins = asciidoc.override {
-    inherit (python3.pkgs) pygments;
-    texlive = texlive.combine { inherit (texlive) scheme-minimal dvipng; };
-    w3m = w3m-batch;
     enableStandardFeatures = true;
     enableExtraPlugins = true;
   };
@@ -4861,6 +4863,8 @@ with pkgs;
   circus = callPackage ../tools/networking/circus { };
 
   citrix_workspace = citrix_workspace_22_05_0;
+
+  cirrus-cli = callPackage ../development/tools/continuous-integration/cirrus-cli { };
 
   inherit (callPackage ../applications/networking/remote/citrix-workspace { })
     citrix_workspace_21_01_0
@@ -11975,6 +11979,8 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Foundation IOBluetooth;
   };
 
+  wipefreespace = callPackage ../tools/filesystems/wipefreespace {};
+
   woeusb = callPackage ../tools/misc/woeusb { };
 
   woeusb-ng = callPackage ../tools/misc/woeusb-ng { };
@@ -12231,6 +12237,8 @@ with pkgs;
   zplug = callPackage ../shells/zsh/zplug { };
 
   zinit = callPackage ../shells/zsh/zinit {} ;
+
+  zint = qt6Packages.callPackage ../development/libraries/zint { };
 
   zs-apc-spdu-ctl = callPackage ../tools/networking/zs-apc-spdu-ctl { };
 
@@ -15177,7 +15185,8 @@ with pkgs;
     electron_15
     electron_16
     electron_17
-    electron_18;
+    electron_18
+    electron_19;
 
   autobuild = callPackage ../development/tools/misc/autobuild { };
 
@@ -15514,20 +15523,27 @@ with pkgs;
 
   ctmg = callPackage ../tools/security/ctmg { };
 
-  cmake = libsForQt5.callPackage ../development/tools/build-managers/cmake {
+  cmake = callPackage ../development/tools/build-managers/cmake {
     inherit (darwin.apple_sdk.frameworks) SystemConfiguration;
+    inherit (libsForQt5) qtbase wrapQtAppsHook;
   };
 
-  cmakeMinimal = libsForQt5.callPackage ../development/tools/build-managers/cmake {
+  cmakeMinimal = callPackage ../development/tools/build-managers/cmake {
     isBootstrap = true;
+    qtbase = null;
+    wrapQtAppsHook = null;
     # There is no SystemConfiguration in bootstrapTools, so this version gets
     # patched to remove that dependency.
     SystemConfiguration = null;
   };
 
-  cmakeCurses = cmake.override { useNcurses = true; };
+  cmakeCurses = cmake.override {
+    uiToolkits = [ "ncurses" ];
+  };
 
-  cmakeWithGui = cmakeCurses.override { withQt5 = true; };
+  cmakeWithGui = cmake.override {
+    uiToolkits = [ "ncurses" "qt5" ];
+  };
 
   cmake-format = python3Packages.callPackage ../development/tools/cmake-format { };
 
@@ -20929,6 +20945,9 @@ with pkgs;
     s6-networking-man-pages = callPackage ../data/documentation/s6-networking-man-pages {
       inherit buildManPages;
     };
+    s6-portable-utils-man-pages = callPackage ../data/documentation/s6-portable-utils-man-pages {
+      inherit buildManPages;
+    };
 
     mdevd = callPackage ../os-specific/linux/mdevd { };
     nsss = callPackage ../development/libraries/nsss { };
@@ -21028,23 +21047,6 @@ with pkgs;
   };
 
   sphinx = with python3Packages; toPythonApplication sphinx;
-
-  # A variation of sphinx that is only suitable for offline use as it excludes
-  # pyopenssl, which is broken on aarch64-darwin.
-  # https://github.com/NixOS/nixpkgs/issues/175875
-  sphinx_offline =
-    if !(stdenv.buildPlatform.isDarwin && stdenv.buildPlatform.isAarch64)
-    then sphinx
-    else
-      sphinx.override (o: {
-        requests = pkgsBuildTarget.python3Packages.requests.override (o: {
-          urllib3 = pkgsBuildTarget.python3Packages.urllib3.overrideAttrs (o: {
-            # urllib3 adds the optional pyopenssl to propagatedBuildInputs
-            # pkgs/development/python-modules/urllib3/default.nix
-            propagatedBuildInputs = [];
-          });
-        });
-      });
 
   sphinx-autobuild = with python3Packages; toPythonApplication sphinx-autobuild;
 
@@ -21927,6 +21929,8 @@ with pkgs;
     mod_wsgi3 = callPackage ../servers/http/apache-modules/mod_wsgi { python = python3; };
 
     mod_itk = callPackage ../servers/http/apache-modules/mod_itk { };
+
+    mod_mbtiles = callPackage ../servers/http/apache-modules/mod_mbtiles { };
 
     php = pkgs.php.override { inherit apacheHttpd; };
 
@@ -23437,7 +23441,7 @@ with pkgs;
 
     # latest 6.8 mysteriously fails to parse '@headings single':
     #   https://lists.gnu.org/archive/html/bug-texinfo/2021-09/msg00011.html
-    texinfo = texinfo6_7;
+    texinfo = buildPackages.texinfo6_7;
   };
 
   gpm-ncurses = gpm.override { inherit ncurses; };
@@ -25289,6 +25293,8 @@ with pkgs;
 
   s6-networking-man-pages = skawarePackages.s6-networking-man-pages;
 
+  s6-portable-utils-man-pages = skawarePackages.s6-portable-utils-man-pages;
+
   scientifica = callPackage ../data/fonts/scientifica { };
 
   siji = callPackage ../data/fonts/siji
@@ -25844,6 +25850,8 @@ with pkgs;
   bleachbit = callPackage ../applications/misc/bleachbit { };
 
   blender = callPackage  ../applications/misc/blender {
+    # LLVM 11 crashes when compiling GHOST_SystemCocoa.mm
+    stdenv = if stdenv.isDarwin then llvmPackages_10.stdenv else stdenv;
     inherit (darwin.apple_sdk.frameworks) Cocoa CoreGraphics ForceFeedback OpenAL OpenGL;
   };
 
@@ -25988,6 +25996,8 @@ with pkgs;
   };
 
   bookworm = callPackage ../applications/office/bookworm { };
+
+  bookletimposer = callPackage ../applications/office/bookletimposer { };
 
   boops = callPackage ../applications/audio/boops { };
 
@@ -29207,6 +29217,11 @@ with pkgs;
 
   openscad = libsForQt5.callPackage ../applications/graphics/openscad {};
 
+  open-stage-control = callPackage ../applications/audio/open-stage-control {
+    electron = electron_15;
+    nodejs = nodejs-16_x;
+  };
+
   opentimestamps-client = python3Packages.callPackage ../tools/misc/opentimestamps-client {};
 
   opentoonz = let
@@ -29777,7 +29792,9 @@ with pkgs;
 
   rdup = callPackage ../tools/backup/rdup { };
 
-  reaper = callPackage ../applications/audio/reaper { };
+  reaper = callPackage ../applications/audio/reaper {
+    jackLibrary = libjack2; # Another option is "pipewire.jack".
+  };
 
   recapp = callPackage ../applications/video/recapp { };
 
@@ -32484,6 +32501,8 @@ with pkgs;
 
   openmw-tes3mp = libsForQt5.callPackage ../games/openmw/tes3mp.nix { };
 
+  opensoldat = callPackage ../games/opensoldat { };
+
   portmod = callPackage ../games/portmod { };
 
   tetrio-desktop = callPackage ../games/tetrio-desktop { };
@@ -32701,8 +32720,6 @@ with pkgs;
   # solarus and solarus-quest-editor must use the same version of Qt.
   solarus = libsForQt5.callPackage ../games/solarus { };
   solarus-quest-editor = libsForQt5.callPackage ../development/tools/solarus-quest-editor { };
-
-  soldat-unstable = callPackage ../games/soldat-unstable { };
 
   sollya = callPackage ../development/interpreters/sollya { };
 
@@ -33597,6 +33614,8 @@ with pkgs;
   ipopt = callPackage ../development/libraries/science/math/ipopt { };
 
   gmsh = callPackage ../applications/science/math/gmsh { };
+
+  wcpg = callPackage ../development/libraries/science/math/wcpg { };
 
   zn_poly = callPackage ../development/libraries/science/math/zn_poly { };
 
