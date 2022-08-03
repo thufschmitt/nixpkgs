@@ -304,6 +304,7 @@ dont-distribute-packages:
  - PlslTools
  - Printf-TH
  - ProbabilityMonads
+ - PropaFP
  - Pugs
  - Pup-Events
  - Pup-Events-Demo
@@ -346,7 +347,6 @@ dont-distribute-packages:
  - Shpadoinkle-widgets
  - SimpleGL
  - SimpleLog
- - SimpleServer
  - Smooth
  - Snusmumrik
  - SoccerFun
@@ -428,6 +428,7 @@ dont-distribute-packages:
  - adict
  - adjunction
  - adp-multi-monadiccp
+ - aern2-mfun
  - aeson-native
  - aeson-result
  - affine
@@ -830,6 +831,7 @@ dont-distribute-packages:
  - bond
  - bond-haskell
  - bond-haskell-compiler
+ - bookhound-format
  - bookkeeper-permissions
  - boomslang
  - boopadoop
@@ -843,6 +845,7 @@ dont-distribute-packages:
  - bricks-rendering
  - bricks-syntax
  - bronyradiogermany-streaming
+ - btc-lsp
  - btree
  - buchhaltung
  - buildbox-tools
@@ -857,6 +860,7 @@ dont-distribute-packages:
  - bytable
  - bytehash
  - bytelog
+ - bytepatch
  - bytestring-builder-varword
  - bytestring-read
  - ca
@@ -953,18 +957,6 @@ dont-distribute-packages:
  - claferIG
  - claferwiki
  - clash
- - clash-ghc
- - clash-lib
- - clash-lib-hedgehog
- - clash-multisignal
- - clash-prelude
- - clash-prelude-hedgehog
- - clash-prelude-quickcheck
- - clash-shake
- - clash-systemverilog
- - clash-verilog
- - clash-vhdl
- - clashilator
  - classify-frog
  - classy-miso
  - clckwrks
@@ -1043,7 +1035,6 @@ dont-distribute-packages:
  - condor
  - conductive-hsc3
  - conductive-song
- - conduit-aeson
  - conduit-throttle
  - conduit-vfs-zip
  - confcrypt
@@ -1293,6 +1284,7 @@ dont-distribute-packages:
  - dph-prim-interface
  - dph-prim-par
  - dph-prim-seq
+ - drama
  - dropbox-sdk
  - dropsolve
  - dsh-sql
@@ -1326,6 +1318,7 @@ dont-distribute-packages:
  - ekg-carbon
  - ekg-cloudwatch
  - ekg-wai
+ - electrs-client
  - elerea-examples
  - elliptic-curve
  - elsa
@@ -1462,7 +1455,6 @@ dont-distribute-packages:
  - fixed-point-vector-space
  - fixed-precision
  - fixhs
- - flac-picture
  - flashblast
  - flatbuffers
  - flexiwrap
@@ -1560,6 +1552,7 @@ dont-distribute-packages:
  - geniconvert
  - geniserver
  - genvalidity-mergeful
+ - genvalidity-network-uri
  - genvalidity-sydtest
  - genvalidity-sydtest-aeson
  - genvalidity-sydtest-hashable
@@ -2026,7 +2019,6 @@ dont-distribute-packages:
  - hasloGUI
  - hasparql-client
  - hasql-cursor-query
- - hasql-dynamic-statements
  - hasql-postgres
  - hasql-postgres-options
  - hasqlator-mysql
@@ -2078,7 +2070,6 @@ dont-distribute-packages:
  - helics
  - helics-wai
  - helium
- - helix
  - hellage
  - hellnet
  - hemokit
@@ -2306,7 +2297,6 @@ dont-distribute-packages:
  - hyloutils
  - hyperpublic
  - iException
- - ice40-prim
  - icepeak
  - ide-backend
  - ide-backend-server
@@ -2418,6 +2408,10 @@ dont-distribute-packages:
  - jobqueue
  - join
  - jordan-openapi
+ - jordan-servant
+ - jordan-servant-client
+ - jordan-servant-openapi
+ - jordan-servant-server
  - jsc
  - jsmw
  - json-ast-json-encoder
@@ -2591,7 +2585,6 @@ dont-distribute-packages:
  - linux-ptrace
  - lio-eci11
  - lio-simple
- - lion
  - liquid-base
  - liquid-bytestring
  - liquid-containers
@@ -3130,11 +3123,11 @@ dont-distribute-packages:
  - poseidon
  - poseidon-postgis
  - postgresql-pure
+ - postgresql-simple-ltree
  - postgresql-simple-queue
  - postgresql-simple-typed
  - postgresql-tx-query
  - postgresql-tx-squeal-compat-simple
- - postgrest
  - postmark
  - potoki
  - potoki-cereal
@@ -3205,6 +3198,7 @@ dont-distribute-packages:
  - pvd
  - qd-vec
  - qhs
+ - qhull
  - qr-imager
  - qr-repa
  - qtah-examples
@@ -3344,7 +3338,6 @@ dont-distribute-packages:
  - relational-record-examples
  - relational-schemas
  - relative-date
- - reload
  - remote-json
  - remote-json-client
  - remote-json-server
@@ -3374,8 +3367,6 @@ dont-distribute-packages:
  - restful-snap
  - restricted-workers
  - rethinkdb-model
- - retroclash-lib
- - retroclash-sim
  - rewrite
  - rewriting
  - rezoom
@@ -3532,6 +3523,8 @@ dont-distribute-packages:
  - servant-jsonrpc-client
  - servant-jsonrpc-server
  - servant-matrix-param
+ - servant-oauth2
+ - servant-oauth2-examples
  - servant-polysemy
  - servant-postgresql
  - servant-pushbullet-client
@@ -3544,7 +3537,6 @@ dont-distribute-packages:
  - servant-streaming-server
  - servant-swagger-tags
  - servant-to-elm
- - servant-typescript
  - servant-util
  - servant-util-beam-pg
  - servant-waargonaut
@@ -3559,7 +3551,6 @@ dont-distribute-packages:
  - shady-graphics
  - shake-ats
  - shake-bindist
- - shake-futhark
  - shake-minify-css
  - shake-plus-extended
  - shakebook
@@ -3658,7 +3649,6 @@ dont-distribute-packages:
  - sock2stream
  - socket-io
  - sockets
- - solga
  - solga-swagger
  - solr
  - souffle-dsl
@@ -4054,7 +4044,6 @@ dont-distribute-packages:
  - vty-ui-extras
  - waargonaut
  - wahsp
- - wai-control
  - wai-devel
  - wai-dispatch
  - wai-handler-snap
@@ -4068,7 +4057,6 @@ dont-distribute-packages:
  - wai-middleware-rollbar
  - wai-middleware-route
  - wai-middleware-throttle
- - wai-routes
  - wai-routing
  - wai-session-tokyocabinet
  - wai-thrift

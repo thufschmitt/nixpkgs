@@ -254,7 +254,7 @@ in {
   jibri = handleTest ./jibri.nix {};
   jirafeau = handleTest ./jirafeau.nix {};
   jitsi-meet = handleTest ./jitsi-meet.nix {};
-  k3s-single-node = handleTest ./k3s-single-node.nix {};
+  k3s = handleTest ./k3s {};
   kafka = handleTest ./kafka.nix {};
   kanidm = handleTest ./kanidm.nix {};
   kbd-setfont-decompress = handleTest ./kbd-setfont-decompress.nix {};
@@ -278,8 +278,11 @@ in {
   libreddit = handleTest ./libreddit.nix {};
   libresprite = handleTest ./libresprite.nix {};
   libreswan = handleTest ./libreswan.nix {};
+  librewolf = handleTest ./firefox.nix { firefoxPackage = pkgs.librewolf; };
+  libuiohook = handleTest ./libuiohook.nix {};
   lidarr = handleTest ./lidarr.nix {};
   lightdm = handleTest ./lightdm.nix {};
+  lighttpd = handleTest ./lighttpd.nix {};
   limesurvey = handleTest ./limesurvey.nix {};
   litestream = handleTest ./litestream.nix {};
   locate = handleTest ./locate.nix {};
@@ -412,6 +415,7 @@ in {
   pam-oath-login = handleTest ./pam/pam-oath-login.nix {};
   pam-u2f = handleTest ./pam/pam-u2f.nix {};
   pam-ussh = handleTest ./pam/pam-ussh.nix {};
+  pass-secret-service = handleTest ./pass-secret-service.nix {};
   pantalaimon = handleTest ./matrix/pantalaimon.nix {};
   pantheon = handleTest ./pantheon.nix {};
   paperless = handleTest ./paperless.nix {};
@@ -439,6 +443,7 @@ in {
   podman = handleTestOn ["x86_64-linux"] ./podman/default.nix {};
   podman-dnsname = handleTestOn ["x86_64-linux"] ./podman/dnsname.nix {};
   podman-tls-ghostunnel = handleTestOn ["x86_64-linux"] ./podman/tls-ghostunnel.nix {};
+  polaris = handleTest ./polaris.nix {};
   pomerium = handleTestOn ["x86_64-linux"] ./pomerium.nix {};
   postfix = handleTest ./postfix.nix {};
   postfix-raise-smtpd-tls-security-level = handleTest ./postfix-raise-smtpd-tls-security-level.nix {};
@@ -518,6 +523,7 @@ in {
   starship = handleTest ./starship.nix {};
   step-ca = handleTestOn ["x86_64-linux"] ./step-ca.nix {};
   strongswan-swanctl = handleTest ./strongswan-swanctl.nix {};
+  stunnel = handleTest ./stunnel.nix {};
   sudo = handleTest ./sudo.nix {};
   swap-partition = handleTest ./swap-partition.nix {};
   sway = handleTest ./sway.nix {};

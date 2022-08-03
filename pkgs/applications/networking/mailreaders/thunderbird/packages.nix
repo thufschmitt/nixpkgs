@@ -4,13 +4,13 @@ rec {
   thunderbird = thunderbird-102;
   thunderbird-91 = (buildMozillaMach rec {
     pname = "thunderbird";
-    version = "91.11.0";
+    version = "91.12.0";
     application = "comm/mail";
     applicationName = "Mozilla Thunderbird";
     binaryName = pname;
     src = fetchurl {
       url = "mirror://mozilla/thunderbird/releases/${version}/source/thunderbird-${version}.source.tar.xz";
-      sha512 = "26b9242259b71eb14ddadffb34a59d07d515bbbc0cb806eed965a73b001ee81b3b1128d06cfdf3e50d5da4ef97be21d11193be34a582d3c9f27f27d2f97d90d2";
+      sha512 = "1c0200a84ccc4124127d472713d72c4ff7ece8d61ad120d5c45c732a3ab4f86a2edfea23a8bf26e4739d24956654aec30e7bc59a28af17fbbf10f3d67466649a";
     };
     extraPatches = [
       # The file to be patched is different from firefox's `no-buildconfig-ffx90.patch`.
@@ -29,6 +29,7 @@ rec {
     };
     updateScript = callPackage ./update.nix {
       attrPath = "thunderbird-91-unwrapped";
+      versionPrefix = "91";
     };
   }).override {
     geolocationSupport = false;
@@ -38,13 +39,13 @@ rec {
   };
   thunderbird-102 = (buildMozillaMach rec {
     pname = "thunderbird";
-    version = "102.0";
+    version = "102.0.3";
     application = "comm/mail";
     applicationName = "Mozilla Thunderbird";
     binaryName = pname;
     src = fetchurl {
       url = "mirror://mozilla/thunderbird/releases/${version}/source/thunderbird-${version}.source.tar.xz";
-      sha512 = "633eeb498fa8eafe33cf5ad1352bf093fd01eba4e36932da0b958f1bff53ffce4404574ef5de2fa3ec620c0d6d476f0f7157d783644200a7b0c6fbfedc0cfdc2";
+      sha512 = "ac9f22935ef558890c95cf7fbbbe32a5bb1b7140acb10088ed0d037d1ca5c6e11695c131eb40844807003b77e83b1dd2d9008df420ec394fed5008d5c4c6c3cb";
     };
     extraPatches = [
       # The file to be patched is different from firefox's `no-buildconfig-ffx90.patch`.
@@ -62,7 +63,8 @@ rec {
       license = licenses.mpl20;
     };
     updateScript = callPackage ./update.nix {
-      attrPath = "thunderbird-102-unwrapped";
+      attrPath = "thunderbird-unwrapped";
+      versionPrefix = "102";
     };
   }).override {
     geolocationSupport = false;

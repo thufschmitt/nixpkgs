@@ -1,22 +1,17 @@
-{ lib, rustPlatform, fetchFromGitHub, rustfmt }:
+{ lib, rustPlatform, fetchFromGitHub }:
 
 rustPlatform.buildRustPackage rec {
   pname = "millet";
-  version = "0.1.14";
+  version = "0.2.9";
 
   src = fetchFromGitHub {
     owner = "azdavis";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-Kz2CwfntAUI33igYJBJQKPAmoW895toe/wS9dGnFB64=";
+    sha256 = "sha256-ZvLpLQ7WkRvApSZ7vPDmQH8iLLpKUEY5ig5Mn+rkMI8=";
   };
 
-  cargoSha256 = "sha256-Rrnt6VEp7jDGLSsDcHuPfKhkm4USstxi/OW5oOVrgqY=";
-
-  nativeBuildInputs = [
-    # Required for `syntax-gen` crate https://github.com/azdavis/language-util/blob/8ec2dc509c88951102ad3e751820443059a363af/crates/syntax-gen/src/util.rs#L37
-    rustfmt
-  ];
+  cargoSha256 = "sha256-I5JgtW5Bgz2swJYiY2gV1UbSgeGxef7Hb4gDQYz/0TU=";
 
   cargoBuildFlags = [ "--package" "lang-srv" ];
 
