@@ -2386,7 +2386,7 @@ in {
 
   django_compat = callPackage ../development/python-modules/django-compat { };
 
-  django_compressor = callPackage ../development/python-modules/django_compressor { };
+  django-compressor = callPackage ../development/python-modules/django-compressor { };
 
   django-configurations = callPackage ../development/python-modules/django-configurations { };
 
@@ -6741,6 +6741,8 @@ in {
 
   python-ecobee-api = callPackage ../development/python-modules/python-ecobee-api { };
 
+  python-flirt = callPackage ../development/python-modules/python-flirt { };
+
   python-glanceclient = callPackage ../development/python-modules/python-glanceclient { };
 
   python-google-nest = callPackage ../development/python-modules/python-google-nest { };
@@ -7354,6 +7356,8 @@ in {
   py-desmume = callPackage ../development/python-modules/py-desmume { };
 
   pydevccu = callPackage ../development/python-modules/pydevccu { };
+
+  pydevd = callPackage ../development/python-modules/pydevd { };
 
   pydexcom = callPackage ../development/python-modules/pydexcom { };
 
@@ -10515,6 +10519,8 @@ in {
   };
 
   tensorly = callPackage ../development/python-modules/tensorly { };
+
+  tensorrt = callPackage ../development/python-modules/tensorrt { };
 
   tellduslive = callPackage ../development/python-modules/tellduslive { };
 
