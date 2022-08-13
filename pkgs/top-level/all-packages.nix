@@ -19545,9 +19545,7 @@ with pkgs;
 
   libmilter = callPackage ../development/libraries/libmilter { };
 
-  libminc = callPackage ../development/libraries/libminc {
-    hdf5 = hdf5_1_10;
-  };
+  libminc = callPackage ../development/libraries/libminc { };
 
   libmkv = callPackage ../development/libraries/libmkv { };
 
@@ -33679,6 +33677,10 @@ with pkgs;
 
   cd-hit = callPackage ../applications/science/biology/cd-hit {
     inherit (llvmPackages) openmp;
+  };
+
+  ciftilib = callPackage ../development/libraries/science/biology/ciftilib {
+    boost = boost16x;
   };
 
   cmtk = callPackage ../applications/science/biology/cmtk { };
