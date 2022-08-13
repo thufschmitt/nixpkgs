@@ -242,6 +242,8 @@ with pkgs;
 
   atkinson-hyperlegible = callPackage ../data/fonts/atkinson-hyperlegible { };
 
+  _0x =  callPackage ../tools/misc/0x { };
+
   atuin = callPackage ../tools/misc/atuin {
     inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
   };
@@ -1089,7 +1091,6 @@ with pkgs;
 
   acme-client = callPackage ../tools/networking/acme-client {
     stdenv = gccStdenv;
-    libressl = libressl_3_4;
   };
 
   adrgen = callPackage ../tools/misc/adrgen { };
@@ -1139,6 +1140,8 @@ with pkgs;
   ahcpd = callPackage ../tools/networking/ahcpd { };
 
   aide = callPackage ../tools/security/aide { };
+
+  aioblescan = with python3Packages; toPythonApplication aioblescan;
 
   aiodnsbrute = python3Packages.callPackage ../tools/security/aiodnsbrute { };
 
@@ -3185,6 +3188,8 @@ with pkgs;
   cht-sh = callPackage ../tools/misc/cht.sh { };
 
   cinny = callPackage ../applications/networking/instant-messengers/cinny { stdenv = stdenvNoCC; };
+
+  cinny-desktop = callPackage ../applications/networking/instant-messengers/cinny-desktop { };
 
   ckbcomp = callPackage ../tools/X11/ckbcomp { };
 
@@ -9827,6 +9832,10 @@ with pkgs;
     libpng = libpng12;
   };
 
+  pngpaste = callPackage ../os-specific/darwin/pngpaste {
+    inherit (darwin.apple_sdk.frameworks) AppKit Cocoa;
+  };
+
   pngtools = callPackage ../tools/graphics/pngtools { };
 
   pngpp = callPackage ../development/libraries/png++ { };
@@ -14222,6 +14231,9 @@ with pkgs;
   cargo-llvm-lines = callPackage ../development/tools/rust/cargo-llvm-lines { };
   cargo-outdated = callPackage ../development/tools/rust/cargo-outdated {
     inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
+  };
+  cargo-pgx = callPackage ../development/tools/rust/cargo-pgx {
+    inherit (darwin.apple_sdk.frameworks) Security;
   };
   cargo-release = callPackage ../development/tools/rust/cargo-release {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -21550,6 +21562,8 @@ with pkgs;
     buildGoModule = buildGo117Module;
   };
 
+  uncover = callPackage ../tools/security/uncover { };
+
   unibilium = callPackage ../development/libraries/unibilium { };
 
   unicap = callPackage ../development/libraries/unicap {};
@@ -22796,6 +22810,8 @@ with pkgs;
 
   sympa = callPackage ../servers/mail/sympa { };
 
+  syncstorage-rs = callPackage ../servers/syncstorage-rs { };
+
   system-sendmail = lowPrio (callPackage ../servers/mail/system-sendmail { });
 
   # PulseAudio daemons
@@ -24031,6 +24047,10 @@ with pkgs;
 
   librealsenseWithoutCuda = callPackage ../development/libraries/librealsense {
     cudaSupport = false;
+  };
+
+  librealsense-gui = callPackage ../development/libraries/librealsense {
+    enableGUI = true;
   };
 
   libsass = callPackage ../development/libraries/libsass { };
@@ -35774,9 +35794,7 @@ with pkgs;
 
   viewnior = callPackage ../applications/graphics/viewnior { };
 
-  vimUtils = callPackage ../applications/editors/vim/plugins/vim-utils.nix {
-    inherit (lua51Packages) hasLuaModule;
-  };
+  vimUtils = callPackage ../applications/editors/vim/plugins/vim-utils.nix { };
 
   vimPlugins = recurseIntoAttrs (callPackage ../applications/editors/vim/plugins {
     llvmPackages = llvmPackages_6;

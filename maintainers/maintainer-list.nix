@@ -1273,6 +1273,12 @@
     githubId = 1217745;
     name = "Aldwin Vlasblom";
   };
+  aveltras = {
+    email = "romain.viallard@outlook.fr";
+    github = "aveltras";
+    githubId = 790607;
+    name = "Romain Viallard";
+  };
   avery = {
     email = "averyl+nixos@protonmail.com";
     github = "AveryLychee";
@@ -6440,13 +6446,6 @@
     githubId = 3267697;
     name = "Joshua Potter";
   };
-  jschievink = {
-    email = "jonasschievink@gmail.com";
-    matrix = "@jschievink:matrix.org";
-    github = "jonas-schievink";
-    githubId = 1786438;
-    name = "Jonas Schievink";
-  };
   jshcmpbll = {
     email = "me@joshuadcampbell.com";
     github = "jshcmpbll";
@@ -11468,6 +11467,12 @@
     github = "samuelrivas";
     githubId = 107703;
     name = "Samuel Rivas";
+  };
+  samw = {
+    email = "sam@wlcx.cc";
+    github = "wlcx";
+    githubId = 3065381;
+    name = "Sam Willcocks";
   };
   samyak = {
     name = "Samyak Sarnayak";
