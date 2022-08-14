@@ -3319,6 +3319,8 @@ with pkgs;
 
   wayland-proxy-virtwl = callPackage ../tools/wayland/wayland-proxy-virtwl { };
 
+  wayout = callPackage ../tools/wayland/wayout { };
+
   way-displays = callPackage ../tools/wayland/way-displays { };
 
   wev = callPackage ../tools/wayland/wev { };
@@ -4942,6 +4944,8 @@ with pkgs;
   circus = callPackage ../tools/networking/circus { };
 
   cirrus-cli = callPackage ../development/tools/continuous-integration/cirrus-cli { };
+
+  cirrusgo = callPackage ../tools/security/cirrusgo { };
 
   inherit (callPackage ../applications/networking/remote/citrix-workspace { })
     citrix_workspace_21_01_0
@@ -7856,6 +7860,8 @@ with pkgs;
   krename = libsForQt5.callPackage ../applications/misc/krename { };
 
   krunner-pass = libsForQt5.callPackage ../tools/security/krunner-pass { };
+
+  krunvm = callPackage ../applications/virtualization/krunvm { };
 
   kronometer = libsForQt5.callPackage ../tools/misc/kronometer { };
 
@@ -14260,7 +14266,7 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
   cargo-crev = callPackage ../development/tools/rust/cargo-crev {
-    inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration;
+    inherit (darwin.apple_sdk.frameworks) Security SystemConfiguration CoreFoundation;
   };
   cargo-cross = callPackage ../development/tools/rust/cargo-cross { };
   cargo-deny = callPackage ../development/tools/rust/cargo-deny {
@@ -20163,6 +20169,8 @@ with pkgs;
     deps = [ memorymapping ];
   } ../development/libraries/memorymapping/setup-hook.sh;
 
+  memray = callPackage ../development/tools/memray { };
+
   memstream = callPackage ../development/libraries/memstream { };
   memstreamHook = makeSetupHook {
     deps = [ memstream ];
@@ -23874,6 +23882,12 @@ with pkgs;
   libatasmart = callPackage ../os-specific/linux/libatasmart { };
 
   libcgroup = callPackage ../os-specific/linux/libcgroup { };
+
+  libkrun = callPackage ../development/libraries/libkrun { };
+
+  libkrun-sev = callPackage ../development/libraries/libkrun { sevVariant = true; };
+
+  libkrunfw = callPackage ../development/libraries/libkrunfw { };
 
   libnl = callPackage ../os-specific/linux/libnl { };
 
