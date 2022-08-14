@@ -1493,7 +1493,9 @@ with pkgs;
 
   pcsxr = callPackage ../applications/emulators/pcsxr { };
 
-  ppsspp = libsForQt5.callPackage ../applications/emulators/ppsspp { };
+  ppsspp = callPackage ../applications/emulators/ppsspp {
+    inherit (libsForQt5) qtbase qtmultimedia wrapQtAppsHook;
+  };
 
   proton-caller = callPackage ../applications/emulators/proton-caller { };
 
@@ -4086,6 +4088,8 @@ with pkgs;
   klipper-genconf = callPackage ../servers/klipper/klipper-genconf.nix { };
 
   klog = qt5.callPackage ../applications/radio/klog { };
+
+  komga = callPackage ../servers/komga { };
 
   krapslog = callPackage ../tools/misc/krapslog { };
 
@@ -7196,8 +7200,6 @@ with pkgs;
 
   habitat = callPackage ../applications/networking/cluster/habitat { };
 
-  hardlink = callPackage ../tools/system/hardlink { };
-
   hashcash = callPackage ../tools/security/hashcash { };
 
   hashcat = callPackage ../tools/security/hashcat { };
@@ -7265,9 +7267,7 @@ with pkgs;
 
   hdf5-blosc = callPackage ../development/libraries/hdf5-blosc { };
 
-  hdfview = callPackage ../tools/misc/hdfview {
-    hdf5 = hdf5_1_10;
-  };
+  hdfview = callPackage ../tools/misc/hdfview { };
 
   hecate = callPackage ../applications/editors/hecate { };
 
@@ -9477,7 +9477,9 @@ with pkgs;
 
   oshka = callPackage ../development/tools/oshka {};
 
-  osl = callPackage ../development/compilers/osl { };
+  osl = libsForQt5.callPackage ../development/compilers/osl {
+    boost = boost165;
+  };
 
   osqp = callPackage ../development/libraries/science/math/osqp { };
 
@@ -21279,6 +21281,8 @@ with pkgs;
 
   soapyuhd = callPackage ../applications/radio/soapyuhd { };
 
+  social-engineer-toolkit = callPackage ../tools/security/social-engineer-toolkit { };
+
   socket_wrapper = callPackage ../development/libraries/socket_wrapper { };
 
   soco-cli = callPackage ../tools/audio/soco-cli { };
@@ -22328,7 +22332,7 @@ with pkgs;
   codeowners = callPackage ../development/tools/codeowners { };
 
   couchdb3 = callPackage ../servers/http/couchdb/3.nix {
-    erlang = erlangR22;
+    erlang = buildPackages.erlangR22;
   };
 
   dcnnt = python3Packages.callPackage ../servers/dcnnt { };
@@ -23184,6 +23188,10 @@ with pkgs;
 
   radicale = radicale3;
 
+  radicle-cli = callPackage ../applications/version-management/git-and-tools/radicle-cli {
+    inherit (darwin) DarwinTools;
+    inherit (darwin.apple_sdk.frameworks) AppKit;
+  };
   radicle-upstream = callPackage ../applications/version-management/git-and-tools/radicle-upstream {};
 
   rake = callPackage ../development/tools/build-managers/rake { };
@@ -26442,6 +26450,8 @@ with pkgs;
   clipmenu = callPackage ../applications/misc/clipmenu { };
 
   clipit = callPackage ../applications/misc/clipit { };
+
+  clipqr = callPackage ../applications/misc/clipqr { };
 
   cloud-hypervisor = callPackage ../applications/virtualization/cloud-hypervisor { };
 
@@ -30771,6 +30781,7 @@ with pkgs;
   teams = callPackage ../applications/networking/instant-messengers/teams { };
 
   teamspeak_client = libsForQt5.callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
+  teamspeak5_client = callPackage ../applications/networking/instant-messengers/teamspeak/client5.nix { };
   teamspeak_server = callPackage ../applications/networking/instant-messengers/teamspeak/server.nix { };
 
   taskell = haskell.lib.compose.justStaticExecutables haskellPackages.taskell;
