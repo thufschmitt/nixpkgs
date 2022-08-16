@@ -21007,7 +21007,7 @@ with pkgs;
 
   qgnomeplatform = libsForQt5.callPackage ../development/libraries/qgnomeplatform { };
 
-  randomx = callPackage ../development/libraries/randomx { };
+  randomx = darwin.apple_sdk_11_0.callPackage ../development/libraries/randomx { };
 
   remodel = callPackage ../development/tools/remodel {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -31953,18 +31953,17 @@ with pkgs;
 
   inherit (nodePackages) zx;
 
-  zynaddsubfx = zyn-fusion;
+  zynaddsubfx = callPackage ../applications/audio/zynaddsubfx {
+    guiModule = "zest";
+    fftw = fftwSinglePrec;
+  };
 
-  zynaddsubfx-fltk = callPackage ../applications/audio/zynaddsubfx {
+  zynaddsubfx-fltk = zynaddsubfx.override {
     guiModule = "fltk";
   };
 
-  zynaddsubfx-ntk = callPackage ../applications/audio/zynaddsubfx {
+  zynaddsubfx-ntk = zynaddsubfx.override {
     guiModule = "ntk";
-  };
-
-  zyn-fusion = callPackage ../applications/audio/zynaddsubfx {
-    guiModule = "zest";
   };
 
   ### BLOCKCHAINS / CRYPTOCURRENCIES / WALLETS
@@ -34497,6 +34496,8 @@ with pkgs;
   };
 
   openroad = libsForQt5.callPackage ../applications/science/electronics/openroad { };
+
+  openboardview = callPackage ../applications/science/electronics/openboardview { };
 
   pcb = callPackage ../applications/science/electronics/pcb { };
 
