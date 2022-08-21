@@ -226,7 +226,9 @@ with pkgs;
 
   anders = callPackage ../applications/science/logic/anders { };
 
-  ankisyncd = callPackage ../servers/ankisyncd { };
+  ankisyncd = callPackage ../servers/ankisyncd {
+    python3 = python39;
+  };
 
   ani-cli = callPackage ../applications/video/ani-cli { };
 
@@ -5921,6 +5923,8 @@ with pkgs;
 
   zoekt = callPackage ../tools/text/zoekt { };
 
+  zonemaster-cli = perlPackages.ZonemasterCLI;
+
   zoxide = callPackage ../tools/misc/zoxide { };
 
   zzuf = callPackage ../tools/security/zzuf { };
@@ -9898,6 +9902,8 @@ with pkgs;
 
   podiff = callPackage ../tools/text/podiff { };
 
+  pocketbase = callPackage ../servers/pocketbase { };
+
   podman = callPackage ../applications/virtualization/podman/wrapper.nix { };
   podman-unwrapped = callPackage ../applications/virtualization/podman { };
 
@@ -11038,6 +11044,8 @@ with pkgs;
   su-exec = callPackage ../tools/security/su-exec {};
 
   subberthehut = callPackage ../tools/misc/subberthehut { };
+
+  subedit = callPackage ../tools/text/subedit { };
 
   subgit = callPackage ../applications/version-management/git-and-tools/subgit { };
 
@@ -14560,7 +14568,9 @@ with pkgs;
   tbb = callPackage ../development/libraries/tbb { };
 
   terra = callPackage ../development/compilers/terra {
-    llvmPackages = llvmPackages_10;
+    llvmPackages = llvmPackages_11;
+    inherit (darwin) libobjc;
+    inherit (darwin.apple_sdk.frameworks) Cocoa Foundation;
   };
 
   teyjus = callPackage ../development/compilers/teyjus (
@@ -20834,6 +20844,7 @@ with pkgs;
   flatbuffers = callPackage ../development/libraries/flatbuffers { };
 
   nanopb = callPackage ../development/libraries/nanopb { };
+  nanopbMalloc = callPackage ../development/libraries/nanopb { mallocBuild = true; };
 
   gnupth = callPackage ../development/libraries/pth { };
   pth = if stdenv.hostPlatform.isMusl then npth else gnupth;
@@ -31552,6 +31563,8 @@ with pkgs;
 
   webmacs = libsForQt5.callPackage ../applications/networking/browsers/webmacs {};
 
+  websploit = python3Packages.callPackage ../tools/security/websploit {};
+
   webssh = with python3Packages; toPythonApplication webssh;
 
   webtorrent_desktop = callPackage ../applications/video/webtorrent_desktop {};
@@ -31734,6 +31747,8 @@ with pkgs;
   xchm = callPackage ../applications/misc/xchm { };
 
   inherit (xorg) xcompmgr;
+
+  x-create-mouse-void = callPackage ../applications/window-managers/x-create-mouse-void { };
 
   picom = callPackage ../applications/window-managers/picom {};
 
@@ -32014,7 +32029,9 @@ with pkgs;
 
   zim = callPackage ../applications/office/zim { };
 
-  zine = callPackage ../applications/misc/zine { };
+  zine = callPackage ../applications/misc/zine {
+    inherit (darwin.apple_sdk.frameworks) CoreServices Security;
+  };
 
   zita-ajbridge = callPackage ../applications/audio/zita-ajbridge { };
 
@@ -32492,7 +32509,7 @@ with pkgs;
 
   angband = callPackage ../games/angband { };
 
-  anki = python3Packages.callPackage ../games/anki {
+  anki = python39Packages.callPackage ../games/anki {
     inherit (darwin.apple_sdk.frameworks) CoreAudio;
   };
   anki-bin = callPackage ../games/anki/bin.nix { buildFHSUserEnv = buildFHSUserEnvBubblewrap; };
@@ -36103,6 +36120,8 @@ with pkgs;
     libpng = libpng12;
     sane-backends = sane-backends.override { libpng = libpng12; };
   };
+
+  xsser = python3Packages.callPackage ../tools/security/xsser { };
 
   xsw = callPackage ../applications/misc/xsw {
     # Enable the next line to use this in terminal.
