@@ -16193,6 +16193,8 @@ with pkgs;
   gnum4 = callPackage ../development/tools/misc/gnum4 { };
   m4 = gnum4;
 
+  om4 = callPackage ../development/tools/misc/om4 { };
+
   gnumake = callPackage ../development/tools/build-managers/gnumake { };
   gnumake42 = callPackage ../development/tools/build-managers/gnumake/4.2 { };
 
@@ -30619,6 +30621,8 @@ with pkgs;
     inherit (xfce) xfce4-dev-tools;
   };
 
+  lightdm-slick-greeter = callPackage ../applications/display-managers/lightdm-slick-greeter { };
+
   lightdm-mini-greeter = callPackage ../applications/display-managers/lightdm-mini-greeter { };
 
   lightdm-tiny-greeter = callPackage ../applications/display-managers/lightdm-tiny-greeter {
@@ -35598,6 +35602,8 @@ with pkgs;
   rates = callPackage ../tools/misc/rates {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
+
+  rars = callPackage ../development/tools/rars { };
 
   rargs = callPackage ../tools/misc/rargs { };
 
