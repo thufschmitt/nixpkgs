@@ -257,6 +257,8 @@ in {
 
   aioairzone = callPackage ../development/python-modules/aioairzone { };
 
+  aioairq = callPackage ../development/python-modules/aioairq { };
+
   aioaladdinconnect = callPackage ../development/python-modules/aioaladdinconnect { };
 
   aioambient = callPackage ../development/python-modules/aioambient { };
@@ -2399,6 +2401,8 @@ in {
   dill = callPackage ../development/python-modules/dill { };
 
   dingz = callPackage ../development/python-modules/dingz { };
+
+  dinghy = callPackage ../development/python-modules/dinghy { };
 
   diofant = callPackage ../development/python-modules/diofant { };
 
@@ -10996,6 +11000,8 @@ in {
   tumpa = callPackage ../development/python-modules/tumpa {
     inherit (pkgs.libsForQt5) wrapQtAppsHook;
   };
+
+  turnt = callPackage ../development/python-modules/turnt { };
 
   tuya-iot-py-sdk = callPackage ../development/python-modules/tuya-iot-py-sdk { };
 
