@@ -9326,6 +9326,8 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
+  onetun = callPackage ../tools/networking/onetun { };
+
   opencorsairlink = callPackage ../tools/misc/opencorsairlink { };
 
   openfpgaloader = callPackage ../development/embedded/fpga/openfpgaloader { };
@@ -9358,6 +9360,8 @@ with pkgs;
   ofono-phonesim = libsForQt5.callPackage ../development/tools/ofono-phonesim { };
 
   ogdf = callPackage ../development/libraries/ogdf { };
+
+  oh-my-posh = callPackage ../development/tools/oh-my-posh {};
 
   oh-my-zsh = callPackage ../shells/zsh/oh-my-zsh { };
 
@@ -9867,6 +9871,8 @@ with pkgs;
 
   playbar2 = libsForQt5.callPackage ../applications/audio/playbar2 { };
 
+  plecost = callPackage ../tools/security/plecost { };
+
   plujain-ramp = callPackage ../applications/audio/plujain-ramp { };
 
   inherit (callPackage ../servers/plik { })
@@ -10045,6 +10051,8 @@ with pkgs;
   pr-tracker = callPackage ../servers/pr-tracker { };
 
   progress = callPackage ../tools/misc/progress { };
+
+  ps3-disc-dumper = callPackage ../tools/games/ps3-disc-dumper { };
 
   ps3netsrv = callPackage ../servers/ps3netsrv { };
 
@@ -10375,6 +10383,8 @@ with pkgs;
   recoverjpeg = callPackage ../tools/misc/recoverjpeg { };
 
   reftools = callPackage ../development/tools/reftools { };
+
+  redwax-tool = callPackage ../tools/security/redwax-tool { };
 
   regpg = callPackage ../tools/security/regpg { };
 
@@ -36613,6 +36623,8 @@ with pkgs;
   xsos = callPackage ../os-specific/linux/xsos { };
 
   xmcp = callPackage ../tools/X11/xmcp { };
+
+  ymuse = callPackage ../applications/audio/ymuse { };
 
   zk = callPackage ../applications/office/zk {};
 
