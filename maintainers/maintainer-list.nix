@@ -1423,6 +1423,12 @@
     githubId = 35324;
     name = "Badi' Abdul-Wahid";
   };
+  baitinq = {
+    email = "manuelpalenzuelamerino@gmail.com";
+    name = "Baitinq";
+    github = "Baitinq";
+    githubId = 30861839;
+  };
   balodja = {
     email = "balodja@gmail.com";
     github = "balodja";
@@ -8062,11 +8068,11 @@
     name = "Michael Fellinger";
   };
   maralorn = {
-    email = "malte.brandy@maralorn.de";
+    email = "mail@maralorn.de";
     matrix = "@maralorn:maralorn.de";
     github = "maralorn";
     githubId = 1651325;
-    name = "Malte Brandy";
+    name = "maralorn";
   };
   marcweber = {
     email = "marco-oweber@gmx.de";
@@ -15122,6 +15128,16 @@
     githubId = 401263;
     keys = [{
       fingerprint = "1147 43F1 E707 6F3E 6F4B  2C96 B9A8 B592 F126 F8E8";
+    }];
+  };
+  tjni = {
+    email = "43ngvg@masqt.com";
+    matrix = "@tni:matrix.org";
+    name = "Theodore Ni";
+    github = "tjni";
+    githubId = 3806110;
+    keys = [{
+      fingerprint = "4384 B8E1 299F C028 1641  7B8F EC30 EFBE FA7E 84A4";
     }];
   };
 }
