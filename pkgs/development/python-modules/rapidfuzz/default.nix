@@ -18,17 +18,16 @@
 
 buildPythonPackage rec {
   pname = "rapidfuzz";
-  version = "2.13.4";
+  version = "3.0.0";
+  format = "pyproject";
 
   disabled = pythonOlder "3.7";
-
-  format = "pyproject";
 
   src = fetchFromGitHub {
     owner = "maxbachmann";
     repo = "RapidFuzz";
     rev = "refs/tags/v${version}";
-    hash = "sha256-ztGeWQTEilKzL93fruBpMvQY1W6OiMGvWUK/bgMhYd8=";
+    hash = "sha256-rpUrMHIBr7sb0Cib6WYdLJ3KOPEgRnB0DCV/df1uE1A=";
   };
 
   nativeBuildInputs = [
@@ -52,9 +51,9 @@ buildPythonPackage rec {
     export CMAKE_ARGS="-DCMAKE_CXX_COMPILER_AR=$AR -DCMAKE_CXX_COMPILER_RANLIB=$RANLIB"
   '';
 
-  NIX_CFLAGS_COMPILE = lib.optionals (stdenv.cc.isClang && stdenv.isDarwin) [
+  env.NIX_CFLAGS_COMPILE = toString (lib.optionals (stdenv.cc.isClang && stdenv.isDarwin) [
     "-fno-lto"  # work around https://github.com/NixOS/nixpkgs/issues/19098
-  ];
+  ]);
 
   propagatedBuildInputs = [
     numpy
@@ -64,15 +63,20 @@ buildPythonPackage rec {
     export RAPIDFUZZ_IMPLEMENTATION=cpp
   '';
 
-  checkInputs = [
+  nativeCheckInputs = [
     hypothesis
     pandas
     pytestCheckHook
   ];
 
+  disabledTests = lib.optionals (stdenv.isDarwin && stdenv.isx86_64) [
+    # segfaults
+    "test_cdist"
+  ];
+
   pythonImportsCheck = [
+    "rapidfuzz.distance"
     "rapidfuzz.fuzz"
-    "rapidfuzz.string_metric"
     "rapidfuzz.process"
     "rapidfuzz.utils"
   ];
@@ -80,7 +84,7 @@ buildPythonPackage rec {
   meta = with lib; {
     description = "Rapid fuzzy string matching";
     homepage = "https://github.com/maxbachmann/RapidFuzz";
-    changelog = "https://github.com/maxbachmann/RapidFuzz/blob/${src.rev}/CHANGELOG.md";
+    changelog = "https://github.com/maxbachmann/RapidFuzz/blob/${src.rev}/CHANGELOG.rst";
     license = licenses.mit;
     maintainers = with maintainers; [ dotlambda ];
   };

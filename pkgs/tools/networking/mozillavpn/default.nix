@@ -1,33 +1,35 @@
 { buildGoModule
+, cargo
 , cmake
 , fetchFromGitHub
 , go
 , lib
+, libsecret
 , pkg-config
 , polkit
 , python3
 , qt5compat
 , qtbase
-, qtcharts
 , qtnetworkauth
+, qtsvg
 , qttools
 , qtwebsockets
 , rustPlatform
+, rustc
 , stdenv
-, which
 , wireguard-tools
 , wrapQtAppsHook
 }:
 
 let
   pname = "mozillavpn";
-  version = "2.11.0";
+  version = "2.14.1";
   src = fetchFromGitHub {
     owner = "mozilla-mobile";
     repo = "mozilla-vpn-client";
     rev = "v${version}";
     fetchSubmodules = true;
-    hash = "sha256-QXxZ6RQwXrVsaZRkW13r7aoz8iHxuT0nW/2aFDpLLzU=";
+    hash = "sha256-xWm21guI+h0bKd/rEyxVMyxypCitLWEbVy7TaVBKh4o=";
   };
 
   netfilter-go-modules = (buildGoModule {
@@ -40,14 +42,19 @@ let
     inherit src;
     name = "${pname}-${version}-extension-bridge";
     preBuild = "cd extension/bridge";
-    hash = "sha256-BRUUEDIVQoF+FuKnoBzFbMyeGOgGb6/boYSaftZPF2U=";
+    hash = "sha256-XW47EnNHm5JUWCqDU/iHB6ZRGny4v5x7Fs/1dv5TfzM=";
   };
-
   signatureDeps = rustPlatform.fetchCargoTarball {
     inherit src;
     name = "${pname}-${version}-signature";
     preBuild = "cd signature";
-    hash = "sha256-oSO7KS4aBwSVYIyxmWTXKn0CL9t6CDR/hx+0+nbf/dM=";
+    hash = "sha256-CNPL1Orn+ZbX0HL+CHMaoXPI9G8MoC+hY8pJTJlWH1U=";
+  };
+  vpngleanDeps = rustPlatform.fetchCargoTarball {
+    inherit src;
+    name = "${pname}-${version}-vpnglean";
+    preBuild = "cd vpnglean";
+    hash = "sha256-5vazbCqzJG6iA0MFaTNha42jb1pgLhr0P9I8rQxSKtw=";
   };
 
 in
@@ -55,11 +62,12 @@ stdenv.mkDerivation {
   inherit pname version src;
 
   buildInputs = [
+    libsecret
     polkit
     qt5compat
     qtbase
-    qtcharts
     qtnetworkauth
+    qtsvg
     qtwebsockets
   ];
   nativeBuildInputs = [
@@ -68,12 +76,11 @@ stdenv.mkDerivation {
     pkg-config
     python3
     python3.pkgs.glean-parser
-    python3.pkgs.lxml
     python3.pkgs.pyyaml
     python3.pkgs.setuptools
     rustPlatform.cargoSetupHook
-    rustPlatform.rust.cargo
-    which
+    cargo
+    rustc
     wrapQtAppsHook
   ];
 
@@ -87,19 +94,22 @@ stdenv.mkDerivation {
     cargoDeps='${signatureDeps}' cargoSetupPostUnpackHook
     signatureDepsCopy="$cargoDepsCopy"
     popd
+
+    pushd source/vpnglean
+    cargoDeps='${vpngleanDeps}' cargoSetupPostUnpackHook
+    vpngleanDepsCopy="$cargoDepsCopy"
+    popd
   '';
   dontCargoSetupPostUnpack = true;
 
   postPatch = ''
-    for file in linux/*.service linux/extra/*.desktop src/platforms/linux/daemon/*.service; do
-      substituteInPlace "$file" --replace /usr/bin/mozillavpn "$out/bin/mozillavpn"
-    done
+    substituteInPlace src/apps/vpn/platforms/linux/daemon/org.mozilla.vpn.dbus.service --replace /usr/bin/mozillavpn "$out/bin/mozillavpn"
 
     substituteInPlace scripts/addon/build.py \
       --replace 'qtbinpath = args.qtpath' 'qtbinpath = "${qttools.dev}/bin"' \
       --replace 'rcc = os.path.join(qtbinpath, rcc_bin)' 'rcc = "${qtbase.dev}/libexec/rcc"'
 
-    substituteInPlace src/cmake/linux.cmake \
+    substituteInPlace src/apps/vpn/cmake/linux.cmake \
       --replace '/etc/xdg/autostart' "$out/etc/xdg/autostart" \
       --replace '${"$"}{POLKIT_POLICY_DIR}' "$out/share/polkit-1/actions" \
       --replace '/usr/share/dbus-1' "$out/share/dbus-1" \
@@ -107,9 +117,6 @@ stdenv.mkDerivation {
 
     substituteInPlace extension/CMakeLists.txt \
       --replace '/etc' "$out/etc"
-
-    substituteInPlace src/connectionbenchmark/benchmarktasktransfer.cpp \
-      --replace 'QT_VERSION >= 0x060400' 'false'
 
     ln -s '${netfilter-go-modules}' linux/netfilter/vendor
 
@@ -119,6 +126,10 @@ stdenv.mkDerivation {
 
     pushd signature
     cargoDepsCopy="$signatureDepsCopy" cargoSetupPostPatchHook
+    popd
+
+    pushd vpnglean
+    cargoDepsCopy="$vpngleanDepsCopy" cargoSetupPostPatchHook
     popd
 
     cargoSetupPostPatchHook() { true; }

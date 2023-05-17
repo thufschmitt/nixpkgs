@@ -20,21 +20,24 @@
 , pugixml
 , rapidjson
 , vulkan-headers
+, wayland
 , wxGTK32
 , zarchive
 
 , vulkan-loader
+
+, nix-update-script
 }:
 
 stdenv.mkDerivation rec {
   pname = "cemu";
-  version = "2.0-17";
+  version = "2.0-36";
 
   src = fetchFromGitHub {
     owner = "cemu-project";
     repo = "Cemu";
     rev = "v${version}";
-    hash = "sha256-ryFph55o7s3eiqQ8kx5+3Et5S2U9H5i3fmZTc1CaCnA=";
+    hash = "sha256-RO8c9gLK00LLwDzcD8UOS3kh3kwTwFyrpuRlIXcInPo=";
   };
 
   patches = [
@@ -68,6 +71,7 @@ stdenv.mkDerivation rec {
     pugixml
     rapidjson
     vulkan-headers
+    wayland
     wxGTK32
     zarchive
   ];
@@ -82,9 +86,12 @@ stdenv.mkDerivation rec {
     "-DPORTABLE=OFF"
   ];
 
-  preConfigure = ''
+  preConfigure = with lib; let
+    tag = last (splitString "-" version);
+  in ''
     rm -rf dependencies/imgui
     ln -s ${imgui}/include/imgui dependencies/imgui
+    sed 's/\(EMULATOR_VERSION_SUFFIX\).*experimental.*/\1 "-${tag} (experimental)"/' -i src/Common/version.h
   '';
 
   installPhase = ''
@@ -108,12 +115,10 @@ stdenv.mkDerivation rec {
   in ''
     gappsWrapperArgs+=(
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath libs}"
-
-      # Force X11 to be used until Wayland is natively supported
-      # <https://github.com/cemu-project/Cemu/pull/143>
-      --set GDK_BACKEND x11
     )
   '';
+
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Cemu is a Wii U emulator";

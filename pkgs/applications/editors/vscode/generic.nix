@@ -1,7 +1,7 @@
 { stdenv, lib, makeDesktopItem
-, unzip, libsecret, libXScrnSaver, libxshmfence, wrapGAppsHook, makeWrapper
+, unzip, libsecret, libXScrnSaver, libxshmfence, buildPackages
 , atomEnv, at-spi2-atk, autoPatchelfHook
-, systemd, fontconfig, libdbusmenu, glib, buildFHSUserEnvBubblewrap
+, systemd, fontconfig, libdbusmenu, glib, buildFHSEnv, wayland
 
 # Populate passthru.tests
 , tests
@@ -66,13 +66,14 @@ let
     buildInputs = [ libsecret libXScrnSaver libxshmfence ]
       ++ lib.optionals (!stdenv.isDarwin) ([ at-spi2-atk ] ++ atomEnv.packages);
 
-    runtimeDependencies = lib.optionals stdenv.isLinux [ (lib.getLib systemd) fontconfig.lib libdbusmenu ];
+    runtimeDependencies = lib.optionals stdenv.isLinux [ (lib.getLib systemd) fontconfig.lib libdbusmenu wayland ];
 
     nativeBuildInputs = [ unzip ]
       ++ lib.optionals stdenv.isLinux [
         autoPatchelfHook
         nodePackages.asar
-        (wrapGAppsHook.override { inherit makeWrapper; })
+        # override doesn't preserve splicing https://github.com/NixOS/nixpkgs/issues/132651
+        (buildPackages.wrapGAppsHook.override { inherit (buildPackages) makeWrapper; })
       ];
 
     dontBuild = true;
@@ -134,6 +135,9 @@ let
 
       # this fixes bundled ripgrep
       chmod +x resources/app/node_modules/@vscode/ripgrep/bin/rg
+    '' + lib.optionalString (lib.versionOlder version "1.78.0" && stdenv.isLinux) ''
+      # see https://github.com/gentoo/gentoo/commit/4da5959
+      chmod +x resources/app/node_modules/node-pty/build/Release/spawn-helper
     '';
 
     inherit meta;
@@ -146,9 +150,9 @@ let
   # in order to create or update extensions.
   # See: #83288 #91179 #73810 #41189
   #
-  # buildFHSUserEnv allows for users to use the existing vscode
+  # buildFHSEnv allows for users to use the existing vscode
   # extension tooling without significant pain.
-  fhs = { additionalPkgs ? pkgs: [] }: buildFHSUserEnvBubblewrap {
+  fhs = { additionalPkgs ? pkgs: [] }: buildFHSEnv {
     # also determines the name of the wrapped command
     name = executableName;
 
@@ -162,12 +166,17 @@ let
       icu
       libunwind
       libuuid
+      lttng-ust
       openssl
       zlib
 
       # mono
       krb5
     ]) ++ additionalPkgs pkgs;
+
+    extraBwrapArgs = [
+      "--bind-try /etc/nixos/ /etc/nixos/"
+    ];
 
     # symlink shared assets, including icons and desktop entries
     extraInstallCommands = ''

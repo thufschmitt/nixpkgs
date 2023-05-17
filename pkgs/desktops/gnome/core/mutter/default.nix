@@ -1,7 +1,6 @@
 { fetchurl
 , runCommand
 , lib
-, fetchpatch
 , stdenv
 , pkg-config
 , gnome
@@ -16,27 +15,44 @@
 , libcanberra
 , ninja
 , xvfb-run
-, xkeyboard_config
-, libxkbfile
+, libxcvt
+, libICE
+, libX11
+, libXcomposite
+, libXcursor
 , libXdamage
-, libxkbcommon
+, libXext
+, libXfixes
+, libXi
 , libXtst
+, libxkbfile
+, xkeyboard_config
+, libxkbcommon
+, libXrender
+, libxcb
+, libXrandr
+, libXinerama
+, libXau
 , libinput
 , libdrm
 , gsettings-desktop-schemas
 , glib
-, gtk3
+, atk
+, gtk4
+, fribidi
+, harfbuzz
 , gnome-desktop
 , pipewire
 , libgudev
 , libwacom
+, libSM
 , xwayland
 , mesa
 , meson
 , gnome-settings-daemon
 , xorgserver
 , python3
-, wrapGAppsHook
+, wrapGAppsHook4
 , gi-docgen
 , sysprof
 , libsysprof-capture
@@ -44,42 +60,25 @@
 , libcap_ng
 , egl-wayland
 , graphene
+, wayland
 , wayland-protocols
 }:
 
-let self = stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "mutter";
-  version = "43.2";
+  version = "44.1";
 
   outputs = [ "out" "dev" "man" "devdoc" ];
 
   src = fetchurl {
-    url = "mirror://gnome/sources/mutter/${lib.versions.major version}/${pname}-${version}.tar.xz";
-    sha256 = "/S63B63DM8wnevhoXlzzkTXhxNeYofnQXojkU9w+u4Q=";
+    url = "mirror://gnome/sources/mutter/${lib.versions.major finalAttrs.version}/mutter-${finalAttrs.version}.tar.xz";
+    sha256 = "lzrq+rQvBvk0oJlPyEh4lYzbTSdmpMhnpczcVH3VcFY=";
   };
-
-  patches = [
-    # Fix build with separate sysprof.
-    # https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/2572
-    (fetchpatch {
-      url = "https://gitlab.gnome.org/GNOME/mutter/-/commit/285a5a4d54ca83b136b787ce5ebf1d774f9499d5.patch";
-      sha256 = "/npUE3idMSTVlFptsDpZmGWjZ/d2gqruVlJKq4eF4xU=";
-    })
-
-    # Revert clutter optimization causing issues on X11
-    # https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/2667
-    # Will be replaced with a proper fix in 43.2
-    # https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/6054
-    (fetchpatch {
-      url = "https://gitlab.gnome.org/GNOME/mutter/-/commit/7e7a639cc5132cf3355e861235f325540fe56548.patch";
-      sha256 = "NYoKCRh5o1Q15c11a79Hk5tGKq/jOa+e6GpgBjPEepo=";
-      revert = true;
-    })
-  ];
 
   mesonFlags = [
     "-Degl_device=true"
     "-Dinstalled_tests=false" # TODO: enable these
+    "-Dtests=false"
     "-Dwayland_eglstream=true"
     "-Dprofiler=true"
     "-Dxwayland_path=${xwayland}/bin/Xwayland"
@@ -92,7 +91,6 @@ let self = stdenv.mkDerivation rec {
   propagatedBuildInputs = [
     # required for pkg-config to detect mutter-clutter
     json-glib
-    libXtst
     libcap_ng
     graphene
   ];
@@ -100,15 +98,16 @@ let self = stdenv.mkDerivation rec {
   nativeBuildInputs = [
     desktop-file-utils
     gettext
+    libxcvt
     mesa # needed for gbm
     meson
     ninja
     xvfb-run
     pkg-config
     python3
-    wrapGAppsHook
+    wrapGAppsHook4
     gi-docgen
-    xorgserver # for cvt command
+    xorgserver
   ];
 
   buildInputs = [
@@ -119,25 +118,45 @@ let self = stdenv.mkDerivation rec {
     gnome-settings-daemon
     gobject-introspection
     gsettings-desktop-schemas
-    gtk3
+    atk
+    fribidi
+    harfbuzz
     libcanberra
     libdrm
     libgudev
     libinput
     libstartup_notification
     libwacom
-    libxkbcommon
-    libxkbfile
-    libXdamage
+    libSM
     colord
     lcms2
     pango
     pipewire
     sysprof # for D-Bus interfaces
     libsysprof-capture
-    xkeyboard_config
     xwayland
+    wayland
     wayland-protocols
+  ] ++ [
+    # X11 client
+    gtk4
+    libICE
+    libX11
+    libXcomposite
+    libXcursor
+    libXdamage
+    libXext
+    libXfixes
+    libXi
+    libXtst
+    libxkbfile
+    xkeyboard_config
+    libxkbcommon
+    libXrender
+    libxcb
+    libXrandr
+    libXinerama
+    libXau
   ];
 
   postPatch = ''
@@ -151,7 +170,7 @@ let self = stdenv.mkDerivation rec {
   postFixup = ''
     # Cannot be in postInstall, otherwise _multioutDocs hook in preFixup will move right back.
     # TODO: Move this into a directory devhelp can find.
-    moveToOutput "share/mutter-11/doc" "$devdoc"
+    moveToOutput "share/mutter-12/doc" "$devdoc"
   '';
 
   # Install udev files into our own tree.
@@ -160,12 +179,12 @@ let self = stdenv.mkDerivation rec {
   separateDebugInfo = true;
 
   passthru = {
-    libdir = "${self}/lib/mutter-11";
+    libdir = "${finalAttrs.finalPackage}/lib/mutter-12";
 
     tests = {
       libdirExists = runCommand "mutter-libdir-exists" {} ''
-        if [[ ! -d ${self.libdir} ]]; then
-          echo "passthru.libdir should contain a directory, “${self.libdir}” is not one."
+        if [[ ! -d ${finalAttrs.finalPackage.libdir} ]]; then
+          echo "passthru.libdir should contain a directory, “${finalAttrs.finalPackage.libdir}” is not one."
           exit 1
         fi
         touch $out
@@ -173,8 +192,8 @@ let self = stdenv.mkDerivation rec {
     };
 
     updateScript = gnome.updateScript {
-      packageName = pname;
-      attrPath = "gnome.${pname}";
+      packageName = "mutter";
+      attrPath = "gnome.mutter";
     };
   };
 
@@ -185,5 +204,4 @@ let self = stdenv.mkDerivation rec {
     maintainers = teams.gnome.members;
     platforms = platforms.linux;
   };
-};
-in self
+})

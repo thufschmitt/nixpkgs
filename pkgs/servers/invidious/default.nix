@@ -12,7 +12,7 @@ let
   #     * update lsquic and boringssl if necessarry, lsquic.cr depends on
   #       the same version of lsquic and lsquic requires the boringssl
   #       commit mentioned in its README
-  versions = builtins.fromJSON (builtins.readFile ./versions.json);
+  versions = lib.importJSON ./versions.json;
 in
 crystal.buildCrystalPackage rec {
   pname = "invidious";
@@ -44,7 +44,7 @@ crystal.buildCrystalPackage rec {
       substituteInPlace src/invidious.cr \
           --replace ${lib.escapeShellArg branchTemplate} '"master"' \
           --replace ${lib.escapeShellArg commitTemplate} '"${lib.substring 0 7 versions.invidious.rev}"' \
-          --replace ${lib.escapeShellArg versionTemplate} '"${lib.replaceChars ["-"] ["."] (lib.substring 9 10 version)}"' \
+          --replace ${lib.escapeShellArg versionTemplate} '"${lib.replaceStrings ["-"] ["."] (lib.substring 9 10 version)}"' \
           --replace ${lib.escapeShellArg assetCommitTemplate} '"${lib.substring 0 7 versions.invidious.rev}"'
 
       # Patch the assets and locales paths to be absolute
@@ -115,6 +115,5 @@ crystal.buildCrystalPackage rec {
     homepage = "https://invidious.io/";
     license = licenses.agpl3;
     maintainers = with maintainers; [ infinisil sbruder ];
-    broken = stdenv.isDarwin && stdenv.isAarch64;
   };
 }

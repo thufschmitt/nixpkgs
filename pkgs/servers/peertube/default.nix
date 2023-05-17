@@ -6,26 +6,26 @@ let
     if stdenv.hostPlatform.system == "x86_64-linux" then "linux-x64"
     else throw "Unsupported architecture: ${stdenv.hostPlatform.system}";
 
-  bcrypt_version = "5.0.1";
+  bcrypt_version = "5.1.0";
   bcrypt_lib = fetchurl {
     url = "https://github.com/kelektiv/node.bcrypt.js/releases/download/v${bcrypt_version}/bcrypt_lib-v${bcrypt_version}-napi-v3-${arch}-glibc.tar.gz";
-    hash = "sha256-3R3dBZyPansTuM77Nmm3f7BbTDkDdiT2HQIrti2Ottc=";
+    hash = "sha256-I1ceMi7h6flvKBmMIU1qjAU1S6z5MzguHDul3g1zMKw=";
   };
 
 in stdenv.mkDerivation rec {
   pname = "peertube";
-  version = "4.3.1";
+  version = "5.1.0";
 
   src = fetchFromGitHub {
     owner = "Chocobozzz";
     repo = "PeerTube";
     rev = "v${version}";
-    hash = "sha256-r3Bi7QLzDKo3/idEY7fYIxTJPULNvAS6hy19Hko2qHE=";
+    hash = "sha256-C9mBF+QymGXyBB3IFX6MNgsZpHk739qv1/DLuvzrTaU=";
   };
 
   yarnOfflineCacheServer = fetchYarnDeps {
     yarnLock = "${src}/yarn.lock";
-    hash = "sha256-BimtZpU3aZepvlMfhJ/u0trk1rUsGlzjYk2G90fstII=";
+    hash = "sha256-W+pX2XO27j6qAVxvo+Xf1h7g3V0LUMtwNf+meZmkgwE=";
   };
 
   yarnOfflineCacheTools = fetchYarnDeps {
@@ -35,7 +35,7 @@ in stdenv.mkDerivation rec {
 
   yarnOfflineCacheClient = fetchYarnDeps {
     yarnLock = "${src}/client/yarn.lock";
-    hash = "sha256-IKMu+gQa+d30+yXjHCu/oQOQXL6kTN9WxDI/Y5IL1E8=";
+    hash = "sha256-TAv8QAAfT3q28jUo26h0uCGsoqBzAn8lybIaqNAApU8=";
   };
 
   nativeBuildInputs = [ brotli fixup_yarn_lock jq nodejs which yarn ];
@@ -123,6 +123,6 @@ in stdenv.mkDerivation rec {
     license = licenses.agpl3Plus;
     homepage = "https://joinpeertube.org/";
     platforms = [ "x86_64-linux" ];
-    maintainers = with maintainers; [ immae izorkin matthiasbeyer mohe2015 stevenroose ];
+    maintainers = with maintainers; [ immae izorkin mohe2015 stevenroose ];
   };
 }

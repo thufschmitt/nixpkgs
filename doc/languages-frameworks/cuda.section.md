@@ -27,8 +27,27 @@ package set to make it the default. This guarantees you get a consistent package
 set.
 ```nix
 mypkg = let
-  cudaPackages = cudaPackages_11_5.overrideScope' (final: prev {
+  cudaPackages = cudaPackages_11_5.overrideScope' (final: prev: {
     cudnn = prev.cudnn_8_3_2;
   }});
 in callPackage { inherit cudaPackages; };
 ```
+
+The CUDA NVCC compiler requires flags to determine which hardware you
+want to target for in terms of SASS (real hardware) or PTX (JIT kernels).
+
+Nixpkgs tries to target support real architecture defaults based on the
+CUDA toolkit version with PTX support for future hardware.  Experienced
+users may optimize this configuration for a variety of reasons such as
+reducing binary size and compile time, supporting legacy hardware, or
+optimizing for specific hardware.
+
+You may provide capabilities to add support or reduce binary size through
+`config` using `cudaCapabilities = [ "6.0" "7.0" ];` and
+`cudaForwardCompat = true;` if you want PTX support for future hardware.
+
+Please consult [GPUs supported](https://en.wikipedia.org/wiki/CUDA#GPUs_supported)
+for your specific card(s).
+
+Library maintainers should consult [NVCC Docs](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/)
+and release notes for their software package.

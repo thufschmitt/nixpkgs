@@ -31,7 +31,7 @@
 , openldap
 , enableOAuth2 ? stdenv.isLinux
 , webkitgtk_4_1
-, webkitgtk_5_0
+, webkitgtk_6_0
 , libaccounts-glib
 , json-glib
 , glib
@@ -45,17 +45,18 @@
 , boost
 , protobuf
 , libiconv
+, makeHardcodeGsettingsPatch
 }:
 
 stdenv.mkDerivation rec {
   pname = "evolution-data-server";
-  version = "3.46.2";
+  version = "3.48.1";
 
   outputs = [ "out" "dev" ];
 
   src = fetchurl {
     url = "mirror://gnome/sources/evolution-data-server/${lib.versions.majorMinor version}/${pname}-${version}.tar.xz";
-    sha256 = "+b1SAIt+U12BaSDPzscKDlViveKK9x+ZbiA/9qhuRuA=";
+    sha256 = "XOYsHmfyeJNCp/SgNbEC905i7YX2DoGlt/PgQWVATf8=";
   };
 
   patches = [
@@ -110,7 +111,7 @@ stdenv.mkDerivation rec {
   ] ++ lib.optionals withGtk4 [
     gtk4
   ] ++ lib.optionals (withGtk4 && enableOAuth2) [
-    webkitgtk_5_0
+    webkitgtk_6_0
   ];
 
   propagatedBuildInputs = [
@@ -150,8 +151,8 @@ stdenv.mkDerivation rec {
   '';
 
   passthru = {
-    hardcodeGsettingsPatch = glib.mkHardcodeGsettingsPatch {
-      glib-schema-to-var = {
+    hardcodeGsettingsPatch = makeHardcodeGsettingsPatch {
+      schemaIdToVariableMapping = {
         "org.gnome.Evolution.DefaultSources" = "EDS";
         "org.gnome.evolution.shell.network-config" = "EDS";
         "org.gnome.evolution-data-server.addressbook" = "EDS";

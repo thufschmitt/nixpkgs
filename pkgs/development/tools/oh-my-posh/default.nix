@@ -6,16 +6,16 @@
 
 buildGoModule rec {
   pname = "oh-my-posh";
-  version = "12.26.1";
+  version = "15.4.2";
 
   src = fetchFromGitHub {
     owner = "jandedobbeleer";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-c8O3kZefTZ/IvSRMRxR+Oc6L4Tkcl2PrnuflgbTb7eQ=";
+    hash = "sha256-D1X0/r/OyQKPPE1aEwNVdGJYq6+i67xTvIQK3ZeI7pM=";
   };
 
-  vendorHash = "sha256-OrtKFkWXqVoXKmN6BT8YbCNjR1gRTT4gPNwmirn7fjU=";
+  vendorHash = "sha256-4exLY24baDjgGIDS1P7BIK38O4b+KeqNTMzA6wap05k=";
 
   sourceRoot = "source/src";
 
@@ -35,7 +35,13 @@ buildGoModule rec {
     "static_build"
   ];
 
+  postPatch = ''
+    # this test requires internet access
+    rm engine/migrate_glyphs_test.go
+  '';
+
   postInstall = ''
+    mv $out/bin/{src,oh-my-posh}
     mkdir -p $out/share/oh-my-posh
     cp -r ${src}/themes $out/share/oh-my-posh/
     installShellCompletion --cmd oh-my-posh \

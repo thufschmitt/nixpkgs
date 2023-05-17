@@ -171,7 +171,7 @@ let cfg = config.services.xserver.libinput;
           lib.mdDoc ''
             Enables or disables drag lock during tapping behavior. When enabled, a finger up during tap-
             and-drag will not immediately release the button. If the finger is set down again within the
-            timeout, the draging process continues.
+            timeout, the dragging process continues.
           '';
       };
 
@@ -260,7 +260,9 @@ in {
   options = {
 
     services.xserver.libinput = {
-      enable = mkEnableOption (lib.mdDoc "libinput");
+      enable = mkEnableOption (lib.mdDoc "libinput") // {
+        default = true;
+      };
       mouse = mkConfigForDevice "mouse";
       touchpad = mkConfigForDevice "touchpad";
     };

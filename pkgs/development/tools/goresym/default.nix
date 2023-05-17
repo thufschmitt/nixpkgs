@@ -2,18 +2,18 @@
 
 buildGoModule rec {
   pname = "goresym";
-  version = "1.8";
+  version = "2.3";
 
   src = fetchFromGitHub {
     owner = "mandiant";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-GFr3ppZJsGwi3dyrlpIjYrdJ2QYp2i01SX+EKEAmDE8=";
+    sha256 = "sha256-o2t542q6UGjWdhJkcAm34kGhPUGNsvZKf940T+vydoE=";
   };
 
   subPackages = [ "." ];
 
-  vendorSha256 = "sha256-ElV5edbe1LQWbA1NKv52/rLZJeOLBahE4YBKg9OA7YY=";
+  vendorHash = "sha256-ElV5edbe1LQWbA1NKv52/rLZJeOLBahE4YBKg9OA7YY=";
 
   doCheck = true;
 

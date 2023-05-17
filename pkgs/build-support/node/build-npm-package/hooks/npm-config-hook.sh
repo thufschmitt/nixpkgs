@@ -28,7 +28,7 @@ npmConfigHook() {
       if ! [ -e "$srcLockfile" ]; then
         echo
         echo "ERROR: Missing package-lock.json from src. Expected to find it at: $srcLockfile"
-        echo "Hint: You can use the patches attribute to add a package-lock.json manually to the build."
+        echo "Hint: You can copy a vendored package-lock.json file via postPatch."
         echo
 
         exit 1
@@ -55,6 +55,9 @@ npmConfigHook() {
 
       exit 1
     fi
+
+    export CACHE_MAP_PATH="$TMP/MEOW"
+    @prefetchNpmDeps@ --map-cache
 
     @prefetchNpmDeps@ --fixup-lockfile "$srcLockfile"
 
@@ -108,6 +111,9 @@ npmConfigHook() {
     fi
 
     patchShebangs node_modules
+
+    rm "$CACHE_MAP_PATH"
+    unset CACHE_MAP_PATH
 
     echo "Finished npmConfigHook"
 }

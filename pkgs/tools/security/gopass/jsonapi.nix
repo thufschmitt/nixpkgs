@@ -8,16 +8,16 @@
 
 buildGoModule rec {
   pname = "gopass-jsonapi";
-  version = "1.15.0";
+  version = "1.15.5";
 
   src = fetchFromGitHub {
     owner = "gopasspw";
-    repo = pname;
+    repo = "gopass-jsonapi";
     rev = "v${version}";
-    hash = "sha256-0pCk82na0lWEaRlHhf/Q2BC3K2/sLBHZzKvCN86TMMI=";
+    hash = "sha256-ZSX5g1agmnPU8Nlmptr3GVrjtPPKbDxouSjz9ulSW44=";
   };
 
-  vendorHash = "sha256-fuazCxWJAnxUsxakN2VT9DWNwRO/s89G1sJXk48uO34=";
+  vendorHash = "sha256-JWOBGTJFzihoznYFzcgjayAzNof6Ob5u3Jfx2a6zwEk=";
 
   subPackages = [ "." ];
 
@@ -29,7 +29,7 @@ buildGoModule rec {
 
   postFixup = ''
     wrapProgram $out/bin/gopass-jsonapi \
-      --prefix PATH : "${lib.makeBinPath [ gopass ]}"
+      --prefix PATH : "${gopass.wrapperPath}"
   '';
 
   meta = with lib; {

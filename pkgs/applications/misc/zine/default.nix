@@ -10,14 +10,14 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "zine";
-  version = "0.8.1";
+  version = "0.15.0";
 
   src = fetchCrate {
     inherit pname version;
-    sha256 = "sha256-mcYBaNmfpXDMhZuDxZ8WgwRb0CM3WjATrMH5YcU2Dxo=";
+    sha256 = "sha256-81aCSIsgi7R4KmH1wvDYJJ1WX1vpT1n20XXSs+pHT54=";
   };
 
-  cargoSha256 = "sha256-Xfy7RRQairzfhVmh2E5ny07/9jACDdTqU2aj4IT1rkE=";
+  cargoHash = "sha256-QRxh67WKRUukKGbKQHwWYdDSazN+2g/kf2A3BgePOUM=";
 
   nativeBuildInputs = [
     pkg-config

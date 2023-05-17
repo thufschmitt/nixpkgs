@@ -3,9 +3,10 @@
 , bleak
 , bleak-retry-connector
 , buildPythonPackage
+, cryptography
 , fetchFromGitHub
+, lru-dict
 , poetry-core
-, pycryptodome
 , pytest-asyncio
 , pytestCheckHook
 , pythonOlder
@@ -13,7 +14,7 @@
 
 buildPythonPackage rec {
   pname = "yalexs-ble";
-  version = "1.11.4";
+  version = "2.1.16";
   format = "pyproject";
 
   disabled = pythonOlder "3.9";
@@ -22,7 +23,7 @@ buildPythonPackage rec {
     owner = "bdraco";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-EiT1Bnez1en8NTcNrGn9GmD//VcaBMfk4iwXaYTm8cU=";
+    hash = "sha256-dA0g5HAvbnN1t2D+JTfphxZUEbUT7NBLY6oCKFNf5E8=";
   };
 
   nativeBuildInputs = [
@@ -33,10 +34,11 @@ buildPythonPackage rec {
     async-timeout
     bleak
     bleak-retry-connector
-    pycryptodome
+    cryptography
+    lru-dict
   ];
 
-  checkInputs = [
+  nativeCheckInputs = [
     pytest-asyncio
     pytestCheckHook
   ];

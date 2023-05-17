@@ -42,7 +42,7 @@ in
       description = mdDoc ''
         Group policies to install.
 
-        See [Mozilla's documentation](https://github.com/mozilla/policy-templates/blob/master/README.md")
+        See [Mozilla's documentation](https://github.com/mozilla/policy-templates/blob/master/README.md)
         for a list of available options.
 
         This can be used to install extensions declaratively! Check out the
@@ -79,6 +79,114 @@ in
       '';
     };
 
+    languagePacks = mkOption {
+      # Available languages can be found in https://releases.mozilla.org/pub/firefox/releases/${cfg.package.version}/linux-x86_64/xpi/
+      type = types.listOf (types.enum ([
+        "ach"
+        "af"
+        "an"
+        "ar"
+        "ast"
+        "az"
+        "be"
+        "bg"
+        "bn"
+        "br"
+        "bs"
+        "ca-valencia"
+        "ca"
+        "cak"
+        "cs"
+        "cy"
+        "da"
+        "de"
+        "dsb"
+        "el"
+        "en-CA"
+        "en-GB"
+        "en-US"
+        "eo"
+        "es-AR"
+        "es-CL"
+        "es-ES"
+        "es-MX"
+        "et"
+        "eu"
+        "fa"
+        "ff"
+        "fi"
+        "fr"
+        "fy-NL"
+        "ga-IE"
+        "gd"
+        "gl"
+        "gn"
+        "gu-IN"
+        "he"
+        "hi-IN"
+        "hr"
+        "hsb"
+        "hu"
+        "hy-AM"
+        "ia"
+        "id"
+        "is"
+        "it"
+        "ja"
+        "ka"
+        "kab"
+        "kk"
+        "km"
+        "kn"
+        "ko"
+        "lij"
+        "lt"
+        "lv"
+        "mk"
+        "mr"
+        "ms"
+        "my"
+        "nb-NO"
+        "ne-NP"
+        "nl"
+        "nn-NO"
+        "oc"
+        "pa-IN"
+        "pl"
+        "pt-BR"
+        "pt-PT"
+        "rm"
+        "ro"
+        "ru"
+        "sco"
+        "si"
+        "sk"
+        "sl"
+        "son"
+        "sq"
+        "sr"
+        "sv-SE"
+        "szl"
+        "ta"
+        "te"
+        "th"
+        "tl"
+        "tr"
+        "trs"
+        "uk"
+        "ur"
+        "uz"
+        "vi"
+        "xh"
+        "zh-CN"
+        "zh-TW"
+      ]));
+      default = [ ];
+      description = mdDoc ''
+        The language packs to install.
+      '';
+    };
+
     autoConfig = mkOption {
       type = types.lines;
       default = "";
@@ -93,6 +201,7 @@ in
     nativeMessagingHosts = mapAttrs (_: v: mkEnableOption (mdDoc v)) {
       browserpass = "Browserpass support";
       bukubrow = "Bukubrow support";
+      euwebid = "Web eID support";
       ff2mpv = "ff2mpv support";
       fxCast = "fx_cast support";
       gsconnect = "GSConnect support";
@@ -109,6 +218,8 @@ in
         extraPrefs = cfg.autoConfig;
         extraNativeMessagingHosts = with pkgs; optionals nmh.ff2mpv [
           ff2mpv
+        ] ++ optionals nmh.euwebid [
+          web-eid-app
         ] ++ optionals nmh.gsconnect [
           gnomeExtensions.gsconnect
         ] ++ optionals nmh.jabref [
@@ -122,6 +233,7 @@ in
     nixpkgs.config.firefox = {
       enableBrowserpass = nmh.browserpass;
       enableBukubrow = nmh.bukubrow;
+      enableEUWebID = nmh.euwebid;
       enableTridactylNative = nmh.tridactyl;
       enableUgetIntegrator = nmh.ugetIntegrator;
       enableFXCastBridge = nmh.fxCast;
@@ -136,10 +248,19 @@ in
       };
 
     # Preferences are converted into a policy
-    programs.firefox.policies = mkIf (cfg.preferences != { }) {
+    programs.firefox.policies = {
       Preferences = (mapAttrs
         (_: value: { Value = value; Status = cfg.preferencesStatus; })
         cfg.preferences);
+      ExtensionSettings = listToAttrs (map
+        (lang: nameValuePair
+          "langpack-${lang}@firefox.mozilla.org"
+          {
+            installation_mode = "normal_installed";
+            install_url = "https://releases.mozilla.org/pub/firefox/releases/${cfg.package.version}/linux-x86_64/xpi/${lang}.xpi";
+          }
+        )
+        cfg.languagePacks);
     };
   };
 

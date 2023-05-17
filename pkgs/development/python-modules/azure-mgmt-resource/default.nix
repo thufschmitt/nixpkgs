@@ -9,7 +9,7 @@
 
 buildPythonPackage rec {
   pname = "azure-mgmt-resource";
-  version = "21.2.1";
+  version = "23.0.0";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -17,7 +17,7 @@ buildPythonPackage rec {
   src = fetchPypi {
     inherit pname version;
     extension = "zip";
-    hash = "sha256-vSBg1WOT/+Ykao8spn51Tt0D7Ae5dWMLMK4DqIYFl6c=";
+    hash = "sha256-5hN6vDJE797Mcw/u0FsXVCzNr4c1pmuRQa0KN42HKSI=";
   };
 
   propagatedBuildInputs = [
