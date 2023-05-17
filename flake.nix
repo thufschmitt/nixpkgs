@@ -55,7 +55,7 @@
           openssh
           php
           postgresql
-          python
+          python3
           rsyslog
           stdenv
           subversion
