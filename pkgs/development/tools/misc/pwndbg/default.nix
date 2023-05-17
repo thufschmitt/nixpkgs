@@ -1,4 +1,5 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , python3
 , fetchFromGitHub
 , makeWrapper
@@ -13,7 +14,7 @@ let
     pycparser
     pyelftools
     python-ptrace
-    ROPGadget
+    ropgadget
     six
     unicorn
     pygments
@@ -21,14 +22,14 @@ let
 
 in stdenv.mkDerivation rec {
   pname = "pwndbg";
-  version = "2020.07.23";
+  version = "2022.08.30";
   format = "other";
 
   src = fetchFromGitHub {
     owner = "pwndbg";
     repo = "pwndbg";
     rev = version;
-    sha256 = "0w1dmjy8ii12367wza8c35a9q9x204fppf6x328q75bhb3gd845c";
+    sha256 = "sha256-rMdpNJonzbHyTXbnr6MtlVUmfAfLiCHaVSzuQRhtVpE=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
@@ -48,5 +49,7 @@ in stdenv.mkDerivation rec {
     license = licenses.mit;
     platforms = platforms.all;
     maintainers = with maintainers; [ mic92 ];
+    # never built on aarch64-darwin since first introduction in nixpkgs
+    broken = stdenv.isDarwin && stdenv.isAarch64;
   };
 }

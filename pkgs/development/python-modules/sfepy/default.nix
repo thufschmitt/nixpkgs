@@ -1,6 +1,7 @@
-{ lib
+{ stdenv
+, lib
 , buildPythonPackage
-, fetchurl
+, fetchFromGitHub
 , numpy
 , scipy
 , matplotlib
@@ -17,13 +18,15 @@
 }:
 
 buildPythonPackage rec {
-  name = "sfepy";
-  version = "2020.4";
+  pname = "sfepy";
+  version = "2022.1";
   disabled = pythonOlder "3.8";
 
-  src = fetchurl {
-    url="https://github.com/sfepy/sfepy/archive/release_${version}.tar.gz";
-    sha256 = "1wb0ik6kjg3mksxin0abr88bhsly67fpg36qjdzabhj0xn7j1yaz";
+  src = fetchFromGitHub {
+    owner = "sfepy";
+    repo = "sfepy";
+    rev = "release_${version}";
+    sha256 = "sha256-OayULh/dGI5sEynYMc+JLwUd67zEGdIGEKo6CTOdZS8=";
   };
 
   propagatedBuildInputs = [
@@ -65,6 +68,7 @@ buildPythonPackage rec {
   '';
 
   meta = with lib; {
+    broken = stdenv.isLinux && stdenv.isAarch64;
     homepage = "https://sfepy.org/";
     description = "Simple Finite Elements in Python";
     license = licenses.bsd3;

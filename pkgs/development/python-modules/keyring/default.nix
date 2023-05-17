@@ -1,43 +1,60 @@
-{ lib, stdenv, buildPythonPackage, fetchPypi, isPy27, pythonOlder
-, dbus-python
-, entrypoints
+{ lib
+, stdenv
+, buildPythonPackage
+, fetchPypi
+, pythonOlder
+, setuptools-scm
 , importlib-metadata
-, pytest
-, pytest-flake8
+, dbus-python
+, jaraco_classes
+, jeepney
 , secretstorage
-, setuptools_scm
-, toml
+, pytestCheckHook
 }:
 
 buildPythonPackage rec {
   pname = "keyring";
-  version = "21.5.0";
-  disabled = isPy27;
+  version = "23.11.0";
+  format = "pyproject";
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "207bd66f2a9881c835dad653da04e196c678bf104f8252141d2d3c4f31051579";
+    hash = "sha256-rRkiY+LN1fEodd7cLaE1NDWafnYOd/jQS1CWioIcI2E=";
   };
 
   nativeBuildInputs = [
-    setuptools_scm
-    toml
+    setuptools-scm
   ];
 
-  checkInputs = [ pytest pytest-flake8 ];
+  propagatedBuildInputs = [
+    jaraco_classes
+  ] ++ lib.optionals stdenv.isLinux [
+    jeepney
+    secretstorage
+  ] ++ lib.optionals (pythonOlder "3.12") [
+    importlib-metadata
+  ];
 
-  propagatedBuildInputs = [ dbus-python entrypoints ]
-  ++ lib.optional stdenv.isLinux secretstorage
-  ++ lib.optionals (pythonOlder "3.8") [ importlib-metadata ];
+  pythonImportsCheck = [
+    "keyring"
+    "keyring.backend"
+  ];
 
-  # checks try to access a darwin path on linux
-  doCheck = false;
+  checkInputs = [
+    pytestCheckHook
+  ];
+
+  disabledTestPaths = [
+    "tests/backends/test_macOS.py"
+  ];
 
   meta = with lib; {
     description = "Store and access your passwords safely";
-    homepage    = "https://pypi.python.org/pypi/keyring";
-    license     = licenses.psfl;
-    maintainers = with maintainers; [ lovek323 ];
+    homepage    = "https://github.com/jaraco/keyring";
+    changelog   = "https://github.com/jaraco/keyring/blob/v${version}/CHANGES.rst";
+    license     = licenses.mit;
+    maintainers = with maintainers; [ lovek323 dotlambda ];
     platforms   = platforms.unix;
   };
 }

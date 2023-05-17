@@ -1,28 +1,30 @@
 { lib
 , stdenv
 , fetchFromGitHub
-, fetchpatch
 , cmake
+, asciidoc
 , cmark
 , lmdb
 , lmdbxx
 , libsecret
-, tweeny
 , mkDerivation
 , qtbase
 , qtkeychain
 , qtmacextras
 , qtmultimedia
+, qtimageformats
 , qttools
 , qtquickcontrols2
 , qtgraphicaleffects
 , mtxclient
 , boost17x
 , spdlog
-, fmt
 , olm
 , pkg-config
 , nlohmann_json
+, coeurl
+, libevent
+, curl
 , voipSupport ? true
 , gst_all_1
 , libnice
@@ -30,38 +32,41 @@
 
 mkDerivation rec {
   pname = "nheko";
-  version = "0.8.1";
+  version = "0.10.2";
 
   src = fetchFromGitHub {
     owner = "Nheko-Reborn";
     repo = "nheko";
     rev = "v${version}";
-    sha256 = "1v7k3ifzi05fdr06hmws1wkfl1bmhrnam3dbwahp086vkj0r8524";
+    sha256 = "sha256-gid8XOZ1/hMDGNbse4GYfcAdqHiySWyy4isBgcpekIQ=";
   };
 
   nativeBuildInputs = [
     lmdbxx
     cmake
     pkg-config
+    asciidoc
   ];
 
   buildInputs = [
     nlohmann_json
-    tweeny
     mtxclient
     olm
     boost17x
     libsecret
     lmdb
     spdlog
-    fmt
     cmark
     qtbase
     qtmultimedia
+    qtimageformats
     qttools
     qtquickcontrols2
     qtgraphicaleffects
     qtkeychain
+    coeurl
+    libevent
+    curl
   ] ++ lib.optional stdenv.isDarwin qtmacextras
     ++ lib.optionals voipSupport (with gst_all_1; [
       gstreamer

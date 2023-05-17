@@ -4,19 +4,20 @@
 , meson
 , ninja
 , pkg-config
-, lib, stdenv
+, lib
+, stdenv
 , wrapGAppsHook
 }:
 
 stdenv.mkDerivation rec {
   pname = "cinnamon-menus";
-  version = "4.6.1";
+  version = "5.6.0";
 
   src = fetchFromGitHub {
     owner = "linuxmint";
     repo = pname;
     rev = version;
-    sha256 = "1qdaql4mknhzvl2qi1pyw4c820lqb7lg07gblh0wzfk4f7h8hddx";
+    hash = "sha256-6IOlXQhAy6YrSqybfGFUyn3Q2COvzwpj67y/k/YLNhU=";
   };
 
   buildInputs = [

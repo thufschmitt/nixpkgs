@@ -1,31 +1,46 @@
 { lib
+, stdenv
 , fetchPypi
 , buildPythonPackage
-, Mako
-, pytest
-, numpy
-, cffi
-, pytools
-, decorator
 , appdirs
-, six
-, opencl-headers
+, cffi
+, decorator
+, Mako
+, mesa_drivers
+, numpy
 , ocl-icd
+, opencl-headers
+, platformdirs
 , pybind11
+, pytest
+, pytools
+, six
 }:
 
-buildPythonPackage rec {
+let
+  os-specific-buildInputs =
+    if stdenv.isDarwin then [ mesa_drivers.dev ] else [ ocl-icd ];
+in buildPythonPackage rec {
   pname = "pyopencl";
-  version = "2020.3.1";
+  version = "2022.3";
 
   checkInputs = [ pytest ];
-  buildInputs = [ opencl-headers ocl-icd pybind11 ];
+  buildInputs = [ opencl-headers pybind11 ] ++ os-specific-buildInputs;
 
-  propagatedBuildInputs = [ numpy cffi pytools decorator appdirs six Mako ];
+  propagatedBuildInputs = [
+    appdirs
+    cffi
+    decorator
+    Mako
+    numpy
+    platformdirs
+    pytools
+    six
+  ];
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "abc689307cf34d3dcc94d43815f64e2265469b50ecce6c903a3180589666fb36";
+    sha256 = "sha256-I21tqnSc7dunBpw9Q622tlHkDC1INSdb/uaDGc0DgI0=";
   };
 
   # py.test is not needed during runtime, so remove it from `install_requires`

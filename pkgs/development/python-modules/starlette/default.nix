@@ -2,9 +2,10 @@
 , stdenv
 , buildPythonPackage
 , fetchFromGitHub
-, isPy27
+, fetchpatch
 , aiofiles
-, graphene
+, anyio
+, contextlib2
 , itsdangerous
 , jinja2
 , python-multipart
@@ -13,22 +14,33 @@
 , aiosqlite
 , databases
 , pytestCheckHook
-, pytest-asyncio
+, pythonOlder
+, trio
 , typing-extensions
 , ApplicationServices
 }:
 
 buildPythonPackage rec {
   pname = "starlette";
-  version = "0.14.2";
-  disabled = isPy27;
+  version = "0.20.4";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.6";
 
   src = fetchFromGitHub {
     owner = "encode";
     repo = pname;
-    rev = version;
-    sha256 = "0fz28czvwiww693ig9vwdja59xxs7m0yp1df32ms1hzr99666bia";
+    rev = "refs/tags/${version}";
+    hash = "sha256-vP2TJPn9lRGnLGkO8lUmnsoT6rSnhuWDD3WqNk76SM0=";
   };
+
+  patches = [
+    (fetchpatch {
+      url = "https://github.com/encode/starlette/commit/ab70211f0e1fb7390668bf4891eeceda8d9723a0.diff";
+      excludes = [ "requirements.txt" ]; # conflicts
+      hash = "sha256-UHf4c4YUWp/1I1vD8J0hMewdlfkmluA+FyGf9ZsSv3Y=";
+    })
+  ];
 
   postPatch = ''
     # remove coverage arguments to pytest
@@ -37,27 +49,37 @@ buildPythonPackage rec {
 
   propagatedBuildInputs = [
     aiofiles
-    graphene
+    anyio
     itsdangerous
     jinja2
     python-multipart
     pyyaml
     requests
-  ] ++ lib.optional stdenv.isDarwin [ ApplicationServices ];
+  ] ++ lib.optionals (pythonOlder "3.8") [
+    typing-extensions
+  ] ++ lib.optionals (pythonOlder "3.7") [
+    contextlib2
+  ] ++ lib.optionals stdenv.isDarwin [
+    ApplicationServices
+  ];
 
   checkInputs = [
     aiosqlite
     databases
-    pytest-asyncio
     pytestCheckHook
+    trio
     typing-extensions
   ];
 
-  # fails to import graphql, but integrated graphql support is about to
-  # be removed in 0.15, see https://github.com/encode/starlette/pull/1135.
-  disabledTestPaths = [ "tests/test_graphql.py" ];
+  disabledTests = [
+    # asserts fail due to inclusion of br in Accept-Encoding
+    "test_websocket_headers"
+    "test_request_headers"
+  ];
 
-  pythonImportsCheck = [ "starlette" ];
+  pythonImportsCheck = [
+    "starlette"
+  ];
 
   meta = with lib; {
     homepage = "https://www.starlette.io/";

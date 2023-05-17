@@ -1,42 +1,39 @@
 { buildPythonPackage
 , fetchPypi
 , pytest
-, six
 , tqdm
-, pyyaml
 , docopt
 , requests
 , jsonpatch
-, args
 , schema
 , responses
-, backports_csv
-, isPy3k
 , lib
 , glibcLocales
 , setuptools
+, urllib3
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "internetarchive";
-  version = "2.0.2";
+  version = "3.0.2";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "515e6646a2b917c15f2241670d21f14a014b9c67dc509aef4d4aca5a59cdda65";
+    sha256 = "sha256-3oVkZcLvaFIYTQi/1ZwMoBkEhls3OiezgwNKxrQSjrY=";
   };
 
   propagatedBuildInputs = [
-    six
     tqdm
-    pyyaml
     docopt
     requests
     jsonpatch
-    args
     schema
-    setuptools
-  ] ++ lib.optionals (!isPy3k) [ backports_csv ];
+    setuptools # needs pkg_resources at runtime
+    urllib3
+  ];
 
   checkInputs = [ pytest responses glibcLocales ];
 
@@ -55,5 +52,6 @@ buildPythonPackage rec {
     changelog = "https://github.com/jjjake/internetarchive/raw/v${version}/HISTORY.rst";
     license = licenses.agpl3Plus;
     maintainers = [ maintainers.marsam ];
+    mainProgram = "ia";
   };
 }

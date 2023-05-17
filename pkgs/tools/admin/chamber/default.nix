@@ -1,30 +1,21 @@
-{ buildGoModule, lib, fetchFromGitHub, fetchpatch }:
+{ buildGoModule, lib, fetchFromGitHub }:
 
 buildGoModule rec {
   pname = "chamber";
-  version = "2.9.0";
+  version = "2.10.12";
 
   src = fetchFromGitHub {
     owner = "segmentio";
     repo = pname;
     rev = "v${version}";
-    sha256 = "eOMY9P/fCYvnl6KGNb6wohykLA0Sj9Ti0L18gx5dqUk=";
+    sha256 = "sha256-KbKOaUwJEy/mT59yW0VhZ3MIWkXarCRY8cyNlaI51mQ=";
   };
 
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/segmentio/chamber/commit/3aeb416cdf4c232552b653262e37047fc13b1f02.patch";
-      sha256 = "cyxNF9ZP4oG+1sfX9yWZCyntpAvwYUh5BzTirZQGejc=";
-    })
-  ];
+  CGO_ENABLED = 0;
 
-  vendorSha256 = null;
+  vendorSha256 = "sha256-ENsKm3D3URCrRUiqqebkgFS//2h9SlLbAQHdjisdGlE=";
 
-  # set the version. see: chamber's Makefile
-  buildFlagsArray = ''
-    -ldflags=
-    -X main.Version=v${version}
-  '';
+  ldflags = [ "-s" "-w" "-X main.Version=v${version}" ];
 
   meta = with lib; {
     description =

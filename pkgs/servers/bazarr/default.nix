@@ -1,25 +1,44 @@
-{ stdenv, lib, fetchurl, makeWrapper, python3, unrar, ffmpeg, nixosTests }:
+{ stdenv, lib, fetchurl, makeWrapper, unzip, python3, unar, ffmpeg, nixosTests }:
 
+let
+  runtimeProgDeps = [
+    ffmpeg
+    unar
+  ];
+in
 stdenv.mkDerivation rec {
   pname = "bazarr";
-  version = "0.9.2";
+  version = "1.1.3";
+
+  sourceRoot = ".";
 
   src = fetchurl {
-    url = "https://github.com/morpheus65535/bazarr/archive/v${version}.tar.gz";
-    sha256 = "16mh7v8z5ijr75pvavcj6225w6bg12qy1d1w9vm2d5axnfm3wfbk";
+    url = "https://github.com/morpheus65535/bazarr/releases/download/v${version}/bazarr.zip";
+    sha256 = "sha256-jt6E+VtD7JdPIJdWBkVrQyiNfT7vxSYz4kXrFQAdpXE=";
   };
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ unzip makeWrapper ];
+
+  buildInputs = [
+    (python3.withPackages (ps: [ ps.lxml ps.numpy ps.gevent ps.gevent-websocket ]))
+  ] ++ runtimeProgDeps;
 
   installPhase = ''
-    mkdir -p $out/src
-    cp -r * $out/src
+    runHook preInstall
 
-    mkdir -p $out/bin
-    makeWrapper "${(python3.withPackages (ps: [ps.lxml ps.numpy])).interpreter}" \
-      $out/bin/bazarr \
-      --add-flags "$out/src/bazarr.py" \
-      --suffix PATH : ${lib.makeBinPath [ unrar ffmpeg ]} \
+    mkdir -p "$out"/{bin,share/${pname}}
+    cp -r * "$out/share/${pname}"
+
+    # Add missing shebang and execute perms so that patchShebangs can do its
+    # thing.
+    sed -i "1i #!/usr/bin/env python3" "$out/share/${pname}/bazarr.py"
+    chmod +x "$out/share/${pname}/bazarr.py"
+
+    makeWrapper "$out/share/${pname}/bazarr.py" \
+        "$out/bin/bazarr" \
+        --suffix PATH : ${lib.makeBinPath runtimeProgDeps}
+
+    runHook postInstall
   '';
 
   passthru.tests = {
@@ -29,8 +48,9 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "Subtitle manager for Sonarr and Radarr";
     homepage = "https://www.bazarr.media/";
+    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     license = licenses.gpl3Only;
-    maintainers = with maintainers; [ xwvvvvwx ];
+    maintainers = with maintainers; [ d-xo ];
     platforms = platforms.all;
   };
 }

@@ -5,31 +5,30 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "knockpy";
-  version = "5.0.0";
-  disabled = python3.pythonOlder "3.6";
+  version = "5.3.0";
 
   src = fetchFromGitHub {
     owner = "guelfoweb";
     repo = "knock";
     rev = version;
-    sha256 = "1h7sibdxx8y53xm1wydyng418n4j6baiys257msq03cs04jlm7h9";
+    hash = "sha256-aM78If4/zW/0CqVjZHDbHrrWDuU1VSVhX7dfy9FR098=";
   };
 
   propagatedBuildInputs = with python3.pkgs; [
     beautifulsoup4
     colorama
+    matplotlib
+    networkx
+    pyqt5
     requests
   ];
 
-  postPatch = ''
-    # https://github.com/guelfoweb/knock/pull/95
-    substituteInPlace setup.py \
-      --replace "bs4" "beautifulsoup4"
-  '';
-
   # Project has no tests
   doCheck = false;
-  pythonImportsCheck = [ "knockpy" ];
+
+  pythonImportsCheck = [
+    "knockpy"
+  ];
 
   meta = with lib; {
     description = "Tool to scan subdomains";

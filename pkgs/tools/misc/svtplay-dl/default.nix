@@ -1,25 +1,39 @@
-{ lib, stdenv, fetchFromGitHub, makeWrapper, python3Packages, perl, zip
-, gitMinimal, ffmpeg }:
+{ lib
+, stdenv
+, fetchFromGitHub
+, makeWrapper
+, python3Packages
+, perl
+, zip
+, gitMinimal
+, ffmpeg
+}:
 
 let
 
   inherit (python3Packages)
-    python nose cryptography pyyaml requests mock python-dateutil setuptools;
+    python pytest nose cryptography pyyaml requests mock requests-mock
+    python-dateutil setuptools;
 
-in stdenv.mkDerivation rec {
+  version = "4.17";
+
+in
+
+stdenv.mkDerivation rec {
   pname = "svtplay-dl";
-  version = "3.3";
+  inherit version;
 
   src = fetchFromGitHub {
     owner = "spaam";
     repo = "svtplay-dl";
     rev = version;
-    sha256 = "00pz5vv39qjsw67fdlj6942371lyvv368lc82z17nnh723ck54yy";
+    hash = "sha256-1LkWkila0EG3FfjhTohsirpQ/9wXp5IdoTxliRvT4YU=";
   };
 
   pythonPaths = [ cryptography pyyaml requests ];
-  buildInputs = [ python perl nose mock python-dateutil setuptools ] ++ pythonPaths;
+  buildInputs = [ python perl python-dateutil setuptools ] ++ pythonPaths;
   nativeBuildInputs = [ gitMinimal zip makeWrapper ];
+  checkInputs = [ nose pytest mock requests-mock ];
 
   postPatch = ''
     substituteInPlace scripts/run-tests.sh \
@@ -42,11 +56,17 @@ in stdenv.mkDerivation rec {
     sh scripts/run-tests.sh -2
   '';
 
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    $out/bin/svtplay-dl --help > /dev/null
+    runHook postInstallCheck
+  '';
+
   meta = with lib; {
     homepage = "https://github.com/spaam/svtplay-dl";
     description = "Command-line tool to download videos from svtplay.se and other sites";
     license = licenses.mit;
     platforms = lib.platforms.unix;
-    maintainers = [ maintainers.rycee ];
   };
 }

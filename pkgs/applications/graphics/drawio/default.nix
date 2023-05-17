@@ -1,21 +1,21 @@
 { stdenv, lib, fetchurl, rpmextract, autoPatchelfHook, wrapGAppsHook
 
 # Dynamic libraries
-, alsaLib, atk, at-spi2-atk, at-spi2-core, cairo, dbus, cups, expat
+, alsa-lib, atk, at-spi2-atk, at-spi2-core, cairo, dbus, cups, expat
 , gdk-pixbuf, glib, gtk3, libX11, libXScrnSaver, libXcomposite, libXcursor
 , libXdamage, libXext, libXfixes, libXi, libXrandr, libXrender, libXtst
-, libxcb, libuuid, libxshmfence, nspr, nss, pango
+, libxcb, libuuid, libxshmfence, nspr, nss, pango, mesa
 
 , systemd
 }:
 
 stdenv.mkDerivation rec {
   pname = "drawio";
-  version = "14.5.1";
+  version = "20.6.2";
 
   src = fetchurl {
     url = "https://github.com/jgraph/drawio-desktop/releases/download/v${version}/drawio-x86_64-${version}.rpm";
-    hash = "sha256-ZrEoeeEhHQOLm/L3KA43Ru5fruIPK35CCUsllwpPB58=";
+    sha256 = "cf408c19622d7812b93f0f778b7f091a4387992f9d9a767f4bc1c417b61b7058";
   };
 
   nativeBuildInputs = [
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    alsaLib
+    alsa-lib
     atk
     at-spi2-atk
     at-spi2-core
@@ -50,6 +50,7 @@ stdenv.mkDerivation rec {
     libXtst
     libxcb
     libuuid
+    mesa # for libgbm
     nspr
     nss
     pango
@@ -85,12 +86,19 @@ stdenv.mkDerivation rec {
       --replace /opt/drawio/drawio $out/bin/drawio
   '';
 
+  doInstallCheckPhase = true;
+
+  installCheckPhase = ''
+    $out/bin/drawio --help > /dev/null
+  '';
+
   meta = with lib; {
     description = "A desktop application for creating diagrams";
     homepage = "https://about.draw.io/";
+    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     license = licenses.asl20;
     changelog = "https://github.com/jgraph/drawio-desktop/releases/tag/v${version}";
-    maintainers = with maintainers; [ danieldk ];
+    maintainers = with maintainers; [ darkonion0 ];
     platforms = [ "x86_64-linux" ];
   };
 }

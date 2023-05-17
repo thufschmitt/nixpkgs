@@ -1,4 +1,5 @@
-{ lib, stdenv, fetch, cmake, libxml2, llvm, version, clang-tools-extra_src, python3, lld
+{ lib, stdenv, llvm_meta, fetch, substituteAll, cmake, libxml2, libllvm, version, clang-tools-extra_src, python3
+, buildLlvmTools
 , fixDarwinDylibNames
 , enableManpages ? false
 }:
@@ -8,7 +9,7 @@ let
     pname = "clang";
     inherit version;
 
-    src = fetch "clang" "185r9rr254v75ja33nmm53j85lcnkj7bzsl18wvnd37jmz2nfxa5";
+    src = fetch "clang" "0px4gl27az6cdz6adds89qzdwb1cqpjsfvrldbz9qvpmphrj34bf";
     inherit clang-tools-extra_src;
 
     unpackPhase = ''
@@ -16,28 +17,40 @@ let
       mv clang-* clang
       sourceRoot=$PWD/clang
       unpackFile ${clang-tools-extra_src}
+      mv clang-tools-extra-* $sourceRoot/tools/extra
+      substituteInPlace $sourceRoot/tools/extra/clangd/quality/CompletionModel.cmake \
+        --replace ' ''${CMAKE_SOURCE_DIR}/../clang-tools-extra' ' ''${CMAKE_SOURCE_DIR}/tools/extra'
     '';
 
-    nativeBuildInputs = [ cmake python3 lld ]
+    nativeBuildInputs = [ cmake python3 ]
       ++ lib.optional enableManpages python3.pkgs.sphinx
       ++ lib.optional stdenv.hostPlatform.isDarwin fixDarwinDylibNames;
 
-    buildInputs = [ libxml2 llvm ];
+    buildInputs = [ libxml2 libllvm ];
 
     cmakeFlags = [
       "-DCMAKE_CXX_FLAGS=-std=c++14"
       "-DCLANGD_BUILD_XPC=OFF"
+      "-DLLVM_ENABLE_RTTI=ON"
     ] ++ lib.optionals enableManpages [
       "-DCLANG_INCLUDE_DOCS=ON"
       "-DLLVM_ENABLE_SPHINX=ON"
       "-DSPHINX_OUTPUT_MAN=ON"
       "-DSPHINX_OUTPUT_HTML=OFF"
       "-DSPHINX_WARNINGS_AS_ERRORS=OFF"
+    ] ++ lib.optionals (stdenv.hostPlatform != stdenv.buildPlatform) [
+      "-DLLVM_TABLEGEN_EXE=${buildLlvmTools.llvm}/bin/llvm-tblgen"
+      "-DCLANG_TABLEGEN=${buildLlvmTools.libclang.dev}/bin/clang-tblgen"
     ];
 
     patches = [
       ./purity.patch
       # https://reviews.llvm.org/D51899
+      ./gnu-install-dirs.patch
+      (substituteAll {
+        src = ../../clang-11-12-LLVMgold-path.patch;
+        libllvmLibdir = "${libllvm.lib}/lib";
+      })
     ];
 
     postPatch = ''
@@ -51,14 +64,9 @@ let
       sed -i -e 's/lgcc_s/lgcc_eh/' lib/Driver/ToolChains/*.cpp
     '';
 
-    outputs = [ "out" "lib" "python" ];
+    outputs = [ "out" "lib" "dev" "python" ];
 
-    # Clang expects to find LLVMgold in its own prefix
     postInstall = ''
-      if [ -e ${llvm}/lib/LLVMgold.so ]; then
-        ln -sv ${llvm}/lib/LLVMgold.so $out/lib
-      fi
-
       ln -sv $out/bin/clang $out/bin/cpp
 
       # Move libclang to 'lib' output
@@ -75,18 +83,32 @@ let
       fi
       mv $out/share/clang/*.py $python/share/clang
       rm $out/bin/c-index-test
+      patchShebangs $python/bin
+
+      mkdir -p $dev/bin
+      cp bin/clang-tblgen $dev/bin
     '';
 
     passthru = {
       isClang = true;
-      inherit llvm;
+      inherit libllvm;
     };
 
-    meta = {
-      description = "A c, c++, objective-c, and objective-c++ frontend for the llvm compiler";
-      homepage    = "https://llvm.org/";
-      license     = lib.licenses.ncsa;
-      platforms   = lib.platforms.all;
+    meta = llvm_meta // {
+      homepage = "https://clang.llvm.org/";
+      description = "A C language family frontend for LLVM";
+      longDescription = ''
+        The Clang project provides a language front-end and tooling
+        infrastructure for languages in the C language family (C, C++, Objective
+        C/C++, OpenCL, CUDA, and RenderScript) for the LLVM project.
+        It aims to deliver amazingly fast compiles, extremely useful error and
+        warning messages and to provide a platform for building great source
+        level tools. The Clang Static Analyzer and clang-tidy are tools that
+        automatically find bugs in your code, and are great examples of the sort
+        of tools that can be built using the Clang frontend as a library to
+        parse C/C++ code.
+      '';
+      mainProgram = "clang";
     };
   } // lib.optionalAttrs enableManpages {
     pname = "clang-manpages";
@@ -105,6 +127,8 @@ let
 
     doCheck = false;
 
-    meta.description = "man page for Clang ${version}";
+    meta = llvm_meta // {
+      description = "man page for Clang ${version}";
+    };
   });
 in self

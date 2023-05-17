@@ -1,46 +1,48 @@
 { config, stdenv, lib, fetchurl, fetchzip, boost, cmake, ffmpeg, gettext, glew
 , ilmbase, libXi, libX11, libXext, libXrender
 , libjpeg, libpng, libsamplerate, libsndfile
-, libtiff, libGLU, libGL, openal, opencolorio, openexr, openimagedenoise, openimageio2, openjpeg, python3Packages
+, libtiff, libGLU, libGL, openal, opencolorio, openexr, openimagedenoise, openimageio2, openjpeg, python310Packages
 , openvdb, libXxf86vm, tbb, alembic
-, zlib, fftw, opensubdiv, freetype, jemalloc, ocl-icd, addOpenGLRunpath
+, zlib, zstd, fftw, opensubdiv, freetype, jemalloc, ocl-icd, addOpenGLRunpath
 , jackaudioSupport ? false, libjack2
-, cudaSupport ? config.cudaSupport or false, cudatoolkit
+, cudaSupport ? config.cudaSupport or false, cudaPackages ? {}
+, hipSupport ? false, hip # comes with a significantly larger closure size
 , colladaSupport ? true, opencollada
 , spaceNavSupport ? stdenv.isLinux, libspnav
 , makeWrapper
 , pugixml, llvmPackages, SDL, Cocoa, CoreGraphics, ForceFeedback, OpenAL, OpenGL
 , potrace
 , openxr-loader
-, embree, gmp
+, embree, gmp, libharu
 }:
 
 with lib;
 let
-  python = python3Packages.python;
+  python = python310Packages.python;
   optix = fetchzip {
-    url = "https://developer.download.nvidia.com/redist/optix/v7.0/OptiX-7.0.0-include.zip";
-    sha256 = "1b3ccd3197anya2bj3psxdrvrpfgiwva5zfv2xmyrl73nb2dvfr7";
+    # url taken from the archlinux blender PKGBUILD
+    url = "https://developer.download.nvidia.com/redist/optix/v7.3/OptiX-7.3.0-Include.zip";
+    sha256 = "0max1j4822mchj0xpz9lqzh91zkmvsn4py0r174cvqfz8z8ykjk8";
   };
 
 in
 stdenv.mkDerivation rec {
   pname = "blender";
-  version = "2.92.0";
+  version = "3.3.1";
 
   src = fetchurl {
     url = "https://download.blender.org/source/${pname}-${version}.tar.xz";
-    sha256 = "15a5vffn18a920286x0avbc2rap56k6y531wgibq68r90g2cz4g7";
+    hash = "sha256-KtpI8L+KDKgCuYfXV0UgEuH48krPTSNFOwnC1ZURjMo=";
   };
 
   patches = lib.optional stdenv.isDarwin ./darwin.patch;
 
-  nativeBuildInputs = [ cmake makeWrapper python3Packages.wrapPython ]
+  nativeBuildInputs = [ cmake makeWrapper python310Packages.wrapPython llvmPackages.llvm.dev ]
     ++ optionals cudaSupport [ addOpenGLRunpath ];
   buildInputs =
     [ boost ffmpeg gettext glew ilmbase
       freetype libjpeg libpng libsamplerate libsndfile libtiff
-      opencolorio openexr openimagedenoise openimageio2 openjpeg python zlib fftw jemalloc
+      opencolorio openexr openimagedenoise openimageio2 openjpeg python zlib zstd fftw jemalloc
       alembic
       (opensubdiv.override { inherit cudaSupport; })
       tbb
@@ -48,6 +50,7 @@ stdenv.mkDerivation rec {
       gmp
       pugixml
       potrace
+      libharu
     ]
     ++ (if (!stdenv.isDarwin) then [
       libXi libX11 libXext libXrender
@@ -61,10 +64,10 @@ stdenv.mkDerivation rec {
       llvmPackages.openmp SDL Cocoa CoreGraphics ForceFeedback OpenAL OpenGL
     ])
     ++ optional jackaudioSupport libjack2
-    ++ optional cudaSupport cudatoolkit
+    ++ optional cudaSupport cudaPackages.cudatoolkit
     ++ optional colladaSupport opencollada
     ++ optional spaceNavSupport libspnav;
-  pythonPath = with python3Packages; [ numpy requests ];
+  pythonPath = with python310Packages; [ numpy requests ];
 
   postPatch = ''
     # allow usage of dynamically linked embree
@@ -74,23 +77,21 @@ stdenv.mkDerivation rec {
       : > build_files/cmake/platform/platform_apple_xcode.cmake
       substituteInPlace source/creator/CMakeLists.txt \
         --replace '${"$"}{LIBDIR}/python' \
-                  '${python}' \
-        --replace '${"$"}{LIBDIR}/openmp' \
-                  '${llvmPackages.openmp}'
+                  '${python}'
       substituteInPlace build_files/cmake/platform/platform_apple.cmake \
-        --replace 'set(PYTHON_VERSION 3.7)' \
-                  'set(PYTHON_VERSION ${python.pythonVersion})' \
-        --replace '${"$"}{PYTHON_VERSION}m' \
-                  '${"$"}{PYTHON_VERSION}' \
         --replace '${"$"}{LIBDIR}/python' \
                   '${python}' \
         --replace '${"$"}{LIBDIR}/opencollada' \
                   '${opencollada}' \
         --replace '${"$"}{PYTHON_LIBPATH}/site-packages/numpy' \
-                  '${python3Packages.numpy}/${python.sitePackages}/numpy'
+                  '${python310Packages.numpy}/${python.sitePackages}/numpy'
     '' else ''
       substituteInPlace extern/clew/src/clew.c --replace '"libOpenCL.so"' '"${ocl-icd}/lib/libOpenCL.so"'
-    '');
+    '') +
+    (if hipSupport then ''
+      substituteInPlace extern/hipew/src/hipew.c --replace '"/opt/rocm/hip/lib/libamdhip64.so"' '"${hip}/lib/libamdhip64.so"'
+      substituteInPlace extern/hipew/src/hipew.c --replace '"opt/rocm/hip/bin"' '"${hip}/bin"'
+    '' else "");
 
   cmakeFlags =
     [
@@ -109,8 +110,8 @@ stdenv.mkDerivation rec {
       "-DPYTHON_VERSION=${python.pythonVersion}"
       "-DWITH_PYTHON_INSTALL=OFF"
       "-DWITH_PYTHON_INSTALL_NUMPY=OFF"
-      "-DPYTHON_NUMPY_PATH=${python3Packages.numpy}/${python.sitePackages}"
-      "-DPYTHON_NUMPY_INCLUDE_DIRS=${python3Packages.numpy}/${python.sitePackages}/numpy/core/include"
+      "-DPYTHON_NUMPY_PATH=${python310Packages.numpy}/${python.sitePackages}"
+      "-DPYTHON_NUMPY_INCLUDE_DIRS=${python310Packages.numpy}/${python.sitePackages}/numpy/core/include"
       "-DWITH_PYTHON_INSTALL_REQUESTS=OFF"
       "-DWITH_OPENVDB=ON"
       "-DWITH_TBB=ON"
@@ -126,7 +127,7 @@ stdenv.mkDerivation rec {
     # Clang doesn't support "-export-dynamic"
     ++ optional stdenv.cc.isClang "-DPYTHON_LINKFLAGS="
     ++ optional jackaudioSupport "-DWITH_JACK=ON"
-    ++ optional cudaSupport [
+    ++ optionals cudaSupport [
       "-DWITH_CYCLES_CUDA_BINARIES=ON"
       "-DWITH_CYCLES_DEVICE_OPTIX=ON"
       "-DOPTIX_ROOT_DIR=${optix}"
@@ -139,8 +140,11 @@ stdenv.mkDerivation rec {
   NIX_LDFLAGS = optionalString cudaSupport "-rpath ${stdenv.cc.cc.lib}/lib";
 
   blenderExecutable =
-    placeholder "out" + (if stdenv.isDarwin then "/Blender.app/Contents/MacOS/Blender" else "/bin/blender");
-  postInstall = ''
+    placeholder "out" + (if stdenv.isDarwin then "/Applications/Blender.app/Contents/MacOS/Blender" else "/bin/blender");
+  postInstall = lib.optionalString stdenv.isDarwin ''
+    mkdir $out/Applications
+    mv $out/Blender.app $out/Applications
+  '' + ''
     buildPythonPath "$pythonPath"
     wrapProgram $blenderExecutable \
       --prefix PATH : $program_PATH \

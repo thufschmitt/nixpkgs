@@ -1,22 +1,36 @@
-{ lib, buildPythonPackage, fetchPypi, glibcLocales }:
+{ lib
+, buildPythonPackage
+, fetchFromGitHub
+, pytestCheckHook
+, pythonOlder
+}:
 
 buildPythonPackage rec {
-  pname = "Unidecode";
-  version = "1.1.2";
+  pname = "unidecode";
+  version = "1.3.4";
+  format = "setuptools";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "a039f89014245e0cad8858976293e23501accc9ff5a7bdbc739a14a2b7b85cdc";
+  disabled = pythonOlder "3.5";
+
+  src = fetchFromGitHub {
+    owner = "avian2";
+    repo = pname;
+    rev = "${pname}-${version}";
+    hash = "sha256-2LRV6Egst2bdxefEzfuA9Ef8zMSWvmlCEV/sIzezyPw=";
   };
 
-  LC_ALL="en_US.UTF-8";
+  checkInputs = [
+    pytestCheckHook
+  ];
 
-  buildInputs = [ glibcLocales ];
+  pythonImportsCheck = [
+    "unidecode"
+  ];
 
   meta = with lib; {
-    homepage = "https://pypi.python.org/pypi/Unidecode/";
     description = "ASCII transliterations of Unicode text";
-    license = licenses.gpl2;
+    homepage = "https://pypi.python.org/pypi/Unidecode/";
+    license = licenses.gpl2Plus;
     maintainers = with maintainers; [ domenkozar ];
   };
 }

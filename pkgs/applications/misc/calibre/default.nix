@@ -1,59 +1,62 @@
 { lib
 , stdenv
-, mkDerivation
 , fetchurl
-, poppler_utils
-, pkg-config
-, libpng
-, imagemagick
-, libjpeg
+, cmake
+, fetchpatch
 , fontconfig
-, podofo
-, qtbase
-, qmake
-, icu
-, sqlite
 , hunspell
 , hyphen
-, unrarSupport ? false
-, chmlib
-, python3Packages
-, libusb1
+, icu
+, imagemagick
+, libjpeg
 , libmtp
-, xdg-utils
+, libpng
+, libstemmer
+, libuchardet
+, libusb1
+, pkg-config
+, podofo
+, poppler_utils
+, python3Packages
+, qmake
+, qtbase
+, qtwayland
 , removeReferencesTo
+, sqlite
+, wrapQtAppsHook
+, xdg-utils
+, unrarSupport ? false
 }:
 
-mkDerivation rec {
+stdenv.mkDerivation rec {
   pname = "calibre";
-  version = "5.13.0";
+  version = "6.9.0";
 
   src = fetchurl {
     url = "https://download.calibre-ebook.com/${version}/${pname}-${version}.tar.xz";
-    sha256 = "sha256-GDFAZxZmkio7e7kVjhYqhNdhXIlUPJF0iMWVl0uWVCM=";
+    hash = "sha256-pAZy9YgAzEks5o4R5r46iGLTcitBrOHyltWg2ZyfzwA=";
   };
 
+  # https://sources.debian.org/patches/calibre/${version}+dfsg-1
   patches = [
-    # Plugin installation (very insecure) disabled (from Debian)
-    ./disable_plugins.patch
-    # Automatic version update disabled by default (from Debian)
-    ./no_updates_dialog.patch
+    #  allow for plugin update check, but no calibre version check
+    (fetchpatch {
+      name = "0001-only-plugin-update.patch";
+      url = "https://raw.githubusercontent.com/debian-calibre/calibre/debian/${version}%2Bdfsg-1/debian/patches/0001-only-plugin-update.patch";
+      hash = "sha256-uL1mSjgCl5ZRLbSuKxJM6XTfvVwog70F7vgKtQzQNEQ=";
+    })
+    (fetchpatch {
+      name = "0006-Hardening-Qt-code.patch";
+      url = "https://raw.githubusercontent.com/debian-calibre/calibre/debian/${version}%2Bdfsg-1/debian/patches/0006-Hardening-Qt-code.patch";
+      hash = "sha256-CutVTb7K4tjewq1xAjHEGUHFcuuP/Z4FFtj4xQb4zKQ=";
+    })
   ]
   ++ lib.optional (!unrarSupport) ./dont_build_unrar_plugin.patch;
 
-  escaped_pyqt5_dir = builtins.replaceStrings ["/"] ["\\/"] (toString python3Packages.pyqt5);
-  platform_tag =
-    if stdenv.hostPlatform.isDarwin then
-      "WS_MACX"
-    else if stdenv.hostPlatform.isWindows then
-      "WS_WIN"
-    else
-      "WS_X11";
-
   prePatch = ''
-    sed -i "s/\[tool.sip.project\]/[tool.sip.project]\nsip-include-dirs = [\"${escaped_pyqt5_dir}\/share\/sip\/PyQt5\"]/g" \
+    sed -i "s@\[tool.sip.project\]@[tool.sip.project]\nsip-include-dirs = [\"${python3Packages.pyqt6}/${python3Packages.python.sitePackages}/PyQt6/bindings\"]@g" \
       setup/build.py
-    sed -i "s/\[tool.sip.bindings.pictureflow\]/[tool.sip.bindings.pictureflow]\ntags = [\"${platform_tag}\"]/g" \
+    sed -i "s/\[tool.sip.bindings.pictureflow\]/[tool.sip.bindings.pictureflow]\ntags = [\"${python3Packages.sip.platform_tag}\"]/g" \
       setup/build.py
 
     # Remove unneeded files and libs
@@ -61,13 +64,17 @@ mkDerivation rec {
   '';
 
   dontUseQmakeConfigure = true;
+  dontUseCmakeConfigure = true;
 
-  enableParallelBuilding = true;
-
-  nativeBuildInputs = [ pkg-config qmake removeReferencesTo ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    qmake
+    removeReferencesTo
+    wrapQtAppsHook
+  ];
 
   buildInputs = [
-    chmlib
     fontconfig
     hunspell
     hyphen
@@ -76,20 +83,25 @@ mkDerivation rec {
     libjpeg
     libmtp
     libpng
+    libstemmer
+    libuchardet
     libusb1
     podofo
     poppler_utils
     qtbase
+    qtwayland
     sqlite
     xdg-utils
   ] ++ (
     with python3Packages; [
-      apsw
+      (apsw.overrideAttrs (oldAttrs: rec {
+        setupPyBuildFlags = [ "--enable=load_extension" ];
+      }))
       beautifulsoup4
       cchardet
       css-parser
       cssselect
-      dateutil
+      python-dateutil
       dnspython
       feedparser
       html2text
@@ -100,15 +112,23 @@ mkDerivation rec {
       msgpack
       netifaces
       pillow
+      pychm
       pyqt-builder
-      pyqt5
-      pyqtwebengine
+      pyqt6
       python
       regex
-      sip_5
+      sip
+      setuptools
       zeroconf
+      jeepney
+      pycryptodome
       # the following are distributed with calibre, but we use upstream instead
       odfpy
+    ] ++ lib.optionals (lib.lists.any (p: p == stdenv.hostPlatform.system) pyqt6-webengine.meta.platforms) [
+      # much of calibre's functionality is usable without a web
+      # browser, so we enable building on platforms which qtwebengine
+      # does not support by simply omitting qtwebengine.
+      pyqt6-webengine
     ] ++ lib.optional (unrarSupport) unrardll
   );
 
@@ -124,7 +144,6 @@ mkDerivation rec {
     export FC_LIB_DIR=${fontconfig.lib}/lib
     export PODOFO_INC_DIR=${podofo.dev}/include/podofo
     export PODOFO_LIB_DIR=${podofo.lib}/lib
-    export SIP_BIN=${python3Packages.sip}/bin/sip
     export XDG_DATA_HOME=$out/share
     export XDG_UTILS_INSTALL_MODE="user"
 
@@ -150,7 +169,6 @@ mkDerivation rec {
 
   # Wrap manually
   dontWrapQtApps = true;
-  dontWrapGApps = true;
 
   # Remove some references to shrink the closure size. This reference (as of
   # 2018-11-06) was a single string like the following:
@@ -160,9 +178,7 @@ mkDerivation rec {
       $out/lib/calibre/calibre/plugins/podofo.so
 
     for program in $out/bin/*; do
-      wrapProgram $program \
-        ''${qtWrapperArgs[@]} \
-        ''${gappsWrapperArgs[@]} \
+      wrapQtApp $program \
         --prefix PYTHONPATH : $PYTHONPATH \
         --prefix PATH : ${poppler_utils.out}/bin
     done

@@ -1,42 +1,39 @@
 { lib
 , brotli
+, brotlicffi
 , buildPythonPackage
+, certifi
 , cryptography
-, dateutil
 , fetchPypi
 , idna
-, isPy27
+, isPyPy
 , mock
 , pyopenssl
 , pysocks
 , pytest-freezegun
 , pytest-timeout
 , pytestCheckHook
-, pythonOlder
+, python-dateutil
 , tornado
 , trustme
 }:
 
 buildPythonPackage rec {
   pname = "urllib3";
-  version = "1.26.4";
+  version = "1.26.12";
+  format = "setuptools";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "0dw9w9bs3hmr5dp3r3h43jyzzb1g1046ag7lj8pqf58i4kvj3c77";
+    hash = "sha256-P6ls9CPmmHmX/DJq6N85bbKot8ZndH1H3djsupH0p04=";
   };
 
-  propagatedBuildInputs = [
-    brotli
-    pysocks
-  ] ++ lib.optionals isPy27 [
-    cryptography
-    idna
-    pyopenssl
-  ];
+  # FIXME: remove backwards compatbility hack
+  propagatedBuildInputs = passthru.optional-dependencies.brotli
+    ++ passthru.optional-dependencies.socks;
 
   checkInputs = [
-    dateutil
+    python-dateutil
     mock
     pytest-freezegun
     pytest-timeout
@@ -62,7 +59,16 @@ buildPythonPackage rec {
     export CI # Increases LONG_TIMEOUT
   '';
 
-  pythonImportsCheck = [ "urllib3" ];
+  pythonImportsCheck = [
+    "urllib3"
+  ];
+
+  passthru.optional-dependencies = {
+    brotli = if isPyPy then [ brotlicffi ] else [ brotli ];
+    # Use carefully since pyopenssl is not supported aarch64-darwin
+    secure = [ certifi cryptography idna pyopenssl ];
+    socks = [ pysocks ];
+  };
 
   meta = with lib; {
     description = "Powerful, sanity-friendly HTTP client for Python";

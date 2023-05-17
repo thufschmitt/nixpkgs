@@ -1,5 +1,5 @@
 { mkDerivation, lib, fetchurl, fetchgit, fetchpatch
-, qtbase, qtquickcontrols, qtscript, qtdeclarative, qmake, llvmPackages_8
+, qtbase, qtquickcontrols, qtscript, qtdeclarative, qmake, llvmPackages_8, elfutils, perf
 , withDocumentation ? false, withClangPlugins ? true
 }:
 
@@ -9,6 +9,8 @@ let
   # Fetch clang from qt vendor, this contains submodules like this:
   # clang<-clang-tools-extra<-clazy.
   clang_qt_vendor = llvmPackages_8.clang-unwrapped.overrideAttrs (oldAttrs: {
+    # file RPATH_CHANGE could not write new RPATH
+    cmakeFlags = [ "-DCMAKE_SKIP_BUILD_RPATH=ON" ];
     src = fetchgit {
       url = "https://code.qt.io/clang/clang.git";
       rev = "c12b012bb7465299490cf93c2ae90499a5c417d5";
@@ -20,15 +22,15 @@ in
 
 mkDerivation rec {
   pname = "qtcreator";
-  version = "4.14.0";
+  version = "5.0.3";
   baseVersion = builtins.concatStringsSep "." (lib.take 2 (builtins.splitVersion version));
 
   src = fetchurl {
     url = "http://download.qt-project.org/official_releases/${pname}/${baseVersion}/${version}/qt-creator-opensource-src-${version}.tar.xz";
-    sha256 = "07i045mzwbfhwj2jlijhz9xs6ay03qs5dgcw2kzlcr79a69i0h6j";
+    sha256 = "1sz21ijzvhf5avblikffykbqa8zdq3sbg32g2dmyxv5w211v3lvz";
   };
 
-  buildInputs = [ qtbase qtscript qtquickcontrols qtdeclarative ] ++
+  buildInputs = [ qtbase qtscript qtquickcontrols qtdeclarative elfutils.dev ] ++
     optionals withClangPlugins [ llvmPackages_8.libclang
                                  clang_qt_vendor
                                  llvmPackages_8.llvm ];
@@ -45,11 +47,11 @@ mkDerivation rec {
 
   doCheck = true;
 
-  enableParallelBuilding = true;
-
   buildFlags = optional withDocumentation "docs";
 
   installFlags = [ "INSTALL_ROOT=$(out)" ] ++ optional withDocumentation "install_docs";
+
+  qtWrapperArgs = [ "--set-default PERFPROFILER_PARSER_FILEPATH ${lib.getBin perf}/bin" ];
 
   preConfigure = ''
     substituteInPlace src/plugins/plugins.pro \
@@ -64,17 +66,19 @@ mkDerivation rec {
 
     # Fix paths to libclang library.
     substituteInPlace src/shared/clang/clang_installation.pri \
-      --replace 'LIBCLANG_LIBS = -L$${LLVM_LIBDIR}' 'LIBCLANG_LIBS = -L${llvmPackages_8.libclang}/lib' \
+      --replace 'LIBCLANG_LIBS = -L$${LLVM_LIBDIR}' 'LIBCLANG_LIBS = -L${llvmPackages_8.libclang.lib}/lib' \
       --replace 'LIBCLANG_LIBS += $${CLANG_LIB}' 'LIBCLANG_LIBS += -lclang' \
       --replace 'LIBTOOLING_LIBS = -L$${LLVM_LIBDIR}' 'LIBTOOLING_LIBS = -L${clang_qt_vendor}/lib' \
       --replace 'LLVM_CXXFLAGS ~= s,-gsplit-dwarf,' '${lib.concatStringsSep "\n" ["LLVM_CXXFLAGS ~= s,-gsplit-dwarf," "    LLVM_CXXFLAGS += -fno-rtti"]}'
   '';
 
-  preBuild = optional withDocumentation ''
+  preBuild = optionalString withDocumentation ''
     ln -s ${getLib qtbase}/$qtDocPrefix $NIX_QT5_TMP/share
   '';
 
   postInstall = ''
+    mkdir -p $out/share/applications
+    cp share/applications/org.qt-project.qtcreator.desktop $out/share/applications
     substituteInPlace $out/share/applications/org.qt-project.qtcreator.desktop \
       --replace "Exec=qtcreator" "Exec=$out/bin/qtcreator"
   '';

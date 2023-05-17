@@ -37,11 +37,12 @@ stdenv.mkDerivation rec {
   '';
 
   meta = {
-    inherit version;
     description = "A generic Sokoban game for X11";
     license = lib.licenses.gpl2Plus;
     maintainers = [lib.maintainers.raskin];
     platforms = lib.platforms.unix;
     homepage = "https://tracker.debian.org/pkg/xsok";
+    # never built on aarch64-darwin since first introduction in nixpkgs
+    broken = stdenv.isDarwin && stdenv.isAarch64;
   };
 }

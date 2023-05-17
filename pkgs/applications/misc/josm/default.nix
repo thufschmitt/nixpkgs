@@ -1,24 +1,26 @@
-{ lib, stdenv, fetchurl, fetchsvn, makeWrapper, unzip, jre, libXxf86vm }:
+{ lib, stdenv, fetchurl, fetchsvn, makeWrapper, unzip, jre, libXxf86vm
+, extraJavaOpts ? "-Djosm.restart=true -Djava.net.useSystemProxies=true"
+}:
 let
   pname = "josm";
-  version = "17702";
+  version = "18583";
   srcs = {
     jar = fetchurl {
       url = "https://josm.openstreetmap.de/download/josm-snapshot-${version}.jar";
-      sha256 = "1p7p0jd87sxrs5n0r82apkilx0phgmjw7vpdg8qrr5msda4rsmpk";
+      hash = "sha256-6S6E7ngTCBXb0epPfYxIswLvfm9r2Ql0wgOs/PxpmIM=";
     };
     macosx = fetchurl {
-      url = "https://josm.openstreetmap.de/download/macosx/josm-macos-${version}-java16.zip";
-      sha256 = "0r17cphxm852ykb8mkil29rr7sb0bj5w69qd5wz8zf2f9djk9npk";
+      url = "https://josm.openstreetmap.de/download/macosx/josm-macos-${version}-java17.zip";
+      hash = "sha256-3XEoSCXEpeqZj1y4nns5+0JR1SINYE1rsmQ4fMflxRQ=";
     };
     pkg = fetchsvn {
       url = "https://josm.openstreetmap.de/svn/trunk/native/linux/tested";
       rev = version;
-      sha256 = "1b7dryvakph8znh2ahgywch66l4bl5rmgsr79axnz1xi12g8ac12";
+      sha256 = "sha256-Cga17ymUROJb5scpyOlo6JIgQ77yHavI0ciUpZN+jLk=";
     };
   };
 in
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   inherit pname version;
 
   dontUnpack = true;
@@ -36,8 +38,7 @@ stdenv.mkDerivation {
 
       # Add libXxf86vm to path because it is needed by at least Kendzi3D plugin
       makeWrapper ${jre}/bin/java $out/bin/josm \
-        --add-flags "-Djosm.restart=true -Djava.net.useSystemProxies=true" \
-        --add-flags "-jar $out/share/josm/josm.jar" \
+        --add-flags "${extraJavaOpts} -jar $out/share/josm/josm.jar" \
         --prefix LD_LIBRARY_PATH ":" '${libXxf86vm}/lib'
     '';
 
@@ -45,6 +46,7 @@ stdenv.mkDerivation {
     description = "An extensible editor for OpenStreetMap";
     homepage = "https://josm.openstreetmap.de/";
     changelog = "https://josm.openstreetmap.de/wiki/Changelog";
+    sourceProvenance = with sourceTypes; [ binaryBytecode ];
     license = licenses.gpl2Plus;
     maintainers = with maintainers; [ rycee sikmir ];
     platforms = platforms.all;

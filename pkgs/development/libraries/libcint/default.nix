@@ -9,13 +9,13 @@
 
 stdenv.mkDerivation rec {
   pname = "libcint";
-  version = "4.1.1";
+  version = "5.1.6";
 
   src = fetchFromGitHub {
     owner = "sunqm";
     repo = "libcint";
     rev = "v${version}";
-    sha256 = "sha256-HBZ/VMuTLAYpqcIPzQ4JbsMSXsI/sKc14ZFpbVhQF/g=";
+    hash = "sha256-vhi/VzT/WmkfWi+hliN60o7eT+XgDr7T/k8DG3N1moc=";
   };
 
   nativeBuildInputs = [ cmake ];
@@ -24,6 +24,9 @@ stdenv.mkDerivation rec {
     "-DENABLE_TEST=1"
     "-DQUICK_TEST=1"
     "-DCMAKE_INSTALL_PREFIX=" # ends up double-adding /nix/store/... prefix, this avoids issue
+    "-DWITH_RANGE_COULOMB:STRING=1"
+    "-DWITH_FORTRAN:STRING=1"
+    "-DMIN_EXPCUTOFF:STRING=20"
   ];
 
   strictDeps = true;

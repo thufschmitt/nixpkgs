@@ -1,26 +1,24 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , fetchFromGitHub
 , pkg-config
-, autoreconfHook
 , glib
 , gettext
 , cinnamon-desktop
-, intltool
 , gtk3
 , libnotify
 , libxml2
 , gnome-online-accounts
-, cinnamon-settings-daemon
 , colord
 , polkit
 , libxkbfile
 , cinnamon-menus
-, dbus-glib
 , libgnomekbd
 , libxklavier
 , networkmanager
+, libgudev
 , libwacom
-, libtool
+, gnome
 , wrapGAppsHook
 , tzdata
 , glibc
@@ -28,17 +26,22 @@
 , modemmanager
 , xorg
 , gdk-pixbuf
+, meson
+, ninja
+, cinnamon-translations
+, python3
+, upower
 }:
 
 stdenv.mkDerivation rec {
   pname = "cinnamon-control-center";
-  version = "4.6.2";
+  version = "5.6.0";
 
   src = fetchFromGitHub {
     owner = "linuxmint";
     repo = pname;
     rev = version;
-    sha256 = "0fbgi2r2xikpa04k431qq9akngi9akyflq1kcks8f095qs5gsana";
+    hash = "sha256-WK35uDckIYU4HwuYtLj+CFVJD8O78LTQcnOvjp/et2s=";
   };
 
   buildInputs = [
@@ -48,12 +51,11 @@ stdenv.mkDerivation rec {
     libnotify
     cinnamon-menus
     libxml2
-    dbus-glib
     polkit
     libgnomekbd
     libxklavier
     colord
-    cinnamon-settings-daemon
+    libgudev
     libwacom
     gnome-online-accounts
     tzdata
@@ -63,43 +65,33 @@ stdenv.mkDerivation rec {
     xorg.libXxf86misc
     xorg.libxkbfile
     gdk-pixbuf
+    upower
   ];
 
   /* ./panels/datetime/test-timezone.c:4:#define TZ_DIR "/usr/share/zoneinfo/"
-  ./panels/datetime/tz.h:32:#  define TZ_DATA_FILE "/usr/share/zoneinfo/zone.tab"
-  ./panels/datetime/tz.h:34:#  define TZ_DATA_FILE "/usr/share/lib/zoneinfo/tab/zone_sun.tab" */
+    ./panels/datetime/tz.h:32:#  define TZ_DATA_FILE "/usr/share/zoneinfo/zone.tab"
+    ./panels/datetime/tz.h:34:#  define TZ_DATA_FILE "/usr/share/lib/zoneinfo/tab/zone_sun.tab" */
 
   postPatch = ''
-    patchShebangs ./autogen.sh
     sed 's|TZ_DIR "/usr/share/zoneinfo/"|TZ_DIR "${tzdata}/share/zoneinfo/"|g' -i ./panels/datetime/test-timezone.c
     sed 's|TZ_DATA_FILE "/usr/share/zoneinfo/zone.tab"|TZ_DATA_FILE "${tzdata}/share/zoneinfo/zone.tab"|g' -i ./panels/datetime/tz.h
     sed 's|"/usr/share/i18n/locales/"|"${glibc}/share/i18n/locales/"|g' -i panels/datetime/test-endianess.c
+
+    patchShebangs meson_install_schemas.py
   '';
 
-  autoreconfPhase = ''
-    NOCONFIGURE=1 bash ./autogen.sh
-  '';
-
-  # it needs to have access to that file, otherwise we can't run tests after build
-
-  preBuild = ''
-    mkdir -p $out/share/cinnamon-control-center/
-    ln -s $PWD/panels/datetime $out/share/cinnamon-control-center/
-  '';
-
-  preInstall = ''
-    rm -rfv $out
-  '';
-
-  doCheck = true;
+  mesonFlags = [
+    # use locales from cinnamon-translations
+    "--localedir=${cinnamon-translations}/share/locale"
+  ];
 
   nativeBuildInputs = [
     pkg-config
-    autoreconfHook
+    meson
+    ninja
     wrapGAppsHook
     gettext
-    intltool
-    libtool
+    python3
   ];
 
   meta = with lib; {

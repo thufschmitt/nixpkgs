@@ -1,33 +1,27 @@
-{ lib
-, buildGoPackage
-, fetchFromGitHub
-, makeWrapper
-}:
+{ lib, buildGoModule, fetchFromGitHub, makeWrapper }:
 
-buildGoPackage rec {
+buildGoModule rec {
   pname = "docker-slim";
-  version = "1.34.0";
-
-  goPackagePath = "github.com/docker-slim/docker-slim";
+  version = "1.39.0";
 
   src = fetchFromGitHub {
     owner = "docker-slim";
     repo = "docker-slim";
     rev = version;
-    sha256 = "1ynpd6yb1xc18y528sshd5k9nkz48h1zifj2w4sjh5n0864lna7b";
+    sha256 = "sha256-CN3mvXjI6c10yvXM2owWASngsU2PjgLhd1N55vxubw0=";
   };
+
+  vendorSha256 = null;
 
   subPackages = [ "cmd/docker-slim" "cmd/docker-slim-sensor" ];
 
-  nativeBuildInputs = [
-    makeWrapper
-  ];
+  nativeBuildInputs = [ makeWrapper ];
 
-  buildFlagsArray = [
-    ''-ldflags=
-        -s -w -X ${goPackagePath}/pkg/version.appVersionTag=${version}
-              -X ${goPackagePath}/pkg/version.appVersionRev=${src.rev}
-    ''
+  ldflags = [
+    "-s"
+    "-w"
+    "-X github.com/docker-slim/docker-slim/pkg/version.appVersionTag=${version}"
+    "-X github.com/docker-slim/docker-slim/pkg/version.appVersionRev=${src.rev}"
   ];
 
   # docker-slim tries to create its state dir next to the binary (inside the nix
@@ -39,7 +33,7 @@ buildGoPackage rec {
   meta = with lib; {
     description = "Minify and secure Docker containers";
     homepage = "https://dockersl.im/";
-    changelog = "https://github.com/docker-slim/docker-slim/blob/${version}/CHANGELOG.md";
+    changelog = "https://github.com/docker-slim/docker-slim/raw/${version}/CHANGELOG.md";
     license = licenses.asl20;
     maintainers = with maintainers; [ Br1ght0ne marsam mbrgm ];
   };

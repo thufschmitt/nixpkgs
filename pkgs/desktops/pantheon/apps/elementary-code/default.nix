@@ -1,49 +1,50 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , fetchFromGitHub
+, fetchpatch
 , nix-update-script
-, pantheon
-, pkg-config
+, appstream
+, desktop-file-utils
 , meson
 , ninja
-, vala
+, pkg-config
+, polkit
 , python3
-, desktop-file-utils
-, gtk3
-, granite
-, libgee
-, elementary-icon-theme
-, appstream
-, libpeas
+, vala
+, wrapGAppsHook
 , editorconfig-core-c
-, gtksourceview3
+, granite
+, gtk3
+, gtksourceview4
 , gtkspell3
+, libgee
+, libgit2-glib
+, libhandy
+, libpeas
 , libsoup
 , vte
-, webkitgtk
-, zeitgeist
 , ctags
-, libgit2-glib
-, wrapGAppsHook
 }:
 
 stdenv.mkDerivation rec {
   pname = "elementary-code";
-  version = "3.4.1";
-
-  repoName = "code";
+  version = "6.2.0";
 
   src = fetchFromGitHub {
     owner = "elementary";
-    repo = repoName;
+    repo = "code";
     rev = version;
-    sha256 = "sha256-4AEayj+K/lOW6jEYmvmdan1kTqqqLL1YzwcU7/3PH5U=";
+    sha256 = "sha256-QhJNRhYgGbPMd7B1X3kG+pnC/lGUoF7gc7O1PdG49LI=";
   };
 
-  passthru = {
-    updateScript = nix-update-script {
-      attrPath = "pantheon.${pname}";
-    };
-  };
+  patches = [
+    # Fix drag and drop of accented text and between tabs
+    # https://github.com/elementary/code/pull/1194
+    (fetchpatch {
+      url = "https://github.com/elementary/code/commit/1ed7b590768ea9cb5b4658e27d9dc7ac224442ae.patch";
+      sha256 = "sha256-VrYcEbkzQKi5gFB/Vw/0NITZvSXKXfuEv2R3m0VALVM=";
+    })
+  ];
 
   nativeBuildInputs = [
     appstream
@@ -51,30 +52,25 @@ stdenv.mkDerivation rec {
     meson
     ninja
     pkg-config
+    polkit # needed for ITS rules
     python3
     vala
     wrapGAppsHook
   ];
 
   buildInputs = [
-    ctags
     editorconfig-core-c
-    elementary-icon-theme
     granite
     gtk3
-    gtksourceview3
+    gtksourceview4
     gtkspell3
     libgee
     libgit2-glib
+    libhandy
     libpeas
     libsoup
     vte
-    webkitgtk
-    zeitgeist
   ];
-
-  # install script fails with UnicodeDecodeError because of printing a fancy elipsis character
-  LC_ALL = "C.UTF-8";
 
   # ctags needed in path by outline plugin
   preFixup = ''
@@ -88,11 +84,18 @@ stdenv.mkDerivation rec {
     patchShebangs meson/post_install.py
   '';
 
+  passthru = {
+    updateScript = nix-update-script {
+      attrPath = "pantheon.${pname}";
+    };
+  };
+
   meta = with lib; {
     description = "Code editor designed for elementary OS";
     homepage = "https://github.com/elementary/code";
     license = licenses.gpl3Plus;
     platforms = platforms.linux;
-    maintainers = pantheon.maintainers;
+    maintainers = teams.pantheon.members;
+    mainProgram = "io.elementary.code";
   };
 }

@@ -1,32 +1,37 @@
-{ lib, buildGoModule, fetchFromGitHub, installShellFiles }:
+{ lib, stdenv, buildGoModule, fetchFromGitHub, installShellFiles }:
 
 buildGoModule rec {
   pname = "velero";
-  version = "1.5.4";
+  version = "1.10.0";
+
 
   src = fetchFromGitHub {
-    rev = "v${version}";
     owner = "vmware-tanzu";
     repo = "velero";
-    sha256 = "sha256-YHBqIM3NV2L13w9WCzldUWmdBMec7ZndzYgGHblS8Dg=";
+    rev = "v${version}";
+    sha256 = "sha256-PBCTVws5N42q68rKcMLW7GgZvdsQgmdlsKMpJ5bCF00=";
   };
 
-  buildFlagsArray = ''
-    -ldflags=
-      -s -w
-      -X github.com/vmware-tanzu/velero/pkg/buildinfo.Version=${version}
-      -X github.com/vmware-tanzu/velero/pkg/buildinfo.GitSHA=456eb19668f8da603756353d9179b59b5a7bfa04
-      -X github.com/vmware-tanzu/velero/pkg/buildinfo.GitTreeState=clean
+  ldflags = [
+    "-s" "-w"
+    "-X github.com/vmware-tanzu/velero/pkg/buildinfo.Version=v${version}"
+    "-X github.com/vmware-tanzu/velero/pkg/buildinfo.ImageRegistry=velero"
+    "-X github.com/vmware-tanzu/velero/pkg/buildinfo.GitTreeState=clean"
+    "-X github.com/vmware-tanzu/velero/pkg/buildinfo.GitSHA=none"
+  ];
+
+  vendorSha256 = "sha256-5Po8TRCE6VP+RcaIJImYjElTMHHS/2JwbrHreeWLxio=";
+
+  excludedPackages = [ "issue-template-gen" "release-tools" "v1" "velero-restic-restore-helper" ];
+
+  doCheck = false; # Tests expect a running cluster see https://github.com/vmware-tanzu/velero/tree/main/test/e2e
+  doInstallCheck = true;
+  installCheckPhase = ''
+    $out/bin/velero version --client-only | grep ${version} > /dev/null
   '';
 
-  vendorSha256 = "sha256-m/zShJeclZ1k8Fr9faK2x1Mpwbwun674iMPJhMw/9Mc=";
-
-  excludedPackages = [ "issue-template-gen" ];
-
-  doCheck = false;
-
   nativeBuildInputs = [ installShellFiles ];
-  postInstall = ''
+  postInstall = lib.optionalString (stdenv.hostPlatform == stdenv.buildPlatform) ''
     $out/bin/velero completion bash > velero.bash
     $out/bin/velero completion zsh > velero.zsh
     installShellCompletion velero.{bash,zsh}
@@ -40,6 +45,5 @@ buildGoModule rec {
       "https://github.com/vmware-tanzu/velero/releases/tag/v${version}";
     license = licenses.asl20;
     maintainers = [ maintainers.mbode maintainers.bryanasdev000 ];
-    platforms = platforms.linux ++ platforms.darwin;
   };
 }

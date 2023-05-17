@@ -1,13 +1,13 @@
-{ lib, stdenv, fetchurl, openssl }:
+{ lib, stdenv, fetchurl, openssl, nixosTests }:
 
 stdenv.mkDerivation rec {
   pname = "stunnel";
-  version = "5.58";
+  version = "5.67";
 
   src = fetchurl {
-    url    = "https://www.stunnel.org/downloads/${pname}-${version}.tar.gz";
-    sha256 = "d4c14cc096577edca3f6a2a59c2f51869e35350b3988018ddf808c88e5973b79";
-    # please use the contents of "https://www.stunnel.org/downloads/${name}.tar.gz.sha256",
+    url    = "https://www.stunnel.org/archive/${lib.versions.major version}.x/${pname}-${version}.tar.gz";
+    sha256 = "3086939ee6407516c59b0ba3fbf555338f9d52f459bcab6337c0f00e91ea8456";
+    # please use the contents of "https://www.stunnel.org/downloads/stunnel-${version}.tar.gz.sha256",
     # not the output of `nix-prefetch-url`
   };
 
@@ -27,6 +27,10 @@ stdenv.mkDerivation rec {
     "sysconfdir=\${out}/etc"
     "localstatedir=\${TMPDIR}"
   ];
+
+  passthru.tests = {
+    stunnel = nixosTests.stunnel;
+  };
 
   meta = {
     description = "Universal tls/ssl wrapper";

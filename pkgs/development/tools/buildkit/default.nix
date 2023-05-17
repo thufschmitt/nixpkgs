@@ -1,25 +1,29 @@
-{ lib, stdenv, fetchFromGitHub, buildGoPackage }:
+{ lib, stdenv, buildGoModule, fetchFromGitHub }:
 
-buildGoPackage rec {
+buildGoModule rec {
   pname = "buildkit";
-  version = "0.8.2";
-
-  goPackagePath = "github.com/moby/buildkit";
-  subPackages = [ "cmd/buildctl" ] ++ lib.optionals stdenv.isLinux [ "cmd/buildkitd" ];
+  version = "0.10.6";
 
   src = fetchFromGitHub {
     owner = "moby";
     repo = "buildkit";
     rev = "v${version}";
-    sha256 = "sha256-aPVroqpR4ynfHhjJ6jJX6y5cdgmoUny3A8GBhnooOeo=";
+    sha256 = "sha256-bTzpiTqdAfo31sFRBCp0EzYMVjc6jt4aPK0VLsB9j0g=";
   };
 
-  buildFlagsArray = [ "-ldflags=-s -w -X ${goPackagePath}/version.Version=${version} -X ${goPackagePath}/version.Revision=${src.rev}" ];
+  vendorSha256 = null;
+
+  subPackages = [ "cmd/buildctl" ] ++ lib.optionals stdenv.isLinux [ "cmd/buildkitd" ];
+
+  ldflags = [ "-s" "-w" "-X github.com/moby/buildkit/version.Version=${version}" "-X github.com/moby/buildkit/version.Revision=${src.rev}" ];
+
+  doCheck = false;
 
   meta = with lib; {
     description = "Concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit";
     homepage = "https://github.com/moby/buildkit";
     license = licenses.asl20;
     maintainers = with maintainers; [ vdemeester marsam ];
+    mainProgram = "buildctl";
   };
 }

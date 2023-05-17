@@ -1,11 +1,12 @@
 { fetchurl, lib, stdenv, libidn, libkrb5 }:
 
 stdenv.mkDerivation rec {
-  name = "gsasl-1.10.0";
+  pname = "gsasl";
+  version = "2.2.0";
 
   src = fetchurl {
-    url = "mirror://gnu/gsasl/${name}.tar.gz";
-    sha256 = "sha256-hby9juYJWt54cCY6KOvLiDL1Qepzk5dUlJJgFcB1aNM=";
+    url = "mirror://gnu/gsasl/${pname}-${version}.tar.gz";
+    sha256 = "sha256-ebho47mXbcSE1ZspygroiXvpbOTTbTKu1dk1p6Mwd1k=";
   };
 
   buildInputs = [ libidn libkrb5 ];

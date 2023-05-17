@@ -1,8 +1,12 @@
 { lib, clangStdenv, fetchFromGitHub, fetchurl, fetchpatch, fetchgit
-, python3Packages, mesa, ninja, pkg-config, protobuf, zinnia, qt5, fcitx5
+, python3Packages, ninja, pkg-config, protobuf, zinnia, qt5, fcitx5
 , jsoncpp, gtest, which, gtk2, unzip, abseil-cpp, breakpad }:
 let
   inherit (python3Packages) python gyp six;
+  utdic = fetchurl {
+    url = "https://osdn.net/downloads/users/39/39056/mozcdic-ut-20220904.tar.bz2";
+    sha256 = "sha256-pmLBCcw2Zsirzl1PjYkviRIZoyfUz5rpESeABDxuhtU=";
+  };
   japanese_usage_dictionary = fetchFromGitHub {
     owner = "hiroyuki-komatsu";
     repo = "japanese-usage-dictionary";
@@ -31,7 +35,7 @@ in clangStdenv.mkDerivation rec {
     sha256 = "R+w0slVFpqtt7PIr1pyupJjRoQsABVZiMdZ9fKGKAqw=";
   };
 
-  nativeBuildInputs = [ gyp ninja mesa python pkg-config qt5.wrapQtAppsHook six which unzip ];
+  nativeBuildInputs = [ gyp ninja python pkg-config qt5.wrapQtAppsHook six which unzip ];
 
   buildInputs = [ protobuf zinnia qt5.qtbase fcitx5 abseil-cpp jsoncpp gtest gtk2 ];
 
@@ -47,6 +51,9 @@ in clangStdenv.mkDerivation rec {
   postUnpack = ''
     unzip ${x-ken-all} -d $sourceRoot/src/
     unzip ${jigyosyo} -d $sourceRoot/src/
+    mkdir $TMPDIR/unpack
+    tar xf ${utdic} -C $TMPDIR/unpack
+    cat $TMPDIR/unpack/mozcdic-ut-20220904/mozcdic-ut-20220904.txt >> $sourceRoot/src/data/dictionary_oss/dictionary00.txt
 
     rmdir $sourceRoot/src/third_party/breakpad/
     ln -s ${breakpad} $sourceRoot/src/third_party/breakpad
@@ -100,7 +107,7 @@ in clangStdenv.mkDerivation rec {
     description = "Fcitx5 Module of A Japanese Input Method for Chromium OS, Windows, Mac and Linux (the Open Source Edition of Google Japanese Input)";
     homepage = "https://github.com/fcitx/mozc";
     license = licenses.bsd3;
-    maintainers = with maintainers; [ berberman ];
+    maintainers = with maintainers; [ berberman govanify ];
     platforms = platforms.linux;
   };
 }

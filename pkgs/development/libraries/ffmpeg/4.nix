@@ -1,12 +1,15 @@
-{ callPackage, fetchpatch
-# Darwin frameworks
-, Cocoa, CoreMedia, VideoToolbox
-, ...
-}@args:
+{ callPackage, fetchpatch, ... }@args:
 
 callPackage ./generic.nix (rec {
-  version = "4.3.2";
-  branch = "4.3";
-  sha256 = "0flik4y7c5kchj65p3p908mk1dsncqgzjdvzysjs12rmf1m6sfmb";
-  darwinFrameworks = [ Cocoa CoreMedia VideoToolbox ];
+  version = "4.4.2";
+  branch = version;
+  sha256 = "sha256-+YpIJSDEdQdSGpB5FNqp77wThOBZG1r8PaGKqJfeKUg=";
+
+  patches = [
+    # SDL2 recently changed their versioning
+    (fetchpatch {
+      url = "https://git.videolan.org/?p=ffmpeg.git;a=patch;h=e5163b1d34381a3319214a902ef1df923dd2eeba";
+      hash = "sha256-nLhP2+34cj5EgpnUrePZp60nYAxmbhZAEDfay4pBVk0=";
+    })
+  ];
 } // args)

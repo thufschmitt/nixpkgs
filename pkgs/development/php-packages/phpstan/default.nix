@@ -1,24 +1,27 @@
 { mkDerivation, fetchurl, makeWrapper, lib, php }:
 let
   pname = "phpstan";
-  version = "0.12.82";
+  version = "1.8.6";
 in
 mkDerivation {
   inherit pname version;
 
   src = fetchurl {
     url = "https://github.com/phpstan/phpstan/releases/download/${version}/phpstan.phar";
-    sha256 = "sha256-fX7YK4z6xUhSJ2jTCy7bRK13TxXSn/qo7E5DeZlv2Nw=";
+    sha256 = "sha256-8scUd8BT6u9rqBPoaXozkn6H9PIWF/MWNWT9y8RwPkg=";
   };
 
-  phases = [ "installPhase" ];
+  dontUnpack = true;
+
   nativeBuildInputs = [ makeWrapper ];
 
   installPhase = ''
+    runHook preInstall
     mkdir -p $out/bin
     install -D $src $out/libexec/phpstan/phpstan.phar
     makeWrapper ${php}/bin/php $out/bin/phpstan \
       --add-flags "$out/libexec/phpstan/phpstan.phar"
+    runHook postInstall
   '';
 
   meta = with lib; {

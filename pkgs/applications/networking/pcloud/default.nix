@@ -15,29 +15,27 @@
 # ^1 https://github.com/NixOS/nixpkgs/issues/69338
 
 {
-  # Build dependencies
-  appimageTools, autoPatchelfHook, fetchzip, lib, stdenv,
+ # Build dependencies
+ appimageTools, autoPatchelfHook, fetchzip, lib, stdenv
 
-  # Runtime dependencies;
-  # A few additional ones (e.g. Node) are already shipped together with the
-  # AppImage, so we don't have to duplicate them here.
-  alsaLib, dbus-glib, fuse, gnome3, gtk3, libdbusmenu-gtk2, udev, nss
+ # Runtime dependencies;
+ # A few additional ones (e.g. Node) are already shipped together with the
+ # AppImage, so we don't have to duplicate them here.
+, alsa-lib, dbus-glib, fuse, gsettings-desktop-schemas, gtk3, libdbusmenu-gtk2, libXdamage, nss, udev
 }:
 
 let
   pname = "pcloud";
-  version = "1.9.1";
-  code = "XZXB3fXZgXyQbnTkTm5XOJH9i6NsKX9lL21V";
-  name = "${pname}-${version}";
-
-  # Archive link's code thanks to: https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=pcloud-drive
+  version = "1.9.9";
+  code = "XZWTVkVZQM0GNXA4hrFGPkefzUUWVLKOpPIX";
+  # Archive link's codes: https://www.pcloud.com/release-notes/linux.html
   src = fetchzip {
-    url = "https://api.pcloud.com/getpubzip?code=${code}&filename=${name}.zip";
-    hash = "sha256-vUrz4thp9tcU9T8d52DJUAbt6Jnv+E3pbUytzMR8d/E=";
+    url = "https://api.pcloud.com/getpubzip?code=${code}&filename=${pname}-${version}.zip";
+    hash = "sha256-8566vKrE3/QCm4qW9KxEAO+r+YfMRYOhV2Da7qic48M=";
   };
 
   appimageContents = appimageTools.extractType2 {
-    inherit name;
+    name = "${pname}-${version}";
     src = "${src}/pcloud";
   };
 
@@ -54,11 +52,12 @@ in stdenv.mkDerivation {
   ];
 
   buildInputs = [
-    alsaLib
+    alsa-lib
     dbus-glib
     fuse
     gtk3
     libdbusmenu-gtk2
+    libXdamage
     nss
     udev
   ];
@@ -84,8 +83,8 @@ in stdenv.mkDerivation {
     substitute \
       app/pcloud.desktop \
       share/applications/pcloud.desktop \
-      --replace "Name=pcloud" "Name=pCloud" \
-      --replace "Exec=AppRun" "Exec=$out/bin/pcloud"
+      --replace 'Name=pcloud' 'Name=pCloud' \
+      --replace 'Exec=AppRun' 'Exec=${pname}'
 
     # Build the main executable
     cat > bin/pcloud <<EOF
@@ -93,7 +92,7 @@ in stdenv.mkDerivation {
 
     # This is required for the file picker dialog - otherwise pcloud just
     # crashes
-    export XDG_DATA_DIRS="${gnome3.gsettings-desktop-schemas}/share/gsettings-schemas/${gnome3.gsettings-desktop-schemas.name}:${gtk3}/share/gsettings-schemas/${gtk3.name}:$XDG_DATA_DIRS"
+    export XDG_DATA_DIRS="${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}:${gtk3}/share/gsettings-schemas/${gtk3.name}:$XDG_DATA_DIRS"
 
     exec "$out/app/pcloud"
     EOF
@@ -104,6 +103,7 @@ in stdenv.mkDerivation {
   meta = with lib; {
     description = "Secure and simple to use cloud storage for your files; pCloud Drive, Electron Edition";
     homepage = "https://www.pcloud.com/";
+    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     license = licenses.unfree;
     maintainers = with maintainers; [ patryk27 ];
     platforms = [ "x86_64-linux" ];

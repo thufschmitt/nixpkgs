@@ -1,10 +1,9 @@
 { lib
-, buildPythonApplication
+, buildPythonPackage
 , isPy3k
 , daemonize
 , dbus-python
 , fetchFromGitHub
-, fetchpatch
 , gobject-introspection
 , gtk3
 , makeWrapper
@@ -17,12 +16,10 @@
 let
   common = import ./common.nix { inherit lib fetchFromGitHub; };
 in
-buildPythonApplication (common // rec {
+buildPythonPackage (common // rec {
   pname = "openrazer_daemon";
 
   disabled = !isPy3k;
-
-  sourceRoot = "source/daemon";
 
   outputs = [ "out" "man" ];
 
@@ -37,6 +34,14 @@ buildPythonApplication (common // rec {
     pyudev
     setproctitle
   ];
+
+  prePatch = ''
+    cd daemon
+  '';
+
+  postPatch = ''
+    substituteInPlace openrazer_daemon/daemon.py --replace "plugdev" "openrazer"
+  '';
 
   postBuild = ''
     DESTDIR="$out" PREFIX="" make install manpages

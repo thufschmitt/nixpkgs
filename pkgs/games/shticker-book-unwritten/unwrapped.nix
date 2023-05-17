@@ -1,18 +1,16 @@
-{ fetchFromGitHub, lib, openssl, pkg-config, rustPlatform }:
+{ lib, rustPlatform, fetchCrate, pkg-config, openssl }:
 
 rustPlatform.buildRustPackage rec {
   pname = "shticker-book-unwritten";
-  version = "1.0.3";
+  version = "1.2.0";
 
-  src = fetchFromGitHub {
-    owner = "JonathanHelianthicusDoe";
-    repo = "shticker_book_unwritten";
-    rev = "v${version}";
-    sha256 = "08lyxica0b0vvivybsvzigy2j7saar78mbz723y3g5hqrilfb5np";
+  src = fetchCrate {
+    inherit version;
+    crateName = "shticker_book_unwritten";
+    sha256 = "sha256-jI2uL8tMUmjZ5jPkCV2jb98qtKwi9Ti4NVCPfuO3iB4=";
   };
 
-  cargoPatches = [ ./cargo-lock.patch ];
-  cargoSha256 = "1lnhdr8mri1ns9lxj6aks4vs2v4fvg7mcriwzwj78inpi1l0xqk5";
+  cargoSha256 = "sha256-Tney9SG9MZh7AUIT1h/dlgJyRrSPX7mUhfsKD1Rfsfc=";
 
   nativeBuildInputs = [ pkg-config ];
 

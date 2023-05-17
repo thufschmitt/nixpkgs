@@ -2,36 +2,39 @@
 , buildPythonApplication
 , copyDesktopItems
 , fetchPypi
-, makeDesktopItem
-, flask
+, gobject-introspection
 , jellyfin-apiclient-python
 , jinja2
+, makeDesktopItem
 , mpv
 , pillow
-, pydantic
-, pyqtwebengine
 , pystray
+, python
 , python-mpv-jsonipc
 , pywebview
-, qt5
 , tkinter
-, werkzeug
+, wrapGAppsHook
 }:
 
 buildPythonApplication rec {
   pname = "jellyfin-mpv-shim";
-  version = "1.10.3";
+  version = "2.2.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-Tl7P8SJ/ZuwIi8RxDWkhfd7LUd63xv5Ehg1UqaYHb1g=";
+    sha256 = "sha256-JiSC6WjrLsWk3/m/EHq7KNXaJ6rqT2fG9TT1jPvYlK0=";
   };
+
+  nativeBuildInputs = [
+    copyDesktopItems
+    wrapGAppsHook
+    gobject-introspection
+  ];
 
   propagatedBuildInputs = [
     jellyfin-apiclient-python
     mpv
     pillow
-    pydantic
     python-mpv-jsonipc
 
     # gui dependencies
@@ -41,28 +44,6 @@ buildPythonApplication rec {
     # display_mirror dependencies
     jinja2
     pywebview
-
-    # desktop dependencies
-    flask
-    pyqtwebengine
-    werkzeug
-  ];
-
-  nativeBuildInputs = [
-    copyDesktopItems
-    qt5.wrapQtAppsHook
-  ];
-
-  desktopItems = [
-    (makeDesktopItem {
-      name = "Jellyfin Desktop";
-      exec = "jellyfin-desktop";
-      icon = "jellyfin-desktop";
-      desktopName = "jellyfin-desktop";
-      comment = "MPV-based desktop and cast client for Jellyfin";
-      genericName = "MPV-based desktop and cast client for Jellyfin";
-      categories = "Video;AudioVideo;TV;Player";
-    })
   ];
 
   # override $HOME directory:
@@ -82,24 +63,58 @@ buildPythonApplication rec {
       --replace "notify_updates: bool = True" "notify_updates: bool = False"
   '';
 
+  # Install all the icons for the desktop item
   postInstall = ''
-    mkdir -p $out/share/pixmaps
-    cp jellyfin_mpv_shim/integration/jellyfin-256.png $out/share/pixmaps/jellyfin-desktop.png
+    for s in 16 32 48 64 128 256; do
+      mkdir -p $out/share/icons/hicolor/''${s}x''${s}/apps
+      ln -s $out/${python.sitePackages}/jellyfin_mpv_shim/integration/jellyfin-''${s}.png \
+        $out/share/icons/hicolor/''${s}x''${s}/apps/${pname}.png
+    done
   '';
 
-  postFixup = ''
-    wrapQtApp $out/bin/jellyfin-desktop
-    wrapQtApp $out/bin/jellyfin-mpv-desktop
+  # needed for pystray to access appindicator using GI
+  preFixup = ''
+    makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
   '';
+  dontWrapGApps = true;
 
   # no tests
   doCheck = false;
   pythonImportsCheck = [ "jellyfin_mpv_shim" ];
 
+  desktopItems = [
+    (makeDesktopItem {
+      name = pname;
+      exec = pname;
+      icon = pname;
+      desktopName = "Jellyfin MPV Shim";
+      categories = [ "Video" "AudioVideo" "TV" "Player" ];
+    })
+  ];
+
   meta = with lib; {
-    homepage = "https://github.com/jellyfin/jellyfin-desktop";
+    homepage = "https://github.com/jellyfin/jellyfin-mpv-shim";
     description = "Allows casting of videos to MPV via the jellyfin mobile and web app";
-    license = licenses.gpl3;
+    longDescription = ''
+      Jellyfin MPV Shim is a client for the Jellyfin media server which plays media in the
+      MPV media player. The application runs in the background and opens MPV only
+      when media is cast to the player. The player supports most file formats, allowing you
+      to prevent needless transcoding of your media files on the server. The player also has
+      advanced features, such as bulk subtitle updates and launching commands on events.
+    '';
+    license = with licenses; [
+      # jellyfin-mpv-shim
+      gpl3Only
+      mit
+
+      # shader-pack licenses (github:iwalton3/default-shader-pack)
+      # KrigBilateral, SSimDownscaler, NNEDI3
+      gpl3Plus
+      # Anime4K, FSRCNNX
+      mit
+      # Static Grain
+      unlicense
+    ];
     maintainers = with maintainers; [ jojosch ];
   };
 }

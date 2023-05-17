@@ -1,22 +1,62 @@
-{ lib, stdenv, fetchurl, pkg-config, gobject-introspection, intltool, vala
-, libcap_ng, libvirt, libxml2
+{ lib
+, stdenv
+, fetchurl
+, fetchpatch
+, meson
+, ninja
+, pkg-config
+, gobject-introspection
+, gettext
+, gtk-doc
+, docbook-xsl-nons
+, vala
+, libcap_ng
+, libvirt
+, libxml2
 }:
 
 stdenv.mkDerivation rec {
-  name = "libvirt-glib-3.0.0";
+  pname = "libvirt-glib";
+  version = "4.0.0";
 
-  outputs = [ "out" "dev" ];
+  outputs = [ "out" "dev" "devdoc" ];
 
   src = fetchurl {
-    url = "https://libvirt.org/sources/glib/${name}.tar.gz";
-    sha256 = "1zpbv4ninc57c9rw4zmmkvvqn7154iv1qfr20kyxn8xplalqrzvz";
+    url = "https://libvirt.org/sources/glib/${pname}-${version}.tar.xz";
+    sha256 = "hCP3Bp2qR2MHMh0cEeLswoU0DNMsqfwFIHdihD7erL0=";
   };
 
-  nativeBuildInputs = [ pkg-config intltool vala gobject-introspection ];
-  buildInputs = [ libcap_ng libvirt libxml2 gobject-introspection ];
+  patches = [
+    # Fix build with GLib 2.70
+    (fetchpatch {
+      url = "https://gitlab.com/libvirt/libvirt-glib/-/commit/9a34c4ea55e0246c34896e48b8ecd637bc559ac7.patch";
+      sha256 = "UU70uTi55EzPMuLYVKRzpVcd3WogeAtWAWEC2hWlR7k=";
+    })
+  ];
 
-  enableParallelBuilding = true;
+  nativeBuildInputs = [
+    meson
+    ninja
+    pkg-config
+    gettext
+    gtk-doc
+    docbook-xsl-nons
+    vala
+    gobject-introspection
+  ];
+
+  buildInputs = (lib.optionals stdenv.isLinux [
+    libcap_ng
+  ]) ++ [
+    libvirt
+    libxml2
+    gobject-introspection
+  ];
+
   strictDeps = true;
+
+  # https://gitlab.com/libvirt/libvirt-glib/-/issues/4
+  NIX_CFLAGS_COMPILE = [ "-Wno-error=pointer-sign" ];
 
   meta = with lib; {
     description = "Library for working with virtual machines";
@@ -30,6 +70,6 @@ stdenv.mkDerivation rec {
     '';
     homepage = "https://libvirt.org/";
     license = licenses.lgpl2Plus;
-    platforms = platforms.linux;
+    platforms = platforms.unix;
   };
 }

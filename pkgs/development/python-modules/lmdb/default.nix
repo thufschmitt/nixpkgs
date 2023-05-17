@@ -4,29 +4,36 @@
 , pytestCheckHook
 , cffi
 , lmdb
-, ludios_wpull
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "lmdb";
-  version = "1.0.0";
+  version = "1.4.0";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "4136ffdf0aad61da86d1402808029d002a771b2a9ccc9b39c6bcafa7847c21b6";
+    hash = "sha256-OfbE7hRdKNFwJdNQcgq7b5XbgWUU6GjbV0RP3vUcu0c=";
   };
 
-  buildInputs = [ lmdb ];
+  buildInputs = [
+    lmdb
+  ];
 
-  propogatedBuildInputs = [ ludios_wpull ];
-
-  checkInputs = [ cffi pytestCheckHook ];
+  checkInputs = [
+    cffi
+    pytestCheckHook
+  ];
 
   LMDB_FORCE_SYSTEM=1;
 
   meta = with lib; {
     description = "Universal Python binding for the LMDB 'Lightning' Database";
     homepage = "https://github.com/dw/py-lmdb";
+    changelog = "https://github.com/jnwatson/py-lmdb/blob/py-lmdb_${version}/ChangeLog";
     license = licenses.openldap;
     maintainers = with maintainers; [ copumpkin ivan ];
   };

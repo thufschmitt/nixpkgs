@@ -1,40 +1,83 @@
 { stdenv
 , lib
 , fetchFromGitHub
+, fetchpatch
+, runCommand
 , rustPlatform
 , openssl
 , zlib
+, zstd
 , pkg-config
 , python3
 , xorg
 , libiconv
 , AppKit
+, Foundation
 , Security
-, withStableFeatures ? true
+# darwin.apple_sdk.sdk
+, sdk
+, nghttp2
+, libgit2
+, withExtraFeatures ? true
+, testers
+, nushell
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "nushell";
-  version = "0.29.0";
+  version = "0.72.1";
 
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
     rev = version;
-    sha256 = "sha256-RZz8hmcLOJRz0HpPXc3121B1UcbtDgCFv8Zdv29E+XQ=";
+    sha256 = "sha256-OVJr+usN+47yBHFAy94rIVlU2F+Klo6xdrV2MwUoKUE=";
   };
 
-  cargoSha256 = "sha256-V6Qdg8xSm2/6BbSEOH5mH92Gjx+xy0J2CZ9FQxmhI88=";
+  patches = [
+    # https://github.com/nushell/nushell/pull/7423: make tests
+    # more resilient (less dependent on env).
+    # Already merged upstream, so can be dropped in the next version
+    (fetchpatch {
+      url = "https://github.com/nushell/nushell/commit/87631e7068bfc6635d5b31413856f0a791994527.patch";
+      hash = "sha256-9vrcmBe5gXLLodynb3jyarwi/a0YiurJ6WsDxXl2vjo=";
+    })
+  ];
+
+  cargoSha256 = "sha256-v6mPr+gOT64rKYuog+hS7/AqUZDailoOBXX3Sfeo+sk=";
+
+  # enable pkg-config feature of zstd
+  cargoPatches = [ ./zstd-pkg-config.patch ];
 
   nativeBuildInputs = [ pkg-config ]
-    ++ lib.optionals (withStableFeatures && stdenv.isLinux) [ python3 ];
+    ++ lib.optionals (withExtraFeatures && stdenv.isLinux) [ python3 ]
+    ++ lib.optionals stdenv.isDarwin [ rustPlatform.bindgenHook ];
 
-  buildInputs = [ openssl ]
+  buildInputs = [ openssl zstd ]
     ++ lib.optionals stdenv.isDarwin [ zlib libiconv Security ]
-    ++ lib.optionals (withStableFeatures && stdenv.isLinux) [ xorg.libX11 ]
-    ++ lib.optionals (withStableFeatures && stdenv.isDarwin) [ AppKit ];
+    ++ lib.optionals (stdenv.isDarwin && stdenv.isx86_64) [
+    Foundation
+    (
+      # Pull a header that contains a definition of proc_pid_rusage().
+      # (We pick just that one because using the other headers from `sdk` is not
+      # compatible with our C++ standard library. This header is already in
+      # the standard library on aarch64)
+      # See also:
+      # https://github.com/shanesveller/nixpkgs/tree/90ed23b1b23c8ee67928937bdec7ddcd1a0050f5/pkgs/development/libraries/webkitgtk/default.nix
+      # https://github.com/shanesveller/nixpkgs/blob/90ed23b1b23c8ee67928937bdec7ddcd1a0050f5/pkgs/tools/system/btop/default.nix#L32-L38
+      runCommand "${pname}_headers" { } ''
+        install -Dm444 "${lib.getDev sdk}"/include/libproc.h "$out"/include/libproc.h
+      ''
+    )
+  ] ++ lib.optionals (withExtraFeatures && stdenv.isLinux) [ xorg.libX11 ]
+    ++ lib.optionals (withExtraFeatures && stdenv.isDarwin) [ AppKit nghttp2 libgit2 ];
 
-  cargoBuildFlags = lib.optional withStableFeatures "--features stable";
+  buildFeatures = lib.optional withExtraFeatures "extra";
+
+  # TODO investigate why tests are broken on darwin
+  # failures show that tests try to write to paths
+  # outside of TMPDIR
+  doCheck = ! stdenv.isDarwin;
 
   checkPhase = ''
     runHook preCheck
@@ -48,10 +91,13 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://www.nushell.sh/";
     license = licenses.mit;
     maintainers = with maintainers; [ Br1ght0ne johntitor marsam ];
-    platforms = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" ];
+    mainProgram = "nu";
   };
 
   passthru = {
     shellPath = "/bin/nu";
+    tests.version = testers.testVersion {
+      package = nushell;
+    };
   };
 }

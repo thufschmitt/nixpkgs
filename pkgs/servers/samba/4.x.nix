@@ -1,13 +1,13 @@
 { lib, stdenv
+, buildPackages
 , fetchurl
-, python
+, wafHook
 , pkg-config
 , bison
 , flex
 , perl
 , libxslt
 , docbook_xsl
-, rpcgen
 , fixDarwinDylibNames
 , docbook_xml_dtd_45
 , readline
@@ -17,16 +17,20 @@
 , libarchive
 , zlib
 , liburing
-, fam
 , gnutls
 , libunwind
 , systemd
+, samba
 , jansson
 , libtasn1
 , tdb
+, libxcrypt
 , cmocka
 , rpcsvc-proto
+, bash
+, python3Packages
 , nixosTests
+, libiconv
 
 , enableLDAP ? false, openldap
 , enablePrinting ? false, cups
@@ -34,7 +38,7 @@
 , enableMDNS ? false, avahi
 , enableDomainController ? false, gpgme, lmdb
 , enableRegedit ? true, ncurses
-, enableCephFS ? false, libceph
+, enableCephFS ? false, ceph
 , enableGlusterFS ? false, glusterfs, libuuid
 , enableAcl ? (!stdenv.isDarwin), acl
 , enablePam ? (!stdenv.isDarwin), pam
@@ -44,11 +48,11 @@ with lib;
 
 stdenv.mkDerivation rec {
   pname = "samba";
-  version = "4.13.7";
+  version = "4.17.3";
 
   src = fetchurl {
     url = "mirror://samba/pub/samba/stable/${pname}-${version}.tar.gz";
-    sha256 = "1ajvr5hzl9kmrf77hb9c71zvnm8j0xgy40nqfjz4f407cw470zaf";
+    hash = "sha256-XRxCDLMexhPHhvmFN/lZZZCB7ca+g3PmjocUCGiTjiY=";
   };
 
   outputs = [ "out" "dev" "man" ];
@@ -58,28 +62,35 @@ stdenv.mkDerivation rec {
     ./patch-source3__libads__kerberos_keytab.c.patch
     ./4.x-no-persistent-install-dynconfig.patch
     ./4.x-fix-makeflags-parsing.patch
-    # Backport, should be removed for version 4.14
-    ./0001-lib-util-Standardize-use-of-st_-acm-time-ns.patch
+    ./build-find-pre-built-heimdal-build-tools-in-case-of-.patch
   ];
 
   nativeBuildInputs = [
+    python3Packages.python
+    wafHook
     pkg-config
     bison
     flex
     perl
     perl.pkgs.ParseYapp
+    perl.pkgs.JSON
     libxslt
+    buildPackages.stdenv.cc
     docbook_xsl
     docbook_xml_dtd_45
     cmocka
     rpcsvc-proto
-  ] ++ optionals stdenv.isDarwin [
-    rpcgen
+  ] ++ optional (stdenv.buildPlatform != stdenv.hostPlatform) samba # asn1_compile/compile_et
+    ++ optionals stdenv.isDarwin [
     fixDarwinDylibNames
   ];
 
+  wafPath = "buildtools/bin/waf";
+
   buildInputs = [
-    python
+    bash
+    python3Packages.wrapPython
+    python3Packages.python
     readline
     popt
     dbus
@@ -87,18 +98,19 @@ stdenv.mkDerivation rec {
     libbsd
     libarchive
     zlib
-    fam
     libunwind
     gnutls
     libtasn1
     tdb
+    libxcrypt
   ] ++ optionals stdenv.isLinux [ liburing systemd ]
-    ++ optional enableLDAP openldap
+    ++ optionals stdenv.isDarwin [ libiconv ]
+    ++ optionals enableLDAP [ openldap.dev python3Packages.markdown ]
     ++ optional (enablePrinting && stdenv.isLinux) cups
     ++ optional enableMDNS avahi
-    ++ optionals enableDomainController [ gpgme lmdb ]
+    ++ optionals enableDomainController [ gpgme lmdb python3Packages.dnspython ]
     ++ optional enableRegedit ncurses
-    ++ optional (enableCephFS && stdenv.isLinux) libceph
+    ++ optional (enableCephFS && stdenv.isLinux) (lib.getDev ceph)
     ++ optionals (enableGlusterFS && stdenv.isLinux) [ glusterfs libuuid ]
     ++ optional enableAcl acl
     ++ optional enablePam pam;
@@ -113,9 +125,15 @@ stdenv.mkDerivation rec {
     patchShebangs ./buildtools/bin
   '';
 
-  configureFlags = [
+  preConfigure = ''
+    export PKGCONFIG="$PKG_CONFIG"
+    export PYTHONHASHSEED=1
+  '';
+
+  wafConfigureFlags = [
     "--with-static-modules=NONE"
     "--with-shared-modules=ALL"
+    "--with-libunwind"
     "--enable-fhs"
     "--sysconfdir=/etc"
     "--localstatedir=/var"
@@ -127,17 +145,37 @@ stdenv.mkDerivation rec {
     "--without-ads"
   ] ++ optional enableProfiling "--with-profiling-data"
     ++ optional (!enableAcl) "--without-acl-support"
-    ++ optional (!enablePam) "--without-pam";
+    ++ optional (!enablePam) "--without-pam"
+    ++ optionals (stdenv.hostPlatform != stdenv.buildPlatform) [
+    "--bundled-libraries=!asn1_compile,!compile_et"
+  ] ++ optionals stdenv.isAarch32 [
+    # https://bugs.gentoo.org/683148
+    "--jobs 1"
+  ];
+
+  # python-config from build Python gives incorrect values when cross-compiling.
+  # If python-config is not found, the build falls back to using the sysconfig
+  # module, which works correctly in all cases.
+  PYTHON_CONFIG = "/invalid";
+
+  pythonPath = [ python3Packages.dnspython tdb ];
 
   preBuild = ''
     export MAKEFLAGS="-j $NIX_BUILD_CORES"
+  '';
+
+  # Save asn1_compile and compile_et so they are available to run on the build
+  # platform when cross-compiling
+  postInstall = optionalString (stdenv.hostPlatform == stdenv.buildPlatform) ''
+    mkdir -p "$dev/bin"
+    cp bin/asn1_compile bin/compile_et "$dev/bin"
   '';
 
   # Some libraries don't have /lib/samba in RPATH but need it.
   # Use find -type f -executable -exec echo {} \; -exec sh -c 'ldd {} | grep "not found"' \;
   # Looks like a bug in installer scripts.
   postFixup = ''
-    export SAMBA_LIBS="$(find $out -type f -name \*.so -exec dirname {} \; | sort | uniq)"
+    export SAMBA_LIBS="$(find $out -type f -regex '.*\.so\(\..*\)?' -exec dirname {} \; | sort | uniq)"
     read -r -d "" SCRIPT << EOF || true
     [ -z "\$SAMBA_LIBS" ] && exit 1;
     BIN='{}';
@@ -146,8 +184,21 @@ stdenv.mkDerivation rec {
     patchelf --set-rpath "\$ALL_LIBS" "\$BIN" 2>/dev/null || exit $?;
     patchelf --shrink-rpath "\$BIN";
     EOF
-    find $out -type f -name \*.so -exec $SHELL -c "$SCRIPT" \;
+    find $out -type f -regex '.*\.so\(\..*\)?' -exec $SHELL -c "$SCRIPT" \;
+
+    # Fix PYTHONPATH for some tools
+    wrapPythonPrograms
+
+    # Samba does its own shebang patching, but uses build Python
+    find $out/bin -type f -executable | while read file; do
+      isScript "$file" || continue
+      sed -i 's^${lib.getBin buildPackages.python3Packages.python}/bin^${lib.getBin python3Packages.python}/bin^' "$file"
+    done
   '';
+
+  disallowedReferences =
+    lib.optionals (buildPackages.python3Packages.python != python3Packages.python)
+      [ buildPackages.python3Packages.python ];
 
   passthru = {
     tests.samba = nixosTests.samba;
@@ -159,6 +210,8 @@ stdenv.mkDerivation rec {
     license = licenses.gpl3;
     platforms = platforms.unix;
     # N.B. enableGlusterFS does not build
+    # TODO: darwin support needs newer SDK for "_futimens" and "_utimensat"
+    # see https://github.com/NixOS/nixpkgs/issues/101229
     broken = stdenv.isDarwin || enableGlusterFS;
     maintainers = with maintainers; [ aneeshusa ];
   };

@@ -8,27 +8,38 @@
 , lua5_3
 , libid3tag
 , flac
-, mongoose
+, pcre2
+, gzip
+, perl
 }:
 
 stdenv.mkDerivation rec {
   pname = "mympd";
-  version = "6.10.0";
+  version = "9.5.4";
 
   src = fetchFromGitHub {
     owner = "jcorporation";
     repo = "myMPD";
     rev = "v${version}";
-    sha256 = "sha256-QGJti1tKKJlumLgABPmROplF0UVGMWMnyRXLb2cEieQ=";
+    sha256 = "sha256-0X/rEVfJ6zzX75R72xVntOfuCt8srp9PkiYOq3XbWPs=";
   };
 
-  nativeBuildInputs = [ pkg-config cmake ];
+  nativeBuildInputs = [
+    pkg-config
+    cmake
+    gzip
+    perl
+  ];
+  preConfigure = ''
+    env MYMPD_BUILDDIR=$PWD/build ./build.sh createassets
+  '';
   buildInputs = [
     libmpdclient
     openssl
     lua5_3
     libid3tag
     flac
+    pcre2
   ];
 
   cmakeFlags = [
@@ -42,7 +53,7 @@ stdenv.mkDerivation rec {
   hardeningDisable = [ "strictoverflow" ];
 
   meta = {
-    homepage = "https://jcorporation.github.io/mympd";
+    homepage = "https://jcorporation.github.io/myMPD";
     description = "A standalone and mobile friendly web mpd client with a tiny footprint and advanced features";
     maintainers = [ lib.maintainers.doronbehar ];
     platforms = lib.platforms.linux;

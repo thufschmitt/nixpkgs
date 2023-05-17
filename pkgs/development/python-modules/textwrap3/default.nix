@@ -1,10 +1,7 @@
 { lib
 , buildPythonPackage
 , fetchPypi
-, tox
-, pytest
-, coverage
-, pytestcov
+, pytestCheckHook
 }:
 
 buildPythonPackage rec {
@@ -18,15 +15,8 @@ buildPythonPackage rec {
   };
 
   checkInputs = [
-    tox
-    pytest
-    coverage
-    pytestcov
+    pytestCheckHook
   ];
-
-  checkPhase = ''
-    pytest
-  '';
 
   meta = with lib; {
     description = "Textwrap from Python 3.6 backport plus a few tweaks";

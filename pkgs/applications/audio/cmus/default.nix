@@ -1,12 +1,12 @@
 { config, lib, stdenv, fetchFromGitHub, runCommand, ncurses, pkg-config
-, libiconv, CoreAudio, AudioUnit
+, libiconv, CoreAudio, AudioUnit, VideoToolbox
 
-, alsaSupport ? stdenv.isLinux, alsaLib ? null
+, alsaSupport ? stdenv.isLinux, alsa-lib ? null
 # simple fallback for everyone else
 , aoSupport ? !stdenv.isLinux, libao ? null
 , jackSupport ? false, libjack ? null
 , samplerateSupport ? jackSupport, libsamplerate ? null
-, ossSupport ? false, alsaOss ? null
+, ossSupport ? false, alsa-oss ? null
 , pulseaudioSupport ? config.pulseaudio or false, libpulseaudio ? null
 , mprisSupport ? stdenv.isLinux, systemd ? null
 
@@ -55,11 +55,11 @@ let
 
   opts = [
     # Audio output
-    (mkFlag alsaSupport       "CONFIG_ALSA=y"       alsaLib)
+    (mkFlag alsaSupport       "CONFIG_ALSA=y"       alsa-lib)
     (mkFlag aoSupport         "CONFIG_AO=y"         libao)
     (mkFlag jackSupport       "CONFIG_JACK=y"       libjack)
     (mkFlag samplerateSupport "CONFIG_SAMPLERATE=y" libsamplerate)
-    (mkFlag ossSupport        "CONFIG_OSS=y"        alsaOss)
+    (mkFlag ossSupport        "CONFIG_OSS=y"        alsa-oss)
     (mkFlag pulseaudioSupport "CONFIG_PULSE=y"      libpulseaudio)
     (mkFlag mprisSupport      "CONFIG_MPRIS=y"      systemd)
 
@@ -102,13 +102,13 @@ in
 
 stdenv.mkDerivation rec {
   pname = "cmus";
-  version = "2.9.1";
+  version = "2.10.0";
 
   src = fetchFromGitHub {
     owner  = "cmus";
     repo   = "cmus";
     rev    = "v${version}";
-    sha256 = "sha256-HEiEnEWf/MzhPO19VKTLYzhylpEvyzy1Jxs6EW2NU34=";
+    sha256 = "sha256-Ha0bIh3SYMhA28YXQ//Loaz9J1lTJAzjTx8eK3AqUjM=";
   };
 
   patches = [ ./option-debugging.patch ];
@@ -121,7 +121,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ ncurses ]
     ++ lib.optional stdenv.cc.isClang clangGCC
-    ++ lib.optionals stdenv.isDarwin [ libiconv CoreAudio AudioUnit ]
+    ++ lib.optionals stdenv.isDarwin [ libiconv CoreAudio AudioUnit VideoToolbox ]
     ++ flatten (concatMap (a: a.deps) opts);
 
   makeFlags = [ "LD=$(CC)" ];

@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchFromGitHub, substituteAll, pkgs }:
+{ lib, stdenv, fetchFromGitHub, substituteAll, pkgs, bash }:
 
 # To make use of this derivation, use
 # `programs.zsh.promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";`
@@ -7,26 +7,29 @@ let
   # match gitstatus version with given `gitstatus_version`:
   # https://github.com/romkatv/powerlevel10k/blob/master/gitstatus/build.info
   gitstatus = pkgs.gitstatus.overrideAttrs (oldAtttrs: rec {
-    version = "1.3.1";
+    version = "1.5.3";
 
     src = fetchFromGitHub {
       owner = "romkatv";
       repo = "gitstatus";
       rev = "v${version}";
-      sha256 = "03zaywncds7pjrl07rvdf3fh39gnp2zfvgsf0afqwv317sgmgpzf";
+      sha256 = "17giwdjrsmr71xskxxf506n8kaab8zx77fv267fx37ifi57nffk5";
     };
   });
 in
 stdenv.mkDerivation rec {
   pname = "powerlevel10k";
-  version = "1.14.6";
+  version = "1.16.1";
 
   src = fetchFromGitHub {
     owner = "romkatv";
     repo = "powerlevel10k";
     rev = "v${version}";
-    sha256 = "1z6xipd7bgq7fc03x9j2dmg3yv59xyjf4ic5f1l6l6pw7w3q4sq7";
+    sha256 = "0fkfh8j7rd8mkpgz6nsx4v7665d375266shl1aasdad8blgqmf0c";
   };
+
+  strictDeps = true;
+  buildInputs = [ bash ];
 
   patches = [
     (substituteAll {
@@ -37,6 +40,7 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     install -D powerlevel10k.zsh-theme --target-directory=$out/share/zsh-powerlevel10k
+    install -D powerlevel9k.zsh-theme --target-directory=$out/share/zsh-powerlevel10k
     install -D config/* --target-directory=$out/share/zsh-powerlevel10k/config
     install -D internal/* --target-directory=$out/share/zsh-powerlevel10k/internal
     cp -R gitstatus $out/share/zsh-powerlevel10k/gitstatus

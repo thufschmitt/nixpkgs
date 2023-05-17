@@ -10,18 +10,18 @@
 , polkit-qt
 , kwindowsystem
 , xorg
-, lxqtUpdateScript
+, gitUpdater
 }:
 
 mkDerivation rec {
   pname = "liblxqt";
-  version = "0.16.0";
+  version = "1.2.0";
 
   src = fetchFromGitHub {
     owner = "lxqt";
     repo = pname;
     rev = version;
-    sha256 = "1rp26g1ygzzy1cm7md326sv99zjz4y12pa402nlf2vrf2lzbwfmk";
+    sha256 = "x1gzqmTHDnpAdLxacKyl+gDob1M7toTDUufaM0y+AHA=";
   };
 
   nativeBuildInputs = [
@@ -43,16 +43,20 @@ mkDerivation rec {
   patches = [ ./fix-application-path.patch ];
 
   postPatch = ''
+    # https://github.com/NixOS/nixpkgs/issues/119766
+    substituteInPlace lxqtbacklight/linux_backend/driver/libbacklight_backend.c \
+      --replace "pkexec lxqt-backlight_backend" "pkexec $out/bin/lxqt-backlight_backend"
+
     sed -i "s|\''${POLKITQT-1_POLICY_FILES_INSTALL_DIR}|''${out}/share/polkit-1/actions|" CMakeLists.txt
   '';
 
-  passthru.updateScript = lxqtUpdateScript { inherit pname version src; };
+  passthru.updateScript = gitUpdater { };
 
   meta = with lib; {
     description = "Core utility library for all LXQt components";
     homepage = "https://github.com/lxqt/liblxqt";
     license = licenses.lgpl21Plus;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ romildo ];
+    maintainers = teams.lxqt.members;
   };
 }

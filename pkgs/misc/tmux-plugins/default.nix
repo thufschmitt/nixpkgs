@@ -63,14 +63,41 @@ in rec {
     };
   };
 
+  better-mouse-mode = mkTmuxPlugin {
+    pluginName = "better-mouse-mode";
+    version = "unstable-2021-08-02";
+    src = fetchFromGitHub {
+      owner = "NHDaly";
+      repo = "tmux-better-mouse-mode";
+      rev = "aa59077c635ab21b251bd8cb4dc24c415e64a58e";
+      sha256 = "06346ih3hzwszhkj25g4xv5av7292s6sdbrdpx39p0n3kgf5mwww";
+    };
+    rtpFilePath = "scroll_copy_mode.tmux";
+    meta = {
+      homepage = "https://github.com/NHDaly/tmux-better-mouse-mode";
+      description = "better mouse support for tmux";
+      longDescription =
+      ''
+        Features:
+
+          * Emulate mouse-support for full-screen programs like less that don't provide built in mouse support.
+          * Exit copy-mode and return to your prompt by scrolling back all the way down to the bottom.
+          * Adjust your scrolling speed.
+      '';
+      license = lib.licenses.mit;
+      platforms = lib.platforms.unix;
+      maintainers = with lib.maintainers; [ chrispickard ];
+    };
+  };
+
   continuum = mkTmuxPlugin {
     pluginName = "continuum";
-    version = "unstable-2020-10-16";
+    version = "unstable-2022-01-25";
     src = fetchFromGitHub {
       owner = "tmux-plugins";
       repo = "tmux-continuum";
-      rev = "26eb5ffce0b559d682b9f98c8d4b6c370ecb639b";
-      sha256 = "1glwa89bv2r92qz579a49prk3jf612cpd5hw46j4wfb35xhnj3ab";
+      rev = "fc2f31d79537a5b349f55b74c8ca69abaac1ddbb";
+      sha256 = "06i1jp83iybw76raaxciqz9a7ypgpkvbyjn6jjap8jpqfmj2wmjb";
     };
     meta = {
       homepage = "https://github.com/tmux-plugins/tmux-continuum";
@@ -92,6 +119,29 @@ in rec {
     };
   };
 
+  copy-toolkit = mkTmuxPlugin rec {
+    pluginName = "copy-toolkit";
+    rtpFilePath = "copytk.tmux";
+    version = "1.1";
+    src = fetchFromGitHub {
+      owner = "CrispyConductor";
+      repo = "tmux-copy-toolkit";
+      rev = "v${version}";
+      sha256 = "MEMC9klm+PH66UHwrB2SqdCaZX0LAujL+Woo/hV84m4=";
+    };
+    postInstall = ''
+      sed -i -e 's|python3 |${pkgs.python3}/bin/python3 |g' $target/copytk.tmux
+      sed -i -e 's|/bin/bash|${pkgs.bash}/bin/bash|g;s|/bin/cat|${pkgs.coreutils}/bin/cat|g' $target/copytk.py
+    '';
+    meta = {
+      homepage = "https://github.com/CrispyConductor/tmux-copy-toolkit";
+      description = "Various copy-mode tools";
+      license = lib.licenses.mit;
+      platforms = lib.platforms.unix;
+      maintainers = with lib.maintainers; [ deejayem ];
+    };
+  };
+
   copycat = mkTmuxPlugin {
     pluginName = "copycat";
     version = "unstable-2020-01-09";
@@ -105,12 +155,12 @@ in rec {
 
   cpu = mkTmuxPlugin {
     pluginName = "cpu";
-    version = "unstable-2020-07-25";
+    version = "unstable-2021-12-15";
     src = fetchFromGitHub {
       owner = "tmux-plugins";
       repo = "tmux-cpu";
-      rev = "20120a38ade17057441482b43eb5390e6ea2c1c1";
-      sha256 = "1gdz2awyd9icvyiw2p40gwymh6ngjhb9mkiv63ix53snp9ii794i";
+      rev = "9eb3dba66672c5b43065e144cc3a1031f77ad67e";
+      sha256 = "sha256-v/jZxsa+JwsSKjmA32VK/4gBNHP/SyOzTaYSSz2c0+4=";
     };
   };
 
@@ -127,12 +177,12 @@ in rec {
 
   dracula = mkTmuxPlugin rec {
     pluginName = "dracula";
-    version = "unstable-2021-02-18";
+    version = "2.0.0";
     src = fetchFromGitHub {
       owner = "dracula";
       repo = "tmux";
-      rev = "8d1a7fa41b773d4f7b53dfff2d9fc5166d34f104";
-      sha256 = "DG+oKbTkYO4hwoOlOqW5IuCLdVEttlvLM2en4DUHyMY=";
+      rev = "v${version}";
+      sha256 = "ILs+GMltb2AYNUecFMyQZ/AuETB0PCFF2InSnptVBos=";
     };
     meta = with lib; {
       homepage = "https://draculatheme.com/tmux";
@@ -210,24 +260,24 @@ in rec {
   fzf-tmux-url = mkTmuxPlugin {
     pluginName = "fzf-tmux-url";
     rtpFilePath = "fzf-url.tmux";
-    version = "unstable-2019-12-02";
+    version = "unstable-2021-12-27";
     src = fetchFromGitHub {
       owner = "wfxr";
       repo = "tmux-fzf-url";
-      rev = "2baa410bf7a0f6ceb62a83770baf90d570406ac0";
-      sha256 = "0rjzzlmxgjrr8g19bg2idcqr9ny07mrq2s39vndg24n0m7znh3fz";
+      rev = "1241fc5682850fe41812cad81c76541674ee305b";
+      sha256 = "1270c5nfvgsdajgfahlacqfb5xwg4hwfrciiy0v03d50vg4h0kdi";
     };
   };
 
   gruvbox = mkTmuxPlugin {
     pluginName = "gruvbox";
     rtpFilePath = "gruvbox-tpm.tmux";
-    version = "unstable-2019-05-05";
+    version = "unstable-2022-04-19";
     src = fetchFromGitHub {
       owner = "egel";
       repo = "tmux-gruvbox";
-      rev = "6149fd8b5d6924925b4d5aa6935039780e94f3d6";
-      sha256 = "1ykr4yardavd0x7yfrnshd4b0gi8p31pji7i79ib0nss134zncpb";
+      rev = "3f9e38d7243179730b419b5bfafb4e22b0a969ad";
+      sha256 = "1l0kq77rk3cbv0rvh7bmfn90vvqqmywn9jk6gbl9mg3qbynq5wcf";
     };
   };
 
@@ -370,23 +420,23 @@ in rec {
 
   prefix-highlight = mkTmuxPlugin {
     pluginName = "prefix-highlight";
-    version = "unstable-2020-03-26";
+    version = "unstable-2021-03-30";
     src = fetchFromGitHub {
       owner = "tmux-plugins";
       repo = "tmux-prefix-highlight";
-      rev = "1db6e735aad54503b076391d791c56e1af213917";
-      sha256 = "0ws9blzg00zhz548m51cm6zbrkqlz7jazkr5029vka1f6qk36x0g";
+      rev = "15acc6172300bc2eb13c81718dc53da6ae69de4f";
+      sha256 = "08rkflfnynxgv2s26b33l199h6xcqdfmlqbyqa1wkw7h85br3dgl";
     };
   };
 
   resurrect = mkTmuxPlugin {
     pluginName = "resurrect";
-    version = "unstable-2020-09-18";
+    version = "unstable-2022-05-01";
     src = fetchFromGitHub {
       owner = "tmux-plugins";
       repo = "tmux-resurrect";
-      rev = "e4825055c92e54b0c6ec572afc9b6c4723aba6c8";
-      sha256 = "0a96drkx1kpadkbxabcnvb542p75xdh2dbizvlq2lac5ldpb4hmx";
+      rev = "ca6468e2deef11efadfe3a62832ae67742505432";
+      sha256 = "0d7jg5dy4jq64679rf2zqmqbvgiqvpcj5jxfljk7d7y86dnqhj3n";
     };
     meta = {
       homepage = "https://github.com/tmux-plugins/tmux-resurrect";
@@ -496,12 +546,12 @@ in rec {
   tmux-fzf = mkTmuxPlugin {
     pluginName = "tmux-fzf";
     rtpFilePath = "main.tmux";
-    version = "unstable-2020-12-07";
+    version = "unstable-2022-08-02";
     src = fetchFromGitHub {
       owner = "sainnhe";
       repo = "tmux-fzf";
-      rev = "5efeb91086040a3becf5372fb38258acd0579954";
-      sha256 = "1z0zmsf8asxs9wbwvkiyd81h93wb2ikl8nxxc26sdpi6l333q5s9";
+      rev = "3e261309ad367c3fe56c0ef14af00078684b1035";
+      sha256 = "13wlcq3f7944v74lcnfbmabcy2c0ca83ya21s3qn3j0lw3wqj6vj";
     };
     postInstall = ''
       find $target -type f -print0 | xargs -0 sed -i -e 's|fzf |${pkgs.fzf}/bin/fzf |g'
@@ -527,6 +577,10 @@ in rec {
       platforms = lib.platforms.unix;
       maintainers = with lib.maintainers; [ kyleondy ];
     };
+  };
+
+  tmux-thumbs = pkgs.callPackage ./tmux-thumbs {
+    inherit mkTmuxPlugin;
   };
 
   urlview = mkTmuxPlugin {
@@ -565,23 +619,23 @@ in rec {
   vim-tmux-navigator = mkTmuxPlugin {
     pluginName = "vim-tmux-navigator";
     rtpFilePath = "vim-tmux-navigator.tmux";
-    version = "unstable-2019-12-10";
+    version = "unstable-2022-08-21";
     src = fetchFromGitHub {
       owner = "christoomey";
       repo = "vim-tmux-navigator";
-      rev = "8fdf78292bb3aed1c9de880be7e03efdbf23d306";
-      sha256 = "0y92na4dcfcsj5zbs3m7y6csl3sd46a9968id78cdn9cgg8iwzac";
+      rev = "afb45a55b452b9238159047ce7c6e161bd4a9907";
+      hash = "sha256-8A+Yt9uhhAP76EiqUopE8vl7/UXkgU2x000EOcF7pl0=";
     };
   };
 
   yank = mkTmuxPlugin {
     pluginName = "yank";
-    version = "unstable-2019-12-02";
+    version = "unstable-2021-06-20";
     src = fetchFromGitHub {
       owner = "tmux-plugins";
       repo = "tmux-yank";
-      rev = "648005db64d9bf3c4650eff694ecb6cf3e42b0c8";
-      sha256 = "1zg9k8yk1iw01vl8m44w4sv20lln4l0lq9dafc09lxmgxm9dllj4";
+      rev = "1b1a436e19f095ae8f825243dbe29800a8acd25c";
+      sha256 = "hRvkBf+YrWycecnDixAsD4CAHg3KsioomfJ/nLl5Zgs=";
     };
   };
 }

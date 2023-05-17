@@ -2,19 +2,19 @@
 , buildPythonPackage
 , fetchFromGitHub
 , karton-core
-, python
+, unittestCheckHook
 , yara-python
 }:
 
 buildPythonPackage rec {
   pname = "karton-yaramatcher";
-  version = "1.0.0";
+  version = "1.2.0";
 
   src = fetchFromGitHub {
     owner = "CERT-Polska";
     repo = pname;
     rev = "v${version}";
-    sha256 = "093h5hbx2ss4ly523gvf10a5ky3vvin6wipigvhx13y1rdxl6c9n";
+    sha256 = "sha256-ulWwPXbjqQXwSRi8MFdcx7vC7P19yu66Ll8jkuTesao=";
   };
 
   propagatedBuildInputs = [
@@ -22,17 +22,7 @@ buildPythonPackage rec {
     yara-python
   ];
 
-  postPatch = ''
-    substituteInPlace requirements.txt \
-      --replace "karton-core==4.0.5" "karton-core" \
-      --replace "yara-python==4.0.2" "yara-python" \
-  '';
-
-  checkPhase = ''
-    runHook preCheck
-    ${python.interpreter} -m unittest discover
-    runHook postCheck
-  '';
+  checkInputs = [ unittestCheckHook ];
 
   pythonImportsCheck = [ "karton.yaramatcher" ];
 

@@ -1,58 +1,68 @@
 { lib
 , buildPythonPackage
-, fetchPypi
-, pythonOlder
-, isPy27
+, bash
 , cmake
-, protobuf
-, numpy
-, six
-, typing-extensions
-, typing
-, pytestrunner
-, pytest
+, fetchPypi
+, isPy27
 , nbval
+, numpy
+, protobuf
+, pytestCheckHook
+, six
 , tabulate
+, typing-extensions
+, pythonRelaxDepsHook
+, pytest-runner
 }:
 
 buildPythonPackage rec {
   pname = "onnx";
-  version = "1.8.1";
+  version = "1.12.0";
+  format = "setuptools";
 
-  # Due to Protobuf packaging issues this build of Onnx with Python 2 gives
-  # errors on import.
-  # Also support for Python 2 will be deprecated from Onnx v1.8.
   disabled = isPy27;
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "9d65c52009a90499f8c25fdfe5acda3ac88efe0788eb1d5f2575a989277145fb";
+    sha256 = "sha256-E7PnfSdSO52/TzDfyclZRVhZ1eNOkhxE9xLWm4Np7/k=";
   };
 
-  nativeBuildInputs = [ cmake ];
+  nativeBuildInputs = [
+    cmake
+    pythonRelaxDepsHook
+  ];
+
+  pythonRelaxDeps = [ "protobuf" ];
 
   propagatedBuildInputs = [
     protobuf
     numpy
     six
     typing-extensions
-  ] ++ lib.optional (pythonOlder "3.5") [ typing ];
+  ];
 
   checkInputs = [
-    pytestrunner
-    pytest
     nbval
+    pytestCheckHook
+    pytest-runner
     tabulate
   ];
 
   postPatch = ''
     chmod +x tools/protoc-gen-mypy.sh.in
-    patchShebangs tools/protoc-gen-mypy.sh.in tools/protoc-gen-mypy.py
+    patchShebangs tools/protoc-gen-mypy.py
+    substituteInPlace tools/protoc-gen-mypy.sh.in \
+      --replace "/bin/bash" "${bash}/bin/bash"
   '';
 
   preBuild = ''
     export MAX_JOBS=$NIX_BUILD_CORES
   '';
+
+  disabledTestPaths = [
+    # Unexpected output fields from running code: {'stderr'}
+    "onnx/examples/np_array_tensorproto.ipynb"
+  ];
 
   # The executables are just utility scripts that aren't too important
   postInstall = ''
@@ -62,10 +72,14 @@ buildPythonPackage rec {
   # The setup.py does all the configuration
   dontUseCmakeConfigure = true;
 
-  meta = {
-    homepage    = "http://onnx.ai";
+  pythonImportsCheck = [
+    "onnx"
+  ];
+
+  meta = with lib; {
     description = "Open Neural Network Exchange";
-    license     = lib.licenses.mit;
-    maintainers = [ lib.maintainers.acairncross ];
+    homepage = "https://onnx.ai";
+    license = licenses.asl20;
+    maintainers = with maintainers; [ acairncross ];
   };
 }

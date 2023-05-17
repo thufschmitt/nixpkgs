@@ -8,25 +8,33 @@
 , mock
 , proto-plus
 , pytest-asyncio
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "google-cloud-error-reporting";
-  version = "1.1.2";
+  version = "1.6.3";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-NT/+2mtIaEMyXnmM1fWX4kEV9pb1+aNas2lNobUPR14=";
+    hash = "sha256-7QR4NS98MtJ8aMLC+qQeTrK1Rv5kw6XlZhSKbatrZFY=";
   };
 
-  postPatch = ''
-    substituteInPlace setup.py \
-      --replace 'google-cloud-logging>=1.14.0, <2.1' 'google-cloud-logging>=1.14.0'
-  '';
+  propagatedBuildInputs = [
+    google-cloud-logging
+    libcst
+    proto-plus
+  ];
 
-  propagatedBuildInputs = [ google-cloud-logging libcst proto-plus ];
-
-  checkInputs = [ google-cloud-testutils mock pytestCheckHook pytest-asyncio ];
+  checkInputs = [
+    google-cloud-testutils
+    mock
+    pytestCheckHook
+    pytest-asyncio
+  ];
 
   disabledTests = [
     # require credentials
@@ -34,8 +42,8 @@ buildPythonPackage rec {
     "test_report_exception"
   ];
 
-  # prevent google directory from shadowing google imports
   preCheck = ''
+    # prevent google directory from shadowing google imports
     rm -r google
   '';
 

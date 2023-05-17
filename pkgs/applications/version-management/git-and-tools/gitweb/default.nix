@@ -6,7 +6,7 @@ let
     owner = "kogakure";
     repo = "gitweb-theme";
     rev = "049b88e664a359f8ec25dc6f531b7e2aa60dd1a2";
-    extraPostFetch = ''
+    postFetch = ''
       mkdir -p "$TMPDIR/gitwebTheme"
       mv "$out"/* "$TMPDIR/gitwebTheme/"
       mkdir "$out/static"
@@ -22,6 +22,6 @@ in buildEnv {
        ++ [ "${git}/share/gitweb" ];
 
   meta = git.meta // {
-    maintainers = with lib.maintainers; [ gnidorah ];
+    maintainers = with lib.maintainers; [ ];
   };
 }

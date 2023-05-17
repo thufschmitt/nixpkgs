@@ -3,8 +3,8 @@
 , grpc
 , six
 , protobuf
-, enum34
-, futures
+, enum34 ? null
+, futures ? null
 , isPy27
 , pkg-config
 , cython
@@ -16,6 +16,7 @@
 buildPythonPackage rec {
   inherit (grpc) src version;
   pname = "grpcio";
+  format = "setuptools";
 
   outputs = [ "out" "dev" ];
 

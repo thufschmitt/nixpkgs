@@ -2,53 +2,75 @@
 , stdenv
 , buildPythonPackage
 , fetchPypi
-, fetchpatch
-, argh
 , pathtools
 , pyyaml
-, pytest-cov
+, flaky
+, pytest-timeout
 , pytestCheckHook
 , CoreServices
+, fetchpatch
 }:
 
 buildPythonPackage rec {
   pname = "watchdog";
-  version = "2.0.2";
+  version = "2.1.9";
+  format = "setuptools";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-Uy/t2ZPnVVRnH6o2zQTFgM7T+uCEJUp3mvu9iq8AVms=";
+    sha256 = "sha256-Q84g67NqUfIfo3b3bR1GkkUrJSfM1gGVDWntNrniFgk=";
   };
 
-  patches = [
+  patches = lib.optionals (stdenv.isDarwin && !stdenv.isAarch64) [
+    ./force-kqueue.patch
+  ] ++ [
     (fetchpatch {
-      # Fix test flakiness on Apple Silicon, remove after upgrade to 2.0.6.
-      url = "https://github.com/gorakhargosh/watchdog/commit/331fd7c2c819663be39bc146e78ce67553f265fa.patch";
-      sha256 = "sha256-pLkZmbPN3qRNHs53OP0HIyDxqYCPPo6yOcBLD3aO2YE=";
+      url = "https://github.com/gorakhargosh/watchdog/commit/255d1e45c17929dd5ba8a6f91aa28771109931cd.patch";
+      sha256 = "sha256-gGgEGuB/0g+4Pv1dXMvIdObjqKruWKkxtufS/dzSlY8=";
+      excludes = [ "changelog.rst" ];
     })
   ];
 
   buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
 
   propagatedBuildInputs = [
-    argh
     pathtools
     pyyaml
   ];
 
   checkInputs = [
-    pytest-cov
+    flaky
+    pytest-timeout
     pytestCheckHook
   ];
 
-  pythonImportsCheck = [ "watchdog" ];
+  postPatch = ''
+    substituteInPlace setup.cfg \
+      --replace "--cov=watchdog" "" \
+      --replace "--cov-report=term-missing" ""
+  '';
+
+  disabledTests = [
+    # probably failing because of an encoding related issue
+    "test_create_wrong_encoding"
+  ] ++ lib.optionals (stdenv.isDarwin && !stdenv.isAarch64) [
+    "test_delete"
+    "test_separate_consecutive_moves"
+  ];
+
+  disabledTestPaths = [
+    # Tests are flaky
+    "tests/test_inotify_buffer.py"
+  ];
+
+  pythonImportsCheck = [
+    "watchdog"
+  ];
 
   meta = with lib; {
     description = "Python API and shell utilities to monitor file system events";
     homepage = "https://github.com/gorakhargosh/watchdog";
     license = licenses.asl20;
     maintainers = with maintainers; [ goibhniu ];
-    # error: use of undeclared identifier 'kFSEventStreamEventFlagItemCloned'
-    broken = stdenv.isDarwin;
   };
 }

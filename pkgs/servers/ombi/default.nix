@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, makeWrapper, patchelf, openssl, libunwind, zlib, krb5, icu, nixosTests }:
+{ lib, stdenv, fetchurl, makeWrapper, autoPatchelfHook, fixDarwinDylibNames, zlib, krb5, openssl, icu, nixosTests }:
 
 let
   os = if stdenv.isDarwin then "osx" else "linux";
@@ -10,20 +10,14 @@ let
     "Unsupported system: ${stdenv.hostPlatform.system}");
 
   hash = {
-    x64-linux_hash = "sha256-Cuvz9Mhwpg8RIaiSXib+QW00DM66qPRQulrchRL2BSk=";
-    arm64-linux_hash = "sha256-uyVwa73moHWMZScNNSOU17lALuK3PC/cvTZPJ9qg7JQ=";
-    x64-osx_hash = "sha256-FGXLsfEuCW94D786LJ/wvA9TakOn5sG2M1rDXPQicYw=";
+    x64-linux_hash = "sha256-7l9NT0brk6c7H3oqe9IjTY+5Ji2c5a4vB4vomqmv7x8=";
+    arm64-linux_hash = "sha256-UKVCpFS4m2DMkgG62V7uSQyLG/Zt6z3GSogd30A/4nY=";
+    x64-osx_hash = "sha256-xUu4nsAzBDCKUJWmim3UXVgFzwa6fg9mj/eD3OW1ILY=";
   }."${arch}-${os}_hash";
-
-  rpath = lib.makeLibraryPath [
-    stdenv.cc.cc openssl libunwind zlib krb5 icu
-  ];
-
-  dynamicLinker = stdenv.cc.bintools.dynamicLinker;
 
 in stdenv.mkDerivation rec {
   pname = "ombi";
-  version = "4.0.1292";
+  version = "4.22.5";
 
   sourceRoot = ".";
 
@@ -32,23 +26,19 @@ in stdenv.mkDerivation rec {
     sha256 = hash;
   };
 
-  buildInputs = [ makeWrapper patchelf ];
+  nativeBuildInputs = [ makeWrapper ]
+    ++ lib.optional stdenv.hostPlatform.isLinux autoPatchelfHook
+    ++ lib.optional stdenv.hostPlatform.isDarwin fixDarwinDylibNames;
+
+  propagatedBuildInputs = [ stdenv.cc.cc zlib krb5 ];
 
   installPhase = ''
     mkdir -p $out/{bin,share/${pname}-${version}}
     cp -r * $out/share/${pname}-${version}
 
     makeWrapper $out/share/${pname}-${version}/Ombi $out/bin/Ombi \
-      --run "cd $out/share/${pname}-${version}"
-  '';
-
-  dontPatchELF = true;
-  postFixup = ''
-    patchelf --set-interpreter "${dynamicLinker}" \
-      --set-rpath "$ORIGIN:${rpath}" $out/share/${pname}-${version}/Ombi
-
-    find $out -type f -name "*.so" -exec \
-      patchelf --set-rpath '$ORIGIN:${rpath}' {} ';'
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ openssl icu ]} \
+      --chdir "$out/share/${pname}-${version}"
   '';
 
   passthru = {
@@ -59,6 +49,7 @@ in stdenv.mkDerivation rec {
   meta = with lib; {
     description = "Self-hosted web application that automatically gives your shared Plex or Emby users the ability to request content by themselves";
     homepage = "https://ombi.io/";
+    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     license = licenses.gpl2Only;
     maintainers = with maintainers; [ woky ];
     platforms = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" ];

@@ -1,13 +1,12 @@
-{ lib, buildPecl, php, valgrind, pcre' }:
+{ lib, stdenv, buildPecl, php, valgrind, pcre2 }:
 
 buildPecl {
   pname = "swoole";
 
-  version = "4.6.4";
-  sha256 = "0hgndnn27q7fbsb0nw6bfdg0kyy5di9vrmf7g53jc6lsnf73ha31";
+  version = "5.0.1";
+  sha256 = "1zq5vvwjqpg3d4qv8902w54gvghjgcb3c7szi7fpqi6f51mhhwvf";
 
-  buildInputs = [ valgrind pcre' ];
-  internalDeps = lib.optionals (lib.versionOlder php.version "7.4") [ php.extensions.hash ];
+  buildInputs = [ pcre2 ] ++ lib.optionals (!stdenv.isDarwin) [ valgrind ];
 
   doCheck = true;
   checkTarget = "tests";

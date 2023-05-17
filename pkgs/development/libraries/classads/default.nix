@@ -1,10 +1,8 @@
 { lib, stdenv, fetchurl, pcre }:
 
-let version = "1.0.10"; in
-
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "classads";
-  inherit version;
+  version = "1.0.10";
 
   src = fetchurl {
     url = "ftp://ftp.cs.wisc.edu/condor/classad/c++/classads-${version}.tar.gz";
@@ -22,5 +20,7 @@ stdenv.mkDerivation {
     description = "The Classified Advertisements library provides a generic means for matching resources";
     license = lib.licenses.asl20;
     platforms = lib.platforms.unix;
+    # never built on aarch64-darwin since first introduction in nixpkgs
+    broken = stdenv.isDarwin && stdenv.isAarch64;
   };
 }

@@ -3,18 +3,16 @@
 with lib;
 
 buildLinux (args // rec {
-  version = "5.12-rc6";
-  extraMeta.branch = "5.12";
+  version = "6.1-rc8";
+  extraMeta.branch = lib.versions.majorMinor version;
 
   # modDirVersion needs to be x.y.z, will always add .0
   modDirVersion = if (modDirVersionArg == null) then builtins.replaceStrings ["-"] [".0-"] version else modDirVersionArg;
 
   src = fetchurl {
     url = "https://git.kernel.org/torvalds/t/linux-${version}.tar.gz";
-    sha256 = "0w0zk2byimdbcvn8myqaq0ab6lyd43493fnkv9a1407dimpxb03d";
+    hash = "sha256-YQYxNWZ7HmF3z5M88S8I8tjOaglNYWFtCGlGbDttx64=";
   };
-
-  kernelTests = args.kernelTests or [ nixosTests.kernel-generic.linux_testing ];
 
   # Should the testing kernels ever be built on Hydra?
   extraMeta.hydraPlatforms = [];

@@ -1,12 +1,12 @@
-{ stdenv, lib, fetchurl, readline }:
+{ stdenv, lib, fetchurl, withReadline ? true, readline }:
 
 stdenv.mkDerivation rec {
   pname = "oil";
-  version = "0.8.8";
+  version = "0.12.9";
 
   src = fetchurl {
     url = "https://www.oilshell.org/download/oil-${version}.tar.xz";
-    sha256 = "sha256-J9aNuw72qufoVY6VnbdpCtpcI6GAI7ON10XGEJuqieI=";
+    hash = "sha256-HY/SZiVOfOrA69gGxEp+qdRnuTJ72XveAk9Xp45zcf8=";
   };
 
   postPatch = ''
@@ -17,8 +17,9 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
   '';
 
-  buildInputs = [ readline ];
-  configureFlags = [ "--with-readline" ];
+  strictDeps = true;
+  buildInputs = lib.optional withReadline readline;
+  configureFlags = lib.optional withReadline "--with-readline";
 
   # Stripping breaks the bundles by removing the zip file from the end.
   dontStrip = true;
@@ -32,11 +33,12 @@ stdenv.mkDerivation rec {
       asl20 # Licence for Oil itself
     ];
 
+    platforms = lib.platforms.all;
     maintainers = with lib.maintainers; [ lheckemann alva ];
     changelog = "https://www.oilshell.org/release/${version}/changelog.html";
   };
 
   passthru = {
-      shellPath = "/bin/osh";
+    shellPath = "/bin/osh";
   };
 }

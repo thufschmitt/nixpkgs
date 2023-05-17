@@ -21,14 +21,12 @@ rustPlatform.buildRustPackage rec {
     sha256 = "0f9915f083z5qqcxyavj0w6m973c8m1x7kfb89pah5agryy5mkaq";
   };
 
-  nativeBuildInputs = [ installShellFiles pkg-config ];
+  nativeBuildInputs = [ installShellFiles pkg-config rustPlatform.bindgenHook ];
   buildInputs = [ openssl ]
     ++ lib.optional stdenv.isDarwin Security;
   checkInputs = [ gitMinimal util-linuxMinimal ];
 
-  LIBCLANG_PATH = "${llvmPackages.libclang}/lib";
-
-  cargoSha256 = "0n8cw70qh8g4hfwfaxwwxbrrx5hm2z037z8kdhvdpqkxljl9189x";
+  cargoSha256 = "1vnrc72g2271i2p847z30kplxmdpi60n3dzpw0s7dahg33g14ai6";
 
   checkPhase = ''
     export HOME=$TMPDIR

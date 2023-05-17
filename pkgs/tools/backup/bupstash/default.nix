@@ -1,16 +1,16 @@
-{ lib, fetchFromGitHub, installShellFiles, rustPlatform, ronn, pkg-config, libsodium }:
+{ stdenv, lib, fetchFromGitHub, installShellFiles, rustPlatform, ronn, pkg-config, libsodium }:
 rustPlatform.buildRustPackage rec {
   pname = "bupstash";
-  version = "0.8.0";
+  version = "0.11.0";
 
   src = fetchFromGitHub {
     owner = "andrewchambers";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-zZHJlC0OICIc3G825t7GrZwdmkaaLQKzX2IwkKigkV4=";
+    sha256 = "sha256-9yWQQ8uzDkN3Pi2OiEn+oEazc3nH53dF2GswBCu8d3c=";
   };
 
-  cargoSha256 = "sha256-KVeIF6x+gpb8vkqCtZptF5EX9G1Zv6q8L6tskN6HziM=";
+  cargoSha256 = "sha256-JAclSUFuQk768cgDEvG1rxux2xBGHl1d/NAoxw161YU=";
 
   nativeBuildInputs = [ ronn pkg-config installShellFiles ];
   buildInputs = [ libsodium ];
@@ -28,6 +28,10 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://bupstash.io";
     license = licenses.mit;
     platforms = platforms.unix;
+    # = note: Undefined symbols for architecture x86_64:
+    #           "_utimensat", referenced from:
+    # https://github.com/NixOS/nixpkgs/issues/101229
+    broken = (stdenv.isDarwin && stdenv.isx86_64);
     maintainers = with maintainers; [ andrewchambers ];
   };
 }

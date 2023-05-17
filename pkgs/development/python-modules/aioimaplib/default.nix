@@ -1,4 +1,6 @@
 { lib
+, pythonOlder
+, pythonAtLeast
 , asynctest
 , buildPythonPackage
 , docutils
@@ -8,20 +10,22 @@
 , nose
 , pyopenssl
 , pytestCheckHook
-, pythonOlder
 , pytz
 , tzlocal
 }:
 
 buildPythonPackage rec {
   pname = "aioimaplib";
-  version = "0.7.18";
+  version = "1.0.1";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.5";
 
   src = fetchFromGitHub {
     owner = "bamthomas";
     repo = pname;
     rev = version;
-    sha256 = "037fxwmkdfb95cqcykrhn37p138wg9pvlsgdf45vyn1mhz5crky5";
+    hash = "sha256-7Ta0BhtQSm228vvUa5z+pzM3UC7+BskgBNjxsbEb9P0=";
   };
 
   checkInputs = [
@@ -36,10 +40,16 @@ buildPythonPackage rec {
     tzlocal
   ];
 
-  # Project is using asynctest with doesn't work with Python 3.8 and above
-  # https://github.com/bamthomas/aioimaplib/issues/54
-  doCheck = pythonOlder "3.8";
-  pythonImportsCheck = [ "aioimaplib" ];
+  disabledTests = [
+    # https://github.com/bamthomas/aioimaplib/issues/77
+    "test_get_quotaroot"
+    # asyncio.exceptions.TimeoutError
+    "test_idle"
+  ];
+
+  pythonImportsCheck = [
+    "aioimaplib"
+  ];
 
   meta = with lib; {
     description = "Python asyncio IMAP4rev1 client library";

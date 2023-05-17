@@ -1,70 +1,71 @@
-{ stdenv
-, lib
+{ lib
 , buildPythonPackage
+, callPackage
 , fetchFromGitHub
 , click
 , h11
 , httptools
-, uvloop
-, websockets
-, wsproto
-, pytestCheckHook
-, pytest-mock
+, python-dotenv
 , pyyaml
-, requests
-, trustme
 , typing-extensions
-, isPy27
+, uvloop
+, watchfiles
+, websockets
 , pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "uvicorn";
-  version = "0.13.2";
-  disabled = isPy27;
+  version = "0.18.2";
+  disabled = pythonOlder "3.6";
 
   src = fetchFromGitHub {
     owner = "encode";
     repo = pname;
     rev = version;
-    sha256 = "04zgmp9z46k72ay6cz7plga6d3w3a6x41anabm7ramp7jdqf6na9";
+    hash = "sha256-nxtDqYh2OmDtoV10CEBGYQrQBf+Xtuf5k9yR6UfCgYc=";
   };
+
+  outputs = [
+    "out"
+    "testsout"
+  ];
 
   propagatedBuildInputs = [
     click
     h11
-    httptools
-    uvloop
-    websockets
-    wsproto
   ] ++ lib.optionals (pythonOlder "3.8") [
     typing-extensions
   ];
 
-  checkInputs = [
-    pytestCheckHook
-    pytest-mock
+  passthru.optional-dependencies.standard = [
+    httptools
+    python-dotenv
     pyyaml
-    requests
-    trustme
+    uvloop
+    watchfiles
+    websockets
   ];
 
-  doCheck = !stdenv.isDarwin;
+  postInstall = ''
+    mkdir $testsout
+    cp -R tests $testsout/tests
+  '';
 
-  __darwinAllowLocalNetworking = true;
-
-  pytestFlagsArray = [
-    # watchgod required the watchgod package, which isn't available in nixpkgs
-    "--ignore=tests/supervisors/test_reload.py"
+  pythonImportsCheck = [
+    "uvicorn"
   ];
 
-  disabledTests = [
-    "test_supported_upgrade_request"
-    "test_invalid_upgrade"
-  ];
+  # check in passthru.tests.pytest to escape infinite recursion with httpx/httpcore
+  doCheck = false;
+
+  passthru.tests = {
+    pytest = callPackage ./tests.nix { };
+  };
 
   meta = with lib; {
     homepage = "https://www.uvicorn.org/";
+    changelog = "https://github.com/encode/uvicorn/blob/${src.rev}/CHANGELOG.md";
     description = "The lightning-fast ASGI server";
     license = licenses.bsd3;
     maintainers = with maintainers; [ wd15 ];

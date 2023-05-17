@@ -5,30 +5,23 @@
 , cryptography
 , mock
 , pyfakefs
+, unittestCheckHook
 }:
 
 buildPythonPackage rec {
   pname = "fido2";
-  version = "0.9.1";
+  version = "1.1.0";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-hoDuJSOOIwdZbrOQCg+MDZzJEYkUbtgDlUTxo6ad/m4=";
+    sha256 = "sha256-K0tOYgwhAEQsIGeODpUa1tHvs7pcqOu3IMTI1UMpNnQ=";
   };
 
   propagatedBuildInputs = [ six cryptography ];
 
-  checkInputs = [ mock pyfakefs ];
+  checkInputs = [ unittestCheckHook mock pyfakefs ];
 
-  # Testing with `python setup.py test` doesn't work:
-  # https://github.com/Yubico/python-fido2/issues/108#issuecomment-763513576
-  checkPhase = ''
-    runHook preCheck
-
-    python -m unittest discover -v
-
-    runHook postCheck
-  '';
+  unittestFlagsArray = [ "-v" ];
 
   pythonImportsCheck = [ "fido2" ];
 

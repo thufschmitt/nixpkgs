@@ -1,7 +1,6 @@
 { lib
 , stdenv
 , fetchFromGitHub
-, fetchpatch
 , meson
 , pkg-config
 , ninja
@@ -11,80 +10,93 @@
 , gtkmm3
 , libsigcxx
 , jsoncpp
-, fmt
 , scdoc
 , spdlog
 , gtk-layer-shell
-, howard-hinnant-date, cmake
-, traySupport  ? true,  libdbusmenu-gtk3
-, pulseSupport ? true,  libpulseaudio
-, sndioSupport ? true,  sndio
-, nlSupport    ? true,  libnl
-, udevSupport  ? true,  udev
-, swaySupport  ? true,  sway
-, mpdSupport   ? true,  libmpdclient
-, withMediaPlayer ? false, glib, gobject-introspection, python3, python38Packages, playerctl
+, howard-hinnant-date
+, libinotify-kqueue
+, libxkbcommon
+, evdevSupport    ? true,  libevdev
+, inputSupport    ? true,  libinput
+, jackSupport     ? true,  libjack2
+, mpdSupport      ? true,  libmpdclient
+, nlSupport       ? true,  libnl
+, pulseSupport    ? true,  libpulseaudio
+, rfkillSupport   ? true
+, runTests        ? true,  catch2_3
+, sndioSupport    ? true,  sndio
+, swaySupport     ? true,  sway
+, traySupport     ? true,  libdbusmenu-gtk3
+, udevSupport     ? true,  udev
+, upowerSupport   ? true,  upower
+, wireplumberSupport ? true, wireplumber
+, withMediaPlayer ? false, glib, gobject-introspection, python3, playerctl
 }:
 
 stdenv.mkDerivation rec {
   pname = "waybar";
-  version = "0.9.5";
+  version = "0.9.16";
 
   src = fetchFromGitHub {
     owner = "Alexays";
     repo = "Waybar";
     rev = version;
-    sha256 = "1kzrgqaclfk6gcwhknxn28xl74gm5swipgn8kk8avacb4nsw1l9q";
+    sha256 = "sha256-hcU0ijWIN7TtIPkURVmAh0kanQWkBUa22nubj7rSfBs=";
   };
 
-  patches = [
-    # XXX: REMOVE ON NEXT VERSION BUMP
-    # Fixes compatibility of the bluetooth and network modules with linux kernel
-    # >=5.11
-    # c.f. https://github.com/Alexays/Waybar/issues/994
-    (fetchpatch {
-      url = "https://patch-diff.githubusercontent.com/raw/Alexays/Waybar/pull/1015.patch";
-      sha256 = "sha256-jQZEM3Yru2yxcXAzapU47DoAv4ZoabrV80dH42I2OFk=";
-    })
-  ];
-
   nativeBuildInputs = [
-    meson ninja pkg-config scdoc wrapGAppsHook cmake
+    meson ninja pkg-config scdoc wrapGAppsHook
   ] ++ lib.optional withMediaPlayer gobject-introspection;
 
   propagatedBuildInputs = lib.optionals withMediaPlayer [
     glib
     playerctl
-    python38Packages.pygobject3
+    python3.pkgs.pygobject3
   ];
   strictDeps = false;
 
   buildInputs = with lib;
-    [ wayland wlroots gtkmm3 libsigcxx jsoncpp fmt spdlog gtk-layer-shell howard-hinnant-date ]
-    ++ optional  traySupport  libdbusmenu-gtk3
-    ++ optional  pulseSupport libpulseaudio
-    ++ optional  sndioSupport sndio
-    ++ optional  nlSupport    libnl
-    ++ optional  udevSupport  udev
-    ++ optional  swaySupport  sway
-    ++ optional  mpdSupport   libmpdclient;
+    [ wayland wlroots gtkmm3 libsigcxx jsoncpp spdlog gtk-layer-shell howard-hinnant-date libxkbcommon ]
+    ++ optional  (!stdenv.isLinux) libinotify-kqueue
+    ++ optional  evdevSupport  libevdev
+    ++ optional  inputSupport  libinput
+    ++ optional  jackSupport   libjack2
+    ++ optional  mpdSupport    libmpdclient
+    ++ optional  nlSupport     libnl
+    ++ optional  pulseSupport  libpulseaudio
+    ++ optional  sndioSupport  sndio
+    ++ optional  swaySupport   sway
+    ++ optional  traySupport   libdbusmenu-gtk3
+    ++ optional  udevSupport   udev
+    ++ optional  upowerSupport upower
+    ++ optional  wireplumberSupport wireplumber;
+
+  checkInputs = [ catch2_3 ];
+  doCheck = runTests;
 
   mesonFlags = (lib.mapAttrsToList
     (option: enable: "-D${option}=${if enable then "enabled" else "disabled"}")
     {
       dbusmenu-gtk = traySupport;
-      pulseaudio = pulseSupport;
-      sndio = sndioSupport;
+      jack = jackSupport;
+      libinput = inputSupport;
       libnl = nlSupport;
       libudev = udevSupport;
       mpd = mpdSupport;
+      pulseaudio = pulseSupport;
+      rfkill = rfkillSupport;
+      sndio = sndioSupport;
+      tests = runTests;
+      upower_glib = upowerSupport;
+      wireplumber = wireplumberSupport;
     }
   ) ++ [
-    "-Dout=${placeholder "out"}"
     "-Dsystemd=disabled"
+    "-Dgtk-layer-shell=enabled"
+    "-Dman-pages=enabled"
   ];
 
-  preFixup = lib.optional withMediaPlayer ''
+  preFixup = lib.optionalString withMediaPlayer ''
       cp $src/resources/custom_modules/mediaplayer.py $out/bin/waybar-mediaplayer.py
 
       wrapProgram $out/bin/waybar-mediaplayer.py \

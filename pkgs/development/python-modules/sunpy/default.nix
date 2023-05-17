@@ -1,86 +1,163 @@
-{ stdenv
-, lib
-, buildPythonPackage
-, fetchPypi
-, pythonOlder
+{ lib
+, stdenv
 , asdf
 , astropy
-, setuptools-scm
-, astropy-helpers
 , astropy-extension-helpers
+, astropy-helpers
 , beautifulsoup4
+, buildPythonPackage
 , drms
+, fetchPypi
 , glymur
+, h5netcdf
 , hypothesis
+, lxml
 , matplotlib
 , numpy
 , pandas
 , parfive
 , pytest-astropy
+, pytestCheckHook
 , pytest-mock
-, pytestcov
 , python-dateutil
+, pythonOlder
 , scikitimage
 , scipy
+, setuptools-scm
 , sqlalchemy
-, towncrier
 , tqdm
 , zeep
 }:
 
 buildPythonPackage rec {
   pname = "sunpy";
-  version = "2.0.7";
-  disabled = pythonOlder "3.6";
+  version = "4.0.5";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "d13ac67c14ea825652dc3e12c4c627e782e8e843e96a1d54440d39dd2ceb6a5c";
+    hash = "sha256-7I23WtSeZPtHULJ7sNAbOdwAuzjiPE6WW2ukKUCMODs=";
   };
 
   nativeBuildInputs = [
-    setuptools-scm
     astropy-extension-helpers
+    setuptools-scm
   ];
 
   propagatedBuildInputs = [
-    numpy
-    scipy
-    matplotlib
-    pandas
     astropy
     astropy-helpers
+    numpy
     parfive
-    sqlalchemy
-    scikitimage
-    towncrier
-    glymur
-    beautifulsoup4
-    drms
-    python-dateutil
-    zeep
-    tqdm
-    asdf
   ];
+
+  passthru.optional-dependencies = {
+    asdf = [
+      asdf
+      # asdf-astropy
+    ];
+    database = [
+      sqlalchemy
+    ];
+    image = [
+      scikitimage
+      scipy
+    ];
+    net = [
+      beautifulsoup4
+      drms
+      python-dateutil
+      tqdm
+      zeep
+    ];
+    jpeg2000 = [
+      glymur
+      lxml
+    ];
+    timeseries = [
+      # cdflib
+      h5netcdf
+      # h5py
+      matplotlib
+      pandas
+    ];
+  };
 
   checkInputs = [
     hypothesis
     pytest-astropy
-    pytestcov
     pytest-mock
-  ];
+    pytestCheckHook
+  ] ++ passthru.optional-dependencies.asdf
+    ++ passthru.optional-dependencies.database
+    ++ passthru.optional-dependencies.image
+    ++ passthru.optional-dependencies.net
+    ++ passthru.optional-dependencies.timeseries;
+
+  postPatch = ''
+    substituteInPlace setup.cfg \
+      --replace " --dist no" ""
+  '';
 
   # darwin has write permission issues
   doCheck = stdenv.isLinux;
-  # ignore documentation tests
-  checkPhase = ''
-    PY_IGNORE_IMPORTMISMATCH=1 HOME=$(mktemp -d) pytest sunpy -k 'not rst'
+
+  preCheck = ''
+    export HOME=$(mktemp -d)
   '';
 
+  disabledTests = [
+    "rst"
+    "test_sunpy_warnings_logging"
+    "test_main_nonexisting_module"
+    "test_main_stdlib_module"
+    "test_find_dependencies"
+  ];
+
+  disabledTestPaths = [
+    # Tests are very slow
+    "sunpy/net/tests/test_fido.py"
+    # asdf.extensions plugin issue
+    "sunpy/io/special/asdf/resources/schemas/"
+    "sunpy/io/special/asdf/resources/manifests/sunpy-1.0.0.yaml"
+    # Requires mpl-animators package
+    "sunpy/map/tests/test_compositemap.py"
+    "sunpy/map/tests/test_mapbase.py"
+    "sunpy/map/tests/test_mapsequence.py"
+    "sunpy/map/tests/test_plotting.py"
+    "sunpy/map/tests/test_reproject_to.py"
+    "sunpy/net/tests/test_helioviewer.py"
+    "sunpy/timeseries/tests/test_timeseriesbase.py"
+    "sunpy/visualization/animator/tests/test_basefuncanimator.py"
+    "sunpy/visualization/animator/tests/test_mapsequenceanimator.py"
+    "sunpy/visualization/animator/tests/test_wcs.py"
+    "sunpy/visualization/colormaps/tests/test_cm.py"
+    # Requires cdflib package
+    "sunpy/timeseries/tests/test_timeseries_factory.py"
+    # Requires jplephem
+    "sunpy/image/tests/test_transform.py"
+    "sunpy/io/special/asdf/tests/test_coordinate_frames.py"
+    "sunpy/io/special/asdf/tests/test_genericmap.py"
+    # distutils is deprecated
+    "sunpy/io/setup_package.py"
+  ];
+
+  pytestFlagsArray = [
+    "-W"
+    "ignore::DeprecationWarning"
+  ];
+
+  # Wants a configuration file
+  # pythonImportsCheck = [
+  #   "sunpy"
+  # ];
+
   meta = with lib; {
-    description = "SunPy: Python for Solar Physics";
+    description = "Python for Solar Physics";
     homepage = "https://sunpy.org";
     license = licenses.bsd2;
-    maintainers = [ maintainers.costrouc ];
+    maintainers = with maintainers; [ costrouc ];
   };
 }

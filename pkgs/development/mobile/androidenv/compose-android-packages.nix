@@ -3,18 +3,19 @@
 }:
 
 { toolsVersion ? "26.1.1"
-, platformToolsVersion ? "30.0.5"
-, buildToolsVersions ? [ "30.0.3" ]
+, platformToolsVersion ? "33.0.2"
+, buildToolsVersions ? [ "32.0.0" ]
 , includeEmulator ? false
-, emulatorVersion ? "30.3.4"
+, emulatorVersion ? "31.3.7"
 , platformVersions ? []
 , includeSources ? false
 , includeSystemImages ? false
 , systemImageTypes ? [ "google_apis_playstore" ]
-, abiVersions ? [ "armeabi-v7a" ]
+, abiVersions ? [ "armeabi-v7a" "arm64-v8a" ]
 , cmakeVersions ? [ ]
 , includeNDK ? false
-, ndkVersion ? "22.0.7026061"
+, ndkVersion ? "24.0.8215888"
+, ndkVersions ? [ndkVersion]
 , useGoogleAPIs ? false
 , useGoogleTVAddOns ? false
 , includeExtras ? []
@@ -63,9 +64,9 @@ let
                addons = repoXmls.addons or [];
              };
            in
-           builtins.fromJSON (builtins.readFile "${mkRepoJson repoXmlSpec}")
+           lib.importJSON "${mkRepoJson repoXmlSpec}"
          else
-           builtins.fromJSON (builtins.readFile repoJson);
+           lib.importJSON repoJson;
 
   # Converts all 'archives' keys in a repo spec to fetchurl calls.
   fetchArchives = attrSet:
@@ -119,7 +120,8 @@ rec {
   };
 
   platform-tools = import ./platform-tools.nix {
-    inherit deployAndroidPackage os autoPatchelfHook pkgs lib;
+    inherit deployAndroidPackage autoPatchelfHook pkgs lib;
+    os = if stdenv.system == "aarch64-darwin" then "macosx" else os; # "macosx" is a universal binary here
     package = packages.platform-tools.${platformToolsVersion};
   };
 
@@ -170,15 +172,23 @@ rec {
 
   cmake = map (version:
     import ./cmake.nix {
-      inherit deployAndroidPackage os autoPatchelfHook pkgs lib;
+      inherit deployAndroidPackage os autoPatchelfHook pkgs lib stdenv;
       package = packages.cmake.${version};
     }
   ) cmakeVersions;
 
-  ndk-bundle = import ./ndk-bundle {
-    inherit deployAndroidPackage os autoPatchelfHook makeWrapper pkgs pkgsHostHost lib platform-tools;
-    package = packages.ndk-bundle.${ndkVersion};
-  };
+  # Creates a NDK bundle.
+  makeNdkBundle = ndkVersion:
+    import ./ndk-bundle {
+      inherit deployAndroidPackage os autoPatchelfHook makeWrapper pkgs pkgsHostHost lib platform-tools stdenv;
+      package = packages.ndk-bundle.${ndkVersion} or packages.ndk.${ndkVersion};
+    };
+
+  # All NDK bundles.
+  ndk-bundles = if includeNDK then map makeNdkBundle ndkVersions else [];
+
+  # The "default" NDK bundle.
+  ndk-bundle = if includeNDK then lib.findFirst (x: x != null) null ndk-bundles else null;
 
   google-apis = map (version:
     deployAndroidPackage {
@@ -201,6 +211,21 @@ rec {
       ${lib.concatMapStrings (plugin: ''
         ln -s ${plugin}/libexec/android-sdk/${name}/* ${name}
       '') plugins}
+    '';
+
+  # Function that automatically links all NDK plugins.
+  linkNdkPlugins = {name, plugins, rootName ? name}:
+    lib.optionalString (plugins != []) ''
+      mkdir -p ${rootName}
+      ${lib.concatMapStrings (plugin: ''
+        ln -s ${plugin}/libexec/android-sdk/${name} ${rootName}/${plugin.version}
+      '') plugins}
+    '';
+
+  # Function that automatically links the default NDK plugin.
+  linkNdkPlugin = {name, plugin, check}:
+    lib.optionalString check ''
+      ln -s ${plugin}/libexec/android-sdk/${name} ${name}
     '';
 
   # Function that automatically links a plugin for which only one version exists
@@ -233,14 +258,14 @@ rec {
 
     postInstall = ''
       # Symlink all requested plugins
-
       ${linkPlugin { name = "platform-tools"; plugin = platform-tools; }}
       ${linkPlugins { name = "build-tools"; plugins = build-tools; }}
       ${linkPlugin { name = "emulator"; plugin = emulator; check = includeEmulator; }}
       ${linkPlugins { name = "platforms"; plugins = platforms; }}
       ${linkPlatformPlugins { name = "sources"; plugins = sources; check = includeSources; }}
       ${linkPlugins { name = "cmake"; plugins = cmake; }}
-      ${linkPlugin { name = "ndk-bundle"; plugin = ndk-bundle; check = includeNDK; }}
+      ${linkNdkPlugins { name = "ndk-bundle"; rootName = "ndk"; plugins = ndk-bundles; }}
+      ${linkNdkPlugin { name = "ndk-bundle"; plugin = ndk-bundle; check = includeNDK; }}
 
       ${lib.optionalString includeSystemImages ''
         mkdir -p system-images
@@ -286,6 +311,12 @@ rec {
       do
           ln -s $i $out/bin
       done
+
+      # the emulator auto-linked from platform-tools does not find its local qemu, while this one does
+      ${lib.optionalString includeEmulator ''
+        rm $out/bin/emulator
+        ln -s $out/libexec/android-sdk/emulator/emulator $out/bin
+      ''}
 
       # Write licenses
       mkdir -p licenses

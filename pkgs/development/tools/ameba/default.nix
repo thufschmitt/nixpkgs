@@ -2,14 +2,16 @@
 
 crystal.buildCrystalPackage rec {
   pname = "ameba";
-  version = "0.14.2";
+  version = "1.0.1";
 
   src = fetchFromGitHub {
     owner = "crystal-ameba";
     repo = "ameba";
     rev = "v${version}";
-    sha256 = "sha256-wtUWmvAm7iTiP8eYgPiRasYjzeCIJCQd3D+8f1kMONA=";
+    hash = "sha256-dvhGk6IbSV3pxtoIV7+0+qf47hz2TooPhsSwFd2+xkw=";
   };
+
+  format = "make";
 
   meta = with lib; {
     description = "A static code analysis tool for Crystal";

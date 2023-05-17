@@ -1,17 +1,51 @@
-{ lib, fetchPypi, buildPythonPackage }:
+{ lib
+, buildPythonPackage
+, callPackage
+, fetchFromGitHub
+, fetchpatch
+, cffi
+, gmp
+}:
 
+let
+  test-vectors = callPackage ./vectors.nix { };
+in
 buildPythonPackage rec {
-  version = "3.9.9";
   pname = "pycryptodome";
+  version = "3.15.0";
+  format = "setuptools";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "910e202a557e1131b1c1b3f17a63914d57aac55cf9fb9b51644962841c3995c4";
+  src = fetchFromGitHub {
+    owner = "Legrandin";
+    repo = "pycryptodome";
+    rev = "v${version}";
+    hash = "sha256-SPRoAfwP1MFlVzZsVWmXDWUY5Yje7eg7d+9zJhZNXrw=";
   };
 
+  patches = [
+    (fetchpatch {
+      url = "https://github.com/Legrandin/pycryptodome/commit/1c043abb089ddbc2fc43d1c169672688ccc64c64.patch";
+      sha256 = "sha256-QklwOlFpQNAH0CpR06fWSZqx8C97RV8BRsKbp2j8js8=";
+    })
+  ];
+
+  postPatch = ''
+    substituteInPlace lib/Crypto/Math/_IntegerGMP.py \
+      --replace 'load_lib("gmp"' 'load_lib("${gmp}/lib/libgmp.so.10"'
+  '';
+
+  checkInputs = [
+    test-vectors
+  ];
+
+  pythonImportsCheck = [
+    "Crypto"
+  ];
+
   meta = with lib; {
-    homepage = "https://www.pycryptodome.org/";
-    description = "Python Cryptography Toolkit";
-    platforms = platforms.unix;
+    description = "Self-contained cryptographic library";
+    homepage = "https://github.com/Legrandin/pycryptodome";
+    license = with licenses; [ bsd2 /* and */ asl20 ];
+    maintainers = with maintainers; [ fab ];
   };
 }

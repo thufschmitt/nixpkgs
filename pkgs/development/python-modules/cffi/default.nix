@@ -1,41 +1,50 @@
-{ lib, stdenv, buildPythonPackage, isPyPy, fetchPypi, libffi, pycparser, pytest }:
+{ lib, stdenv, buildPythonPackage, isPyPy, fetchPypi, pytestCheckHook,
+  libffi, pkg-config, pycparser, python, fetchpatch
+}:
 
 if isPyPy then null else buildPythonPackage rec {
   pname = "cffi";
-  version = "1.14.5";
+  version = "1.15.1";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "fd78e5fee591709f32ef6edb9a015b4aa1a5022598e36227500c8f4e02328d9c";
+    sha256 = "sha256-1AC/uaN7E1ElPLQCZxzqfom97MKU6AFqcH9tHYrJNPk=";
   };
 
-  outputs = [ "out" "dev" ];
+  buildInputs = [ libffi ];
 
-  propagatedBuildInputs = [ libffi pycparser ];
-  checkInputs = [ pytest ];
+  nativeBuildInputs = [ pkg-config ];
 
-  # On Darwin, the cffi tests want to hit libm a lot, and look for it in a global
-  # impure search path. It's obnoxious how much repetition there is, and how difficult
-  # it is to get it to search somewhere else (since we do actually have a libm symlink in libSystem)
-  prePatch = lib.optionalString stdenv.isDarwin ''
-    substituteInPlace testing/cffi0/test_parsing.py \
-      --replace 'lib_m = "m"' 'lib_m = "System"' \
-      --replace '"libm" in name' '"libSystem" in name'
-    substituteInPlace testing/cffi0/test_unicode_literals.py --replace 'lib_m = "m"' 'lib_m = "System"'
-    substituteInPlace testing/cffi0/test_zdistutils.py --replace 'self.lib_m = "m"' 'self.lib_m = "System"'
-    substituteInPlace testing/cffi1/test_recompiler.py --replace 'lib_m = "m"' 'lib_m = "System"'
-    substituteInPlace testing/cffi0/test_function.py --replace "lib_m = 'm'" "lib_m = 'System'"
-    substituteInPlace testing/cffi0/test_verify.py --replace "lib_m = ['m']" "lib_m = ['System']"
+  propagatedBuildInputs = [ pycparser ];
+
+  patches =
+    # Fix test that failed because python seems to have changed the exception format in the
+    # final release. This patch should be included in the next version and can be removed when
+    # it is released.
+    lib.optionals (python.pythonVersion == "3.11") [
+      (fetchpatch {
+        url = "https://foss.heptapod.net/pypy/cffi/-/commit/8a3c2c816d789639b49d3ae867213393ed7abdff.diff";
+        sha256 = "sha256-3wpZeBqN4D8IP+47QDGK7qh/9Z0Ag4lAe+H0R5xCb1E=";
+      })
+    ];
+
+  postPatch = lib.optionalString stdenv.isDarwin ''
+    # Remove setup.py impurities
+    substituteInPlace setup.py \
+      --replace "'-iwithsysroot/usr/include/ffi'" "" \
+      --replace "'/usr/include/ffi'," "" \
+      --replace '/usr/include/libffi' '${lib.getDev libffi}/include'
   '';
 
   # The tests use -Werror but with python3.6 clang detects some unreachable code.
   NIX_CFLAGS_COMPILE = lib.optionalString stdenv.cc.isClang
-    "-Wno-unused-command-line-argument -Wno-unreachable-code";
+    "-Wno-unused-command-line-argument -Wno-unreachable-code -Wno-c++11-narrowing";
 
-  doCheck = !stdenv.hostPlatform.isMusl && !stdenv.isDarwin; # TODO: Investigate
-  checkPhase = ''
-    py.test -k "not test_char_pointer_conversion"
-  '';
+  # Lots of tests fail on aarch64-darwin due to "Cannot allocate write+execute memory":
+  # * https://cffi.readthedocs.io/en/latest/using.html#callbacks
+  doCheck = !stdenv.hostPlatform.isMusl && !(stdenv.isDarwin && stdenv.isAarch64);
+
+  checkInputs = [ pytestCheckHook ];
 
   meta = with lib; {
     maintainers = with maintainers; [ domenkozar lnl7 ];

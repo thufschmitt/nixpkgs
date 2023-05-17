@@ -5,31 +5,61 @@
 , numba
 , numpy
 , pytestCheckHook
+, pythonOlder
+, pyyaml
 , rapidjson
+, setuptools
 }:
 
 buildPythonPackage rec {
   pname = "awkward";
-  version = "1.1.2";
+  version = "1.10.2";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "4ae8371d9e6d5bd3e90f3686b433cebc0541c88072655d2c75ec58e79b5d6943";
+    hash = "sha256-MDvAkZ8JMts+eKklTBf83rEl5L5lzYlLQN+8O/3fwFQ=";
   };
 
-  nativeBuildInputs = [ cmake ];
-  buildInputs = [ rapidjson ];
-  propagatedBuildInputs = [ numpy ];
+  nativeBuildInputs = [
+    cmake
+  ];
+
+  buildInputs = [
+    pyyaml
+    rapidjson
+  ];
+
+  propagatedBuildInputs = [
+    numpy
+    setuptools
+  ];
 
   dontUseCmakeConfigure = true;
 
-  checkInputs = [ pytestCheckHook numba ];
-  dontUseSetuptoolsCheck = true;
-  disabledTestPaths = [ "tests-cuda" ];
+  checkInputs = [
+    pytestCheckHook
+    numba
+  ];
+
+  disabledTests = [
+    # incomatible with numpy 1.23
+    "test_numpyarray"
+  ];
+
+  disabledTestPaths = [
+    "tests-cuda"
+  ];
+
+  pythonImportsCheck = [
+    "awkward"
+  ];
 
   meta = with lib; {
     description = "Manipulate JSON-like data with NumPy-like idioms";
-    homepage = "https://github.com/scikit-hep/awkward-1.0";
+    homepage = "https://github.com/scikit-hep/awkward";
     license = licenses.bsd3;
     maintainers = with maintainers; [ veprbl ];
   };

@@ -1,19 +1,20 @@
-{ lib, rustPlatform, fetchFromGitHub, installShellFiles, coreutils }:
+{ lib, rustPlatform, fetchFromGitHub, pkg-config, installShellFiles, udev, coreutils }:
 
 rustPlatform.buildRustPackage rec {
   pname = "surface-control";
-  version = "0.3.1-2";
+  version = "0.4.3-1";
 
   src = fetchFromGitHub {
     owner = "linux-surface";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-SLJ4mwBafLGL5pneMTHLc4S4Tgds2xLqByWFH95TK1k=";
+    sha256 = "sha256-bqrp/XS4OJIRW2ChHnf9gMh/TgCPUEb9fP2soeT1Qe4=";
   };
 
-  cargoSha256 = "sha256-a+4oOkO90TObfYnq9NZsWy5RmYFYN1BKvUKxpvjiJc8=";
+  cargoSha256 = "sha256-TWXK36cN8WuqfrMX7ybO2lnNiGnSKmfK6QGWMBM1y0o=";
 
-  nativeBuildInputs = [ installShellFiles ];
+  nativeBuildInputs = [ pkg-config installShellFiles ];
+  buildInputs = [ udev ];
 
   postInstall = ''
     installShellCompletion \
@@ -31,7 +32,7 @@ rustPlatform.buildRustPackage rec {
       "Control various aspects of Microsoft Surface devices on Linux from the Command-Line";
     homepage = "https://github.com/linux-surface/surface-control";
     license = licenses.mit;
-    maintainers = with maintainers; [ winterqt ];
+    maintainers = with maintainers; [ ];
     platforms = platforms.linux;
   };
 }

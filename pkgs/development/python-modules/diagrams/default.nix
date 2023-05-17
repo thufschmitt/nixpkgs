@@ -2,7 +2,6 @@
 , buildPythonPackage
 , pythonOlder
 , fetchFromGitHub
-, black
 , jinja2
 , poetry-core
 , round
@@ -14,31 +13,42 @@
 
 buildPythonPackage rec {
   pname = "diagrams";
-  version = "0.19.1";
+  version = "0.22.0";
   format = "pyproject";
   disabled = pythonOlder "3.6";
 
   src = fetchFromGitHub {
     owner = "mingrammer";
     repo = pname;
-    rev = "v${version}";
-    sha256 = "0qvk0cp3026n5jmwp9z7m70b6pws0h6a7slxr23glg18baxr44d4";
+    rev = "refs/tags/v${version}";
+    sha256 = "sha256-LUuClvBJeOxtrg+S+lYLpP7T1RXCy5dNjFYQO3H54QE=";
   };
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace 'graphviz = ">=0.13.2,<0.20.0"' 'graphviz = "*"'
+  '';
 
   preConfigure = ''
     patchShebangs autogen.sh
     ./autogen.sh
   '';
 
-  patches = [ ./build_poetry.patch ];
+  patches = [
+    # The build-system section is missing
+    ./build_poetry.patch
+    ./remove-black-requirement.patch
+  ];
 
   checkInputs = [ pytestCheckHook ];
 
   # Despite living in 'tool.poetry.dependencies',
   # these are only used at build time to process the image resource files
-  nativeBuildInputs = [ black inkscape imagemagick jinja2 poetry-core round ];
+  nativeBuildInputs = [ inkscape imagemagick jinja2 poetry-core round ];
 
   propagatedBuildInputs = [ graphviz ];
+
+  pythonImportsCheck = [ "diagrams" ];
 
   meta = with lib; {
     description = "Diagram as Code";

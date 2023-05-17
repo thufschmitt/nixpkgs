@@ -1,20 +1,21 @@
-{ lib, stdenv, fetchFromGitHub, pkg-config, cmake, ninja, yasm
-, libjpeg, openssl, libopus, ffmpeg, alsaLib, libpulseaudio, protobuf
-, xorg, libXtst
+{ lib, stdenv, fetchFromGitHub
+, pkg-config, cmake, ninja, yasm
+, libjpeg, openssl_1_1, libopus, ffmpeg, alsa-lib, libpulseaudio, protobuf
+, openh264, usrsctp, libevent, libvpx
+, libX11, libXtst, libXcomposite, libXdamage, libXext, libXrender, libXrandr, libXi
+, glib, abseil-cpp, pcre, util-linuxMinimal, libselinux, libsepol, pipewire
+, mesa, valgrind, libepoxy, libglvnd
 }:
 
-let
-  rev = "2d804d2c9c5d05324c8ab22f2e6ff8306521b3c3";
-  sha256 = "0kz0i381iwsgcc3yzsq7njx3gkqja4bb9fsgc24vhg0md540qhyn";
-
-in stdenv.mkDerivation {
+stdenv.mkDerivation {
   pname = "tg_owt";
-  version = "git-${rev}";
+  version = "unstable-2022-09-14";
 
   src = fetchFromGitHub {
     owner = "desktop-app";
     repo = "tg_owt";
-    inherit rev sha256;
+    rev = "621f3da55331733bf0d1b223786b96b68c03dca1";
+    sha256 = "0xh4mm8lpiyj3c62iarsld8q82a1w81x3dxdlcwq8s6sg3r04fns";
     fetchSubmodules = true;
   };
 
@@ -23,14 +24,25 @@ in stdenv.mkDerivation {
   nativeBuildInputs = [ pkg-config cmake ninja yasm ];
 
   buildInputs = [
-    libjpeg openssl libopus ffmpeg alsaLib libpulseaudio protobuf
-    xorg.libX11 libXtst
+    libjpeg libopus ffmpeg alsa-lib libpulseaudio protobuf
+    openh264 usrsctp libevent libvpx
+    libX11 libXtst libXcomposite libXdamage libXext libXrender libXrandr libXi
+    glib abseil-cpp pcre util-linuxMinimal libselinux libsepol pipewire
+    mesa libepoxy libglvnd
   ];
 
   cmakeFlags = [
-    # Building as a shared library isn't officially supported and currently broken:
+    # Building as a shared library isn't officially supported and may break at any time.
     "-DBUILD_SHARED_LIBS=OFF"
   ];
 
-  meta.license = lib.licenses.bsd3;
+  propagatedBuildInputs = [
+    # Required for linking downstream binaries.
+    abseil-cpp openh264 usrsctp libevent libvpx openssl_1_1
+  ];
+
+  meta = with lib; {
+    license = licenses.bsd3;
+    maintainers = with maintainers; [ oxalica ];
+  };
 }

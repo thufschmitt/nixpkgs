@@ -1,45 +1,62 @@
-{ lib, stdenv, fetchFromGitHub, cmake, llvmPackages, libxml2, zlib, substituteAll }:
+{ lib
+, stdenv
+, fetchFromGitHub
+, cmake
+, llvmPackages
+, libxml2
+, zlib
+}:
 
-llvmPackages.stdenv.mkDerivation rec {
-  version = "0.7.1";
+stdenv.mkDerivation rec {
   pname = "zig";
+  version = "0.9.1";
 
   src = fetchFromGitHub {
     owner = "ziglang";
     repo = pname;
     rev = version;
-    sha256 = "1z6c4ym9jmga46cw2arn7zv2drcpmrf3vw139gscxp27n7q2z5md";
+    hash = "sha256-x2c4c9RSrNWGqEngio4ArW7dJjW0gg+8nqBwPcR721k=";
   };
 
-  nativeBuildInputs = [ cmake ];
+  # Fix index out of bounds reading RPATH (cherry-picked from 0.10-dev)
+  patches = [ ./rpath.patch ];
+
+  nativeBuildInputs = [
+    cmake
+    llvmPackages.llvm.dev
+  ];
+
   buildInputs = [
-    llvmPackages.clang-unwrapped
-    llvmPackages.llvm
-    llvmPackages.lld
     libxml2
     zlib
-  ];
+  ] ++ (with llvmPackages; [
+    libclang
+    lld
+    llvm
+  ]);
 
   preBuild = ''
     export HOME=$TMPDIR;
   '';
 
+  cmakeFlags = [
+    # file RPATH_CHANGE could not write new RPATH
+    "-DCMAKE_SKIP_BUILD_RPATH=ON"
+  ];
+
+  doCheck = true;
   checkPhase = ''
     runHook preCheck
-    ./zig test --cache-dir "$TMPDIR" -I $src/test $src/test/stage1/behavior.zig
+    ./zig test --cache-dir "$TMPDIR" -I $src/test $src/test/behavior.zig
     runHook postCheck
   '';
 
-  doCheck = true;
-
   meta = with lib; {
+    homepage = "https://ziglang.org/";
     description =
       "General-purpose programming language and toolchain for maintaining robust, optimal, and reusable software";
-    homepage = "https://ziglang.org/";
     license = licenses.mit;
+    maintainers = with maintainers; [ aiotter andrewrk AndersonTorres ];
     platforms = platforms.unix;
-    maintainers = [ maintainers.andrewrk ];
-    # See https://github.com/NixOS/nixpkgs/issues/86299
-    broken = stdenv.isDarwin;
   };
 }

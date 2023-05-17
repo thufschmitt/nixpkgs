@@ -1,10 +1,8 @@
-{ lib, fetchFromGitHub, buildGoPackage }:
+{ lib, fetchFromGitHub, buildGoModule }:
 
-buildGoPackage rec {
+buildGoModule rec {
   pname = "govc";
-  version = "0.24.1";
-
-  goPackagePath = "github.com/vmware/govmomi";
+  version = "0.29.0";
 
   subPackages = [ "govc" ];
 
@@ -12,8 +10,16 @@ buildGoPackage rec {
     rev = "v${version}";
     owner = "vmware";
     repo = "govmomi";
-    sha256 = "sha256-D2UrYdjstOxx9EAdBtAC44khp8hRf6W3+6kzytUVnOo=";
+    sha256 = "sha256-SVQyl1uI3wGBBDhz2VLm0uJj+aREqNot7K+iGRHGmhI=";
   };
+
+  vendorSha256 = "sha256-jbGqQITAhyBLoDa3cKU5gK+4WGgoGSCyFtzeoXx8e7k=";
+
+  ldflags = [
+    "-s"
+    "-w"
+    "-X github.com/vmware/govmomi/govc/flags.BuildVersion=${version}"
+  ];
 
   meta = {
     description = "A vSphere CLI built on top of govmomi";

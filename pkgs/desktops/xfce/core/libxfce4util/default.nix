@@ -5,12 +5,13 @@ mkXfceDerivation {
   pname = "libxfce4util";
   version = "4.16.0";
 
-  sha256 = "1p0snipc81dhaq5glv7c1zfq5pcvgq7nikl4ikhfm2af9picfsxb";
+  sha256 = "sha256-q2vH4k1OiergjITOaA9+m92C3Q/sbPoKVrAFxG60Gtw=";
 
   nativeBuildInputs = [ gobject-introspection vala ];
 
   meta = with lib; {
     description = "Extension library for Xfce";
     license = licenses.lgpl2Plus;
+    maintainers = with maintainers; [ ] ++ teams.xfce.members;
   };
 }

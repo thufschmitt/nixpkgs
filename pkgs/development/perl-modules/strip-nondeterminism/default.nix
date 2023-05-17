@@ -18,7 +18,8 @@ buildPerlPackage rec {
   doCheck = false;
 
   nativeBuildInputs = lib.optionals stdenv.isDarwin [ shortenPerlShebang ];
-  buildInputs = [ ArchiveZip ArchiveCpio file ];
+  buildInputs = [ ArchiveZip ArchiveCpio ];
+  propagatedNativeBuildInputs = [ file ];
 
   perlPostHook = ''
     # we don’t need the debhelper script
@@ -33,7 +34,7 @@ buildPerlPackage rec {
   meta = with lib; {
     description = "A Perl module for stripping bits of non-deterministic information";
     homepage = "https://reproducible-builds.org/";
-    license = licenses.gpl3;
+    license = licenses.gpl3Only;
     maintainers = with maintainers; [ pSub ];
   };
 }

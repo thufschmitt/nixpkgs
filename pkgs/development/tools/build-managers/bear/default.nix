@@ -7,10 +7,8 @@
 , openssl
 , nlohmann_json
 , gtest
-, fmt
 , spdlog
 , c-ares
-, abseil-cpp
 , zlib
 , sqlite
 , re2
@@ -18,13 +16,13 @@
 
 stdenv.mkDerivation rec {
   pname = "bear";
-  version = "3.0.9";
+  version = "3.0.20";
 
   src = fetchFromGitHub {
     owner = "rizsotto";
     repo = pname;
     rev = version;
-    sha256 = "xac8PYo3qYjtQbDy8piOz5BQQpcVlAvMCv1qHrVZmPQ=";
+    sha256 = "sha256-8hA0Y/AGczFwggxkTG7PQKOVnr2Oizx4OH38nS5jCU0=";
   };
 
   nativeBuildInputs = [ cmake pkg-config ];
@@ -35,10 +33,8 @@ stdenv.mkDerivation rec {
     openssl
     nlohmann_json
     gtest
-    fmt
     spdlog
     c-ares
-    abseil-cpp
     zlib
     sqlite
     re2
@@ -59,8 +55,6 @@ stdenv.mkDerivation rec {
     homepage = "https://github.com/rizsotto/Bear";
     license = licenses.gpl3Plus;
     platforms = platforms.unix;
-    maintainers = [ maintainers.babariviere ];
-    # ld: symbol(s) not found for architecture x86_64
-    broken = stdenv.isDarwin;
+    maintainers = with maintainers; [ babariviere qyliss ];
   };
 }

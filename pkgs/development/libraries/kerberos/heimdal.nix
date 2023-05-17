@@ -7,13 +7,13 @@
 with lib;
 stdenv.mkDerivation rec {
   pname = "heimdal";
-  version = "7.7.0";
+  version = "7.8.0";
 
   src = fetchFromGitHub {
     owner = "heimdal";
     repo = "heimdal";
     rev = "heimdal-${version}";
-    sha256 = "099qn9b8q20invvi5r8d8q9rnwpcm3nr89hx5rj7gj2ah2x5vgxs";
+    sha256 = "sha256-iXOaar1S3y0xHdL0S+vS0uxoFQjy43kABxqE+KEhxjU=";
   };
 
   outputs = [ "out" "dev" "man" "info" ];
@@ -81,6 +81,9 @@ stdenv.mkDerivation rec {
     # asn1 compilers, move them to $dev
     mv $out/libexec/heimdal/heimdal/* $dev/bin
     rmdir $out/libexec/heimdal/heimdal
+
+    # compile_et is needed for cross-compiling this package and samba
+    mv lib/com_err/.libs/compile_et $dev/bin
   '';
 
   # Issues with hydra

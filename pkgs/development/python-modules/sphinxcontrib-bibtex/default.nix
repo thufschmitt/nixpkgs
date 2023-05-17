@@ -1,7 +1,7 @@
 { lib
 , buildPythonPackage
 , fetchPypi
-, isPy3k
+, pythonOlder
 , oset
 , pybtex
 , pybtex-docutils
@@ -9,20 +9,28 @@
 }:
 
 buildPythonPackage rec {
-  version = "2.2.0";
   pname = "sphinxcontrib-bibtex";
+  version = "2.5.0";
 
-  disabled = !isPy3k;
+  disabled = pythonOlder "3.6";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-dQCEPhVNdpg8I7ylynOAll4HJcRrj0hMEyLQtYps47I=";
+    hash = "sha256-cbQuXbDi4oTyQ4dTJr+ZNqqadjKCJ311BIgm/vWwDqo=";
   };
 
-  propagatedBuildInputs = [ oset pybtex pybtex-docutils sphinx ];
+  propagatedBuildInputs = [
+    oset
+    pybtex
+    pybtex-docutils
+    sphinx
+  ];
 
   doCheck = false;
-  pythonImportsCheck = [ "sphinxcontrib.bibtex" ];
+
+  pythonImportsCheck = [
+    "sphinxcontrib.bibtex"
+  ];
 
   meta = with lib; {
     description = "A Sphinx extension for BibTeX style citations";

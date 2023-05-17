@@ -1,26 +1,24 @@
 { lib, stdenv, fetchurl, appimageTools, undmg, libsecret, libxshmfence }:
 let
-  inherit (stdenv.hostPlatform) system;
-  throwSystem = throw "Unsupported system: ${system}";
-
   pname = "keeweb";
-  version = "1.17.0";
+  version = "1.18.7";
   name = "${pname}-${version}";
 
-  suffix = {
-    x86_64-linux = "linux.AppImage";
-    x86_64-darwin = "mac.x64.dmg";
-    aarch64-darwin = "mac.arm64.dmg";
-  }.${system} or throwSystem;
-
-  src = fetchurl {
-    url = "https://github.com/keeweb/keeweb/releases/download/v${version}/KeeWeb-${version}.${suffix}";
-    sha256 = {
-      x86_64-linux = "1c7zvwnd46d3lrlcdigv341flz44jl6mnvr6zqny5mfz221ynbj7";
-      x86_64-darwin = "1n4haxychm5jjhjnpncavjh0wr4dagqi78qfsx5gwlv86hzryzwy";
-      aarch64-darwin = "1j7z63cbfms02f2lhl949wy3lc376jw8kqmjfn9j949s0l5fanpb";
-    }.${system} or throwSystem;
+  srcs = {
+    x86_64-linux = fetchurl {
+      url = "https://github.com/keeweb/keeweb/releases/download/v${version}/KeeWeb-${version}.linux.AppImage";
+      hash = "sha256-W3Dfo7YZfLObodAS7ZN3jqnYzLNAnjJIfJC6il5THwY=";
+    };
+    x86_64-darwin = fetchurl {
+      url = "https://github.com/keeweb/keeweb/releases/download/v${version}/KeeWeb-${version}.mac.x64.dmg";
+      hash = "sha256-+ZFGrrw0tZ7F6lb/3iBIyGD+tp1puVhkPv10hfp6ATU=";
+    };
+    aarch64-darwin = fetchurl {
+      url = "https://github.com/keeweb/keeweb/releases/download/v${version}/KeeWeb-${version}.mac.arm64.dmg";
+      hash = "sha256-bkhwsWYLkec16vMOfXUce7jfrmI9W2xHiZvU1asebK4=";
+    };
   };
+  src = srcs.${stdenv.hostPlatform.system};
 
   appimageContents = appimageTools.extract {
     inherit name src;
@@ -30,9 +28,10 @@ let
     description = "Free cross-platform password manager compatible with KeePass";
     homepage = "https://keeweb.info/";
     changelog = "https://github.com/keeweb/keeweb/blob/v${version}/release-notes.md";
+    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     license = licenses.mit;
     maintainers = with maintainers; [ sikmir ];
-    platforms = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
+    platforms = builtins.attrNames srcs;
   };
 
   linux = appimageTools.wrapType2 rec {
@@ -46,7 +45,7 @@ let
       install -Dm644 ${appimageContents}/keeweb.png -t $out/share/icons/hicolor/256x256/apps
       install -Dm644 ${appimageContents}/usr/share/mime/keeweb.xml -t $out/share/mime
       substituteInPlace $out/share/applications/keeweb.desktop \
-        --replace 'Exec=AppRun' 'Exec=${pname}'
+        --replace "Exec=AppRun" "Exec=$out/bin/${pname}"
     '';
   };
 

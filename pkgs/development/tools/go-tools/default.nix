@@ -5,16 +5,18 @@
 
 buildGoModule rec {
   pname = "go-tools";
-  version = "2020.2.3";
+  version = "2022.1.2";
 
   src = fetchFromGitHub {
     owner = "dominikh";
     repo = "go-tools";
     rev = version;
-    sha256 = "17li8jbw3cpn59kpcl3j3r2an4wkx3fc81xn0j4xgbjpkxh9493n";
+    sha256 = "sha256-pfZv/GZxb7weD+JFGCOknhRCsx8g5puQfpY9lZ4v6Rs=";
   };
 
-  vendorSha256 = "081p008sb3lkc8j6sa6n42qi04za4a631kihrd4ca6aigwkgl3ak";
+  vendorSha256 = "sha256-19uLCtKuuZoVwC4SUKvYGWi2ryqAQbcKXY1iNjIqyn8=";
+
+  excludedPackages = [ "website" ];
 
   doCheck = false;
 
@@ -22,6 +24,6 @@ buildGoModule rec {
     description = "A collection of tools and libraries for working with Go code, including linters and static analysis";
     homepage = "https://staticcheck.io";
     license = licenses.mit;
-    maintainers = with maintainers; [ rvolosatovs kalbasit ];
+    maintainers = with maintainers; [ rvolosatovs kalbasit smasher164 ];
   };
 }

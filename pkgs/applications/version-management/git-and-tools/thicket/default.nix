@@ -1,25 +1,21 @@
 { lib
+, crystal
 , fetchFromGitHub
-, crystal_0_33
 }:
 
-let
-  crystal = crystal_0_33;
-
-in crystal.buildCrystalPackage rec {
+crystal.buildCrystalPackage rec {
   pname = "thicket";
-  version = "0.1.4";
+  version = "0.1.6";
 
   src = fetchFromGitHub {
     owner = "taylorthurlow";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-A89E0CbV7VFB7W4ycFcZloP0J/d42agEuD+hs9a6a6E=";
+    sha256 = "sha256-sF+fNKEZEfjpW3buh6kFUpL1P0yO9g4SrTb0rhx1uNc=";
   };
 
   format = "shards";
 
-  shardsFile = ./shards.nix;
   crystalBinaries.thicket.src = "src/thicket.cr";
 
   # there is one test that tries to clone a repo

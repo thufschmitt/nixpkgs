@@ -2,13 +2,13 @@
 
 stdenv.mkDerivation rec {
   pname = "fast-export";
-  version = "200213";
+  version = "221024";
 
   src = fetchFromGitHub {
     owner = "frej";
     repo = pname;
     rev = "v${version}";
-    sha256 = "0hzyh66rlawxip4n2pvz7pbs0cq82clqv1d6c7hf60v1drjxw287";
+    sha256 = "sha256-re8iXM8s+TD35UGKalq2kVn8fx68fsnUC7Yo+/DQ9SM=";
   };
 
   nativeBuildInputs = [ makeWrapper ];

@@ -1,52 +1,60 @@
 { lib
 , buildPythonPackage
 , fetchPypi
-, fetchpatch
-, nose
-, scikitlearn
-, scipy
-, numba
-, llvmlite
+, importlib-metadata
 , joblib
+, llvmlite
+, numba
+, scikit-learn
+, scipy
+, pytestCheckHook
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "pynndescent";
-  version = "0.5.1";
+  version = "0.5.8";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.6";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "74a05a54d13573a38878781d44812ac6df97d8762a56f9bb5dd87a99911820fe";
+    hash = "sha256-p8VSVpv2BKEB/VS7odJ8EjieBllF3uOmd3pRjGOkbys=";
   };
 
-  patches = [
-    # fixes tests, included in 0.5.2
-    (fetchpatch {
-      url = "https://github.com/lmcinnes/pynndescent/commit/ef5d8c3c3bfe976063b6621e3e0734c0c22d813b.patch";
-      sha256 = "sha256-49n3kevs3wpzd4FfZVKmNpF2o1V8pJs4KOx8zCAhR3s=";
-    })
+  propagatedBuildInputs = [
+    joblib
+    llvmlite
+    numba
+    scikit-learn
+    scipy
+  ] ++ lib.optionals (pythonOlder "3.8") [
+    importlib-metadata
   ];
 
   checkInputs = [
-    nose
+    pytestCheckHook
   ];
 
-  propagatedBuildInputs = [
-    scikitlearn
-    scipy
-    numba
-    llvmlite
-    joblib
+  disabledTests = [
+    # numpy.core._exceptions._UFuncNoLoopError
+    "test_sparse_nn_descent_query_accuracy_angular"
+    "test_nn_descent_query_accuracy_angular"
+    "test_alternative_distances"
+    # scipy: ValueError: Unknown Distance Metric: wminkowski
+    # https://github.com/scikit-learn/scikit-learn/pull/21741
+    "test_weighted_minkowski"
   ];
 
-  checkPhase = ''
-    nosetests
-  '';
+  pythonImportsCheck = [
+    "pynndescent"
+  ];
 
   meta = with lib; {
     description = "Nearest Neighbor Descent";
     homepage = "https://github.com/lmcinnes/pynndescent";
     license = licenses.bsd2;
-    maintainers = [ maintainers.mic92 ];
+    maintainers = with maintainers; [ mic92 ];
   };
 }

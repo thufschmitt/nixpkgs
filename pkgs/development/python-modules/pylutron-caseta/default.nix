@@ -7,19 +7,26 @@
 , pytest-timeout
 , pytestCheckHook
 , pythonOlder
+, setuptools
 }:
 
 buildPythonPackage rec {
   pname = "pylutron-caseta";
-  version = "0.9.0";
-  disabled = pythonOlder "3.5";
+  version = "0.17.1";
+  format = "pyproject";
+
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "gurumitts";
     repo = pname;
     rev = "v${version}";
-    sha256 = "07mz4hn0455qmfqs4xcqlhbf3qvrnmifd0vzpcqlqaqcn009iahq";
+    hash = "sha256-W3OfYNVendYOrwN/WGeAkNAnZctvlssZ3Bvp5caPZao=";
   };
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     cryptography
@@ -32,7 +39,13 @@ buildPythonPackage rec {
     pytestCheckHook
   ];
 
-  pythonImportsCheck = [ "pylutron_caseta" ];
+  pytestFlagsArray = [
+    "--asyncio-mode=auto"
+  ];
+
+  pythonImportsCheck = [
+    "pylutron_caseta"
+  ];
 
   meta = with lib; {
     description = "Python module o control Lutron Caseta devices";

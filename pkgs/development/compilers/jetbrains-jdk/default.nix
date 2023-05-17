@@ -1,15 +1,21 @@
-{ lib, openjdk11, fetchFromGitHub, jetbrains }:
+{ lib
+, stdenv
+, fetchFromGitHub
+, jetbrains
+, openjdk17
+}:
 
-openjdk11.overrideAttrs (oldAttrs: rec {
+openjdk17.overrideAttrs (oldAttrs: rec {
   pname = "jetbrains-jdk";
-  version = "11.0.10-b37";
+  version = "17.0.5-b653.14";
+
   src = fetchFromGitHub {
     owner = "JetBrains";
     repo = "JetBrainsRuntime";
-    rev = "jb${lib.replaceStrings ["."] ["_"] version}";
-    sha256 = "0bcvwnwi29z000b1bk5dhfkd33xfp9899zc3idzifdwl7q42zi02";
+    rev = "jb${version}";
+    hash = "sha256-7Nx7Y12oMfs4zeQMSfnUaDCW1xJYMEkcoTapSpmVCfU=";
   };
-  patches = [];
+
   meta = with lib; {
     description = "An OpenJDK fork to better support Jetbrains's products.";
     longDescription = ''
@@ -23,11 +29,13 @@ openjdk11.overrideAttrs (oldAttrs: rec {
      JetBrains Runtime is not a certified build of OpenJDK. Please, use at
      your own risk.
     '';
-    homepage = "https://bintray.com/jetbrains/intellij-jdk/";
-    license = licenses.gpl2;
-    maintainers = with maintainers; [ edwtjo petabyteboy ];
-    platforms = [ "i686-linux" "x86_64-linux" "aarch64-linux" "armv7l-linux" "armv6l-linux" ];
+    homepage = "https://confluence.jetbrains.com/display/JBR/JetBrains+Runtime";
+    inherit (openjdk17.meta) license platforms mainProgram;
+    maintainers = with maintainers; [ edwtjo ];
+
+    broken = stdenv.isDarwin;
   };
+
   passthru = oldAttrs.passthru // {
     home = "${jetbrains.jdk}/lib/openjdk";
   };

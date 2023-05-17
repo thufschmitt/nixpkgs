@@ -1,9 +1,11 @@
-{ lib, stdenv, fetchurl, python3, bzip2, zlib, gmp, openssl, boost
+{ lib, stdenv, fetchurl, python3, bzip2, zlib, gmp, boost
 # Passed by version specific builders
 , baseVersion, revision, sha256
 , sourceExtension ? "tar.xz"
 , extraConfigureFlags ? ""
+, extraPatches ? [ ]
 , postPatch ? null
+, knownVulnerabilities ? [ ]
 , CoreServices
 , Security
 , ...
@@ -21,13 +23,14 @@ stdenv.mkDerivation rec {
     ];
     inherit sha256;
   };
+  patches = extraPatches;
   inherit postPatch;
 
-  buildInputs = [ python3 bzip2 zlib gmp openssl boost ]
+  buildInputs = [ python3 bzip2 zlib gmp boost ]
     ++ lib.optionals stdenv.isDarwin [ CoreServices Security ];
 
   configurePhase = ''
-    python configure.py --prefix=$out --with-bzip2 --with-zlib ${if openssl != null then "--with-openssl" else ""} ${extraConfigureFlags}${if stdenv.cc.isClang then " --cc=clang" else "" }
+    python configure.py --prefix=$out --with-bzip2 --with-zlib ${extraConfigureFlags}${if stdenv.cc.isClang then " --cc=clang" else "" }
   '';
 
   enableParallelBuilding = true;
@@ -43,12 +46,14 @@ stdenv.mkDerivation rec {
     ln -s botan-*.pc botan.pc || true
   '';
 
+  doCheck = true;
+
   meta = with lib; {
-    inherit version;
     description = "Cryptographic algorithms library";
     maintainers = with maintainers; [ raskin ];
     platforms = platforms.unix;
     license = licenses.bsd2;
+    inherit knownVulnerabilities;
   };
   passthru.updateInfo.downloadPage = "http://files.randombit.net/botan/";
 }

@@ -1,49 +1,82 @@
 { lib
+, aiomysql
+, aiopg
+, aiosqlite
+, asyncmy
+, asyncpg
 , buildPythonPackage
 , fetchFromGitHub
+, pytestCheckHook
+, pythonOlder
 , sqlalchemy
-, aiocontextvars
-, isPy27
-, pytest
-, asyncpg
-, aiomysql
-, aiosqlite
 }:
 
 buildPythonPackage rec {
   pname = "databases";
-  version = "0.2.6";
-  disabled = isPy27;
+  version = "0.6.2";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchFromGitHub {
     owner = "encode";
     repo = pname;
-    rev = version;
-    sha256 = "0cdb4vln4zdmqbbcj7711b81b2l64jg1miihqcg8gpi35v404h2q";
+    rev = "refs/tags/${version}";
+    hash = "sha256-3zgHfYGiO2xWualLa4h8A85qjC32ILadw/47Ul1GTmM=";
   };
 
   propagatedBuildInputs = [
     sqlalchemy
-    aiocontextvars
   ];
+
+  passthru.optional-dependencies = {
+    postgresql = [
+      asyncpg
+    ];
+    asyncpg = [
+      asyncpg
+    ];
+    aiopg = [
+      aiopg
+    ];
+    mysql = [
+      aiomysql
+    ];
+    aiomysql = [
+      aiomysql
+    ];
+    asyncmy = [
+      asyncmy
+    ];
+    sqlite = [
+      aiosqlite
+    ];
+    aiosqlite = [
+      aiosqlite
+    ];
+  };
 
   checkInputs = [
-    pytest
-    asyncpg
-    aiomysql
-    aiosqlite
+    pytestCheckHook
   ];
 
-  # big chunk to tests depend on existing posgresql and mysql databases
-  # some tests are better than no tests
-  checkPhase = ''
-    pytest --ignore=tests/test_integration.py --ignore=tests/test_databases.py
-  '';
+  disabledTestPaths = [
+    # circular dependency on starlette
+    "tests/test_integration.py"
+    # TEST_DATABASE_URLS is not set.
+    "tests/test_databases.py"
+    "tests/test_connection_options.py"
+  ];
+
+  pythonImportsCheck = [
+    "databases"
+  ];
 
   meta = with lib; {
     description = "Async database support for Python";
     homepage = "https://github.com/encode/databases";
+    changelog = "https://github.com/encode/databases/releases/tag/${version}";
     license = licenses.bsd3;
-    maintainers = [ maintainers.costrouc ];
+    maintainers = with maintainers; [ costrouc ];
   };
 }

@@ -9,11 +9,11 @@ in
 
 stdenv.mkDerivation rec {
   pname = "hepmc3";
-  version = "3.2.3";
+  version = "3.2.5";
 
   src = fetchurl {
     url = "http://hepmc.web.cern.ch/hepmc/releases/HepMC3-${version}.tar.gz";
-    sha256 = "sha256-jKrazCyWmIPNH5lLYieV/IhftLFdrYyK5kvL2/DL1H0=";
+    sha256 = "sha256-zQ91yA91VJxZzCqCns52Acd96Xyypat1eQysjh1YUDI=";
   };
 
   nativeBuildInputs = [ cmake ];
@@ -45,5 +45,7 @@ stdenv.mkDerivation rec {
     homepage = "http://hepmc.web.cern.ch/hepmc/";
     platforms = platforms.unix;
     maintainers = with maintainers; [ veprbl ];
+    # never built on aarch64-darwin since first introduction in nixpkgs
+    broken = stdenv.isDarwin && stdenv.isAarch64;
   };
 }

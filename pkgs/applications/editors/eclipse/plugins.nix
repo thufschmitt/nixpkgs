@@ -108,9 +108,9 @@ rec {
     meta = with lib; {
       homepage = "https://github.com/tobiasmelcher/EclipseAceJump";
       description = "Provides fast jumps to text based on initial letter";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.mit;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -131,9 +131,9 @@ rec {
     meta = with lib; {
       homepage = "https://mihai-nita.net/java/#ePluginAEC";
       description = "Adds support for ANSI escape sequences in the Eclipse console";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.asl20;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -154,9 +154,9 @@ rec {
     meta = with lib; {
       description = "A powerful parser generator for processing structured text or binary files";
       homepage = "https://www.antlr.org/";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.bsd3;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -177,32 +177,32 @@ rec {
     meta = with lib; {
       description = "A powerful parser generator for processing structured text or binary files";
       homepage = "https://www.antlr.org/";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.bsd3;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
   anyedittools = buildEclipsePlugin rec {
     name = "anyedit-${version}";
-    version = "2.7.1.201709201439";
+    version = "2.7.2.202006062100";
 
     srcFeature = fetchurl {
-      url = "http://andrei.gmxhome.de/eclipse/features/AnyEditTools_${version}.jar";
-      sha256 = "1wqzl7wq85m9gil8rnvly45ps0a2m0svw613pg6djs5i7amhnayh";
+      url = "https://github.com/iloveeclipse/plugins/blob/latest/features/AnyEditTools_${version}.jar";
+      sha256 = "0dwwwvz8by10f5gnws1ahmg02g6v4xbaqcwc0cydvv1h52cyb40g";
     };
 
     srcPlugin = fetchurl {
-      url = "https://github.com/iloveeclipse/anyedittools/releases/download/2.7.1/de.loskutov.anyedit.AnyEditTools_${version}.jar";
-      sha256 = "03iyb6j2srq74iigmg7dk098c2svyv0ygdfql5jqr44a32n07k8q";
+      url = "https://github.com/iloveeclipse/plugins/blob/latest/plugins/de.loskutov.anyedit.AnyEditTools_${version}.jar";
+      sha256 = "1ip8dk92ka7bczw1bkbs3zkclmwr28ds5q1wrzh525wb70x8v6fi";
     };
 
     meta = with lib; {
-      homepage = "http://andrei.gmxhome.de/anyedit/";
+      homepage = "https://github.com/iloveeclipse/plugins";
       description = "Adds new tools to the context menu of text-based editors";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -223,49 +223,50 @@ rec {
     meta = with lib; {
       homepage = "https://github.com/cypher256/eclipse-encoding-plugin";
       description = "Show file encoding and line ending for the active editor in the eclipse status bar";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
   bytecode-outline = buildEclipsePlugin rec {
     name = "bytecode-outline-${version}";
-    version = "2.5.0.201711011753-5a57fdf";
+    version = "1.0.1.202006062100";
 
     srcFeature = fetchurl {
-      url = "http://andrei.gmxhome.de/eclipse/features/de.loskutov.BytecodeOutline.feature_${version}.jar";
-      sha256 = "0yciqhcq0n5i326mwy57r4ywmkz2c2jky7r4pcmznmhvks3z65ps";
+      url = "https://github.com/iloveeclipse/plugins/blob/latest/features/org.eclipse.jdt.bcoview.feature_${version}.jar";
+      sha256 = "0zbcph72lgv8cb5n4phcl3qsybc5q5yviwbv8yjv4v12m4l15wpk";
     };
 
     srcPlugin = fetchurl {
-      url = "http://dl.bintray.com/iloveeclipse/plugins/de.loskutov.BytecodeOutline_${version}.jar";
-      sha256 = "1vmsqv32jfl7anvdkw0vir342miv5sr9df7vd1w44lf1yf97vxlw";
+      url = "https://github.com/iloveeclipse/plugins/blob/latest/plugins/org.eclipse.jdt.bcoview_${version}.jar";
+      sha256 = "1bx860k4haqcnhy8825kn4df0pyzd680qbnvjmxfrlxrqhr66fbb";
     };
 
     meta = with lib; {
-      homepage = "http://andrei.gmxhome.de/bytecode/";
+      homepage = "https://github.com/iloveeclipse/plugins";
       description = "Shows disassembled bytecode of current java editor or class file";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.bsd2;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
   cdt = buildEclipseUpdateSite rec {
     name = "cdt-${version}";
     # find current version at https://www.eclipse.org/cdt/downloads.php
-    version = "10.1.0";
+    version = "10.7.0";
 
     src = fetchzip {
       stripRoot = false;
-      url = "https://www.eclipse.org/downloads/download.php?r=1&nf=1&file=/tools/cdt/releases/10.1/${name}/${name}.zip";
-      sha256 = "1hbswcar3a5cw20mwrj82w9pvpkvvj6jrvqqf1lincva0r5sl7h8";
+      url = "https://www.eclipse.org/downloads/download.php?r=1&nf=1&file=/tools/cdt/releases/${lib.versions.majorMinor version}/${name}/${name}.zip";
+      hash = "sha256-/lQ3TLFQ1IgwYM540gxAFiEGOfHQIQQMf/pqCZ29ztQ=";
     };
 
     meta = with lib; {
       homepage = "https://eclipse.org/cdt/";
       description = "C/C++ development tooling";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
       maintainers = [ maintainers.bjornfor ];
@@ -285,9 +286,9 @@ rec {
     meta = with lib; {
       homepage = "https://eclipse-cs.sourceforge.net/";
       description = "Checkstyle integration into the Eclipse IDE";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.lgpl21;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
 
   };
@@ -309,9 +310,9 @@ rec {
     meta = with lib; {
       homepage = "http://eclipsecolorthemes.org/";
       description = "Plugin to switch color themes conveniently and without side effects";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -342,6 +343,7 @@ rec {
     meta = with lib; {
       homepage = "http://www2.cs.tum.edu/projects/cup/eclipse.php";
       description = "IDE for developing CUP based parsers";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       platforms = platforms.all;
       maintainers = [ maintainers.romildo ];
     };
@@ -354,7 +356,7 @@ rec {
     src = fetchzip {
       url = "https://download.jboss.org/drools/release/${version}/droolsjbpm-tools-distribution-${version}.zip";
       sha512 = "2qzc1iszqfrfnw8xip78n3kp6hlwrvrr708vlmdk7nv525xhs0ssjaxriqdhcr0s6jripmmazxivv3763rnk2bfkh31hmbnckpx4r3m";
-      extraPostFetch = ''
+      postFetch = ''
         # update site is a couple levels deep, alongside some other irrelevant stuff
         cd $out;
         find . -type f -not -path ./binaries/org.drools.updatesite/\* -exec rm {} \;
@@ -367,6 +369,7 @@ rec {
     meta = with lib; {
       homepage = "https://www.drools.org/";
       description = "Drools is a Business Rules Management System (BRMS) solution";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.asl20;
     };
   };
@@ -384,9 +387,9 @@ rec {
     meta = with lib; {
       homepage = "https://www.eclemma.org/";
       description = "EclEmma is a free Java code coverage tool for Eclipse";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -407,9 +410,9 @@ rec {
     meta = with lib; {
       homepage = "http://findbugs.sourceforge.net/";
       description = "Plugin that uses static analysis to look for bugs in Java code";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -426,27 +429,30 @@ rec {
     meta = with lib; {
       homepage = "https://github.com/ddekany/jbosstools-freemarker";
       description = "Plugin that provides an editor for Apache FreeMarker files";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
     };
   };
 
-  gnuarmeclipse = buildEclipseUpdateSite rec {
-    name = "gnuarmeclipse-${version}";
-    version = "3.1.1-201606210758";
+  embed-cdt = buildEclipseUpdateSite rec {
+    name = "embed-cdt-${version}";
+    version = "6.3.1";
 
     src = fetchzip {
-      stripRoot = false;
-      url = "https://github.com/gnuarmeclipse/plug-ins/releases/download/v${version}/ilg.gnuarmeclipse.repository-${version}.zip";
-      sha256 = "1g77jlhfa3csaxxps1z5lasrd9l2p5ajnddnq9ra5syw8ggkdc2h";
+      stripRoot = true;
+      url = "https://github.com/eclipse-embed-cdt/eclipse-plugins/archive/v${version}.zip";
+      sha256 = "sha256-0wHRIls48NGDQzD+wuX79Thgiax+VVYVPJw2Z6NEzsg=";
     };
 
     meta = with lib; {
-      homepage = "http://gnuarmeclipse.livius.net/";
-      description = "GNU ARM Eclipse Plug-ins";
-      license = licenses.epl10;
+      homepage = "https://github.com/eclipse-embed-cdt/eclipse-plugins";
+      description = "Embedded C/C++ Development Tools (formerly GNU MCU/ARM Eclipse)";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
+      license = licenses.epl20;
       platforms = platforms.all;
       maintainers = [ maintainers.bjornfor ];
     };
   };
+  gnuarmeclipse = embed-cdt; # backward compat alias, added 2022-11-04
 
   jsonedit = buildEclipsePlugin rec {
     name = "jsonedit-${version}";
@@ -480,28 +486,9 @@ rec {
     meta = with lib; {
       description = "Adds support for JSON files to Eclipse";
       homepage = "https://github.com/boothen/Json-Eclipse-Plugin";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
-    };
-  };
-
-  jdt = buildEclipseUpdateSite rec {
-    name = "jdt-${version}";
-    version = "4.18";
-
-    src = fetchzip {
-      stripRoot = false;
-      url = "https://www.eclipse.org/downloads/download.php?r=1&nf=1&file=/eclipse/downloads/drops4/R-${version}-202012021800/org.eclipse.jdt-${version}.zip";
-      sha256 = "q0O6OE2u0bdz1+nOkzXDrrOOzoEbVaXnejx4lX7uZgk=";
-    };
-
-    meta = with lib; {
-      homepage = "https://www.eclipse.org/jdt/";
-      description = "Eclipse Java development tools";
-      license = licenses.epl10;
-      platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -522,9 +509,9 @@ rec {
     meta = with lib; {
       homepage = "https://github.com/angelozerr/jdt-codemining";
       description = "Provides JDT Java CodeMining";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -539,7 +526,7 @@ rec {
       stripRoot = false;
       url = "https://github.com/${owner}/${repo}/archive/${rev}.zip";
       sha256 = "1xfj4j27d1h4bdf2v7f78zi8lz4zkkj7s9kskmsqx5jcs2d459yp";
-      extraPostFetch =
+      postFetch =
         ''
           mv "$out/${repo}-${rev}/releases/local-repo/"* "$out/"
         '';
@@ -548,6 +535,7 @@ rec {
     meta = with lib; {
       homepage = "https://github.com/RustDT";
       description = "Rust development tooling";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
     };
@@ -565,9 +553,9 @@ rec {
     meta = with lib; {
       homepage = "http://scala-ide.org/";
       description = "The Scala IDE for Eclipse";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.bsd3;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -584,9 +572,9 @@ rec {
     meta = with lib; {
       homepage = "https://spotbugs.github.io/";
       description = "Plugin that uses static analysis to look for bugs in Java code";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.lgpl21;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -607,9 +595,9 @@ rec {
     meta = with lib; {
       homepage = "https://testng.org/doc/";
       description = "Eclipse plugin for the TestNG testing framework";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.asl20;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -629,6 +617,7 @@ rec {
     meta = with lib; {
       homepage = "https://github.com/vrapper/vrapper";
       description = "A wrapper to provide a Vim-like input scheme for moving around and editing text";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.gpl3;
       platforms = platforms.all;
       maintainers = [ maintainers.stumoss ];
@@ -652,9 +641,9 @@ rec {
     meta = with lib; {
       homepage = "https://github.com/oyse/yedit";
       description = "A YAML editor plugin for Eclipse";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       license = licenses.epl10;
       platforms = platforms.all;
-      maintainers = [ maintainers.rycee ];
     };
   };
 
@@ -670,9 +659,109 @@ rec {
     meta = with lib; {
       homepage = "https://www.eclipse.org/gef/zest/";
       description = "The Eclipse Visualization Toolkit";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
       platforms = platforms.all;
       maintainers = [ maintainers.romildo ];
     };
   };
 
+  ivyde = buildEclipsePlugin rec {
+    name = "ivyde-${version}";
+    version = "2.2.0.final-201311091524-RELEASE";
+
+    srcFeature = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivyde-${version}/features/org.apache.ivyde.feature_${version}.jar";
+      sha1 = "c8fb6c4aab32db13db0bd81c1a148032667fff31";
+    };
+
+    srcPlugin = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivyde-${version}/plugins/org.apache.ivyde.eclipse_${version}.jar";
+      sha1 = "0c80c2e228a07f18efab1c56ea026448eda70c06";
+    };
+
+    meta = with lib; {
+      homepage = "https://ant.apache.org/ivy/ivyde/index.html";
+      description = "A plugin which integrates Apache Ivy's dependency management";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
+      license = licenses.asl20;
+      platforms = platforms.all;
+      maintainers = [ maintainers.r3dl3g ];
+    };
+  };
+
+  ivyderv = buildEclipsePlugin rec {
+    name = "ivyderv-${version}";
+    version = "2.2.0.final-201311091524-RELEASE";
+
+    srcFeature = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivyde-${version}/features/org.apache.ivyde.eclipse.resolvevisualizer.feature_${version}.jar";
+      sha1 = "fb1941eaa2c0de54259de01b0da6d5a6b4a2cab1";
+    };
+
+    srcPlugin = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivyde-${version}/plugins/org.apache.ivyde.eclipse.resolvevisualizer_${version}.jar";
+      sha1 = "225e0c8ccb010d622c159560638578c2fc51a67e";
+    };
+
+    meta = with lib; {
+      homepage = "https://ant.apache.org/ivy/ivyde/index.html";
+      description = "A graph viewer of the resolved dependencies.";
+      longDescription = ''
+        Apache IvyDE Resolve Visualizer is an optional dependency of Apache IvyDE since
+        it requires additional plugins to be installed (Zest).
+      '';
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
+      license = licenses.asl20;
+      platforms = platforms.all;
+      maintainers = [ maintainers.r3dl3g ];
+    };
+  };
+
+  ivy = buildEclipsePlugin rec {
+    name = "ivy-${version}";
+    version = "2.5.0.final_20191020104435";
+
+    srcFeature = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivy-${version}/features/org.apache.ivy.eclipse.ant.feature_${version}.jar";
+      sha256 = "de6134171a0edf569bb9b4c3a91639d469f196e86804d218adfdd60a5d7fa133";
+    };
+
+    srcPlugin = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivy-${version}/plugins/org.apache.ivy.eclipse.ant_${version}.jar";
+      sha256 = "9e8ea20480cf73d0f0f3fb032d263c7536b24fd2eef71beb7d62af4e065f9ab5";
+    };
+
+    meta = with lib; {
+      homepage = "https://ant.apache.org/ivy/index.html";
+      description = "A popular dependency manager focusing on flexibility and simplicity";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
+      license = licenses.asl20;
+      platforms = platforms.all;
+      maintainers = [ maintainers.r3dl3g ];
+    };
+  };
+
+  ivyant = buildEclipsePlugin rec {
+    name = "ivyant-${version}";
+    version = "2.5.0.final_20191020104435";
+
+    srcFeature = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivy-${version}/features/org.apache.ivy.eclipse.ant.feature_${version}.jar";
+      sha256 = "de6134171a0edf569bb9b4c3a91639d469f196e86804d218adfdd60a5d7fa133";
+    };
+
+    srcPlugin = fetchurl {
+      url = "https://downloads.apache.org/ant/ivyde/updatesite/ivy-${version}/plugins/org.apache.ivy.eclipse.ant_${version}.jar";
+      sha256 = "9e8ea20480cf73d0f0f3fb032d263c7536b24fd2eef71beb7d62af4e065f9ab5";
+    };
+
+    meta = with lib; {
+      homepage = "https://ant.apache.org/ivy/ivyde/index.html";
+      description = "Ant Tasks integrated into Eclipse's Ant runtime";
+      sourceProvenance = with sourceTypes; [ binaryBytecode ];
+      license = licenses.asl20;
+      platforms = platforms.all;
+      maintainers = [ maintainers.r3dl3g ];
+    };
+  };
 }

@@ -3,28 +3,39 @@
 , rustPlatform
 , perl
 , pkg-config
+, SystemConfiguration
 , Security
+, CoreFoundation
 , curl
 , libiconv
 , openssl
+, git
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "cargo-crev";
-  version = "0.19.1";
+  version = "0.23.3";
 
   src = fetchFromGitHub {
     owner = "crev-dev";
     repo = "cargo-crev";
     rev = "v${version}";
-    sha256 = "sha256-/TROCaguzIdXnkQ4BpVR1W14ppGODGQ0MQAjJExMGVw=";
+    sha256 = "sha256-wMF2uF6h06c/vBBXr2IGk/9RsOxnxvffEtIOR+s+iVk=";
   };
 
-  cargoSha256 = "sha256-3uIf6vyeDeww8+dqrzOG4J/T9QbXAnKQKXRbeujeqSo=";
+  cargoSha256 = "sha256-UF0bEV77IqGBmqGCqg2cHzom7JDRqlLpoSxbNQsKKiY=";
+
+  preCheck = ''
+    export HOME=$(mktemp -d)
+    git config --global user.name "Nixpkgs Test"
+    git config --global user.email "nobody@example.com"
+  '';
 
   nativeBuildInputs = [ perl pkg-config ];
 
-  buildInputs = [ openssl ] ++ lib.optionals stdenv.isDarwin [ Security libiconv curl ];
+  buildInputs = [ openssl ] ++ lib.optionals stdenv.isDarwin [ SystemConfiguration Security CoreFoundation libiconv curl ];
+
+  checkInputs = [ git ];
 
   meta = with lib; {
     description = "A cryptographically verifiable code review system for the cargo (Rust) package manager";

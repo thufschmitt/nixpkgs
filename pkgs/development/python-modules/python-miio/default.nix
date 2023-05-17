@@ -1,71 +1,79 @@
 { lib
-, buildPythonPackage
-, pythonOlder
-, fetchPypi
-, poetry
-, click
-, cryptography
-, construct
-, zeroconf
-, attrs
-, pytz
-, appdirs
-, tqdm
-, netifaces
 , android-backup
-, importlib-metadata
+, appdirs
+, attrs
+, buildPythonPackage
+, click
+, construct
 , croniter
+, cryptography
 , defusedxml
-, pytestCheckHook
+, fetchPypi
+, importlib-metadata
+, micloud
+, netifaces
+, poetry-core
 , pytest-mock
+, pytestCheckHook
+, pythonOlder
+, pytz
 , pyyaml
+, tqdm
+, zeroconf
 }:
 
 
 buildPythonPackage rec {
   pname = "python-miio";
-  version = "0.5.5.2";
-  disabled = pythonOlder "3.6";
+  version = "0.5.12";
   format = "pyproject";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-lk7egCyj+vSsaXmxuWxlQuom8n3JEs/RIWwCuwTOXeI=";
+    hash = "sha256-BJw1Gg3FO2R6WWKjkrpxDN4fTMTug5AIj0SNq1gEbBY=";
   };
 
-  postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace 'croniter = "^0"' 'croniter = "*"' \
-      --replace 'defusedxml = "^0.6"' 'defusedxml = "*"' \
-      --replace 'zeroconf = "^0.28"' 'zeroconf = "*"'
-  '';
-
   nativeBuildInputs = [
-    poetry
+    poetry-core
   ];
 
   propagatedBuildInputs = [
-    click
-    cryptography
-    construct
-    zeroconf
-    attrs
-    pytz
-    appdirs
-    tqdm
-    netifaces
     android-backup
+    appdirs
+    attrs
+    click
+    construct
     croniter
+    cryptography
     defusedxml
-  ] ++ lib.optional (pythonOlder "3.8") importlib-metadata;
-
-  checkInputs = [
-    pytestCheckHook
-    pytest-mock
+    micloud
+    netifaces
+    pytz
     pyyaml
+    tqdm
+    zeroconf
+  ] ++ lib.optionals (pythonOlder "3.8") [
+    importlib-metadata
   ];
 
-  pythonImportsCheck = [ "miio" ];
+  checkInputs = [
+    pytest-mock
+    pytestCheckHook
+  ];
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace 'defusedxml = "^0"' 'defusedxml = "*"'
+    # Will be fixed with the next release, https://github.com/rytilahti/python-miio/pull/1378
+    substituteInPlace miio/integrations/vacuum/roborock/vacuum_cli.py \
+      --replace "resultcallback" "result_callback"
+  '';
+
+  pythonImportsCheck = [
+    "miio"
+  ];
 
   meta = with lib; {
     description = "Python library for interfacing with Xiaomi smart appliances";
@@ -74,4 +82,3 @@ buildPythonPackage rec {
     maintainers = with maintainers; [ flyfloh ];
   };
 }
-

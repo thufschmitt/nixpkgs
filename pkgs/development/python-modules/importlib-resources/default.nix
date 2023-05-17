@@ -1,38 +1,48 @@
 { lib
+, isPy27
 , buildPythonPackage
 , fetchPypi
-, setuptools_scm
-, toml
+, setuptools-scm
 , importlib-metadata
-, typing
-, singledispatch
+, typing ? null
 , pythonOlder
-, python
+, unittestCheckHook
 }:
 
 buildPythonPackage rec {
-  pname = "importlib_resources";
-  version = "3.3.1";
+  pname = "importlib-resources";
+  version = "5.9.0";
+  format = "pyproject";
+  disabled = isPy27;
 
   src = fetchPypi {
-    inherit pname version;
-    sha256 = "0ed250dbd291947d1a298e89f39afcc477d5a6624770503034b72588601bcc05";
+    pname = "importlib_resources";
+    inherit version;
+    sha256 = "sha256-VIHpf7Ra+Nzy95iVJiVZHFj+WZ0HNdhrEPVN4IamFoE=";
   };
 
-  nativeBuildInputs = [ setuptools_scm toml ];
+  nativeBuildInputs = [
+    setuptools-scm
+  ];
+
   propagatedBuildInputs = [
     importlib-metadata
-  ] ++ lib.optional (pythonOlder "3.4") singledispatch
-    ++ lib.optional (pythonOlder "3.5") typing
-  ;
+  ] ++ lib.optionals (pythonOlder "3.5") [
+    typing
+  ];
 
-  checkPhase = ''
-    ${python.interpreter} -m unittest discover
-  '';
+  checkInputs = [
+    unittestCheckHook
+  ];
+
+  pythonImportsCheck = [
+    "importlib_resources"
+  ];
 
   meta = with lib; {
     description = "Read resources from Python packages";
     homepage = "https://importlib-resources.readthedocs.io/";
     license = licenses.asl20;
+    maintainers = [ ];
   };
 }

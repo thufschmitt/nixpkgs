@@ -2,7 +2,7 @@
 , lib
 , buildPythonPackage
 , fetchPypi
-, argon2_cffi
+, argon2-cffi
 , nose
 , nose_warnings_filters
 , glibcLocales
@@ -13,7 +13,7 @@
 , ipython_genutils
 , traitlets
 , jupyter_core
-, jupyter_client
+, jupyter-client
 , nbformat
 , nbconvert
 , ipykernel
@@ -21,18 +21,18 @@
 , requests
 , send2trash
 , pexpect
-, prometheus_client
+, prometheus-client
 , pytestCheckHook
 }:
 
 buildPythonPackage rec {
   pname = "notebook";
-  version = "6.2.0";
+  version = "6.4.12";
   disabled = !isPy3k;
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "0464b28e18e7a06cec37e6177546c2322739be07962dd13bf712bcb88361f013";
+    sha256 = "sha256-YmjJ7JBIz/ekVAXJkMKaycpAsLw+wpJj0hjF4B8rToY=";
   };
 
   LC_ALL = "en_US.utf8";
@@ -42,8 +42,8 @@ buildPythonPackage rec {
 
   propagatedBuildInputs = [
     jinja2 tornado ipython_genutils traitlets jupyter_core send2trash
-    jupyter_client nbformat nbconvert ipykernel terminado requests pexpect
-    prometheus_client argon2_cffi
+    jupyter-client nbformat nbconvert ipykernel terminado requests pexpect
+    prometheus-client argon2-cffi
   ];
 
   # disable warning_filters
@@ -68,9 +68,15 @@ buildPythonPackage rec {
     "sock_server"
     "test_list_formats" # tries to find python MIME type
     "KernelCullingTest" # has a race condition failing on slower hardware
-  ] ++ lib.optional stdenv.isDarwin [
+  ] ++ lib.optionals stdenv.isDarwin [
     "test_delete"
     "test_checkpoints_follow_file"
+  ];
+
+  disabledTestPaths = lib.optionals stdenv.isDarwin [
+    # requires local networking
+    "notebook/auth/tests/test_login.py"
+    "notebook/bundler/tests/test_bundler_api.py"
   ];
 
   # Some of the tests use localhost networking.

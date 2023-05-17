@@ -1,37 +1,47 @@
-{ lib, stdenv, fetchurl, meson, ninja, pkg-config, bison, doxygen
-, xkeyboard_config, libxcb, libxml2
+{ lib
+, stdenv
+, fetchurl
+, meson
+, ninja
+, pkg-config
+, bison
+, doxygen
+, xkeyboard_config
+, libxcb
+, libxml2
 , python3
 , libX11
-# To enable the "interactive-wayland" subcommand of xkbcli:
-, withWaylandSupport ? false, wayland, wayland-protocols
+  # To enable the "interactive-wayland" subcommand of xkbcli. This is the
+  # wayland equivalent of `xev` on X11.
+, withWaylandTools ? stdenv.isLinux
+, wayland
+, wayland-protocols
+, wayland-scanner
 }:
 
 stdenv.mkDerivation rec {
   pname = "libxkbcommon";
-  version = "1.1.0";
+  version = "1.4.1";
 
   src = fetchurl {
     url = "https://xkbcommon.org/download/${pname}-${version}.tar.xz";
-    sha256 = "0in2fq2x4yhyjmcn9n5n43zsawsdh12d4sm6l57934kgb75gqb21";
+    sha256 = "0fbb2dyjvf71p42y2jmwdcylsvj03w52f5rb23c2d00rwahhfg4l";
   };
-
-  patches = [
-    ./fix-cross-compilation.patch
-  ];
 
   outputs = [ "out" "dev" "doc" ];
 
+  depsBuildBuild = [ pkg-config ];
   nativeBuildInputs = [ meson ninja pkg-config bison doxygen ]
-    ++ lib.optional withWaylandSupport wayland;
+    ++ lib.optional withWaylandTools wayland-scanner;
   buildInputs = [ xkeyboard_config libxcb libxml2 ]
-    ++ lib.optionals withWaylandSupport [ wayland wayland-protocols ];
+    ++ lib.optionals withWaylandTools [ wayland wayland-protocols ];
   checkInputs = [ python3 ];
 
   mesonFlags = [
     "-Dxkb-config-root=${xkeyboard_config}/etc/X11/xkb"
     "-Dxkb-config-extra-path=/etc/xkb" # default=$sysconfdir/xkb ($out/etc)
     "-Dx-locale-root=${libX11.out}/share/X11/locale"
-    "-Denable-wayland=${lib.boolToString withWaylandSupport}"
+    "-Denable-wayland=${lib.boolToString withWaylandTools}"
   ];
 
   doCheck = true;
@@ -51,6 +61,7 @@ stdenv.mkDerivation rec {
     changelog = "https://github.com/xkbcommon/libxkbcommon/blob/xkbcommon-${version}/NEWS";
     license = licenses.mit;
     maintainers = with maintainers; [ primeos ttuegel ];
+    mainProgram = "xkbcli";
     platforms = with platforms; unix;
   };
 }

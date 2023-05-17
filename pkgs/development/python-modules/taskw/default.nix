@@ -4,19 +4,20 @@
 , nose
 , tox
 , six
-, dateutil
+, python-dateutil
 , kitchen
+, pytestCheckHook
 , pytz
 , pkgs
 }:
 
 buildPythonPackage rec {
-  version = "1.2.0";
   pname = "taskw";
+  version = "2.0.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "fadd8afc12df026c3c2d39b633c55d3337f7dca95602fce2239455a048bc85fe";
+    sha256 = "sha256-EQm9+b3nqbMqUAejAsh4MD/2UYi2QiWsdKMomkxUi90=";
   };
 
   patches = [ ./use-template-for-taskwarrior-install-path.patch ];
@@ -25,11 +26,11 @@ buildPythonPackage rec {
       --replace '@@taskwarrior@@' '${pkgs.taskwarrior}'
   '';
 
-  # https://github.com/ralphbean/taskw/issues/98
-  doCheck = false;
+  buildInputs = [ pkgs.taskwarrior ];
 
-  buildInputs = [ nose pkgs.taskwarrior tox ];
-  propagatedBuildInputs = [ six dateutil kitchen pytz ];
+  propagatedBuildInputs = [ six python-dateutil kitchen pytz ];
+
+  checkInputs = [ pytestCheckHook ];
 
   meta = with lib; {
     homepage =  "https://github.com/ralphbean/taskw";
@@ -37,5 +38,4 @@ buildPythonPackage rec {
     license = licenses.gpl3Plus;
     maintainers = with maintainers; [ pierron ];
   };
-
 }

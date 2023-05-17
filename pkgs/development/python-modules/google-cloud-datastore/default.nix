@@ -9,27 +9,53 @@
 , pytestCheckHook
 , pytest-asyncio
 , google-cloud-testutils
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "google-cloud-datastore";
-  version = "2.1.0";
+  version = "2.9.0";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1yyk9ix1jms5q4kk76cfxzy42wzzyl5qladdswjy5l0pg6iypr8i";
+    hash = "sha256-8/gmeLpdheW7M9nhM0uTlxrpeRcODSgLVOVKPj9O870=";
   };
 
-  propagatedBuildInputs = [ google-api-core google-cloud-core libcst proto-plus ];
+  propagatedBuildInputs = [
+    google-api-core
+    google-cloud-core
+    proto-plus
+  ];
 
-  checkInputs = [ google-cloud-testutils mock pytestCheckHook pytest-asyncio ];
+  passthru.optional-dependencies = {
+    libcst = [
+      libcst
+    ];
+  };
+
+  checkInputs = [
+    google-cloud-testutils
+    mock
+    pytestCheckHook
+    pytest-asyncio
+  ];
 
   preCheck = ''
     # directory shadows imports
     rm -r google
-    # requires credentials
-    rm tests/system/test_system.py
   '';
+
+  disabledTestPaths = [
+    # Requires credentials
+    "tests/system/test_allocate_reserve_ids.py"
+    "tests/system/test_query.py"
+    "tests/system/test_put.py"
+    "tests/system/test_read_consistency.py"
+    "tests/system/test_transaction.py"
+  ];
 
   pythonImportsCheck = [
     "google.cloud.datastore"

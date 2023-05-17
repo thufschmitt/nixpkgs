@@ -1,19 +1,22 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , fetchFromGitHub
+, rocmUpdateScript
 , cmake
 , pkg-config
+, libdrm
 , numactl
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "rocm-thunk";
-  version = "4.1.0";
+  version = "5.4.0";
 
   src = fetchFromGitHub {
     owner = "RadeonOpenCompute";
     repo = "ROCT-Thunk-Interface";
-    rev = "rocm-${version}";
-    hash = "sha256-gdto7BbrSRa3UiRNvTW1KLkHyjrcxdah4+L+1Gdm0wA=";
+    rev = "rocm-${finalAttrs.version}";
+    hash = "sha256-EU5toaKzVeZpdm/YhaQ0bXq0eoYwYQ5qGLUJzxgZVjE=";
   };
 
   preConfigure = ''
@@ -22,16 +25,29 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake pkg-config ];
 
-  buildInputs = [ numactl ];
+  buildInputs = [ libdrm numactl ];
+
+  # https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/issues/75
+  postPatch = ''
+    substituteInPlace libhsakmt.pc.in \
+      --replace '$'{prefix}/@CMAKE_INSTALL_LIBDIR@ @CMAKE_INSTALL_FULL_LIBDIR@ \
+      --replace '$'{prefix}/@CMAKE_INSTALL_INCLUDEDIR@ @CMAKE_INSTALL_FULL_INCLUDEDIR@
+  '';
 
   postInstall = ''
     cp -r $src/include $out
   '';
 
+  passthru.updateScript = rocmUpdateScript {
+    name = finalAttrs.pname;
+    owner = finalAttrs.src.owner;
+    repo = finalAttrs.src.repo;
+  };
+
   meta = with lib; {
     description = "Radeon open compute thunk interface";
     homepage = "https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface";
     license = with licenses; [ bsd2 mit ];
-    maintainers = with maintainers; [ danieldk ];
+    maintainers = with maintainers; [ lovesegfault ] ++ teams.rocm.members;
   };
-}
+})

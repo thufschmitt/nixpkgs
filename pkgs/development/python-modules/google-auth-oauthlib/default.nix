@@ -1,31 +1,44 @@
 { lib
+, stdenv
 , buildPythonPackage
 , fetchPypi
 , click
 , mock
 , pytestCheckHook
 , google-auth
-, requests_oauthlib
+, requests-oauthlib
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "google-auth-oauthlib";
-  version = "0.4.4";
+  version = "0.7.0";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.6";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-CYMsbnUDL5OBjt8a/+R0YSHWQMYlpb75tclq9nbpju4=";
+    sha256 = "sha256-2xG85LPv/Jm1GOwiopA0cOCFPAySvldpTjaE5zjSJRM=";
   };
 
   propagatedBuildInputs = [
     google-auth
-    requests_oauthlib
+    requests-oauthlib
   ];
 
   checkInputs = [
     click
     mock
     pytestCheckHook
+  ];
+
+  disabledTests = lib.optionals stdenv.isDarwin [
+    "test_run_local_server"
+  ];
+
+  pythonImportsCheck = [
+    "google_auth_oauthlib"
   ];
 
   meta = with lib; {

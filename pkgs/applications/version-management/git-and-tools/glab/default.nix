@@ -1,28 +1,44 @@
-{ lib, buildGoModule, fetchFromGitHub }:
+{ lib, buildGoModule, fetchFromGitLab, installShellFiles, stdenv }:
 
 buildGoModule rec {
   pname = "glab";
-  version = "1.16.0";
+  version = "1.24.1";
 
-  src = fetchFromGitHub {
-    owner = "profclems";
-    repo = pname;
+  src = fetchFromGitLab {
+    owner = "gitlab-org";
+    repo = "cli";
     rev = "v${version}";
-    sha256 = "sha256-KkkP/qkIrwJUxmZTY8zxJKMbOiaGl8XqJhHAU7oejGs=";
+    sha256 = "sha256-CUchYPMBTINkMJg8TC8rKMVkrcj/Gy+ZxV7jbtMFvpg=";
   };
 
-  vendorSha256 = "sha256-DO8eH0DAitxX0NOYQBs4/ME9TFQYfXedwbld1DnBWXk=";
-  runVend = true;
+  vendorSha256 = "sha256-NuK63ibb1t+HnSR/gCFS7HWVtfGLazVx2M+qxRNCR1I=";
 
-  # Tests are trying to access /homeless-shelter
-  doCheck = false;
+  ldflags = [
+    "-s"
+    "-w"
+    "-X main.version=${version}"
+  ];
+
+  preCheck = ''
+    # failed to read configuration:  mkdir /homeless-shelter: permission denied
+    export HOME=$TMPDIR
+  '';
 
   subPackages = [ "cmd/glab" ];
 
+  nativeBuildInputs = [ installShellFiles ];
+
+  postInstall = lib.optionalString (stdenv.hostPlatform == stdenv.buildPlatform) ''
+    installShellCompletion --cmd glab \
+      --bash <($out/bin/glab completion -s bash) \
+      --fish <($out/bin/glab completion -s fish) \
+      --zsh <($out/bin/glab completion -s zsh)
+  '';
+
   meta = with lib; {
-    description = "An open-source GitLab command line tool";
+    description = "GitLab CLI tool bringing GitLab to your command line";
     license = licenses.mit;
-    homepage = "https://glab.readthedocs.io/";
+    homepage = "https://gitlab.com/gitlab-org/cli";
     maintainers = with maintainers; [ freezeboy ];
   };
 }

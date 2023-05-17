@@ -1,17 +1,17 @@
-{ lib, pandoc, buildGoModule, fetchFromGitHub }:
+{ lib, buildGoModule, fetchFromGitHub }:
 
 buildGoModule rec {
   pname = "passphrase2pgp";
-  version = "1.1.0";
+  version = "1.2.1";
 
   src = fetchFromGitHub {
     owner = "skeeto";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-Nje77tn55CKRU6igEA/6IquDhXVVQAdiez6nmN49di4";
+    hash = "sha256-Ik/W3gGvrOyUvYgMYqT8FIFoxp62BXd2GpV14pYXEuY=";
   };
 
-  vendorSha256 = "sha256-7q5nwkj4TP7VgHmV9YBbCB11yTPL7tK4gD+uN4Vw3Cs";
+  vendorSha256 = "sha256-2H9YRVCaari47ppSkcQYg/P4Dzb4k5PLjKAtfp39NR8=";
 
   postInstall = ''
     mkdir -p $out/share/doc/$name

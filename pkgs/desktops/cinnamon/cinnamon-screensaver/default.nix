@@ -1,4 +1,5 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , fetchFromGitHub
 , pkg-config
 , meson
@@ -12,7 +13,7 @@
 , libxslt
 , gtk3
 , libgnomekbd
-, gnome3
+, gnome
 , libtool
 , wrapGAppsHook
 , gobject-introspection
@@ -20,29 +21,22 @@
 , pam
 , accountsservice
 , cairo
-, xapps
+, xapp
+, xdotool
 , xorg
 , iso-flags-png-320x420
-, fetchpatch
 }:
 
 stdenv.mkDerivation rec {
   pname = "cinnamon-screensaver";
-  version = "4.6.0";
+  version = "5.6.2";
 
   src = fetchFromGitHub {
     owner = "linuxmint";
     repo = pname;
     rev = version;
-    sha256 = "068lh6wcmznfyvny7hx83q2rf4j96b6mv4a5v79y02k9110m7bsm";
+    hash = "sha256-xsxNGDFiBzVtoCV94iUuia45FRJGyGO522u6p1AIR6g=";
   };
-
-  patches = [
-    (fetchpatch {
-      url = "https://github.com/linuxmint/cinnamon-screensaver/pull/349/commits/4a9e5715f406bf2ca1aacddd5fd8f830102a423c.patch";
-      sha256 = "0fmkmskry4c88zcw0i8vsmh6q14k3m937hqi77p5xi1p93imr46y";
-    })
-  ];
 
   nativeBuildInputs = [
     pkg-config
@@ -67,23 +61,24 @@ stdenv.mkDerivation rec {
     xorg.libX11
     xorg.libXrandr
 
-    (python3.withPackages (pp: with pp; [ pygobject3 setproctitle xapp pycairo ]))
-    xapps
+    (python3.withPackages (pp: with pp; [
+      pygobject3
+      setproctitle
+      python3.pkgs.xapp # The scope prefix is required
+      pycairo
+    ]))
+    xapp
+    xdotool
     pam
     accountsservice
     cairo
     cinnamon-desktop
     cinnamon-common
     libgnomekbd
-    gnome3.caribou
+    gnome.caribou
 
     # things
     iso-flags-png-320x420
-  ];
-
-  mesonFlags = [
-    # TODO: https://github.com/NixOS/nixpkgs/issues/36468
-    "-Dc_args=-I${glib.dev}/include/gio-unix-2.0"
   ];
 
   postPatch = ''

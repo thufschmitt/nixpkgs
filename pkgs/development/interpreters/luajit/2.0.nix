@@ -1,12 +1,13 @@
-{ self, callPackage, lib }:
+{ self, callPackage, lib, passthruFun }:
 callPackage ./default.nix {
-  inherit self;
-  version = "2.0.5-2020-12-28";
-  rev = "56c04accf975bff2519c34721dccbbdb7b8e6963";
+  sourceVersion = { major = "2"; minor = "0"; patch = "5"; };
+  inherit self passthruFun;
+  version = "2.0.5-2022-09-13";
+  rev = "46e62cd963a426e83a60f691dcbbeb742c7b3ba2";
   isStable = true;
-  sha256 = "0mmx7dy843iqdpyxxdfks860np0311gg58gi4zczx10h62y6jacm";
+  hash = "sha256-/XR9+6NjXs2TrUVKJNkH2h970BkDNFqMDJTWcy/bswU=";
   extraMeta = { # this isn't precise but it at least stops the useless Hydra build
-    platforms = with lib; filter (p: p != "aarch64-linux")
+    platforms = with lib; filter (p: !hasPrefix "aarch64-" p)
       (platforms.linux ++ platforms.darwin);
   };
 }

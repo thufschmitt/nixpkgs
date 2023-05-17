@@ -1,34 +1,26 @@
 { lib
 , fetchFromGitLab
-# native
-, intltool
 , wrapGAppsHook
-, file
-# not native
 , xorg
 , gobject-introspection
 , gtk3
+, libappindicator-gtk3
+, slop
 , python3
 }:
 
 python3.pkgs.buildPythonApplication rec {
   pname = "screenkey";
-  version = "1.2";
+  version = "1.5";
 
   src = fetchFromGitLab {
-    owner = "screenkey";
-    repo = "screenkey";
+    owner = pname;
+    repo = pname;
     rev = "v${version}";
-    sha256 = "1x13n57iy2pg3h3r994q3g5nbmh2gwk3qidmmcv0g7qa89n2gwbj";
+    hash = "sha256-kWktKzRyWHGd1lmdKhPwrJoSzAIN2E5TKyg30uhM4Ug=";
   };
 
   nativeBuildInputs = [
-    python3.pkgs.distutils_extra
-    # Shouldn't be needed once https://gitlab.com/screenkey/screenkey/-/issues/122 is fixed.
-    intltool
-    # We are not sure why is this needed, but without it we get "file: command
-    # not found" errors during build.
-    file
     wrapGAppsHook
     # for setup hook
     gobject-introspection
@@ -36,19 +28,24 @@ python3.pkgs.buildPythonApplication rec {
 
   buildInputs = [
     gtk3
+    libappindicator-gtk3
   ];
 
   propagatedBuildInputs = with python3.pkgs; [
+    babel
     pycairo
     pygobject3
+    dbus-python
   ];
 
   # Prevent double wrapping because of wrapGAppsHook
   dontWrapGApps = true;
-  # https://github.com/NixOS/nixpkgs/issues/56943
-  strictDeps = false;
+
   preFixup = ''
-    makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
+    makeWrapperArgs+=(
+      --prefix PATH ":" "${lib.makeBinPath [ slop ]}"
+      "''${gappsWrapperArgs[@]}"
+      )
   '';
 
   # screenkey does not have any tests

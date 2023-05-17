@@ -17,16 +17,17 @@ let
 
   pname = "simplenote";
 
-  version = "2.8.0";
+  version = "2.9.0";
 
   sha256 = {
-    x86_64-linux = "sha256-W8+LzWMPDCrFZCm9p/Gcj7OXqJw/gs7lMxTKjOQChQY=";
+    x86_64-linux = "sha256-uwd9fYqZepJ/BBttprqkJhswqMepGsHDTd5Md9gjI68=";
   }.${system} or throwSystem;
 
   meta = with lib; {
     description = "The simplest way to keep notes";
     homepage = "https://github.com/Automattic/simplenote-electron";
     license = licenses.gpl2;
+    sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     maintainers = with maintainers; [
       kiwi
     ];
@@ -46,14 +47,13 @@ let
     };
 
     desktopItem = makeDesktopItem {
-      categories = "Development";
+      categories = [ "Development" ];
       comment = "Simplenote for Linux";
       desktopName = "Simplenote";
       exec = "simplenote %U";
       icon = "simplenote";
       name = "simplenote";
-      startupNotify = "true";
-      type = "Application";
+      startupNotify = true;
     };
 
     dontBuild = true;

@@ -1,73 +1,98 @@
 { lib
+, stdenv
 , buildPythonPackage
 , fetchPypi
 , pythonOlder
+, pandoc
 , pytestCheckHook
+, pytest-console-scripts
+, pytest-timeout
 , pytest-tornasync
+, argon2-cffi
 , jinja2
 , tornado
 , pyzmq
+, ipykernel
 , ipython_genutils
 , traitlets
 , jupyter_core
-, jupyter_client
+, jupyter-client
 , nbformat
 , nbconvert
 , send2trash
 , terminado
-, prometheus_client
+, prometheus-client
 , anyio
+, websocket-client
 , requests
+, requests-unixsocket
 }:
 
 buildPythonPackage rec {
   pname = "jupyter_server";
-  version = "1.4.1";
-  disabled = pythonOlder "3.6";
+  version = "1.19.1";
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-sBJvI39nlTPuxGJEz8ZtYeOh+OwPrS1HNS+hnT51Tkc=";
+    sha256 = "sha256-0cw1lpRYSXQrw+7fBpn+61CtbGBF6+8CqSmLfxPCfp8=";
   };
 
-  postPatch = ''
-    substituteInPlace setup.py \
-      --replace "anyio>=2.0.2" "anyio"
-  '';
-
   propagatedBuildInputs = [
+    argon2-cffi
     jinja2
     tornado
     pyzmq
     ipython_genutils
     traitlets
     jupyter_core
-    jupyter_client
+    jupyter-client
     nbformat
     nbconvert
     send2trash
     terminado
-    prometheus_client
+    prometheus-client
     anyio
+    websocket-client
+    requests-unixsocket
   ];
 
   checkInputs = [
+    ipykernel
+    pandoc
     pytestCheckHook
+    pytest-console-scripts
+    pytest-timeout
     pytest-tornasync
     requests
   ];
 
   preCheck = ''
     export HOME=$(mktemp -d)
+    export PATH=$out/bin:$PATH
   '';
 
-  pytestFlagsArray = [ "jupyter_server/tests/" ];
+  disabledTests = [
+    "test_cull_idle"
+  ] ++ lib.optionals stdenv.isDarwin [
+    # attempts to use trashcan, build env doesn't allow this
+    "test_delete"
+    # test is presumable broken in sandbox
+    "test_authorized_requests"
+  ];
 
-  # disabled failing tests
-  disabledTests = [ "test_server_extension_list" "test_list_formats" "test_base_url" ];
+  disabledTestPaths = [
+    "tests/services/kernels/test_api.py"
+    "tests/services/sessions/test_api.py"
+    # nbconvert failed: `relax_add_props` kwargs of validate has been
+    # deprecated for security reasons, and will be removed soon.
+    "tests/nbconvert/test_handlers.py"
+  ];
+
+  __darwinAllowLocalNetworking = true;
 
   meta = with lib; {
-    description = "The backend—i.e. core services, APIs, and REST endpoints—to Jupyter web applications.";
+    description = "The backend—i.e. core services, APIs, and REST endpoints—to Jupyter web applications";
     homepage = "https://github.com/jupyter-server/jupyter_server";
     license = licenses.bsdOriginal;
     maintainers = [ maintainers.elohmeier ];

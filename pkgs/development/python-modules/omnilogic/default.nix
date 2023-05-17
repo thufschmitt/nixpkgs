@@ -2,18 +2,22 @@
 , aiohttp
 , xmltodict
 , buildPythonPackage
+, pythonOlder
 , fetchFromGitHub
 }:
 
 buildPythonPackage rec {
   pname = "omnilogic";
-  version = "0.4.3";
+  version = "0.5.0";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchFromGitHub {
     owner = "djtimca";
     repo = "omnilogic-api";
-    rev = "v${version}";
-    sha256 = "19pmbykq0mckk23aj33xbhg3gjx557xy9a481mp6pkmihf2lsc8z";
+    rev = "refs/tags/${version}";
+    hash = "sha256-ySK2T5T+Qdq8nVQqluIARR89KmM1N3oD44oLydwcs7E=";
   };
 
   propagatedBuildInputs = [
@@ -21,14 +25,12 @@ buildPythonPackage rec {
     xmltodict
   ];
 
-  postPatch = ''
-    # Is not used but still present in setup.py
-    substituteInPlace setup.py --replace "'config'," ""
-  '';
-
   # Project has no tests
   doCheck = false;
-  pythonImportsCheck = [ "omnilogic" ];
+
+  pythonImportsCheck = [
+    "omnilogic"
+  ];
 
   meta = with lib; {
     description = "Python interface for the Hayward Omnilogic pool control system";

@@ -1,25 +1,44 @@
 { lib
 , buildPythonPackage
+, cffi
 , fetchPypi
-, zope_interface, cffi
-, sphinx, manuel
+, zope_interface
+, sphinx
+, manuel
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "persistent";
-  version = "4.6.4";
+  version = "4.9.3";
+  format = "setuptools";
 
-  nativeBuildInputs = [ sphinx manuel ];
-  propagatedBuildInputs = [ zope_interface cffi ];
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "f83f54355a44cf8ec38c29ce47b378a8c70444e9a745581dbb13d201a24cb546";
+    hash = "sha256-piFSIf6zlV1IX6kMe87E+yllDOOco9DBEmcQOS4Nwtw=";
   };
 
-  meta = {
+  nativeBuildInputs = [
+    sphinx
+    manuel
+  ];
+
+  propagatedBuildInputs = [
+    zope_interface
+    cffi
+  ];
+
+  pythonImportsCheck = [
+    "persistent"
+  ];
+
+  meta = with lib; {
     description = "Automatic persistence for Python objects";
-    homepage = "http://www.zodb.org/";
-    license = lib.licenses.zpl21;
+    homepage = "https://github.com/zopefoundation/persistent/";
+    changelog = "https://github.com/zopefoundation/persistent/blob/${version}/CHANGES.rst";
+    license = licenses.zpl21;
+    maintainers = with maintainers; [ ];
   };
 }

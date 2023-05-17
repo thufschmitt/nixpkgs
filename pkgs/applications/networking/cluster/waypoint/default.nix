@@ -1,20 +1,19 @@
-{ lib, buildGoModule, fetchFromGitHub, go-bindata }:
+{ lib, buildGoModule, fetchFromGitHub, go-bindata, installShellFiles }:
 
 buildGoModule rec {
   pname = "waypoint";
-  version = "0.3.0";
+  version = "0.10.4";
 
   src = fetchFromGitHub {
     owner = "hashicorp";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-lB9ELa/okNvtKFDP/vImEdYFJCKRgtAcpBG1kIoAysE=";
+    sha256 = "sha256-jbrzXktY1vGk1DuzrzxlWwFQoFPprnDy2YjZQBgmcPI=";
   };
 
-  deleteVendor = true;
-  vendorSha256 = "sha256-VxKUYD92DssoSjWxR+1gZLq34vCVM/4U2ju5felLWzI=";
+  vendorSha256 = "sha256-oTzGgyQZWNj7vNpAaDO47nB7EbpUiQD66u4F1LJ2CR0=";
 
-  nativeBuildInputs = [ go-bindata ];
+  nativeBuildInputs = [ go-bindata installShellFiles ];
 
   # GIT_{COMMIT,DIRTY} filled in blank to prevent trying to run git and ending up blank anyway
   buildPhase = ''
@@ -23,9 +22,32 @@ buildGoModule rec {
     runHook postBuild
   '';
 
+  doCheck = false;
+
   installPhase = ''
     runHook preInstall
+
+    local INSTALL="$out/bin/waypoint"
     install -D waypoint $out/bin/waypoint
+
+    # waypoint's completion install command alters your <something>rc files
+    # below is the equivalent of what it injects
+
+    # Write to a file as it doesn't like EOF within <()
+    cat > waypoint.fish <<EOF
+    function __complete_waypoint
+      set -lx COMP_LINE (commandline -cp)
+      test -z (commandline -ct)
+      and set COMP_LINE "$COMP_LINE "
+      $INSTALL
+    end
+    complete -f -c waypoint -a "(__complete_waypoint)"
+    EOF
+    installShellCompletion --cmd waypoint \
+      --bash <(echo "complete -C $INSTALL waypoint") \
+      --fish <(cat waypoint.fish) \
+      --zsh <(echo "complete -o nospace -C $INSTALL waypoint")
+
     runHook postInstall
   '';
 
@@ -36,7 +58,7 @@ buildGoModule rec {
     export HOME="$TMPDIR"
 
     $out/bin/waypoint --help
-    $out/bin/waypoint version | grep "Waypoint v${version}"
+    $out/bin/waypoint version | grep "CLI: v${version}"
     runHook postInstallCheck
   '';
 
@@ -54,7 +76,6 @@ buildGoModule rec {
       through a consistent and repeatable workflow.
     '';
     license = licenses.mpl20;
-    maintainers = with maintainers; [ winpat jk ];
-    platforms = platforms.linux;
+    maintainers = with maintainers; [ winpat jk techknowlogick ];
   };
 }

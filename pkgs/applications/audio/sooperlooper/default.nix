@@ -1,4 +1,5 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , fetchFromGitHub
 , autoreconfHook
 , pkg-config
@@ -14,7 +15,7 @@
 , rubberband
 , gettext
 , ncurses
-, alsaLib
+, alsa-lib
 , fftw
 }:
 
@@ -34,7 +35,12 @@ stdenv.mkDerivation rec {
     ./autogen.sh
   '';
 
-  nativeBuildInputs = [ autoreconfHook pkg-config which libtool ];
+  nativeBuildInputs = [
+    autoreconfHook
+    pkg-config
+    which
+    libtool
+  ];
 
   buildInputs = [
     liblo
@@ -47,7 +53,7 @@ stdenv.mkDerivation rec {
     rubberband
     gettext
     ncurses
-    alsaLib
+    alsa-lib
     fftw
   ];
 

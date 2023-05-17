@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ makeWrapper ];
   buildInputs = [ jre ];
 
-  phases = [ "installPhase" ];
+  dontUnpack = true;
 
   installPhase = ''
     mkdir -p $out/libexec/varscan
@@ -30,6 +30,7 @@ stdenv.mkDerivation rec {
     # University School of Medicine.
     license = licenses.unfree;
     homepage = "https://github.com/dkoboldt/varscan";
+    sourceProvenance = with sourceTypes; [ binaryBytecode ];
     maintainers = with maintainers; [ jbedo ];
     platforms = platforms.all;
   };

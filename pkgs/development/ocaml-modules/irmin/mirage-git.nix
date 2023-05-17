@@ -1,12 +1,12 @@
 { buildDunePackage, irmin-mirage, irmin-git
 , mirage-kv, cohttp, conduit-lwt, conduit-mirage
-, git-cohttp-mirage, fmt, git, lwt, mirage-clock, uri
+, git-paf, fmt, git, lwt, mirage-clock, uri
 }:
 
 buildDunePackage {
   pname = "irmin-mirage-git";
 
-  inherit (irmin-mirage) version src useDune2;
+  inherit (irmin-mirage) version src strictDeps;
 
   propagatedBuildInputs = [
     irmin-mirage
@@ -15,7 +15,7 @@ buildDunePackage {
     cohttp
     conduit-lwt
     conduit-mirage
-    git-cohttp-mirage
+    git-paf
     fmt
     git
     lwt

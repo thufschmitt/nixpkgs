@@ -6,7 +6,7 @@
 , ... } @ args:
 
 let
-  version = "5.10.27-rt36"; # updated by ./update-rt.sh
+  version = "5.10.153-rt76"; # updated by ./update-rt.sh
   branch = lib.versions.majorMinor version;
   kversion = builtins.elemAt (lib.splitString "-" version) 0;
 in buildLinux (args // {
@@ -18,16 +18,16 @@ in buildLinux (args // {
 
   src = fetchurl {
     url = "mirror://kernel/linux/kernel/v5.x/linux-${kversion}.tar.xz";
-    sha256 = "1nb95ll66kxiz702gs903n3gy5ialz8cin58l19rqaai55kck7fr";
+    sha256 = "0qhn5xv0m6baip1my1gp4mrjc4j6d6nbxa701vpwllg4kx8y9wiw";
   };
 
   kernelPatches = let rt-patch = {
     name = "rt";
     patch = fetchurl {
       url = "mirror://kernel/linux/kernel/projects/rt/${branch}/older/patch-${version}.patch.xz";
-      sha256 = "1bx023ibav6n2di3i2m8i6n4hp7h6zmz9bva7nqxdflbdwfsma1c";
+      sha256 = "12gf2nnnfcbmyp34xnns35qpnzsnwjilq2qs1xvq6m51gcnnzq7g";
     };
-  }; in [ rt-patch ] ++ lib.remove rt-patch kernelPatches;
+  }; in [ rt-patch ] ++ kernelPatches;
 
   structuredExtraConfig = with lib.kernel; {
     PREEMPT_RT = yes;

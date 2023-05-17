@@ -1,31 +1,36 @@
-{ lib, stdenv, fetchgit }:
+{ lib, stdenv, fetchFromGitLab, windows }:
 
 stdenv.mkDerivation rec {
   pname = "lmdb";
-  version = "0.9.28";
+  version = "0.9.29";
 
-  src = fetchgit {
-    url = "https://git.openldap.org/openldap/openldap.git";
+  src = fetchFromGitLab {
+    domain = "git.openldap.org";
+    owner = "openldap";
+    repo = "openldap";
     rev = "LMDB_${version}";
-    sha256 = "012a8bs49cswsnzw7k4piis5b6dn4by85w7a7mai9i04xcjyy9as";
+    sha256 = "19zq5s1amrv1fhw1aszcn2w2xjrk080l6jj5hc9f46yiqf98jjg3";
   };
 
   postUnpack = "sourceRoot=\${sourceRoot}/libraries/liblmdb";
 
-  patches = [ ./hardcoded-compiler.patch ];
+  patches = [ ./hardcoded-compiler.patch ./bin-ext.patch ];
   patchFlags = [ "-p3" ];
 
   outputs = [ "bin" "out" "dev" ];
+
+  buildInputs = lib.optional stdenv.hostPlatform.isWindows windows.pthreads;
 
   makeFlags = [
     "prefix=$(out)"
     "CC=${stdenv.cc.targetPrefix}cc"
     "AR=${stdenv.cc.targetPrefix}ar"
   ]
-    ++ lib.optional stdenv.isDarwin "LDFLAGS=-Wl,-install_name,$(out)/lib/liblmdb.so";
+    ++ lib.optional stdenv.isDarwin "LDFLAGS=-Wl,-install_name,$(out)/lib/liblmdb.so"
+    ++ lib.optionals stdenv.hostPlatform.isWindows [ "SOEXT=.dll" "BINEXT=.exe" ];
 
   doCheck = true;
-  checkPhase = "make test";
+  checkTarget = "test";
 
   postInstall = ''
     moveToOutput bin "$bin"
@@ -52,7 +57,7 @@ stdenv.mkDerivation rec {
       offering the persistence of standard disk-based databases, and is only
       limited to the size of the virtual address space.
     '';
-    homepage = "http://symas.com/mdb/";
+    homepage = "https://symas.com/lmdb/";
     maintainers = with maintainers; [ jb55 vcunat ];
     license = licenses.openldap;
     platforms = platforms.all;

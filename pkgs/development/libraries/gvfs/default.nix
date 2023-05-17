@@ -1,4 +1,5 @@
-{ lib, stdenv
+{ stdenv
+, lib
 , fetchurl
 , meson
 , ninja
@@ -6,6 +7,7 @@
 , gettext
 , dbus
 , glib
+, udevSupport ? stdenv.isLinux
 , libgudev
 , udisks2
 , libgcrypt
@@ -17,13 +19,14 @@
 , fuse3
 , libcdio
 , libxml2
+, libsoup_3
 , libxslt
 , docbook_xsl
 , docbook_xml_dtd_42
 , samba
 , libmtp
 , gnomeSupport ? false
-, gnome3
+, gnome
 , gcr
 , glib-networking
 , gnome-online-accounts
@@ -41,11 +44,11 @@
 
 stdenv.mkDerivation rec {
   pname = "gvfs";
-  version = "1.46.2";
+  version = "1.50.2";
 
   src = fetchurl {
     url = "mirror://gnome/sources/${pname}/${lib.versions.majorMinor version}/${pname}-${version}.tar.xz";
-    sha256 = "2D+hYChmcMA+uJAkBgbYr6fqajqBjorRfu7Y2XZIe9c=";
+    sha256 = "A9crjBXvQ4EQ8M9Fe1ZVJmyLUV0EErMPTVXPoNoGrF4=";
   };
 
   postPatch = ''
@@ -70,28 +73,28 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     glib
-    libgudev
-    udisks2
     libgcrypt
     dbus
     libgphoto2
     avahi
     libarchive
+    libimobiledevice
+    libbluray
+    libnfs
+    openssh
+    gsettings-desktop-schemas
+    libsoup_3
+  ] ++ lib.optionals udevSupport [
+    libgudev
+    udisks2
     fuse3
     libcdio
     samba
     libmtp
     libcap
     polkit
-    libimobiledevice
-    libbluray
     libcdio-paranoia
-    libnfs
-    openssh
-    gsettings-desktop-schemas
-    # TODO: a ligther version of libsoup to have FTP/HTTP support?
   ] ++ lib.optionals gnomeSupport [
-    gnome3.libsoup
     gcr
     glib-networking # TLS support
     gnome-online-accounts
@@ -102,12 +105,24 @@ stdenv.mkDerivation rec {
   mesonFlags = [
     "-Dsystemduserunitdir=${placeholder "out"}/lib/systemd/user"
     "-Dtmpfilesdir=no"
+  ] ++ lib.optionals (!udevSupport) [
+    "-Dgudev=false"
+    "-Dudisks2=false"
+    "-Dfuse=false"
+    "-Dcdda=false"
+    "-Dsmb=false"
+    "-Dmtp=false"
+    "-Dadmin=false"
+    "-Dgphoto2=false"
+    "-Dlibusb=false"
+    "-Dlogind=false"
   ] ++ lib.optionals (!gnomeSupport) [
     "-Dgcr=false"
     "-Dgoa=false"
     "-Dkeyring=false"
-    "-Dhttp=false"
     "-Dgoogle=false"
+  ] ++ lib.optionals (avahi == null) [
+    "-Ddnssd=false"
   ] ++ lib.optionals (samba == null) [
     # Xfce don't want samba
     "-Dsmb=false"
@@ -117,15 +132,16 @@ stdenv.mkDerivation rec {
   doInstallCheck = doCheck;
 
   passthru = {
-    updateScript = gnome3.updateScript {
+    updateScript = gnome.updateScript {
       packageName = pname;
+      versionPolicy = "odd-unstable";
     };
   };
 
   meta = with lib; {
     description = "Virtual Filesystem support library" + optionalString gnomeSupport " (full GNOME support)";
     license = licenses.lgpl2Plus;
-    platforms = platforms.linux;
-    maintainers = [ maintainers.lethalman ] ++ teams.gnome.members;
+    platforms = platforms.unix;
+    maintainers = teams.gnome.members;
   };
 }

@@ -1,14 +1,14 @@
-{ lib, stdenv, fetchFromGitHub, openssl, libsamplerate, alsaLib, AppKit }:
+{ lib, stdenv, fetchFromGitHub, openssl, libsamplerate, alsa-lib, AppKit }:
 
 stdenv.mkDerivation rec {
   pname = "pjsip";
-  version = "2.10";
+  version = "2.13";
 
   src = fetchFromGitHub {
     owner = pname;
     repo = "pjproject";
     rev = version;
-    sha256 = "1aklicpgwc88578k03i5d5cm5h8mfm7hmx8vfprchbmaa2p8f4z0";
+    sha256 = "sha256-yzszmm3uIyXtYFgZtUP3iswLx4u/8UbFt80Ln25ToFE=";
   };
 
   patches = [
@@ -16,14 +16,11 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [ openssl libsamplerate ]
-    ++ lib.optional stdenv.isLinux alsaLib
+    ++ lib.optional stdenv.isLinux alsa-lib
     ++ lib.optional stdenv.isDarwin AppKit;
 
   preConfigure = ''
     export LD=$CC
-  '' # Fixed on master, remove with 2.11
-     + lib.optionalString stdenv.isDarwin ''
-    NIX_CFLAGS_COMPILE+=" -framework Security"
   '';
 
   postInstall = ''
@@ -37,10 +34,12 @@ stdenv.mkDerivation rec {
   dontPatchELF = true;
 
   meta = with lib; {
+    broken = stdenv.isDarwin;
     description = "A multimedia communication library written in C, implementing standard based protocols such as SIP, SDP, RTP, STUN, TURN, and ICE";
     homepage = "https://pjsip.org/";
     license = licenses.gpl2Plus;
     maintainers = with maintainers; [ olynch ];
+    mainProgram = "pjsua";
     platforms = platforms.linux ++ platforms.darwin;
   };
 }

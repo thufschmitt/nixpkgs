@@ -4,11 +4,9 @@
 , buildPackages
 }:
 
-let
-  version = "0.3.11";
-in stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "volume_key";
-  inherit version;
+  version = "0.3.11";
 
   src = fetchgit {
     url = "https://pagure.io/volume_key.git";
@@ -18,9 +16,9 @@ in stdenv.mkDerivation {
 
   outputs = [ "out" "man" "dev" "py" ];
 
-  nativeBuildInputs = [ autoconf automake libtool pkg-config gettext swig ];
+  nativeBuildInputs = [ autoconf automake libtool pkg-config gettext swig autoreconfHook ];
 
-  buildInputs = [ autoreconfHook glib cryptsetup nss util-linux gpgme ncurses ];
+  buildInputs = [ glib cryptsetup nss util-linux gpgme ncurses ];
 
   configureFlags = [
     "--with-gpgme-prefix=${gpgme.dev}"

@@ -1,28 +1,39 @@
-{ lib, buildPythonApplication, fetchPypi, appdirs, attrs
-, beautifulsoup4, click-plugins, elasticsearch, flask-compress
-, flask_login, flask_wtf, html2text, python-dotenv, python-frontmatter
-, requests, tinydb, validators, werkzeug, wtforms }:
+{ lib
+, stdenv
+, python3
+}:
+
+let
+  py = python3.override {
+    packageOverrides = self: super: {
+      wtforms = super.wtforms.overridePythonAttrs (oldAttrs: rec {
+        version = "2.3.1";
+
+        src = oldAttrs.src.override {
+          inherit version;
+          sha256 = "sha256-hhoTs65SHWcA2sOydxlwvTVKY7pwQ+zDqCtSiFlqGXI=";
+        };
+
+        doCheck = false;
+      });
+    };
+  };
+in
+with py.pkgs;
 
 buildPythonApplication rec {
   pname = "archivy";
-  version = "1.1.1";
+  version = "1.7.3";
+  format = "setuptools";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-yUXsTPb5oJYZA9MlHz7eLowRjD/ltq5VLTHeOMqcL/M=";
+    hash = "sha256-ns1Y0DqqnTAQMEt+oBJ/P2gqKqPsX9P3/Z4561qzuns";
   };
 
-  # Relax some dependencies
-  postPatch = ''
-    substituteInPlace requirements.txt \
-      --replace 'WTForms ==' 'WTForms >=' \
-      --replace 'attrs == 20.2.0' 'attrs' \
-      --replace 'elasticsearch ==' 'elasticsearch >=' \
-      --replace 'python_dotenv ==' 'python_dotenv >=' \
-      --replace 'python_frontmatter == 0.5.0' 'python_frontmatter' \
-      --replace 'requests ==' 'requests >=' \
-      --replace 'validators ==' 'validators >=' \
-  '';
+  nativeBuildInputs = [ pythonRelaxDepsHook ];
+
+  pythonRelaxDeps = true;
 
   propagatedBuildInputs = [
     appdirs
@@ -31,15 +42,16 @@ buildPythonApplication rec {
     click-plugins
     elasticsearch
     flask-compress
-    flask_login
-    flask_wtf
+    flask-login
+    flask-wtf
     html2text
     python-dotenv
     python-frontmatter
+    readability-lxml
     requests
+    setuptools
     tinydb
     validators
-    werkzeug
     wtforms
   ];
 

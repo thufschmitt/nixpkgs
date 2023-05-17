@@ -1,4 +1,11 @@
-{ fetchFromGitLab, lib, python3Packages, gobject-introspection, gtk3, pango, wrapGAppsHook
+{ fetchFromGitLab
+, lib
+, python3Packages
+, gobject-introspection
+, gtk3
+, pango
+, wrapGAppsHook
+, xvfb-run
 , chromecastSupport ? false
 , serverSupport ? false
 , keyringSupport ? true
@@ -8,19 +15,27 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "sublime-music";
-  version = "0.11.10";
+  version = "0.11.16";
+  format = "pyproject";
 
   src = fetchFromGitLab {
     owner = "sublime-music";
     repo = pname;
     rev = "v${version}";
-    sha256 = "1g78gmiywg07kaywfc9q0yab2bzxs936vb3157ni1z0flbmcwrry";
+    sha256 = "sha256-n77mTgElwwFaX3WQL8tZzbkPwnsyQ08OW9imSOjpBlg=";
   };
 
   nativeBuildInputs = [
     gobject-introspection
-    python3Packages.setuptools
+    python3Packages.poetry-core
+    python3Packages.pythonRelaxDepsHook
     wrapGAppsHook
+  ];
+
+  # Can be removed in later versions (probably > 0.11.16)
+  pythonRelaxDeps = [
+    "deepdiff"
+    "python-mpv"
   ];
 
   buildInputs = [
@@ -49,13 +64,26 @@ python3Packages.buildPythonApplication rec {
    ++ lib.optional serverSupport bottle
   ;
 
+  postPatch = ''
+    sed -i "/--cov/d" setup.cfg
+    sed -i "/--no-cov-on-fail/d" setup.cfg
+  '';
+
   # hook for gobject-introspection doesn't like strictDeps
   # https://github.com/NixOS/nixpkgs/issues/56943
   strictDeps = false;
 
-  # no tests
-  doCheck = false;
-  pythonImportsCheck = [ "sublime_music" ];
+  checkInputs = with python3Packages; [
+    pytest
+  ];
+
+  checkPhase = ''
+    ${xvfb-run}/bin/xvfb-run pytest
+  '';
+
+  pythonImportsCheck = [
+    "sublime_music"
+  ];
 
   postInstall = ''
     install -Dm444 sublime-music.desktop      -t $out/share/applications

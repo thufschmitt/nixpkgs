@@ -1,7 +1,7 @@
 { lib, fetchgit, SDL, stdenv, libogg, libvorbis, libmad, xdelta }:
 
 stdenv.mkDerivation rec {
-  name = "uhexen2";
+  pname = "uhexen2";
   version = "1.5.9";
 
   src = fetchgit {
@@ -30,7 +30,7 @@ stdenv.mkDerivation rec {
     runHook preBuild
     for makefile in "''${makeFiles[@]}"; do
           local flagsArray=(
-            -j$NIX_BUILD_CORES -l$NIX_BUILD_CORES
+            -j$NIX_BUILD_CORES
             SHELL=$SHELL
             $makeFlags "''${makeFlagsArray[@]}"
             $buildFlags "''${buildFlagsArray[@]}"
@@ -51,6 +51,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with lib; {
+    broken = stdenv.isDarwin;
     description = "A cross-platform port of Hexen II game";
     longDescription = ''
       Hammer of Thyrion (uHexen2) is a cross-platform port of Raven Software's Hexen II source.

@@ -3,6 +3,7 @@
 , autoPatchelfHook
 , stdenv
 , fetchFromGitHub
+, fetchpatch
 , cmake
 , git
 , protobuf
@@ -10,17 +11,29 @@
 , opencv
 , unzip
 , shellcheck
+, srcOnly
 , python
 , enablePython ? false
 }:
 
 let
 
-  onnx_src = fetchFromGitHub {
-    owner = "onnx";
-    repo = "onnx";
-    rev = "v1.8.1";
-    sha256 = "+1zNnZ4lAyVYRptfk0PV7koIX9FqcfD1Ah33qj/G2rA=";
+  onnx_src = srcOnly {
+    name = "onnx-patched";
+    src = fetchFromGitHub {
+      owner = "onnx";
+      repo = "onnx";
+      rev = "v1.8.1";
+      sha256 = "+1zNnZ4lAyVYRptfk0PV7koIX9FqcfD1Ah33qj/G2rA=";
+    };
+    patches = [
+      # Fix build with protobuf 3.18+
+      # Remove with onnx 1.9 release
+      (fetchpatch {
+        url = "https://github.com/onnx/onnx/commit/d3bc82770474761571f950347560d62a35d519d7.patch";
+        sha256 = "0vdsrklkzhdjaj8wdsl4icn93q3961g8dx35zvff0nhpr08wjb7y";
+      })
+    ];
   };
 
 in
@@ -55,7 +68,7 @@ stdenv.mkDerivation rec {
     "-DNGRAPH_UNIT_TEST_ENABLE:BOOL=OFF"
     "-DENABLE_SAMPLES:BOOL=OFF"
     "-DENABLE_CPPLINT:BOOL=OFF"
-  ] ++ lib.optional enablePython [
+  ] ++ lib.optionals enablePython [
     "-DENABLE_PYTHON:BOOL=ON"
   ];
 
@@ -77,23 +90,23 @@ stdenv.mkDerivation rec {
     cd ../build
   '';
 
-  autoPatchelfIgnoreMissingDeps = true;
+  autoPatchelfIgnoreMissingDeps = [ "libngraph_backend.so" ];
 
   nativeBuildInputs = [
     cmake
     autoPatchelfHook
     addOpenGLRunpath
+    unzip
   ];
 
   buildInputs = [
     git
     protobuf
     opencv
-    unzip
     python
     tbb
     shellcheck
-  ] ++ lib.optional enablePython (with python.pkgs; [
+  ] ++ lib.optionals enablePython (with python.pkgs; [
     cython
     pybind11
   ]);
@@ -116,6 +129,9 @@ stdenv.mkDerivation rec {
     '';
     homepage = "https://docs.openvinotoolkit.org/";
     license = with licenses; [ asl20 ];
+    platforms = platforms.all;
+    broken = (stdenv.isLinux && stdenv.isx86_64) # at 2022-09-23
+             || stdenv.isDarwin; # Cannot find macos sdk
     maintainers = with maintainers; [ tfmoraes ];
   };
 }

@@ -3,17 +3,16 @@
 
 stdenv.mkDerivation rec {
   pname = "leiningen";
-  version = "2.9.5";
+  version = "2.9.10";
 
   src = fetchurl {
     url = "https://raw.github.com/technomancy/leiningen/${version}/bin/lein-pkg";
-    sha256 = "12kv3286a2vkm3qpm2msiks87mkspxddgl7bwiacdias9dfda09n";
+    sha256 = "0ckzivinbgg6gw1nss544hy160yixvd3k6pqyyxqanyzsq9lvf6v";
   };
 
   jarsrc = fetchurl {
-    # NOTE: This is actually a .jar, Github has issues
-    url = "https://github.com/technomancy/leiningen/releases/download/${version}/${pname}-${version}-standalone.zip";
-    sha256 = "1shyvg1471sc3bv4h3ax51626xw8a8w05f43bny6gmp8pyc0qjfz";
+    url = "https://github.com/technomancy/leiningen/releases/download/${version}/${pname}-${version}-standalone.jar";
+    sha256 = "1ja9q8lav83h5qhayjgc39f6yyvk1n5f6gfwznn561xm007m6a52";
   };
 
   JARNAME = "${pname}-${version}-standalone.jar";
@@ -46,8 +45,10 @@ stdenv.mkDerivation rec {
   meta = {
     homepage = "https://leiningen.org/";
     description = "Project automation for Clojure";
+    sourceProvenance = with lib.sourceTypes; [ binaryBytecode ];
     license = lib.licenses.epl10;
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
     maintainers = with lib.maintainers; [ thiagokokada ];
+    mainProgram = "lein";
   };
 }

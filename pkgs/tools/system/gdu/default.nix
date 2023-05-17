@@ -7,35 +7,34 @@
 
 buildGoModule rec {
   pname = "gdu";
-  version = "4.10.0";
+  version = "5.20.0";
 
   src = fetchFromGitHub {
     owner = "dundee";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-qYxWjvXGaygoe88muQmQWlDJfM04wqxHy8+l7KO688U=";
+    sha256 = "sha256-8wkp6pu6QDQBrXJVasi9YhxdzyaobDp0WbwNFCQpLag=";
   };
 
-  vendorSha256 = "sha256-QiO5p0x8kmIN6f0uYS0IR2MlWtRYTHeZpW6Nmupjias=";
+  vendorSha256 = "sha256-UP6IdJLc93gRP4vwKKOJl3sNt4sOFeYXjvwk8QM+D48=";
 
   nativeBuildInputs = [ installShellFiles ];
 
-  buildFlagsArray = [
-    "-ldflags="
+  ldflags = [
     "-s"
     "-w"
     "-X github.com/dundee/gdu/v${lib.versions.major version}/build.Version=${version}"
   ];
 
   postPatch = ''
-    substituteInPlace cmd/app/app_test.go --replace "development" "${version}"
+    substituteInPlace cmd/gdu/app/app_test.go --replace "development" "${version}"
   '';
 
   postInstall = ''
     installManPage gdu.1
   '';
 
-  doCheck = !(stdenv.isAarch64 || stdenv.isDarwin);
+  doCheck = !stdenv.isDarwin;
 
   meta = with lib; {
     description = "Disk usage analyzer with console interface";
@@ -46,7 +45,7 @@ buildGoModule rec {
     '';
     homepage = "https://github.com/dundee/gdu";
     license = with licenses; [ mit ];
-    maintainers = [ maintainers.fab ];
+    maintainers = [ maintainers.fab maintainers.zowoq ];
     platforms = platforms.unix;
   };
 }

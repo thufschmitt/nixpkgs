@@ -1,54 +1,42 @@
-{ stdenv
-, lib
+{ lib
+, stdenv
 , fetchFromGitHub
-, pkg-config
 , libinput
 , libxcb
 , libxkbcommon
+, pixman
+, pkg-config
 , wayland
 , wayland-protocols
 , wlroots
-, enable-xwayland ? true, xwayland, libX11
-, patches ? [ ]
-, conf ? null
 , writeText
-, fetchpatch
+, enable-xwayland ? true, xwayland, libX11
+, conf ? null
+, patches ? [ ]
 }:
 
 let
-  # Add two patches to fix compile errors with wlroots 0.13:
-  totalPatches = patches ++ [
-    # Fix the renamed constant WLR_KEY_PRESSED => WL_KEYBOARD_KEY_STATE_PRESSED
-    # https://github.com/djpohly/dwl/pull/66
-    (fetchpatch {
-      url = "https://github.com/djpohly/dwl/commit/a42613db9d9f6debfa4fb2363d75af9457d238ed.patch";
-      sha256 = "0h76hx1fhazi07gqg7sljh13f91v6bvjy7m9qqmimhvqgfwdcc0j";
-    })
-    # Use the new signature for wlr_backend_autocreate, which removes an argument:
-    # https://github.com/djpohly/dwl/pull/76
-    (fetchpatch {
-      url = "https://github.com/djpohly/dwl/commit/0ff13cf216056a36a261f4eed53c6a864989a9fb.patch";
-      sha256 = "18clpdb4il1vxf1b0cx0qrwild68s9dism8ab66zpmvxs5qag2dm";
-    })
-  ];
+  totalPatches = patches ++ [ ];
 in
 
 stdenv.mkDerivation rec {
   pname = "dwl";
-  version = "0.2";
+  version = "0.3.1";
 
   src = fetchFromGitHub {
     owner = "djpohly";
     repo = pname;
     rev = "v${version}";
-    sha256 = "gUaFTkpIQDswEubllMgvxPfCaEYFO7mODzjPyW7XsGQ=";
+    hash = "sha256-VHxBjjnzJNmtJxrm3ywJzvt2bNHGk/Cx8TICw6SaoiQ=";
   };
 
   nativeBuildInputs = [ pkg-config ];
+
   buildInputs = [
     libinput
     libxcb
     libxkbcommon
+    pixman
     wayland
     wayland-protocols
     wlroots
@@ -71,6 +59,11 @@ stdenv.mkDerivation rec {
                  then conf
                  else writeText "config.def.h" conf;
   in lib.optionalString (conf != null) "cp ${configFile} config.def.h";
+
+  NIX_CFLAGS_COMPILE = [
+    # https://github.com/djpohly/dwl/issues/186
+    "-Wno-error=unused-result"
+  ];
 
   dontConfigure = true;
 
@@ -97,8 +90,7 @@ stdenv.mkDerivation rec {
     '';
     license = licenses.gpl3Only;
     maintainers = with maintainers; [ AndersonTorres ];
-    platforms = with platforms; linux;
+    inherit (wayland.meta) platforms;
   };
 }
 # TODO: custom patches from upstream website
-# TODO: investigate the modifications in the upstream unstable version

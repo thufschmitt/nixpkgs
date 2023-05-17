@@ -1,17 +1,24 @@
-{ lib, python3Packages }:
+{ lib
+, python3Packages
+, fetchFromGitHub
+}:
 
 python3Packages.buildPythonApplication rec {
-  pname = "FlexGet";
-  version = "3.1.106";
+  pname = "flexget";
+  version = "3.5.10";
+  format = "pyproject";
 
-  src = python3Packages.fetchPypi {
-    inherit pname version;
-    sha256 = "f0ff300a1762d701b77eb16142dcc13d9d099bbed695f1e950392c1d1bb988eb";
+  # Fetch from GitHub in order to use `requirements.in`
+  src = fetchFromGitHub {
+    owner = "flexget";
+    repo = "flexget";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-vxwhqbupXr0Kj3+HeXBrI2pfvr+ClaVlCblva+gq0/k=";
   };
 
   postPatch = ''
-    # remove dependency constraints
-    sed 's/==\([0-9]\.\?\)\+//' -i requirements.txt
+    # remove dependency constraints but keep environment constraints
+    sed 's/[~<>=][^;]*//' -i requirements.txt
 
     # "zxcvbn-python" was renamed to "zxcvbn", and we don't have the former in
     # nixpkgs. See: https://github.com/NixOS/nixpkgs/issues/62110
@@ -22,46 +29,52 @@ python3Packages.buildPythonApplication rec {
   doCheck = false;
 
   propagatedBuildInputs = with python3Packages; [
-    # See https://github.com/Flexget/Flexget/blob/master/requirements.in
+    # See https://github.com/Flexget/Flexget/blob/master/requirements.txt
     APScheduler
     beautifulsoup4
-    cherrypy
+    click
     colorama
-    colorclass
     feedparser
-    flask-compress
-    flask-cors
-    flask_login
-    flask-restful
-    flask-restx
-    flask
     guessit
     html5lib
     jinja2
     jsonschema
     loguru
     more-itertools
-    progressbar
+    packaging
+    psutil
     pynzb
-    pyparsing
     PyRSS2Gen
-    dateutil
+    python-dateutil
     pyyaml
     rebulk
     requests
+    rich
     rpyc
-    sgmllib3k
     sqlalchemy
-    terminaltables
+    typing-extensions
+
+    # WebUI requirements
+    cherrypy
+    flask-compress
+    flask-cors
+    flask-login
+    flask-restful
+    flask-restx
+    flask
+    pyparsing
+    werkzeug
     zxcvbn
-    # plugins
+
+    # Plugins requirements
     transmission-rpc
   ];
 
   meta = with lib; {
-    homepage    = "https://flexget.com/";
+    homepage = "https://flexget.com/";
+    changelog = "https://github.com/Flexget/Flexget/releases/tag/v${version}";
     description = "Multipurpose automation tool for all of your media";
-    license     = licenses.mit;
+    license = licenses.mit;
     maintainers = with maintainers; [ marsam ];
   };
 }

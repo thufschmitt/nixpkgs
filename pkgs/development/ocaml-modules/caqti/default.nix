@@ -1,21 +1,23 @@
-{ lib, fetchFromGitHub, buildDunePackage, cppo, logs, ptime, uri }:
+{ lib, fetchurl, buildDunePackage, ocaml
+, cppo, logs, ptime, uri, bigstringaf
+, re, cmdliner, alcotest }:
 
 buildDunePackage rec {
   pname = "caqti";
-  version = "1.3.0";
-  useDune2 = true;
+  version = "1.9.1";
 
-  minimumOCamlVersion = "4.04";
+  minimalOCamlVersion = "4.04";
 
-  src = fetchFromGitHub {
-    owner = "paurkedal";
-    repo = "ocaml-${pname}";
-    rev = "v${version}";
-    sha256 = "1ksjchfjnh059wvd95my1sv9b0ild0dfaiynbf2xsaz7zg1y4xmw";
+  src = fetchurl {
+    url = "https://github.com/paurkedal/ocaml-caqti/releases/download/v${version}/caqti-v${version}.tbz";
+    sha256 = "sha256-PQBgJBNx3IcE6/vyNIf26a2xStU22LBhff8eM6UPaJ4=";
   };
 
-  buildInputs = [ cppo ];
-  propagatedBuildInputs = [ logs ptime uri ];
+  nativeBuildInputs = [ cppo ];
+  propagatedBuildInputs = [ logs ptime uri bigstringaf ];
+  checkInputs = [ re cmdliner alcotest ];
+
+  doCheck = lib.versionAtLeast ocaml.version "4.08";
 
   meta = {
     description = "Unified interface to relational database libraries";

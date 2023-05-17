@@ -2,21 +2,18 @@
 
 stdenv.mkDerivation rec {
   pname = "wcslib";
-  version = "7.5";
+  version = "7.11";
 
   src = fetchurl {
     url = "ftp://ftp.atnf.csiro.au/pub/software/wcslib/${pname}-${version}.tar.bz2";
-    sha256 = "1536gmcpm6pckn9xrb6j8s4pm1vryjhzvhfaj9wx3jwxcpbdy0dw";
+    sha256 = "sha256-Rr77/fUM1JU4lmdqfVcAlNx2YeKulnewkuf7E87j2l8=";
   };
 
-  buildInputs = [ flex ];
-
-  prePatch = ''
-    substituteInPlace GNUmakefile --replace 2775 0775
-    substituteInPlace C/GNUmakefile --replace 2775 0775
-  '';
+  nativeBuildInputs = [ flex ];
 
   enableParallelBuilding = true;
+
+  outputs = [ "out" "man" ];
 
   meta = with lib; {
     homepage = "https://www.atnf.csiro.au/people/mcalabre/WCS/";

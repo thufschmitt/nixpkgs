@@ -1,17 +1,28 @@
-{ lib, fetchFromGitHub, python3 }:
+{ lib, fetchFromGitHub, python3, makeDesktopItem, copyDesktopItems }:
 
 with python3.pkgs;
 
 buildPythonApplication rec {
   pname = "thonny";
-  version = "3.3.2";
+  version = "4.0.1";
 
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
     rev = "v${version}";
-    sha256 = "1pzy7v48x4ip8v6aqm8hl5ywx7xiqbsfypxxifih8gnlangp1n8y";
+    sha256 = "sha256-VGP9JVw92rk1yXZDqTKcMzJt8t+T8YAg8zYxFaWxGr4=";
   };
+
+  nativeBuildInputs = [ copyDesktopItems ];
+
+  desktopItems = [ (makeDesktopItem {
+    name = "Thonny";
+    exec = "thonny";
+    icon = "thonny";
+    desktopName = "Thonny";
+    comment     = "Python IDE for beginners";
+    categories  = [ "Development" "IDE" ];
+  }) ];
 
   propagatedBuildInputs = with python3.pkgs; [
     jedi
@@ -32,6 +43,10 @@ buildPythonApplication rec {
   preFixup = ''
     wrapProgram "$out/bin/thonny" \
        --prefix PYTHONPATH : $PYTHONPATH:$(toPythonPath ${python3.pkgs.jedi})
+  '';
+
+  postInstall = ''
+    install -Dm644 ./packaging/icons/thonny-48x48.png $out/share/icons/hicolor/48x48/apps/thonny.png
   '';
 
   # Tests need a DISPLAY
