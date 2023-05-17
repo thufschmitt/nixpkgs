@@ -2,12 +2,17 @@
 , stdenv
 , fetchFromGitHub
 , rustPlatform
+, cargo
+, rustc
 , pkg-config
 , asciidoc
+, ncurses
+, glibc
 , dbus
 , cryptsetup
 , util-linux
 , udev
+, lvm2
 , systemd
 , xfsprogs
 , thin-provisioning-tools
@@ -18,28 +23,24 @@
 , tpm2-tools
 , coreutils
 , clevisSupport ? false
+, nixosTests
 }:
 
 stdenv.mkDerivation rec {
   pname = "stratisd";
-  version = "3.2.2";
+  version = "3.5.4";
 
   src = fetchFromGitHub {
     owner = "stratis-storage";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-dNbbKGRLSYVnPdKfxlLIwXNEf7P6EvGbOp8sfpaw38g=";
+    hash = "sha256-V/1gNgjunT11ErXWIa5hDp2+onPCTequCswwXWD5+9E=";
   };
 
   cargoDeps = rustPlatform.fetchCargoTarball {
     inherit src;
-    hash = "sha256-tJT0GKLpZtiQ/AZACkNeC3zgso54k/L03dFI0m1Jbls=";
+    hash = "sha256-RljuLL8tep42KNGVsS5CxI7xuhxEjRZ90jVn3jUhVYM=";
   };
-
-  patches = [
-    # Allow overriding BINARIES_PATHS with environment variable at compile time
-    ./paths.patch
-  ];
 
   postPatch = ''
     substituteInPlace udev/61-stratisd.rules \
@@ -53,26 +54,29 @@ stdenv.mkDerivation rec {
       --replace udevadm               "${udev}/bin/udevadm"
   '';
 
-  nativeBuildInputs = with rustPlatform; [
-    cargoSetupHook
-    bindgenHook
-    rust.cargo
-    rust.rustc
+  nativeBuildInputs = [
+    rustPlatform.cargoSetupHook
+    rustPlatform.bindgenHook
+    cargo
+    rustc
     pkg-config
     asciidoc
+    ncurses # tput
   ];
 
   buildInputs = [
+    glibc
+    glibc.static
     dbus
     cryptsetup
     util-linux
     udev
+    lvm2
   ];
 
-  BINARIES_PATHS = lib.makeBinPath ([
+  EXECUTABLES_PATHS = lib.makeBinPath ([
     xfsprogs
     thin-provisioning-tools
-    udev
   ] ++ lib.optionals clevisSupport [
     clevis
     jose
@@ -83,8 +87,8 @@ stdenv.mkDerivation rec {
     coreutils
   ]);
 
-  makeFlags = [ "PREFIX=${placeholder "out"}" ];
-  buildFlags = [ "release" "release-min" "docs/stratisd.8" ];
+  makeFlags = [ "PREFIX=${placeholder "out"}" "INSTALL=install" ];
+  buildFlags = [ "build-all" ];
 
   doCheck = true;
   checkTarget = "test";
@@ -94,6 +98,8 @@ stdenv.mkDerivation rec {
     rm -r "$out/lib/dracut"
     rm -r "$out/lib/systemd/system-generators"
   '';
+
+  passthru.tests = nixosTests.stratis;
 
   meta = with lib; {
     description = "Easy to use local storage management for Linux";

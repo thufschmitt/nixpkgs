@@ -1,7 +1,7 @@
 { lib, fetchFromGitLab, fetchFromGitHub, buildGoModule, ruby
 , bundlerEnv, pkg-config
 # libgit2 + dependencies
-, libgit2_1_3_0, openssl, zlib, pcre, http-parser }:
+, libgit2, openssl, zlib, pcre, http-parser }:
 
 let
   rubyEnv = bundlerEnv rec {
@@ -11,7 +11,7 @@ let
     gemdir = ./.;
   };
 
-  version = "15.3.3";
+  version = "15.11.3";
   package_version = "v${lib.versions.major version}";
   gitaly_package = "gitlab.com/gitlab-org/gitaly/${package_version}";
 
@@ -22,17 +22,17 @@ let
       owner = "gitlab-org";
       repo = "gitaly";
       rev = "v${version}";
-      sha256 = "sha256-JapesdZbEjGsiR9o1J/exkqlV6Y9a69PVVPS22AaJG0=";
+      sha256 = "sha256-3bbk9LDqo6hm8eG17+a7udM/yHjvXi3f32gNwXhrMrI=";
     };
 
-    vendorSha256 = "sha256-aPCcTS5zflpjzb2L/oDOQotdL8cFsgKPa8b+lhCpbag=";
+    vendorSha256 = "sha256-gJelagGPogeCdJtRpj4RaYlqzZRhtU0EIhmj1aK4ZOk=";
 
     ldflags = [ "-X ${gitaly_package}/internal/version.version=${version}" "-X ${gitaly_package}/internal/version.moduleVersion=${version}" ];
 
     tags = [ "static,system_libgit2" ];
 
     nativeBuildInputs = [ pkg-config ];
-    buildInputs = [ rubyEnv.wrappedRuby libgit2_1_3_0 openssl zlib pcre http-parser ];
+    buildInputs = [ rubyEnv.wrappedRuby libgit2 openssl zlib pcre http-parser ];
 
     doCheck = false;
   };
@@ -59,7 +59,7 @@ buildGoModule ({
 
   postInstall = ''
     mkdir -p $ruby
-    cp -rv $src/ruby/{bin,lib,proto} $ruby
+    cp -rv $src/ruby/{bin,lib} $ruby
   '';
 
   outputs = [ "out" "ruby" ];

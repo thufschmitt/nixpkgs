@@ -2,16 +2,16 @@
 
 buildGoModule rec {
   pname = "mutagen";
-  version = "0.14.0";
+  version = "0.17.0";
 
   src = fetchFromGitHub {
     owner = "mutagen-io";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-OoRXf0QboRQkZE4zcwlGFyoToGOy1bbgGSo17BQLqCE=";
+    sha256 = "sha256-Dfs7hgyTjl3jU28YSd1XEe0wNKQxKgLLMKcrKSEvc4w=";
   };
 
-  vendorSha256 = "sha256-dkPpz0SZEAMPR7mq11kDHGCgeIpnXj2lRnJo1Ws32Cc=";
+  vendorSha256 = "sha256-kfzT+230KY2TJVc0qKMi4TysmltZSgF/OvL5nPLPcbM=";
 
   agents = fetchzip {
     name = "mutagen-agents-${version}";
@@ -21,7 +21,7 @@ buildGoModule rec {
     postFetch = ''
       rm $out/mutagen # Keep only mutagen-agents.tar.gz.
     '';
-    sha256 = "sha256-AlAo55/ewTE04WfS0beVonGA97AmpR1pAw/QxKAYjv8=";
+    sha256 = "sha256-kQdlwNsZd/YrH5XagtQRA/1WFhw4fLmqQW+kZ4ykxfc=";
   };
 
   doCheck = false;
@@ -34,7 +34,6 @@ buildGoModule rec {
   '';
 
   meta = with lib; {
-    broken = stdenv.isDarwin;
     description = "Make remote development work with your local tools";
     homepage = "https://mutagen.io/";
     changelog = "https://github.com/mutagen-io/mutagen/releases/tag/v${version}";

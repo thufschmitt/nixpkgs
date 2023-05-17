@@ -3,22 +3,36 @@
 , buildGoModule
 , unixODBC
 , icu
+, nix-update-script
+, testers
+, usql
 }:
 
 buildGoModule rec {
   pname = "usql";
-  version = "0.12.0";
+  version = "0.14.6";
 
   src = fetchFromGitHub {
     owner = "xo";
     repo = "usql";
     rev = "v${version}";
-    sha256 = "sha256-OOu3zWK/ccmaEVriXKl7SZUJLLYaJB3tgF+eR9p+TmM=";
+    hash = "sha256-RxnxF+KzRNPQ5w5zsk9g1tr557vGe7bi32pSiGL2rK8=";
   };
 
-  vendorSha256 = "sha256-9XyG0Fu3idxGG01MoBr5BMoQSz+dyZFEXRNvvb+XWjA=";
-
   buildInputs = [ unixODBC icu ];
+
+  vendorHash = "sha256-66HQNh8GNPGYsA4PXIij2PMUnj/SxLSQ/+5junR22UE=";
+  proxyVendor = true;
+
+  # Exclude broken impala & hive driver
+  # These drivers break too often and are not used.
+  #
+  # See https://github.com/xo/usql/pull/347
+  #
+  excludedPackages = [
+    "impala"
+    "hive"
+  ];
 
   # These tags and flags are copied from build-release.sh
   tags = [
@@ -27,6 +41,7 @@ buildGoModule rec {
     "sqlite_fts5"
     "sqlite_introspect"
     "sqlite_json1"
+    "sqlite_math_functions"
     "sqlite_stat4"
     "sqlite_userauth"
     "sqlite_vtable"
@@ -43,13 +58,21 @@ buildGoModule rec {
   # All the checks currently require docker instances to run the databases.
   doCheck = false;
 
+  passthru = {
+    updateScript = nix-update-script { };
+    tests.version = testers.testVersion {
+      inherit version;
+      package = usql;
+      command = "usql --version";
+    };
+  };
+
   meta = with lib; {
     description = "Universal command-line interface for SQL databases";
     homepage = "https://github.com/xo/usql";
+    changelog = "https://github.com/xo/usql/releases/tag/v${version}";
     license = licenses.mit;
-    maintainers = with maintainers; [ georgyo ];
-    # usql does not build on ARM.
-    platforms = [ "x86_64-linux" "x86_64-darwin" ];
+    maintainers = with maintainers; [ georgyo anthonyroussel ];
+    platforms = with platforms; linux ++ darwin;
   };
-
 }

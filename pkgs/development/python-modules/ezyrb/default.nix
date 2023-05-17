@@ -14,7 +14,7 @@
 
 buildPythonPackage rec {
   pname = "ezyrb";
-  version = "1.3.0";
+  version = "1.3.0.post2302";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -22,8 +22,8 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "mathLab";
     repo = "EZyRB";
-    rev = "v${version}";
-    sha256 = "sha256-tFkz+j97m+Bgk/87snQMXtgZnykiWYyWJJLaqwRKiaY=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-ZVmQnxqLHKr275Xx0lOID3BZZFTmn/PMHpYhBFSxT7I=";
   };
 
   propagatedBuildInputs = [
@@ -35,7 +35,7 @@ buildPythonPackage rec {
     torch
   ];
 
-  checkInputs = [
+  nativeCheckInputs = [
     pytestCheckHook
   ];
 

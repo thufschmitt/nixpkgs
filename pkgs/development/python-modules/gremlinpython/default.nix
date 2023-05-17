@@ -6,8 +6,8 @@
 , importlib-metadata
 , isodate
 , nest-asyncio
-, six
 , pytestCheckHook
+, pythonOlder
 , mock
 , pyhamcrest
 , radish-bdd
@@ -15,34 +15,41 @@
 
 buildPythonPackage rec {
   pname = "gremlinpython";
-  version = "3.6.0";
+  version = "3.6.3";
+  format = "setuptools";
 
-  # pypi tarball doesn't include tests
+  disabled = pythonOlder "3.7";
+
   src = fetchFromGitHub {
     owner = "apache";
     repo = "tinkerpop";
-    rev = version;
-    sha256 = "0gyf3a0zbh1grc1vr9zzpqm5yfcjvn0f1akw9l1arq36isqwvydn";
+    rev = "refs/tags/${version}";
+    hash = "sha256-CmVWaRebJaZHJGzhaBdYXPF3BZ8+Cvc5P/KOpsG+dX4=";
   };
+
   sourceRoot = "source/gremlin-python/src/main/python";
+
   postPatch = ''
+    sed -i '/pytest-runner/d' setup.py
+
     substituteInPlace setup.py \
-      --replace 'pytest-runner==5.2' ' '
+      --replace 'importlib-metadata<5.0.0' 'importlib-metadata' \
+      --replace "os.getenv('VERSION', '?').replace('-SNAPSHOT', '.dev-%d' % timestamp)" '"${version}"'
   '';
 
   # setup-requires requirements
   nativeBuildInputs = [
     importlib-metadata
   ];
+
   propagatedBuildInputs = [
     aenum
     aiohttp
     isodate
     nest-asyncio
-    six
   ];
 
-  checkInputs = [
+  nativeCheckInputs = [
     pytestCheckHook
     mock
     pyhamcrest

@@ -4,7 +4,7 @@
 , python
 , xvfb-run
 , matplotlib
-, scikitimage
+, scikit-image
 , numpy
 , pandas
 , imageio
@@ -19,19 +19,19 @@
 
 buildPythonPackage rec {
   pname = "boxx";
-  version = "0.10.5";
+  version = "0.10.8";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-6qO/aPegHk+1PAu8qzIkC3fULh2WjgJcqNui+XEaLQw=";
+    hash = "sha256-uk4DYmbV/4zSyL2QzlAJLvgC6ieBjP/xkuyDktUEmIo=";
   };
 
   propagatedBuildInputs = [
     matplotlib
-    scikitimage
+    scikit-image
     numpy
     pandas
     imageio
@@ -41,7 +41,7 @@ buildPythonPackage rec {
     seaborn
   ];
 
-  checkInputs = [
+  nativeCheckInputs = [
     xvfb-run
     torch
     torchvision

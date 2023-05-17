@@ -7,11 +7,11 @@
 
 stdenv.mkDerivation rec {
   pname = "riot-redis";
-  version = "2.17.0";
+  version = "2.19.0";
 
   src = fetchzip {
     url = "https://github.com/redis-developer/riot/releases/download/v${version}/riot-redis-${version}.zip";
-    sha256 = "sha256-Blhjss0ypHzdd3XTRzzHnIPg8+m1ke7a+8VuBB6oA/0=";
+    sha256 = "sha256-q2ZqFVdjg5HSH4kiwoC1W+a8VgHNxBgNeMaw5n97isc=";
   };
 
   buildInputs = [ jre_headless ];

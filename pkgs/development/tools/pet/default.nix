@@ -1,4 +1,4 @@
-{ buildGoModule, fetchFromGitHub, lib }:
+{ buildGoModule, fetchFromGitHub, installShellFiles, lib }:
 
 buildGoModule rec {
   pname = "pet";
@@ -13,9 +13,22 @@ buildGoModule rec {
 
   vendorSha256 = "sha256-dUvp7FEW09V0xMuhewPGw3TuAic/sD7xyXEYviZ2Ivs=";
 
+  ldflags = [
+    "-s" "-w" "-X=github.com/knqyf263/pet/cmd.version=${version}"
+  ];
+
   doCheck = false;
 
   subPackages = [ "." ];
+
+  nativeBuildInputs = [
+    installShellFiles
+  ];
+
+  postInstall = ''
+    installShellCompletion --cmd pet \
+      --zsh ./misc/completions/zsh/_pet
+  '';
 
   meta = with lib; {
     description = "Simple command-line snippet manager, written in Go";

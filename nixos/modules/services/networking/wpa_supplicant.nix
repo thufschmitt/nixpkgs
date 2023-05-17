@@ -121,11 +121,15 @@ let
         ''}
 
         # substitute environment variables
-        ${pkgs.gawk}/bin/awk '{
-          for(varname in ENVIRON)
-            gsub("@"varname"@", ENVIRON[varname])
-          print
-        }' "${configFile}" > "${finalConfig}"
+        if [ -f "${configFile}" ]; then
+          ${pkgs.gawk}/bin/awk '{
+            for(varname in ENVIRON)
+              gsub("@"varname"@", ENVIRON[varname])
+            print
+          }' "${configFile}" > "${finalConfig}"
+        else
+          touch "${finalConfig}"
+        fi
 
         iface_args="-s ${optionalString cfg.dbusControlled "-u"} -D${cfg.driver} ${configStr}"
 
@@ -187,12 +191,12 @@ in {
       };
 
       allowAuxiliaryImperativeNetworks = mkEnableOption (lib.mdDoc "support for imperative & declarative networks") // {
-        description = ''
+        description = lib.mdDoc ''
           Whether to allow configuring networks "imperatively" (e.g. via
-          <literal>wpa_supplicant_gui</literal>) and declaratively via
-          <xref linkend="opt-networking.wireless.networks"/>.
+          `wpa_supplicant_gui`) and declaratively via
+          [](#opt-networking.wireless.networks).
 
-          Please note that this adds a custom patch to <literal>wpa_supplicant</literal>.
+          Please note that this adds a custom patch to `wpa_supplicant`.
         '';
       };
 

@@ -36,11 +36,11 @@
 
 stdenv.mkDerivation rec {
   pname = "tidal-hifi";
-  version = "4.1.1";
+  version = "5.1.0";
 
   src = fetchurl {
     url = "https://github.com/Mastermindzh/tidal-hifi/releases/download/${version}/tidal-hifi_${version}_amd64.deb";
-    sha256 = "1l8axsf9d7a370fs96j16bnsi8fcdgwq036yxc4r4ykpnnskf1ds";
+    sha256 = "sha256-IaSgul2L0L343TVT3ujgBoMt6tITwjJaBNOVJPCBDtI=";
   };
 
   nativeBuildInputs = [ autoPatchelfHook dpkg makeWrapper ];
@@ -106,8 +106,8 @@ stdenv.mkDerivation rec {
     makeWrapper $out/opt/tidal-hifi/tidal-hifi $out/bin/tidal-hifi \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath buildInputs}" \
       "''${gappsWrapperArgs[@]}"
-    substituteInPlace $out/share/applications/tidal-hifi.desktop --replace \
-      "/opt/tidal-hifi/tidal-hifi" "tidal-hifi"
+    substituteInPlace $out/share/applications/tidal-hifi.desktop \
+      --replace "/opt/tidal-hifi/tidal-hifi" "tidal-hifi"
   '';
 
   meta = with lib; {
@@ -115,7 +115,7 @@ stdenv.mkDerivation rec {
     homepage = "https://github.com/Mastermindzh/tidal-hifi";
     changelog = "https://github.com/Mastermindzh/tidal-hifi/releases/tag/${version}";
     license = licenses.mit;
-    maintainers = with maintainers; [ alternateved ];
+    maintainers = with maintainers; [ qbit ];
     platforms = [ "x86_64-linux" ];
   };
 }

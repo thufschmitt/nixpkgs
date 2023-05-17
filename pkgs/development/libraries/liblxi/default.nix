@@ -1,20 +1,20 @@
 { lib, stdenv, fetchFromGitHub
-, pkg-config, autoreconfHook
+, meson, ninja, pkg-config, cmake
 , libtirpc, rpcsvc-proto, avahi, libxml2
 }:
 
 stdenv.mkDerivation rec {
   pname = "liblxi";
-  version = "1.13";
+  version = "1.19";
 
   src = fetchFromGitHub {
     owner = "lxi-tools";
     repo = "liblxi";
     rev = "v${version}";
-    sha256 = "129m0k2wrlgs25qkskynljddqspasla1x8iq51vmg38nhnilpqf6";
+    sha256 = "sha256-TdIUPAXBogGT9OQrX4wkSmPFjR9McdS9gnQ7c24U4qs=";
   };
 
-  nativeBuildInputs = [ autoreconfHook pkg-config rpcsvc-proto ];
+  nativeBuildInputs = [ meson ninja cmake pkg-config rpcsvc-proto ];
 
   buildInputs = [ libtirpc avahi libxml2 ];
 

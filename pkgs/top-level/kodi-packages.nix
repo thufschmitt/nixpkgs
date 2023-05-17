@@ -9,7 +9,7 @@ in
 let self = rec {
 
   addonDir = "/share/kodi/addons";
-  rel = "Matrix";
+  rel = "Nexus";
 
   callPackage = newScope self;
 
@@ -100,6 +100,8 @@ let self = rec {
 
   vfs-libarchive = callPackage ../applications/video/kodi/addons/vfs-libarchive { };
 
+  visualization-waveform = callPackage ../applications/video/kodi/addons/visualization-waveform { };
+
   youtube = callPackage ../applications/video/kodi/addons/youtube { };
 
   # addon packages (dependencies)
@@ -117,6 +119,8 @@ let self = rec {
   future = callPackage ../applications/video/kodi/addons/future { };
 
   idna = callPackage ../applications/video/kodi/addons/idna { };
+
+  infotagger = callPackage ../applications/video/kodi/addons/infotagger { };
 
   inputstream-adaptive = callPackage ../applications/video/kodi/addons/inputstream-adaptive { };
 

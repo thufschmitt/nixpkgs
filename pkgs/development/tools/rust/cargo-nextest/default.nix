@@ -1,31 +1,35 @@
-{ lib, fetchFromGitHub, rustPlatform, stdenv, Security }:
+{ lib, rustPlatform, fetchFromGitHub, stdenv, Security }:
 
 rustPlatform.buildRustPackage rec {
   pname = "cargo-nextest";
-  version = "0.9.35";
+  version = "0.9.52";
 
   src = fetchFromGitHub {
     owner = "nextest-rs";
     repo = "nextest";
     rev = "cargo-nextest-${version}";
-    sha256 = "sha256-tNpE0bEnN4eJZ0nTkGFNrUW5Lam+GK6gUqQZBBYSeEI=";
+    hash = "sha256-Sl3ax2s81LiXejb0QP1fnmByAjAl8/JosUnw/RjEff8=";
   };
 
-  cargoSha256 = "sha256-p6K3GumMpLlnFsTegnH/ij+VDTjAB/dXYea0cWtCOGw=";
+  cargoHash = "sha256-H3MzVH3868wqT1/j827u13nvGbTti8ePoCtrVQHoSCY=";
 
   buildInputs = lib.optionals stdenv.isDarwin [ Security ];
 
-  cargoTestFlags = [ # TODO: investigate some more why these tests fail in nix
-    "--"
+  cargoBuildFlags = [ "-p" "cargo-nextest" ];
+  cargoTestFlags = [ "-p" "cargo-nextest" ];
+
+  # TODO: investigate some more why these tests fail in nix
+  checkFlags = [
+    "--skip=tests_integration::test_list"
     "--skip=tests_integration::test_relocated_run"
     "--skip=tests_integration::test_run"
-    "--skip=tests_integration::test_run_after_build"
   ];
 
   meta = with lib; {
     description = "Next-generation test runner for Rust projects";
     homepage = "https://github.com/nextest-rs/nextest";
+    changelog = "https://nexte.st/CHANGELOG.html";
     license = with licenses; [ mit asl20 ];
-    maintainers = [ maintainers.ekleog ];
+    maintainers = with maintainers; [ ekleog figsoda ];
   };
 }

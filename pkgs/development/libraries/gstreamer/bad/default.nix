@@ -1,6 +1,7 @@
 { lib
 , stdenv
 , fetchurl
+, substituteAll
 , meson
 , ninja
 , gettext
@@ -19,6 +20,7 @@
 , libkate
 , lrdf
 , ladspaH
+, lcms2
 , libnice
 , webrtc-audio-processing
 , webrtc-audio-processing_1
@@ -55,7 +57,7 @@
 , neon
 , openal
 , opencv4
-, openexr
+, openexr_3
 , openh264
 , libopenmpt
 , pango
@@ -77,6 +79,8 @@
 , mjpegtools
 , libGLU
 , libGL
+, addOpenGLRunpath
+, gtk3
 , libintl
 , game-music-emu
 , openssl
@@ -85,27 +89,41 @@
 , srt
 , vo-aacenc
 , libfreeaptx
+, zxing-cpp
 , VideoToolbox
 , AudioToolbox
 , AVFoundation
+, Cocoa
 , CoreMedia
 , CoreVideo
 , Foundation
 , MediaToolbox
 , enableGplPlugins ? true
 , bluezSupport ? stdenv.isLinux
+# Causes every application using GstDeviceMonitor to send mDNS queries every 2 seconds
+, microdnsSupport ? false
+# Checks meson.is_cross_build(), so even canExecute isn't enough.
+, enableDocumentation ? stdenv.hostPlatform == stdenv.buildPlatform, hotdoc
 }:
 
 stdenv.mkDerivation rec {
   pname = "gst-plugins-bad";
-  version = "1.20.3";
+  version = "1.22.2";
 
   outputs = [ "out" "dev" ];
 
   src = fetchurl {
     url = "https://gstreamer.freedesktop.org/src/${pname}/${pname}-${version}.tar.xz";
-    sha256 = "sha256-ehHBO1XdHSOG3ZAiGeQcv83ajh4Ko+c4GGyVB0s12k8=";
+    hash = "sha256-PY+vHONALIU1zjqMThpslg5LVlXb2mtVlD25rHkCLQ8=";
   };
+
+  patches = [
+    # Add fallback paths for nvidia userspace libraries
+    (substituteAll {
+      src = ./fix-paths.patch;
+      inherit (addOpenGLRunpath) driverLink;
+    })
+  ];
 
   nativeBuildInputs = [
     meson
@@ -116,6 +134,8 @@ stdenv.mkDerivation rec {
     gettext
     gstreamer # for gst-tester-1.0
     gobject-introspection
+  ] ++ lib.optionals enableDocumentation [
+    hotdoc
   ] ++ lib.optionals stdenv.isLinux [
     wayland # for wayland-scanner
   ];
@@ -125,6 +145,7 @@ stdenv.mkDerivation rec {
     gst-plugins-base
     orc
     json-glib
+    lcms2
     ldacbt
     libass
     libkate
@@ -132,7 +153,6 @@ stdenv.mkDerivation rec {
     #webrtc-audio-processing_1 # required by isac
     libbs2b
     libmodplug
-    libmicrodns
     openjpeg
     libopenmpt
     libopus
@@ -151,7 +171,7 @@ stdenv.mkDerivation rec {
     neon
     openal
     opencv4
-    openexr
+    openexr_3
     openh264
     rtmpdump
     pango
@@ -164,6 +184,7 @@ stdenv.mkDerivation rec {
     gnutls
     libGL
     libGLU
+    gtk3
     game-music-emu
     openssl
     libxml2
@@ -171,6 +192,7 @@ stdenv.mkDerivation rec {
     srt
     vo-aacenc
     libfreeaptx
+    zxing-cpp
   ] ++ lib.optionals enableZbar [
     zbar
   ] ++ lib.optionals faacSupport [
@@ -182,6 +204,8 @@ stdenv.mkDerivation rec {
     x265
   ] ++ lib.optionals bluezSupport [
     bluez
+  ] ++ lib.optionals microdnsSupport [
+    libmicrodns
   ] ++ lib.optionals stdenv.isLinux [
     libva # vaapi requires libva -> libdrm -> libpciaccess, which is Linux-only in nixpkgs
     wayland
@@ -219,6 +243,7 @@ stdenv.mkDerivation rec {
     VideoToolbox
     AudioToolbox
     AVFoundation
+    Cocoa
     CoreMedia
     CoreVideo
     Foundation
@@ -227,10 +252,11 @@ stdenv.mkDerivation rec {
 
   mesonFlags = [
     "-Dexamples=disabled" # requires many dependencies and probably not useful for our users
-    "-Ddoc=disabled" # `hotdoc` not packaged in nixpkgs as of writing
     "-Dglib-asserts=disabled" # asserts should be disabled on stable releases
 
+    "-Damfcodec=disabled" # Windows-only
     "-Davtp=disabled"
+    "-Ddirectshow=disabled" # Windows-only
     "-Ddts=disabled" # required `libdca` library not packaged in nixpkgs as of writing, and marked as "BIG FAT WARNING: libdca is still in early development"
     "-Dzbar=${if enableZbar then "enabled" else "disabled"}"
     "-Dfaac=${if faacSupport then "enabled" else "disabled"}"
@@ -259,14 +285,17 @@ stdenv.mkDerivation rec {
     "-Dwasapi=disabled" # not packaged in nixpkgs as of writing / no Windows support
     "-Dwasapi2=disabled" # not packaged in nixpkgs as of writing / no Windows support
     "-Dwpe=disabled" # required `wpe-webkit` library not packaged in nixpkgs as of writing
-    "-Dzxing=disabled" # required `zxing-cpp` library not packaged in nixpkgs as of writing
     "-Disac=disabled" # depends on `webrtc-audio-coding-1` not compatible with 0.3
     "-Dgs=disabled" # depends on `google-cloud-cpp`
     "-Donnx=disabled" # depends on `libonnxruntime` not packaged in nixpkgs as of writing
     "-Dopenaptx=enabled" # since gstreamer-1.20.1 `libfreeaptx` is supported for circumventing the dubious license conflict with `libopenaptx`
+    "-Dmicrodns=${if microdnsSupport then "enabled" else "disabled"}"
     "-Dbluez=${if bluezSupport then "enabled" else "disabled"}"
+    (lib.mesonEnable "doc" enableDocumentation)
   ]
   ++ lib.optionals (!stdenv.isLinux) [
+    "-Ddoc=disabled" # needs gstcuda to be enabled which is Linux-only
+    "-Dnvcodec=disabled" # Linux-only
     "-Dva=disabled" # see comment on `libva` in `buildInputs`
   ]
   ++ lib.optionals stdenv.isDarwin [
@@ -284,9 +313,12 @@ stdenv.mkDerivation rec {
     "-Dladspa=disabled" # requires lrdf
     "-Dwebrtc=disabled" # requires libnice, which as of writing doesn't work on Darwin in nixpkgs
     "-Dwildmidi=disabled" # see dependencies above
+  ] ++ lib.optionals (!stdenv.isLinux || !stdenv.isx86_64) [
+    "-Dqsv=disabled" # Linux (and Windows) x86 only
   ] ++ lib.optionals (!gst-plugins-base.glEnabled) [
     "-Dgl=disabled"
   ] ++ lib.optionals (!gst-plugins-base.waylandEnabled) [
+    "-Dgtk3=disabled" # Wayland-based GTK sink
     "-Dwayland=disabled"
   ] ++ lib.optionals (!gst-plugins-base.glEnabled) [
     # `applemedia/videotexturecache.h` requires `gst/gl/gl.h`,

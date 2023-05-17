@@ -1,11 +1,11 @@
 { config, pkgs, lib, ... }:
 let
-  inherit (lib) any boolToString concatStringsSep isBool isString literalExpression mapAttrsToList mkDefault mkEnableOption mkIf mkOption optionalAttrs types;
+  inherit (lib) any boolToString concatStringsSep isBool isString mapAttrsToList mkDefault mkEnableOption mkIf mkMerge mkOption optionalAttrs types;
 
   package = pkgs.dolibarr.override { inherit (cfg) stateDir; };
 
   cfg = config.services.dolibarr;
-  vhostCfg = config.services.nginx.virtualHosts."${cfg.domain}";
+  vhostCfg = lib.optionalAttrs (cfg.nginx != null) config.services.nginx.virtualHosts."${cfg.domain}";
 
   mkConfigFile = filename: settings:
     let
@@ -16,7 +16,7 @@ let
         if (any (str: k == str) secretKeys) then v
         else if isString v then "'${v}'"
         else if isBool v then boolToString v
-        else if isNull v then "null"
+        else if v == null then "null"
         else toString v
       ;
     in
@@ -38,7 +38,7 @@ let
     force_install_database = cfg.database.name;
     force_install_databaselogin = cfg.database.user;
 
-    force_install_mainforcehttps = vhostCfg.forceSSL;
+    force_install_mainforcehttps = vhostCfg.forceSSL or false;
     force_install_createuser = false;
     force_install_dolibarrlogin = null;
   } // optionalAttrs (cfg.database.passwordFile != null) {
@@ -48,12 +48,12 @@ in
 {
   # interface
   options.services.dolibarr = {
-    enable = mkEnableOption "dolibarr";
+    enable = mkEnableOption (lib.mdDoc "dolibarr");
 
     domain = mkOption {
       type = types.str;
       default = "localhost";
-      description = ''
+      description = lib.mdDoc ''
         Domain name of your server.
       '';
     };
@@ -61,35 +61,35 @@ in
     user = mkOption {
       type = types.str;
       default = "dolibarr";
-      description = ''
+      description = lib.mdDoc ''
         User account under which dolibarr runs.
 
-        <note><para>
-          If left as the default value this user will automatically be created
-          on system activation, otherwise you are responsible for
-          ensuring the user exists before the dolibarr application starts.
-        </para></note>
+        ::: {.note}
+        If left as the default value this user will automatically be created
+        on system activation, otherwise you are responsible for
+        ensuring the user exists before the dolibarr application starts.
+        :::
       '';
     };
 
     group = mkOption {
       type = types.str;
       default = "dolibarr";
-      description = ''
+      description = lib.mdDoc ''
         Group account under which dolibarr runs.
 
-        <note><para>
-          If left as the default value this group will automatically be created
-          on system activation, otherwise you are responsible for
-          ensuring the group exists before the dolibarr application starts.
-        </para></note>
+        ::: {.note}
+        If left as the default value this group will automatically be created
+        on system activation, otherwise you are responsible for
+        ensuring the group exists before the dolibarr application starts.
+        :::
       '';
     };
 
     stateDir = mkOption {
       type = types.str;
       default = "/var/lib/dolibarr";
-      description = ''
+      description = lib.mdDoc ''
         State and configuration directory dolibarr will use.
       '';
     };
@@ -98,33 +98,33 @@ in
       host = mkOption {
         type = types.str;
         default = "localhost";
-        description = "Database host address.";
+        description = lib.mdDoc "Database host address.";
       };
       port = mkOption {
         type = types.port;
         default = 3306;
-        description = "Database host port.";
+        description = lib.mdDoc "Database host port.";
       };
       name = mkOption {
         type = types.str;
         default = "dolibarr";
-        description = "Database name.";
+        description = lib.mdDoc "Database name.";
       };
       user = mkOption {
         type = types.str;
         default = "dolibarr";
-        description = "Database username.";
+        description = lib.mdDoc "Database username.";
       };
       passwordFile = mkOption {
         type = with types; nullOr path;
         default = null;
         example = "/run/keys/dolibarr-dbpassword";
-        description = "Database password file.";
+        description = lib.mdDoc "Database password file.";
       };
       createLocally = mkOption {
         type = types.bool;
         default = true;
-        description = "Create the database and database user locally.";
+        description = lib.mdDoc "Create the database and database user locally.";
       };
     };
 
@@ -183,7 +183,8 @@ in
   };
 
   # implementation
-  config = mkIf cfg.enable {
+  config = mkIf cfg.enable (mkMerge [
+    {
 
     assertions = [
       { assertion = cfg.database.createLocally -> cfg.database.user == cfg.user;
@@ -214,7 +215,7 @@ in
 
       # Security settings
       dolibarr_main_prod = true;
-      dolibarr_main_force_https = vhostCfg.forceSSL;
+      dolibarr_main_force_https = vhostCfg.forceSSL or false;
       dolibarr_main_restrict_os_commands = "${pkgs.mariadb}/bin/mysqldump, ${pkgs.mariadb}/bin/mysql";
       dolibarr_nocsrfcheck = false;
       dolibarr_main_instance_unique_id = ''
@@ -314,7 +315,9 @@ in
     users.groups = optionalAttrs (cfg.group == "dolibarr") {
       dolibarr = { };
     };
-
-    users.users."${config.services.nginx.group}".extraGroups = [ cfg.group ];
-  };
+  }
+  (mkIf (cfg.nginx != null) {
+    users.users."${config.services.nginx.group}".extraGroups = mkIf (cfg.nginx != null) [ cfg.group ];
+  })
+]);
 }

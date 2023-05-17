@@ -2,13 +2,13 @@
 
 stdenvNoCC.mkDerivation rec {
   pname = "numix-icon-theme-square";
-  version = "22.09.04";
+  version = "23.04.28";
 
   src = fetchFromGitHub {
     owner = "numixproject";
     repo = pname;
     rev = version;
-    sha256 = "sha256-BzwuaWaSBVIh9Vk3Y7uv0+9aivXNFhBGJJMoDPrpKh4=";
+    sha256 = "sha256-YiuXSYRiFyRh+dlZAvVViYGI2M57z1QPRb3JleL57Go=";
   };
 
   nativeBuildInputs = [ gtk3 ];
@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation rec {
     runHook postInstall
   '';
 
-  passthru.updateScript = gitUpdater {inherit pname version; };
+  passthru.updateScript = gitUpdater { };
 
   meta = with lib; {
     description = "Numix icon theme (square version)";
