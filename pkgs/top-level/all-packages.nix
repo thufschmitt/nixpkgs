@@ -1767,6 +1767,8 @@ with pkgs;
     stdenv = clangStdenv;
   };
 
+  yarn-lock-converter = callPackage ../tools/package-management/yarn-lock-converter { };
+
   archi = callPackage ../tools/misc/archi { };
 
   breitbandmessung = callPackage ../applications/networking/breitbandmessung { };
@@ -4842,6 +4844,8 @@ with pkgs;
   frawk = callPackage ../tools/text/frawk { };
 
   frei = callPackage ../tools/misc/frei { };
+
+  frogmouth = callPackage ../tools/text/frogmouth { };
 
   fselect = callPackage ../tools/misc/fselect { };
 
@@ -8829,6 +8833,8 @@ with pkgs;
 
   jet = callPackage ../development/tools/jet { };
 
+  jf = callPackage ../development/tools/jf { };
+
   jfmt = callPackage ../development/tools/jfmt { };
 
   jfsutils = callPackage ../tools/filesystems/jfsutils { };
@@ -12096,6 +12102,8 @@ with pkgs;
   scraper = callPackage ../tools/text/scraper { };
 
   scriptaculous = callPackage ../development/libraries/scriptaculous { };
+
+  script-directory = callPackage ../tools/misc/script-directory { };
 
   scrot = callPackage ../tools/graphics/scrot { };
 
@@ -16379,6 +16387,7 @@ with pkgs;
   cargo-semver-checks = callPackage ../development/tools/rust/cargo-semver-checks { };
 
   cargo-show-asm = callPackage ../development/tools/rust/cargo-show-asm { };
+  cargo-shuttle = callPackage ../development/tools/rust/cargo-shuttle { };
 
   cargo-sort = callPackage ../development/tools/rust/cargo-sort { };
   cargo-spellcheck = callPackage ../development/tools/rust/cargo-spellcheck {
@@ -33417,7 +33426,7 @@ with pkgs;
 
   polar-bookshelf1 = callPackage ../applications/misc/polar-bookshelf1 { };
 
-  poezio = python3Packages.poezio;
+  poezio = callPackage ../applications/networking/instant-messengers/poezio { };
 
   pommed_light = callPackage ../os-specific/linux/pommed-light { };
 
@@ -37930,7 +37939,7 @@ with pkgs;
 
   ### SCIENCE/PROGRAMMING
 
-  dafny = dotnetPackages.Dafny;
+  dafny = callPackage ../applications/science/logic/dafny { };
 
   groove = callPackage ../applications/science/programming/groove { };
 
