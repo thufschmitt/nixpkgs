@@ -262,6 +262,8 @@ with pkgs;
 
   alterx = callPackage ../tools/security/alterx { };
 
+  asitop = pkgs.python3Packages.callPackage ../os-specific/darwin/asitop { };
+
   asn = callPackage ../applications/networking/asn { };
 
   asnmap = callPackage ../tools/security/asnmap { };
@@ -323,6 +325,8 @@ with pkgs;
   beebeep = libsForQt5.callPackage ../applications/office/beebeep {};
 
   bakelite = callPackage ../tools/backup/bakelite { };
+
+  bearer = callPackage ../development/tools/bearer { };
 
   benthos = callPackage ../development/tools/benthos { };
 
@@ -668,6 +672,8 @@ with pkgs;
   enumerepo = callPackage ../tools/security/enumerepo {};
 
   erosmb = callPackage ../tools/security/erosmb { };
+
+  oauth2c = callPackage ../tools/security/oauth2c { };
 
   octosuite = callPackage ../tools/security/octosuite { };
 
@@ -1426,8 +1432,6 @@ with pkgs;
 
   aircrack-ng = callPackage ../tools/networking/aircrack-ng { };
 
-  airfield = callPackage ../tools/networking/airfield { };
-
   airgeddon = callPackage ../tools/networking/airgeddon { };
 
   apache-airflow = with python3.pkgs; toPythonApplication apache-airflow;
@@ -1699,7 +1703,9 @@ with pkgs;
 
   speedtest-rs = callPackage ../tools/networking/speedtest-rs { };
 
-  stargazer = callPackage ../servers/gemini/stargazer { };
+  stargazer = callPackage ../servers/gemini/stargazer {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   steamtinkerlaunch = callPackage ../tools/games/steamtinkerlaunch { };
 
@@ -2712,7 +2718,7 @@ with pkgs;
   wayst = callPackage ../applications/terminal-emulators/wayst { };
 
   wezterm = darwin.apple_sdk_11_0.callPackage ../applications/terminal-emulators/wezterm {
-    inherit (darwin.apple_sdk_11_0.frameworks) Cocoa CoreGraphics Foundation UserNotifications;
+    inherit (darwin.apple_sdk_11_0.frameworks) Cocoa CoreGraphics Foundation UserNotifications System;
   };
 
   x3270 = callPackage ../applications/terminal-emulators/x3270 { };
@@ -3833,6 +3839,8 @@ with pkgs;
 
   babelfish = callPackage ../shells/fish/babelfish.nix { };
 
+  baboossh = callPackage ../tools/security/baboossh { };
+
   badchars = python3Packages.callPackage ../tools/security/badchars { };
 
   badvpn = callPackage ../tools/networking/badvpn { };
@@ -4769,8 +4777,12 @@ with pkgs;
   eschalot = callPackage ../tools/security/eschalot { };
 
   espanso = callPackage ../applications/office/espanso {
-    inherit (darwin.apple_sdk.frameworks) AppKit Cocoa Foundation;
-    openssl = openssl_1_1;
+    inherit (darwin.apple_sdk.frameworks) AppKit Cocoa Foundation IOKit Kernel AVFoundation Carbon QTKit AVKit WebKit;
+  };
+  espanso-wayland = espanso.override {
+    x11Support = false;
+    waylandSupport = true;
+    espanso = espanso-wayland;
   };
 
   esphome = callPackage ../tools/misc/esphome { };
@@ -5022,6 +5034,8 @@ with pkgs;
   giph = callPackage ../applications/video/giph { };
 
   gir-rs = callPackage ../development/tools/gir { };
+
+  girsh = callPackage ../tools/networking/girsh { };
 
   gist = callPackage ../tools/text/gist { };
 
@@ -16759,17 +16773,15 @@ with pkgs;
     mbqn-source = buildPackages.mbqn.src;
 
     phase0 = callPackage ../development/interpreters/bqn/cbqn {
-      inherit (cbqn-bootstrap) stdenv;
+      inherit (cbqn-bootstrap) mbqn-source stdenv;
       genBytecode = false;
       bqn-path = null;
-      mbqn-source = null;
     };
 
     phase0-replxx = callPackage ../development/interpreters/bqn/cbqn {
-      inherit (cbqn-bootstrap) stdenv;
+      inherit (cbqn-bootstrap) mbqn-source stdenv;
       genBytecode = false;
       bqn-path = null;
-      mbqn-source = null;
       enableReplxx = true;
     };
 
@@ -31834,6 +31846,8 @@ with pkgs;
 
   kubeseal = callPackage ../applications/networking/cluster/kubeseal { };
 
+  kubestroyer = callPackage ../tools/security/kubestroyer { };
+
   kubernix = callPackage ../applications/networking/cluster/kubernix { };
 
   kubeconform = callPackage ../applications/networking/cluster/kubeconform { };
@@ -38789,6 +38803,8 @@ with pkgs;
   dxvk_1 = callPackage ../misc/dxvk/dxvk.nix { dxvkVersion = "1.10"; };
   dxvk_2 = callPackage ../misc/dxvk/dxvk.nix { dxvkVersion = "2.1"; };
 
+  ec2stepshell = callPackage ../tools/security/ec2stepshell { };
+
   ecdsatool = callPackage ../tools/security/ecdsatool { };
 
   electricsheep = callPackage ../misc/screensavers/electricsheep { };
@@ -39633,6 +39649,8 @@ with pkgs;
   tagref = callPackage ../tools/misc/tagref { };
 
   tcat = callPackage ../tools/misc/tcat { };
+
+  tell-me-your-secrets = callPackage ../tools/security/tell-me-your-secrets { };
 
   tellico = libsForQt5.callPackage ../applications/misc/tellico { };
 

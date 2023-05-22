@@ -2277,6 +2277,8 @@ self: super: with self; {
 
   dash-table = callPackage ../development/python-modules/dash-table { };
 
+  dashing = callPackage ../development/python-modules/dashing { };
+
   dask = callPackage ../development/python-modules/dask { };
 
   dask-awkward = callPackage ../development/python-modules/dask-awkward { };
@@ -4055,6 +4057,8 @@ self: super: with self; {
   github-webhook = callPackage ../development/python-modules/github-webhook { };
 
   github3_py = callPackage ../development/python-modules/github3_py { };
+
+  gitignore-parser = callPackage ../development/python-modules/gitignore-parser { };
 
   gitpython = callPackage ../development/python-modules/gitpython { };
 
@@ -5996,8 +6000,6 @@ self: super: with self; {
   markdownify  = callPackage ../development/python-modules/markdownify { };
 
   markdownsuperscript = callPackage ../development/python-modules/markdownsuperscript { };
-
-  markerlib = callPackage ../development/python-modules/markerlib { };
 
   markupsafe = callPackage ../development/python-modules/markupsafe { };
 
@@ -9759,6 +9761,8 @@ self: super: with self; {
 
   python-ldap-test = callPackage ../development/python-modules/python-ldap-test { };
 
+  python-libnmap = callPackage ../development/python-modules/python-libnmap { };
+
   python-linux-procfs = callPackage ../development/python-modules/python-linux-procfs { };
 
   python-logstash = callPackage ../development/python-modules/python-logstash { };
@@ -11082,6 +11086,8 @@ self: super: with self; {
   simpful = callPackage ../development/python-modules/simpful { };
 
   simpy = callPackage ../development/python-modules/simpy { };
+
+  single-source = callPackage ../development/python-modules/single-source { };
 
   single-version = callPackage ../development/python-modules/single-version { };
 
