@@ -405,6 +405,8 @@ with pkgs;
 
   catppuccin-papirus-folders = callPackage ../data/icons/catppuccin-papirus-folders { };
 
+  catppuccin-plymouth = callPackage ../data/themes/catppuccin-plymouth { };
+
   btdu = callPackage ../tools/misc/btdu { };
 
   ccal = callPackage ../tools/misc/ccal { };
@@ -1683,6 +1685,8 @@ with pkgs;
 
   sdbus-cpp = callPackage ../development/libraries/sdbus-cpp { };
 
+  basu = callPackage ../development/libraries/basu { };
+
   sdlookup = callPackage ../tools/security/sdlookup { };
 
   sgrep = callPackage ../tools/text/sgrep { };
@@ -2287,6 +2291,8 @@ with pkgs;
   fsuae-launcher = libsForQt5.callPackage ../applications/emulators/fs-uae/launcher.nix { };
 
   fuse-emulator = callPackage ../applications/emulators/fuse-emulator { };
+
+  fusesoc = python3Packages.callPackage ../tools/package-management/fusesoc { };
 
   fw = callPackage ../tools/misc/fw {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -5618,6 +5624,8 @@ with pkgs;
   osv-detector = callPackage ../tools/security/osv-detector { };
 
   osv-scanner = callPackage ../tools/security/osv-scanner { };
+
+  otf2bdf = callPackage ../applications/misc/otf2bdf { };
 
   pastel = callPackage ../applications/misc/pastel {
     inherit (darwin.apple_sdk.frameworks) Security;
@@ -9034,6 +9042,8 @@ with pkgs;
 
   keepalived = callPackage ../tools/networking/keepalived { };
 
+  keepwn = callPackage ../tools/security/keepwn { };
+
   kestrel = callPackage ../tools/security/kestrel { };
 
   kexec-tools = callPackage ../os-specific/linux/kexec-tools { };
@@ -9355,6 +9365,8 @@ with pkgs;
   mdbook-graphviz = callPackage ../tools/text/mdbook-graphviz {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
+
+  mdbook-i18n-helpers = callPackage ../tools/text/mdbook-i18n-helpers { };
 
   mdbook-katex = callPackage ../tools/text/mdbook-katex {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
@@ -19532,6 +19544,8 @@ with pkgs;
 
   acl = callPackage ../development/libraries/acl { };
 
+  acltoolkit = callPackage ../tools/security/acltoolkit { };
+
   acsccid = callPackage ../tools/security/acsccid { };
 
   activemq = callPackage ../development/libraries/apache-activemq { };
@@ -23493,7 +23507,6 @@ with pkgs;
   protobuf3_21 = callPackage ../development/libraries/protobuf/3.21.nix { };
   protobuf3_20 = callPackage ../development/libraries/protobuf/3.20.nix { };
   protobuf3_19 = callPackage ../development/libraries/protobuf/3.19.nix { };
-  protobuf3_17 = callPackage ../development/libraries/protobuf/3.17.nix { };
 
   protobufc = callPackage ../development/libraries/protobufc { };
 
@@ -40012,6 +40025,8 @@ with pkgs;
   yacreader = libsForQt5.callPackage ../applications/graphics/yacreader { };
 
   yadm = callPackage ../applications/version-management/yadm { };
+
+  yai = callPackage ../tools/misc/yai { };
 
   yamale = with python3Packages; toPythonApplication yamale;
 
