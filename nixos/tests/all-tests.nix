@@ -273,6 +273,7 @@ in {
   freeswitch = handleTest ./freeswitch.nix {};
   freshrss-sqlite = handleTest ./freshrss-sqlite.nix {};
   freshrss-pgsql = handleTest ./freshrss-pgsql.nix {};
+  frigate = handleTest ./frigate.nix {};
   frr = handleTest ./frr.nix {};
   fsck = handleTest ./fsck.nix {};
   fsck-systemd-stage-1 = handleTest ./fsck.nix { systemdStage1 = true; };
@@ -554,6 +555,7 @@ in {
   openstack-image-userdata = (handleTestOn ["x86_64-linux"] ./openstack-image.nix {}).userdata or {};
   opentabletdriver = handleTest ./opentabletdriver.nix {};
   owncast = handleTest ./owncast.nix {};
+  outline = handleTest ./outline.nix {};
   image-contents = handleTest ./image-contents.nix {};
   openvscode-server = handleTest ./openvscode-server.nix {};
   orangefs = handleTest ./orangefs.nix {};
@@ -603,6 +605,7 @@ in {
   podman-tls-ghostunnel = handleTestOn ["aarch64-linux" "x86_64-linux"] ./podman/tls-ghostunnel.nix {};
   polaris = handleTest ./polaris.nix {};
   pomerium = handleTestOn ["x86_64-linux"] ./pomerium.nix {};
+  portunus = handleTest ./portunus.nix { };
   postfix = handleTest ./postfix.nix {};
   postfix-raise-smtpd-tls-security-level = handleTest ./postfix-raise-smtpd-tls-security-level.nix {};
   postfixadmin = handleTest ./postfixadmin.nix {};
