@@ -8762,7 +8762,7 @@ with pkgs;
 
   infisical = callPackage ../development/tools/infisical { };
 
-  inform6 = callPackage ../development/compilers/inform6 { };
+  inform6 = darwin.apple_sdk_11_0.callPackage ../development/compilers/inform6 { };
 
   inform7 = callPackage ../development/compilers/inform7 { };
 
@@ -28462,6 +28462,8 @@ with pkgs;
   kochi-substitute = callPackage ../data/fonts/kochi-substitute { };
 
   kochi-substitute-naga10 = callPackage ../data/fonts/kochi-substitute-naga10 { };
+
+  kode-mono = callPackage ../data/fonts/kode-mono { };
 
   kopia = callPackage ../tools/backup/kopia { };
 
