@@ -3530,7 +3530,6 @@ self: super: with self; {
 
   fenics = callPackage ../development/python-modules/fenics {
     hdf5 = pkgs.hdf5_1_10;
-    boost = pkgs.boost172;
   };
 
   ffcv = callPackage ../development/python-modules/ffcv { };
@@ -4306,8 +4305,6 @@ self: super: with self; {
   gpytorch = callPackage ../development/python-modules/gpytorch { };
 
   gpt-2-simple = callPackage ../development/python-modules/gpt-2-simple { };
-
-  gpyopt = callPackage ../development/python-modules/gpyopt { };
 
   gql = callPackage ../development/python-modules/gql { };
 
@@ -5518,6 +5515,8 @@ self: super: with self; {
   lakeside = callPackage ../development/python-modules/lakeside { };
 
   langchain = callPackage ../development/python-modules/langchain { };
+
+  langchainplus-sdk = callPackage ../development/python-modules/langchainplus-sdk { };
 
   langcodes = callPackage ../development/python-modules/langcodes { };
 
@@ -13139,6 +13138,8 @@ self: super: with self; {
       withWebKit = true;
     };
   };
+
+  wyoming = callPackage ../development/python-modules/wyoming { };
 
   x-wr-timezone = callPackage ../development/python-modules/x-wr-timezone { };
 
