@@ -897,6 +897,8 @@ with pkgs;
 
   packr = callPackage ../development/libraries/packr { };
 
+  pacproxy = callPackage ../tools/networking/pacproxy { };
+
   perseus-cli = callPackage ../development/tools/perseus-cli {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
@@ -1414,9 +1416,9 @@ with pkgs;
   };
 
   aflplusplus = callPackage ../tools/security/aflplusplus {
-    clang = clang_9;
-    llvm = llvm_9;
-    python = python3;
+    clang = clang_15;
+    llvm = llvm_15;
+    llvmPackages = llvmPackages_15;
     wine = null;
   };
 
@@ -2402,9 +2404,7 @@ with pkgs;
 
   pcem = callPackage ../applications/emulators/pcem { };
 
-  pcsx2 = callPackage ../applications/emulators/pcsx2 {
-    wxGTK = wxGTK32;
-  };
+  pcsx2 = qt6Packages.callPackage ../applications/emulators/pcsx2 { };
 
   pcsxr = callPackage ../applications/emulators/pcsxr { };
 
@@ -5199,6 +5199,8 @@ with pkgs;
 
   hdate = callPackage ../applications/misc/hdate { };
 
+  headache = callPackage ../development/tools/headache { };
+
   heatseeker = callPackage ../tools/misc/heatseeker { };
 
   hebcal = callPackage ../tools/misc/hebcal { };
@@ -6942,10 +6944,7 @@ with pkgs;
 
   dsp = callPackage ../tools/audio/dsp { };
 
-  dirdiff = callPackage ../tools/text/dirdiff {
-    tcl = tcl-8_5;
-    tk = tk-8_5;
-  };
+  dirdiff = callPackage ../tools/text/dirdiff { };
 
   dwdiff = callPackage ../applications/misc/dwdiff { };
 
@@ -7813,16 +7812,9 @@ with pkgs;
 
   fusuma = callPackage ../tools/inputmethods/fusuma { };
 
-  fdbPackages = dontRecurseIntoAttrs (callPackage ../servers/foundationdb {
-    openjdk = openjdk8; # TODO: remove override https://github.com/NixOS/nixpkgs/pull/89731
-    libressl = libressl_3_4;
-  });
+  fdbPackages = dontRecurseIntoAttrs (callPackage ../servers/foundationdb { });
 
   inherit (fdbPackages)
-    foundationdb51
-    foundationdb52
-    foundationdb60
-    foundationdb61
     foundationdb71
   ;
 
@@ -11570,7 +11562,7 @@ with pkgs;
 
   cnping = callPackage ../tools/networking/cnping { };
 
-  past-time = python3Packages.callPackage ../tools/misc/past-time { };
+  past-time = callPackage ../tools/misc/past-time { };
 
   pastebinit = callPackage ../tools/misc/pastebinit { };
 
@@ -14913,6 +14905,8 @@ with pkgs;
 
   eql = callPackage ../development/compilers/eql { };
 
+  erg = callPackage ../development/compilers/erg { };
+
   elm2nix = haskell.lib.compose.justStaticExecutables haskellPackages.elm2nix;
 
   elmPackages = recurseIntoAttrs (callPackage ../development/compilers/elm { });
@@ -15614,6 +15608,8 @@ with pkgs;
   gobang = callPackage ../development/tools/database/gobang {
     inherit (darwin.apple_sdk.frameworks) CoreFoundation Security SystemConfiguration;
   };
+
+  goblob = callPackage ../tools/security/goblob { };
 
   gogetdoc = callPackage ../development/tools/gogetdoc { };
 
@@ -18445,9 +18441,7 @@ with pkgs;
 
   emma = callPackage ../development/tools/analysis/emma { };
 
-  ent-go = callPackage ../development/tools/ent {
-    buildGoModule = buildGo119Module; # go 1.20 build failure
-  };
+  ent-go = callPackage ../development/tools/ent { };
 
   epm = callPackage ../development/tools/misc/epm { };
 
@@ -19898,12 +19892,6 @@ with pkgs;
   boolstuff = callPackage ../development/libraries/boolstuff { };
 
   inherit (callPackage ../development/libraries/boost { inherit (buildPackages) boost-build; })
-    boost168
-    boost169
-    boost170
-    boost172
-    boost173
-    boost174
     boost175
     boost177
     boost178
@@ -19913,7 +19901,6 @@ with pkgs;
     boost182
   ;
 
-  boost16x = boost169;
   boost17x = boost179;
   boost18x = boost182;
   boost = boost17x;
@@ -20743,7 +20730,7 @@ with pkgs;
   };
   glfw2 = callPackage ../development/libraries/glfw/2.x.nix { };
   glfw3 = callPackage ../development/libraries/glfw/3.x.nix {
-    inherit (darwin.apple_sdk.frameworks) Cocoa Kernel;
+    inherit (darwin.apple_sdk.frameworks) Carbon Cocoa Kernel OpenGL;
   };
 
   glibc = callPackage ../development/libraries/glibc {
@@ -23836,6 +23823,8 @@ with pkgs;
 
   rapidxml = callPackage ../development/libraries/rapidxml { };
 
+  rapidyaml = callPackage ../development/libraries/rapidyaml {};
+
   raul = callPackage ../development/libraries/audio/raul { };
 
   raylib = callPackage ../development/libraries/raylib { };
@@ -25999,13 +25988,6 @@ with pkgs;
   mariadb-embedded = mariadb.override { withEmbedded = true; };
 
   mongodb = hiPrio mongodb-6_0;
-
-  mongodb-4_2 = callPackage ../servers/nosql/mongodb/v4_2.nix {
-    sasl = cyrus_sasl;
-    boost = boost169;
-    inherit (darwin) cctools;
-    inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
-  };
 
   mongodb-4_4 = callPackage ../servers/nosql/mongodb/4.4.nix {
     sasl = cyrus_sasl;
@@ -29371,9 +29353,7 @@ with pkgs;
 
   alot = callPackage ../applications/networking/mailreaders/alot { };
 
-  alpine = callPackage ../applications/networking/mailreaders/alpine {
-    tcl = tcl-8_5;
-  };
+  alpine = callPackage ../applications/networking/mailreaders/alpine { };
 
   msgviewer = callPackage ../applications/networking/mailreaders/msgviewer { };
 
@@ -31594,6 +31574,8 @@ with pkgs;
   rootbar = callPackage ../applications/misc/rootbar { };
 
   waybar = callPackage ../applications/misc/waybar { };
+
+  waycorner = callPackage ../applications/misc/waycorner { };
 
   waylock = callPackage ../applications/misc/waylock {
     zig = buildPackages.zig_0_10;
@@ -37398,10 +37380,7 @@ with pkgs;
 
   xbomb = callPackage ../games/xbomb { };
 
-  xconq = callPackage ../games/xconq {
-    tcl = tcl-8_5;
-    tk = tk-8_5;
-  };
+  xconq = callPackage ../games/xconq { };
 
   xcowsay = callPackage ../games/xcowsay { };
 
