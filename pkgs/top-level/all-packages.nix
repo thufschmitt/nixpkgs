@@ -13398,6 +13398,8 @@ with pkgs;
 
   typst-fmt = callPackage ../tools/typesetting/typst-fmt { };
 
+  typst-live = callPackage ../tools/typesetting/typst-live { };
+
   tz = callPackage ../tools/misc/tz { };
 
   u9fs = callPackage ../servers/u9fs { };
@@ -36220,6 +36222,8 @@ with pkgs;
   katawa-shoujo = callPackage ../games/katawa-shoujo { };
 
   keeperrl = callPackage ../games/keeperrl { };
+
+  shipwright = callPackage ../games/shipwright { };
 
   ### GAMES/DOOM-PORTS
 
