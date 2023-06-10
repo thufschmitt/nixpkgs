@@ -581,6 +581,8 @@ with pkgs;
 
   frece = callPackage ../development/tools/frece { };
 
+  frida-tools = callPackage ../tools/security/frida-tools { };
+
   frink = callPackage ../development/tools/frink { };
 
   frugal = callPackage ../development/tools/frugal { };
@@ -2374,6 +2376,9 @@ with pkgs;
 
   mainsail = callPackage ../applications/misc/mainsail { };
 
+  # Does not build with default Haskell version because upstream uses a newer Cabal version.
+  mailctl = haskell.packages.ghc94.callPackage ../tools/networking/mailctl { };
+
   mame = libsForQt5.callPackage ../applications/emulators/mame { };
 
   mame-tools = lib.addMetaAttrs {
@@ -3762,6 +3767,8 @@ with pkgs;
   ios-webkit-debug-proxy = callPackage ../development/mobile/ios-webkit-debug-proxy { };
 
   xcodeenv = callPackage ../development/mobile/xcodeenv { };
+
+  xcodes = callPackage ../development/tools/xcodes { };
 
   gomobile = callPackage ../development/mobile/gomobile { };
 
@@ -12159,6 +12166,8 @@ with pkgs;
   s3-credentials = with python3Packages; toPythonApplication s3-credentials;
 
   s4cmd = callPackage ../tools/networking/s4cmd { };
+
+  s5 = callPackage ../tools/security/s5 { };
 
   s5cmd = callPackage ../tools/networking/s5cmd { };
 
@@ -27435,6 +27444,8 @@ with pkgs;
 
   goconvey = callPackage ../development/tools/goconvey { };
 
+  go-callvis = callPackage ../development/tools/go-callvis { };
+
   gofumpt = callPackage ../development/tools/gofumpt { };
 
   gotags = callPackage ../development/tools/gotags { };
@@ -29512,6 +29523,8 @@ with pkgs;
 
   blocky = callPackage ../applications/networking/blocky { };
 
+  brutefir = callPackage ../applications/audio/brutefir { };
+
   cadence = libsForQt5.callPackage ../applications/audio/cadence { };
 
   cheesecutter = callPackage ../applications/audio/cheesecutter { };
@@ -31109,6 +31122,8 @@ with pkgs;
 
   svox = callPackage ../applications/audio/svox { };
 
+  genesys = callPackage ../applications/misc/genesys { };
+
   giada = callPackage ../applications/audio/giada { };
 
   giara = callPackage ../applications/networking/giara { };
@@ -31664,6 +31679,8 @@ with pkgs;
   wmfs = callPackage ../applications/window-managers/wmfs { };
 
   i810switch = callPackage ../os-specific/linux/i810switch { };
+
+  ical2orgpy = callPackage ../tools/misc/ical2orgpy { };
 
   icewm = callPackage ../applications/window-managers/icewm { };
 
@@ -32941,6 +32958,8 @@ with pkgs;
   nwg-bar = callPackage ../applications/misc/nwg-bar { };
 
   nwg-dock = callPackage ../applications/misc/nwg-dock { };
+
+  nwg-dock-hyprland = callPackage ../applications/misc/nwg-dock-hyprland { };
 
   nwg-drawer = callPackage ../applications/misc/nwg-drawer { };
 
@@ -37100,10 +37119,7 @@ with pkgs;
 
   scid = callPackage ../games/scid { };
 
-  scid-vs-pc = callPackage ../games/scid-vs-pc {
-    tcl = tcl-8_6;
-    tk = tk-8_6;
-  };
+  scid-vs-pc = callPackage ../games/scid-vs-pc { };
 
   scummvm = callPackage ../games/scummvm {
     stdenv = if (stdenv.isDarwin && stdenv.isAarch64) then llvmPackages_14.stdenv else stdenv;
