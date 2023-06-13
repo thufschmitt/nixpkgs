@@ -4605,6 +4605,8 @@ with pkgs;
 
   dduper = callPackage ../tools/filesystems/dduper { };
 
+  deck = callPackage ../applications/networking/deck { };
+
   dedup = callPackage ../tools/backup/dedup { };
 
   deheader = callPackage ../development/tools/misc/deheader { };
@@ -9729,6 +9731,8 @@ with pkgs;
 
   lemmy-help = callPackage ../tools/misc/lemmy-help { };
 
+  lerpn = callPackage ../tools/misc/lerpn { };
+
   lethe = callPackage ../tools/security/lethe {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
@@ -11839,6 +11843,8 @@ with pkgs;
   rar = callPackage ../tools/archivers/rar { };
 
   rarcrack = callPackage ../tools/security/rarcrack { };
+
+  rare-regex = callPackage ../tools/text/rare-regex { };
 
   rarian = callPackage ../development/libraries/rarian { };
 
@@ -18676,6 +18682,8 @@ with pkgs;
   crowdin-cli = callPackage ../tools/text/crowdin-cli { };
 
   gtranslator = callPackage ../tools/text/gtranslator { };
+
+  gtree = callPackage ../tools/text/gtree { };
 
   guff = callPackage ../tools/graphics/guff { };
 
@@ -30838,6 +30846,8 @@ with pkgs;
   fbida = callPackage ../applications/graphics/fbida { };
 
   fclones = callPackage ../tools/misc/fclones { };
+
+  fclones-gui = darwin.apple_sdk_11_0.callPackage ../tools/misc/fclones/gui.nix { };
 
   fcp = callPackage ../tools/misc/fcp { };
 
