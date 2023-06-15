@@ -589,6 +589,8 @@ with pkgs;
 
   functiontrace-server = callPackage ../development/tools/functiontrace-server { };
 
+  gendef = callPackage ../development/tools/gendef { };
+
   glade = callPackage ../development/tools/glade { };
 
   goda = callPackage ../development/tools/goda { };
@@ -900,6 +902,8 @@ with pkgs;
   packr = callPackage ../development/libraries/packr { };
 
   pacproxy = callPackage ../tools/networking/pacproxy { };
+
+  pacup = python3Packages.callPackage ../tools/package-management/pacup { };
 
   perseus-cli = callPackage ../development/tools/perseus-cli {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
@@ -1359,9 +1363,7 @@ with pkgs;
     type = "OPN";
   };
 
-  arc_unpacker = callPackage ../tools/archivers/arc_unpacker {
-    boost = boost175; # checkPhase fails with Boost 1.77
-  };
+  arc_unpacker = callPackage ../tools/archivers/arc_unpacker { };
 
   adminer = callPackage ../servers/adminer { };
 
@@ -9687,10 +9689,6 @@ with pkgs;
 
   jump = callPackage ../tools/system/jump { };
 
-  larynx = callPackage ../tools/audio/larynx { };
-
-  larynx-train = with python3Packages; toPythonApplication larynx-train;
-
   latex2html = callPackage ../tools/misc/latex2html { };
 
   lazycli = callPackage ../tools/misc/lazycli { };
@@ -11320,6 +11318,9 @@ with pkgs;
 
   pim6sd = callPackage ../servers/pim6sd { };
 
+  piper-train = with python3Packages; toPythonApplication piper-train;
+  piper-tts = callPackage ../tools/audio/piper { };
+
   phosh = callPackage ../applications/window-managers/phosh { };
 
   phosh-mobile-settings = callPackage ../applications/window-managers/phosh/phosh-mobile-settings.nix { };
@@ -11804,6 +11805,10 @@ with pkgs;
 
   quicktun = callPackage ../tools/networking/quicktun { };
 
+  quickwit = callPackage ../servers/search/quickwit {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
+
   quilt = callPackage ../development/tools/quilt { };
 
   raider = callPackage ../applications/misc/raider { };
@@ -11940,6 +11945,8 @@ with pkgs;
   rx = callPackage ../applications/graphics/rx { };
 
   qt-box-editor = libsForQt5.callPackage ../applications/misc/qt-box-editor { };
+
+  readability-cli = callPackage ../tools/text/readability-cli { };
 
   recutils = callPackage ../tools/misc/recutils { };
 
@@ -12617,6 +12624,8 @@ with pkgs;
   soundwireserver = callPackage ../applications/audio/soundwireserver { };
 
   sozu = callPackage ../servers/sozu { };
+
+  spacer = callPackage ../tools/misc/spacer { };
 
   sparrow-unwrapped = callPackage ../applications/blockchains/sparrow {
     openimajgrabber = callPackage ../applications/blockchains/sparrow/openimajgrabber.nix {};
@@ -13453,6 +13462,8 @@ with pkgs;
   uget-integrator = callPackage ../tools/networking/uget-integrator { };
 
   ugrep = callPackage ../tools/text/ugrep { };
+
+  ugs = callPackage ../tools/misc/ugs { };
 
   uhk-agent = callPackage ../os-specific/linux/uhk-agent { };
 
@@ -17111,6 +17122,8 @@ with pkgs;
 
   davmail = callPackage ../applications/networking/davmail { };
 
+  kamilalisp = callPackage ../development/interpreters/kamilalisp { };
+
   kanif = callPackage ../applications/networking/cluster/kanif { };
 
   kona = callPackage ../development/interpreters/kona { };
@@ -20155,6 +20168,8 @@ with pkgs;
   cpp-netlib = callPackage ../development/libraries/cpp-netlib { };
 
   cpp-jwt = callPackage ../development/libraries/cpp-jwt { };
+
+  ctranslate2 = callPackage ../development/libraries/ctranslate2 { };
 
   ubus = callPackage ../development/libraries/ubus { };
 
@@ -25732,6 +25747,8 @@ with pkgs;
 
   mastodon = callPackage ../servers/mastodon { };
 
+  gotosocial = callPackage ../servers/gotosocial { };
+
   materialize = callPackage ../servers/sql/materialize {
     inherit (buildPackages.darwin) bootstrap_cmds;
     inherit (darwin.apple_sdk.frameworks) DiskArbitration Foundation;
@@ -26244,6 +26261,7 @@ with pkgs;
   prometheus-jitsi-exporter = callPackage ../servers/monitoring/prometheus/jitsi-exporter.nix { };
   prometheus-jmx-httpserver = callPackage ../servers/monitoring/prometheus/jmx-httpserver.nix {  };
   prometheus-json-exporter = callPackage ../servers/monitoring/prometheus/json-exporter.nix { };
+  prometheus-junos-czerwonk-exporter = callPackage ../servers/monitoring/prometheus/junos-czerwonk-exporter.nix { };
   prometheus-kea-exporter = callPackage ../servers/monitoring/prometheus/kea-exporter.nix { };
   prometheus-keylight-exporter = callPackage ../servers/monitoring/prometheus/keylight-exporter.nix { };
   prometheus-knot-exporter = callPackage ../servers/monitoring/prometheus/knot-exporter.nix { };
@@ -27602,6 +27620,8 @@ with pkgs;
 
   pam_pgsql = callPackage ../os-specific/linux/pam_pgsql { };
 
+  pam_rssh = callPackage ../os-specific/linux/pam_rssh { };
+
   pam_ssh_agent_auth = callPackage ../os-specific/linux/pam_ssh_agent_auth { };
 
   pam_tmpdir = callPackage ../os-specific/linux/pam_tmpdir { };
@@ -27982,6 +28002,8 @@ with pkgs;
   untie = callPackage ../os-specific/linux/untie { };
 
   upower = callPackage ../os-specific/linux/upower { };
+
+  upscayl = callPackage ../applications/graphics/upscayl { };
 
   usbguard = callPackage ../os-specific/linux/usbguard { };
 
@@ -32958,7 +32980,7 @@ with pkgs;
 
   neomutt = callPackage ../applications/networking/mailreaders/neomutt { };
 
-  natron = callPackage ../applications/video/natron { };
+  natron = libsForQt5.callPackage ../applications/video/natron { };
 
   natural-docs = callPackage ../applications/misc/natural-docs { };
 
@@ -33385,10 +33407,6 @@ with pkgs;
   };
 
   openfx = callPackage ../development/libraries/openfx { };
-
-  openimageio_1 = callPackage ../development/libraries/openimageio/1.x.nix {
-    boost = boost175;
-  };
 
   openimageio = darwin.apple_sdk_11_0.callPackage ../development/libraries/openimageio { };
 
@@ -35260,6 +35278,7 @@ with pkgs;
   };
 
   code-server = callPackage ../servers/code-server {
+    nodejs = nodejs_16;
     inherit (darwin.apple_sdk.frameworks) AppKit Cocoa CoreServices Security;
     inherit (darwin) cctools;
     inherit (nodePackages) node-gyp;
@@ -35334,6 +35353,9 @@ with pkgs;
       inherit (wayfireApplications-unwrapped) wayfire;
     }
   );
+
+  weave-gitops = callPackage ../applications/networking/cluster/weave-gitops { };
+
   wf-config = callPackage ../applications/window-managers/wayfire/wf-config.nix { };
 
   waypipe = callPackage ../applications/networking/remote/waypipe { };
@@ -36023,6 +36045,7 @@ with pkgs;
   go-exploitdb = callPackage ../tools/security/go-exploitdb { };
 
   groestlcoin  = libsForQt5.callPackage ../applications/blockchains/groestlcoin {
+    stdenv = darwin.apple_sdk_11_0.stdenv;
     boost = boost17x;
     withGui = true;
     inherit (darwin) autoSignDarwinBinariesHook;
@@ -36200,6 +36223,10 @@ with pkgs;
   phonemizer = with python3Packages; toPythonApplication phonemizer;
 
   tts = callPackage ../tools/audio/tts { };
+
+  wyoming-faster-whisper = callPackage ../tools/audio/wyoming/faster-whisper.nix { };
+
+  wyoming-piper = callPackage ../tools/audio/wyoming/piper.nix { };
 
   ### GAMES
 
@@ -36787,6 +36814,8 @@ with pkgs;
   iortcw = callPackage ../games/iortcw { };
   # used as base package for iortcw forks
   iortcw_sp = callPackage ../games/iortcw/sp.nix { };
+
+  ironwail = callPackage ../games/ironwail { };
 
   ivan = callPackage ../games/ivan { };
 
@@ -37676,6 +37705,8 @@ with pkgs;
 
   openmolcas = callPackage ../applications/science/chemistry/openmolcas { };
 
+  pdb2pqr = with python3Packages; toPythonApplication pdb2pqr;
+
   pymol = callPackage ../applications/science/chemistry/pymol { };
 
   quantum-espresso = callPackage ../applications/science/chemistry/quantum-espresso { };
@@ -37840,7 +37871,7 @@ with pkgs;
 
   macse = callPackage ../applications/science/biology/macse { };
 
-  MACS2 = callPackage ../applications/science/biology/MACS2 { };
+  macs2 = callPackage ../applications/science/biology/macs2 { };
 
   mafft = callPackage ../applications/science/biology/mafft { };
 
@@ -38780,12 +38811,7 @@ with pkgs;
 
   gildas = callPackage ../applications/science/astronomy/gildas { };
 
-  gplates = libsForQt5.callPackage ../applications/science/misc/gplates {
-    boost = boost175;
-    # build with Python 3.10 fails, because boost <= 1.78 can't find
-    # pythons with double digits in minor versions, like X.YZ
-    python3 = python39;
-  };
+  gplates = libsForQt5.callPackage ../applications/science/misc/gplates { };
 
   grap = callPackage ../tools/security/grap { };
 
@@ -39106,7 +39132,7 @@ with pkgs;
 
   faust2 = callPackage ../applications/audio/faust/faust2.nix { };
 
-  faust2alqt = callPackage ../applications/audio/faust/faust2alqt.nix { };
+  faust2alqt = libsForQt5.callPackage ../applications/audio/faust/faust2alqt.nix { };
 
   faust2alsa = callPackage ../applications/audio/faust/faust2alsa.nix { };
 
@@ -39120,17 +39146,15 @@ with pkgs;
 
   faust2jackrust = callPackage ../applications/audio/faust/faust2jackrust.nix { };
 
-  faust2jaqt = callPackage ../applications/audio/faust/faust2jaqt.nix { };
+  faust2jaqt = libsForQt5.callPackage ../applications/audio/faust/faust2jaqt.nix { };
 
   faust2ladspa = callPackage ../applications/audio/faust/faust2ladspa.nix { };
 
-  faust2lv2 = callPackage ../applications/audio/faust/faust2lv2.nix { };
+  faust2lv2 = libsForQt5.callPackage ../applications/audio/faust/faust2lv2.nix { };
 
   faustlive = callPackage ../applications/audio/faust/faustlive.nix { };
 
   faustPhysicalModeling = callPackage ../applications/audio/faustPhysicalModeling  { };
-
-  faustStk = callPackage ../applications/audio/faustStk  { };
 
   flockit = callPackage ../tools/backup/flockit { };
 
