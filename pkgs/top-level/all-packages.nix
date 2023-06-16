@@ -642,6 +642,8 @@ with pkgs;
 
   proto-contrib = callPackage ../development/tools/proto-contrib { };
 
+  protoc-gen-dart = callPackage ../development/tools/protoc-gen-dart { };
+
   protoc-gen-doc = callPackage ../development/tools/protoc-gen-doc { };
 
   protoc-gen-entgrpc = callPackage ../development/tools/protoc-gen-entgrpc { };
@@ -1688,6 +1690,8 @@ with pkgs;
   mprocs = callPackage ../tools/misc/mprocs { };
 
   mpy-utils = python3Packages.callPackage ../tools/misc/mpy-utils { };
+
+  mymcplus = python3Packages.callPackage ../tools/games/mymcplus { };
 
   networkd-notify = python3Packages.callPackage ../tools/networking/networkd-notify {
     systemd = pkgs.systemd;
@@ -5712,6 +5716,8 @@ with pkgs;
   odafileconverter = libsForQt5.callPackage ../applications/graphics/odafileconverter { };
 
   oil-buku = callPackage ../applications/misc/oil-buku { };
+
+  ondir = callPackage ../tools/misc/ondir { };
 
   osdlyrics = callPackage ../applications/audio/osdlyrics { };
 
@@ -39792,6 +39798,8 @@ with pkgs;
   runitor = callPackage ../tools/system/runitor { };
 
   refind = callPackage ../tools/bootloaders/refind { };
+
+  refmt = callPackage ../development/tools/refmt { };
 
   spectra = callPackage ../development/libraries/spectra { };
 
