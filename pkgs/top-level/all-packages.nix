@@ -2350,6 +2350,8 @@ with pkgs;
 
   fsuae-launcher = libsForQt5.callPackage ../applications/emulators/fs-uae/launcher.nix { };
 
+  fuc = callPackage ../tools/misc/fuc { };
+
   fuse-emulator = callPackage ../applications/emulators/fuse-emulator { };
 
   fusesoc = python3Packages.callPackage ../tools/package-management/fusesoc { };
@@ -9580,6 +9582,8 @@ with pkgs;
   multitail = callPackage ../tools/misc/multitail { };
 
   mx-puppet-discord = callPackage ../servers/mx-puppet-discord { };
+
+  mx-takeover = callPackage ../tools/security/mx-takeover { };
 
   mxt-app = callPackage ../misc/mxt-app { };
 
@@ -40103,6 +40107,8 @@ with pkgs;
   tvbrowser = callPackage ../applications/misc/tvbrowser { };
 
   tvheadend = callPackage ../servers/tvheadend { };
+
+  twitch-cli = callPackage ../development/tools/twitch-cli { };
 
   twiggy = callPackage ../development/tools/twiggy { };
 
