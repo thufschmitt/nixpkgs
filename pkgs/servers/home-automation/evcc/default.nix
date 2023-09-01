@@ -2,7 +2,6 @@
 , buildGoModule
 , fetchFromGitHub
 , fetchNpmDeps
-, fetchpatch
 , cacert
 , go
 , git
@@ -17,28 +16,20 @@
 
 buildGoModule rec {
   pname = "evcc";
-  version = "0.118.0";
+  version = "0.118.11";
 
   src = fetchFromGitHub {
     owner = "evcc-io";
     repo = pname;
     rev = version;
-    hash = "sha256-LQtFmN4IyDj/SRTik+ML3h1/tMwnTQ13dQHnghcDuUo=";
+    hash = "sha256-gwFArZJX3DBUNaSpWD5n76VImWeDImR8b1s2czBrBaA=";
   };
 
-  patches = [
-    (fetchpatch {
-      # fix ISO15118 vehicle setup
-      url = "https://github.com/evcc-io/evcc/commit/cc22337b422e4ee541a2c75740c039f2d029bd9b.patch";
-      hash = "sha256-Q+5Klpdv1cWVg716lbKl1JLwkr4LiLPRUoZHemFUQZc=";
-    })
-  ];
-
-  vendorHash = "sha256-1YTVFn/DngzSQwYxGHCAaJl4ZnVj4au32YcpNo1m4w8=";
+  vendorHash = "sha256-0NTOit1nhX/zxQjHwU7ZOY1GsoIu959/KICCEWyfIQ4=";
 
   npmDeps = fetchNpmDeps {
     inherit src;
-    hash = "sha256-QRjOmanO+phyqgZb/cAyU0dFKI6T6o84MuObANZoYNE=";
+    hash = "sha256-/zpyU7x3cdmKrS7YiMe2BVJm0AC0P+yspiG9C3dMVAk=";
   };
 
   nativeBuildInputs = [

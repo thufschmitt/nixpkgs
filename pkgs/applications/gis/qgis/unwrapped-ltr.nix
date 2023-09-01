@@ -124,7 +124,7 @@ in mkDerivation rec {
 
   patches = [
     (substituteAll {
-      src = ./set-pyqt-package-dirs.patch;
+      src = ./set-pyqt-package-dirs-ltr.patch;
       pyQt5PackageDir = "${py.pkgs.pyqt5}/${py.pkgs.python.sitePackages}";
       qsciPackageDir = "${py.pkgs.qscintilla-qt5}/${py.pkgs.python.sitePackages}";
     })
@@ -152,11 +152,11 @@ in mkDerivation rec {
       --prefix PATH : ${lib.makeBinPath [ grass ]}
   '';
 
-  meta = {
+  meta = with lib; {
     description = "A Free and Open Source Geographic Information System";
     homepage = "https://www.qgis.org";
-    license = lib.licenses.gpl2Plus;
-    platforms = with lib.platforms; linux;
-    maintainers = with lib.maintainers; [ lsix sikmir willcohen ];
+    license = licenses.gpl2Plus;
+    maintainers = with maintainers; teams.geospatial.members ++ [ lsix ];
+    platforms = with platforms; linux;
   };
 }

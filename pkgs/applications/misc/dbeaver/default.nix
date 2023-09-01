@@ -16,7 +16,6 @@
 , maven
 , webkitgtk_4_1
 , glib-networking
-, javaPackages
 }:
 
 let
@@ -24,9 +23,7 @@ let
     jdk = jdk17;
   };
 in
-(javaPackages.mavenfod.override {
-  maven = mavenJdk17;
-}) rec {
+mavenJdk17.buildMavenPackage rec {
   pname = "dbeaver";
   version = "22.2.2"; # When updating also update mvnHash
 
@@ -37,13 +34,12 @@ in
     hash = "sha256-TUdtrhQ1JzqZx+QNauNA1P/+WDSSeOGIgGX3SdS0JTI=";
   };
 
-  mvnHash = "sha256-87pf7XRXCuZlAbL54pX+a5Lo/874DmUr/W37/V+5YpQ=";
+  mvnHash = "sha256-ERZYDsPxp1YXteSmunFIgTGZUYqjZJhqrNytLnIUNBQ=";
   mvnParameters = "-P desktop,all-platforms";
 
   nativeBuildInputs = [
     copyDesktopItems
     makeWrapper
-    mavenJdk17
   ];
 
   buildInputs = [
@@ -139,5 +135,6 @@ in
     license = licenses.asl20;
     platforms = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
     maintainers = with maintainers; [ jojosch mkg20001 ];
+    mainProgram = "dbeaver";
   };
 }
