@@ -10,9 +10,14 @@
 # instance, if your program needs to use "ps", just list it as a build
 # input, not "procps" which requires Linux.
 
-with lib;
-
 let
+  inherit (lib)
+    getBin
+    getOutput
+    mapAttrs
+    platforms
+    ;
+
   version = "1003.1-2008";
 
   singleBinary = cmd: providers: let
@@ -23,7 +28,7 @@ let
       meta = {
         mainProgram = cmd;
         priority = 10;
-        platforms = lib.platforms.${stdenv.hostPlatform.parsed.kernel.name} or lib.platforms.all;
+        platforms = platforms.${stdenv.hostPlatform.parsed.kernel.name} or platforms.all;
       };
       passthru = { inherit provider; };
       preferLocalBuild = true;
@@ -61,7 +66,7 @@ let
     };
     column = {
       linux = pkgs.util-linux;
-      darwin = pkgs.netbsd.column;
+      darwin = pkgs.darwin.text_cmds;
     };
     eject = {
       linux = pkgs.util-linux;
@@ -72,7 +77,7 @@ let
       darwin = pkgs.darwin.system_cmds;
     };
     getent = {
-      linux = if stdenv.hostPlatform.libc == "glibc" then pkgs.stdenv.cc.libc
+      linux = if stdenv.hostPlatform.libc == "glibc" then pkgs.stdenv.cc.libc.getent
               else pkgs.netbsd.getent;
       darwin = pkgs.netbsd.getent;
     };
@@ -106,7 +111,7 @@ let
     };
     locale = {
       linux = pkgs.glibc;
-      darwin = pkgs.netbsd.locale;
+      darwin = pkgs.darwin.adv_cmds;
     };
     logger = {
       linux = pkgs.util-linux;
@@ -174,8 +179,8 @@ let
       darwin = pkgs.darwin.basic_cmds;
     };
     xxd = {
-      linux = pkgs.vim;
-      darwin = pkgs.vim;
+      linux = pkgs.vim.xxd;
+      darwin = pkgs.vim.xxd;
     };
   };
 
@@ -187,7 +192,7 @@ let
 
   # Compatibility derivations
   # Provided for old usage of these commands.
-  compat = with bins; lib.mapAttrs makeCompat {
+  compat = with bins; mapAttrs makeCompat {
     procps = [ ps sysctl top watch ];
     util-linux = [ fsck fdisk getopt hexdump mount
                   script umount whereis write col column ];

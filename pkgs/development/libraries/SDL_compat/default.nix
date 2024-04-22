@@ -19,13 +19,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "SDL_compat";
-  version = "1.2.60";
+  version = "1.2.68";
 
   src = fetchFromGitHub {
     owner = "libsdl-org";
     repo = "sdl12-compat";
     rev = "release-" + version;
-    hash = "sha256-8b9rFI4iRpBJqeJ2KRJ9vRyv9gYwa9jRWCuXRfA3x50=";
+    hash = "sha256-f2dl3L7/qoYNl4sjik1npcW/W09zsEumiV9jHuKnUmM=";
   };
 
   nativeBuildInputs = [ cmake pkg-config ]
@@ -53,6 +53,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "A cross-platform multimedia library - build SDL 1.2 applications against 2.0";
+    mainProgram = "sdl-config";
     homepage = "https://www.libsdl.org/";
     license = licenses.zlib;
     maintainers = with maintainers; [ peterhoeg ];

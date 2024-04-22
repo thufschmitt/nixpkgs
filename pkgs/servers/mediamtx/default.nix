@@ -1,27 +1,42 @@
 { lib
 , fetchFromGitHub
+, fetchurl
 , buildGoModule
+, nixosTests
 }:
 
+let
+  hlsJs = fetchurl {
+    url = "https://cdn.jsdelivr.net/npm/hls.js@v1.5.8/dist/hls.min.js";
+    hash = "sha256-KG8Cm0dAsFbrBHuMi9c+bMocpSvWWK4c9aWH9LGfDY4=";
+  };
+in
 buildGoModule rec {
   pname = "mediamtx";
-  version = "0.22.2";
+  # check for hls.js version updates in internal/servers/hls/hlsjsdownloader/VERSION
+  version = "1.7.0";
 
   src = fetchFromGitHub {
-    owner = "aler9";
+    owner = "bluenviron";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-NGUEDOME6jzckHrzOboQr5KrZ8Z4iLCTHGCRGhbQThU=";
+    hash = "sha256-i4tuGlRW5/HZobeSsgzWjHxIxZKB0cZIJcJyD0O/eIY=";
   };
 
-  vendorHash = "sha256-7+0+F1dW70GXjOzJ/+KTFZPp8o1w2wDvQlX0Zrrx7qU=";
+  vendorHash = "sha256-RWHu6VuL9RmmAS1CyInXVbn3dxU6yTAze92C19Fm6gM=";
+
+  postPatch = ''
+    cp ${hlsJs} internal/servers/hls/hls.min.js
+  '';
 
   # Tests need docker
   doCheck = false;
 
   ldflags = [
-    "-X github.com/aler9/mediamtx/internal/core.version=v${version}"
+    "-X github.com/bluenviron/mediamtx/internal/core.version=v${version}"
   ];
+
+  passthru.tests = { inherit (nixosTests) mediamtx; };
 
   meta = with lib; {
     description =
@@ -29,7 +44,7 @@ buildGoModule rec {
     ;
     inherit (src.meta) homepage;
     license = licenses.mit;
-    maintainers = with maintainers; [ ];
+    mainProgram = "mediamtx";
+    maintainers = with maintainers; [ fpletz ];
   };
-
 }

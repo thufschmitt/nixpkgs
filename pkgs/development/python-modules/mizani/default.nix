@@ -12,16 +12,16 @@
 
 buildPythonPackage rec {
   pname = "mizani";
-  version = "0.9.0";
-  format = "pyproject";
+  version = "0.11.1";
+  pyproject = true;
 
   disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "has2k1";
-    repo = pname;
+    repo = "mizani";
     rev = "refs/tags/v${version}";
-    hash = "sha256-XV/Lqr/kGx+t26ALLY7wTp2Ez487yvExM1GUD4AH9Bc=";
+    hash = "sha256-rlzMvIQej8d7LCklNNZeIgtrGaB5A6lDd/1iQG+j+X8=";
   };
 
   nativeBuildInputs = [

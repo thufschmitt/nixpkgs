@@ -1,10 +1,10 @@
-{ stdenv, lib, python3Packages }:
+{ lib, python3Packages, fetchPypi, stdenv }:
 
 python3Packages.buildPythonApplication rec {
   pname = "dyndnsc";
   version = "0.6.1";
 
-  src = python3Packages.fetchPypi {
+  src = fetchPypi {
     inherit pname version;
     sha256 = "13078d29eea2f9a4ca01f05676c3309ead5e341dab047e0d51c46f23d4b7fbb4";
   };
@@ -42,6 +42,7 @@ python3Packages.buildPythonApplication rec {
 
   meta = with lib; {
     description = "Dynamic DNS update client with support for multiple protocols";
+    mainProgram = "dyndnsc";
     longDescription = ''
       Dyndnsc is a command line client for sending updates to Dynamic
       DNS (DDNS, DynDNS) services.  It supports multiple protocols and

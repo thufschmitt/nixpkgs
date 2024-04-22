@@ -5,9 +5,7 @@
 , stdenv
 , cmake
 , cudaPackages ? { }
-, cudaSupport ? config.cudaSupport or false
-, nvidia-thrust
-, useThrustSourceBuild ? true
+, cudaSupport ? config.cudaSupport
 , pythonSupport ? true
 , pythonPackages
 , llvmPackages
@@ -27,8 +25,6 @@
 , runCommand
 }@inputs:
 
-assert cudaSupport -> nvidia-thrust.cudaSupport;
-
 let
   pname = "faiss";
   version = "1.7.4";
@@ -44,9 +40,6 @@ let
       cuda_cudart # cuda_runtime.h
       libcublas
       libcurand
-    ] ++ lib.optionals useThrustSourceBuild [
-      nvidia-thrust
-    ] ++ lib.optionals (!useThrustSourceBuild) [
       cuda_cccl
     ] ++ lib.optionals (cudaPackages ? cuda_profiler_api) [
       cuda_profiler_api # cuda_profiler_api.h
@@ -131,7 +124,7 @@ stdenv.mkDerivation {
   '';
 
   # Need buildPythonPackage for this one
-  # pythonCheckImports = [
+  # pythonImportsCheck = [
   #   "faiss"
   # ];
 
@@ -152,6 +145,7 @@ stdenv.mkDerivation {
 
   meta = with lib; {
     description = "A library for efficient similarity search and clustering of dense vectors by Facebook Research";
+    mainProgram = "demo_ivfpq_indexing";
     homepage = "https://github.com/facebookresearch/faiss";
     license = licenses.mit;
     platforms = platforms.unix;

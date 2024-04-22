@@ -1,33 +1,12 @@
-{ lib
-, fetchFromGitHub
-, buildGoModule
+{ mattermost
 }:
 
-buildGoModule rec {
+mattermost.overrideAttrs (o: {
   pname = "mmctl";
-  version = "7.10.0";
+  subPackages = [ "cmd/mmctl" ];
 
-  src = fetchFromGitHub {
-    owner = "mattermost";
-    repo = "mmctl";
-    rev = "v${version}";
-    sha256 = "sha256-ptkpPwTSoWZhcPAFfBhB73F/eubzzeGPI99K/K3ZT64=";
-  };
-
-  vendorHash = null;
-
-  checkPhase = "make test";
-
-  ldflags = [
-    "-s"
-    "-w"
-    "-X github.com/mattermost/mmctl/v6/commands.Version=${version}"
-  ];
-
-  meta = with lib; {
+  meta = o.meta // {
     description = "A remote CLI tool for Mattermost";
-    homepage = "https://github.com/mattermost/mmctl";
-    license = licenses.asl20;
-    maintainers = with maintainers; [ ppom ];
+    mainProgram = "mmctl";
   };
-}
+})

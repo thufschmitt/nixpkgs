@@ -1,5 +1,6 @@
 { lib, stdenv
 , fetchurl
+, substituteAll
 , meson
 , nasm
 , ninja
@@ -9,6 +10,7 @@
 , orc
 , bzip2
 , gettext
+, libGL
 , libv4l
 , libdv
 , libavc1394
@@ -22,9 +24,10 @@
 , gdk-pixbuf
 , aalib
 , libcaca
-, libsoup
+, libsoup_3
 , libpulseaudio
 , libintl
+, libxml2
 , Cocoa
 , lame
 , mpg123
@@ -34,32 +37,40 @@
 , qt6Support ? false, qt6
 , raspiCameraSupport ? false, libraspberrypi
 , enableJack ? true, libjack2
-, libXdamage
-, libXext
-, libXfixes
+, enableX11 ? stdenv.isLinux, xorg
 , ncurses
 , wayland
 , wayland-protocols
-, xorg
 , libgudev
 , wavpack
 , glib
+, openssl
 # Checks meson.is_cross_build(), so even canExecute isn't enough.
 , enableDocumentation ? stdenv.hostPlatform == stdenv.buildPlatform, hotdoc
 }:
 
-assert raspiCameraSupport -> (stdenv.isLinux && stdenv.isAarch64);
+# MMAL is not supported on aarch64, see:
+# https://github.com/raspberrypi/userland/issues/688
+assert raspiCameraSupport -> (stdenv.isLinux && stdenv.isAarch32);
 
 stdenv.mkDerivation rec {
   pname = "gst-plugins-good";
-  version = "1.22.2";
+  version = "1.22.9";
 
   outputs = [ "out" "dev" ];
 
   src = fetchurl {
     url = "https://gstreamer.freedesktop.org/src/${pname}/${pname}-${version}.tar.xz";
-    hash = "sha256-fIzFlCXysjL2DKfRPlbt1hXaT3Eec90Bp8/6Rua8DN0=";
+    hash = "sha256-JpWfz+v/9jfU6gjvQDFrrzG2G7dymCCwaE6ADDoUeLY=";
   };
+
+  patches = [
+    # dlopen libsoup_3 with an absolute path
+    (substituteAll {
+      src = ./souploader.diff;
+      nixLibSoup3Path = "${lib.getLib libsoup_3}/lib";
+    })
+  ];
 
   strictDeps = true;
 
@@ -79,6 +90,7 @@ stdenv.mkDerivation rec {
     hotdoc
   ] ++ lib.optionals qt5Support (with qt5; [
     qtbase
+    qttools
   ]) ++ lib.optionals qt6Support (with qt6; [
     qtbase
     qttools
@@ -99,21 +111,22 @@ stdenv.mkDerivation rec {
     gdk-pixbuf
     aalib
     libcaca
-    libsoup
+    libsoup_3
     libshout
+    libxml2
     lame
     mpg123
     twolame
     libintl
-    libXdamage
-    libXext
-    libXfixes
     ncurses
-    xorg.libXfixes
-    xorg.libXdamage
     wavpack
+    openssl
   ] ++ lib.optionals raspiCameraSupport [
     libraspberrypi
+  ] ++ lib.optionals enableX11 [
+    xorg.libXext
+    xorg.libXfixes
+    xorg.libXdamage
   ] ++ lib.optionals gtkSupport [
     # for gtksink
     gtk3
@@ -129,6 +142,7 @@ stdenv.mkDerivation rec {
   ]) ++ lib.optionals stdenv.isDarwin [
     Cocoa
   ] ++ lib.optionals stdenv.isLinux [
+    libGL
     libv4l
     libpulseaudio
     libavc1394
@@ -149,6 +163,8 @@ stdenv.mkDerivation rec {
     "-Dqt6=disabled"
   ] ++ lib.optionals (!gtkSupport) [
     "-Dgtk3=disabled"
+  ] ++ lib.optionals (!enableX11) [
+    "-Dximagesrc=disabled" # Linux-only
   ] ++ lib.optionals (!enableJack) [
     "-Djack=disabled"
   ] ++ lib.optionals (!stdenv.isLinux) [
@@ -158,10 +174,11 @@ stdenv.mkDerivation rec {
     "-Dpulse=disabled" # TODO check if we can keep this enabled
     "-Dv4l2-gudev=disabled" # Linux-only
     "-Dv4l2=disabled" # Linux-only
-    "-Dximagesrc=disabled" # Linux-only
-  ] ++ lib.optionals (!raspiCameraSupport) [
+  ] ++ (if raspiCameraSupport then [
+    "-Drpi-lib-dir=${libraspberrypi}/lib"
+  ] else [
     "-Drpicamsrc=disabled"
-  ];
+  ]);
 
   postPatch = ''
     patchShebangs \
@@ -190,6 +207,6 @@ stdenv.mkDerivation rec {
     '';
     license = licenses.lgpl2Plus;
     platforms = platforms.linux ++ platforms.darwin;
-    maintainers = with maintainers; [ matthewbauer ];
+    maintainers = with maintainers; [ matthewbauer lilyinstarlight ];
   };
 }

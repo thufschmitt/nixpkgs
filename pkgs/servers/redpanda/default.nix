@@ -7,12 +7,12 @@
 , stdenv
 }:
 let
-  version = "23.1.7";
+  version = "23.3.12";
   src = fetchFromGitHub {
     owner = "redpanda-data";
     repo = "redpanda";
     rev = "v${version}";
-    sha256 = "sha256-RiGHEJnvNaNFdTSyabnHAB6n1hpL1T0zOZNCV8w8Pe8=";
+    sha256 = "sha256-gkJlqyPDsWaXcbOGB7m70YuHY44xLNymf9laK30yr1k=";
   };
   server = callPackage ./server.nix { inherit src version; };
 in
@@ -21,7 +21,7 @@ buildGoModule rec {
   inherit doCheck src version;
   modRoot = "./src/go/rpk";
   runVend = false;
-  vendorHash = "sha256-8HEJm7m5VgCanV+TY7g00uBUTaWsdv1mxpohmyicjlY=";
+  vendorHash = "sha256-B//qmqxS3g9u2yir8Z3iV2fjQ4XXPAjFujeOZjdt8PE=";
 
   ldflags = [
     ''-X "github.com/redpanda-data/redpanda/src/go/rpk/pkg/cli/cmd/version.version=${version}"''
@@ -48,5 +48,6 @@ buildGoModule rec {
     license = licenses.bsl11;
     maintainers = with maintainers; [ avakhrenev happysalada ];
     platforms = platforms.all;
+    mainProgram = "rpk";
   };
 }

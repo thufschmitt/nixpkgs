@@ -6,16 +6,16 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "laurel";
-  version = "0.5.2";
+  version = "0.6.1";
 
   src = fetchFromGitHub {
     owner = "threathunters-io";
-    repo = pname;
-    rev = "v${version}";
-    hash = "sha256-MT3Zcuztb2QUwWR3HFViJQtygI0oIUE3TlMu+vWzbMI=";
+    repo = "laurel";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-dGgBcugIQ3ZPnqyTw6wRMN2PZLm6GqobeFZ1/uzMKbs=";
   };
 
-  cargoHash = "sha256-hX2nSBgXctAHGqvP/ZmMjGJf7C/wPJ/gL+gV7uI8gco=";
+  cargoHash = "sha256-8JNLssWTCfwrfQ/jg/rj7BUo9bCNCsM2RDwPI7cacRw=";
 
   nativeBuildInputs = [ rustPlatform.bindgenHook ];
   buildInputs = [ acl ];
@@ -25,7 +25,7 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/threathunters-io/laurel";
     changelog = "https://github.com/threathunters-io/laurel/releases/tag/v${version}";
     license = licenses.gpl3Plus;
-    maintainers = with maintainers; [ indeednotjames ];
+    maintainers = with maintainers; [ emilylange ];
     platforms = platforms.linux;
   };
 }

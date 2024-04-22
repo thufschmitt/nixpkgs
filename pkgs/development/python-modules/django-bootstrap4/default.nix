@@ -4,29 +4,33 @@
 
 # build-system
 , setuptools
+, setuptools-scm
+
+# non-propagates
+, django
 
 # dependencies
 , beautifulsoup4
 
 # tests
-, django
 , python
 }:
 
 buildPythonPackage rec {
   pname = "django-bootstrap4";
-  version = "3.0.1";
+  version = "24.1";
   format = "pyproject";
 
   src = fetchFromGitHub {
     owner = "zostera";
     repo = "django-bootstrap4";
-    rev = "v${version}";
-    hash = "sha256-5t6b/1921AMDqoYg7XC2peGxOBFE8XlvgGjHnTlQa4c=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-TCHie5h/VRJ9NSg7wKnWotFHm328kxIp+xFXEa8wL1c=";
   };
 
   nativeBuildInputs = [
     setuptools
+    setuptools-scm
   ];
 
   propagatedBuildInputs = [

@@ -2,64 +2,102 @@
 , stdenv
 , fetchurl
 , dpkg
-, wrapGAppsHook
-, wrapQtAppsHook
 , autoPatchelfHook
 , alsa-lib
+, at-spi2-core
 , libtool
+, libxkbcommon
 , nspr
 , mesa
 , libtiff
-, cups
 , udev
+, gtk3
+, qtbase
 , xorg
+, cups
 , pango
-, makeWrapper
+, runCommandLocal
+, curl
+, coreutils
+, cacert
 , useChineseVersion ? false
 }:
-
+let
+  pkgVersion = "11.1.0.11719";
+  url =
+    if useChineseVersion then
+      "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2019/${lib.last (lib.splitVersion pkgVersion)}/wps-office_${pkgVersion}_amd64.deb"
+    else
+      "https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/linux/${lib.last (lib.splitVersion pkgVersion)}/wps-office_${pkgVersion}.XA_amd64.deb";
+  hash =
+    if useChineseVersion then
+      "sha256-LgE5du2ZnMsAqgoQkY63HWyWYA5TLS5I8ArRYrpxffs="
+    else
+      "sha256-6fXzHSMzZDGuBubOXsHA0YEUGKcy5QIPg3noyxUbdjA=";
+  uri = builtins.replaceStrings [ "https://wps-linux-personal.wpscdn.cn" ] [ "" ] url;
+  securityKey = "7f8faaaa468174dc1c9cd62e5f218a5b";
+in
 stdenv.mkDerivation rec {
   pname = "wpsoffice";
-  version = "11.1.0.11698";
+  version = pkgVersion;
 
-  src = if useChineseVersion then fetchurl {
-    url = "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2019/${lib.last (lib.splitString "." version)}/wps-office_${version}_amd64.deb";
-    sha256 = "sha256-m7BOE2IF2m75mV/4X3HY9UJcidL0S0biqkidddp4LbQ=";
-  } else fetchurl {
-    url = "https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/linux/${lib.last (lib.splitString "." version)}/wps-office_${version}.XA_amd64.deb";
-    sha256 = "sha256-spqxQK/xTE8yFPmGbSbrDY1vSxkan2kwAWpCWIExhgs=";
-  };
+  src = runCommandLocal (if useChineseVersion then "wps-office_${version}_amd64.deb" else "wps-office_${version}.XA_amd64.deb")
+    {
+      outputHashMode = "recursive";
+      outputHashAlgo = "sha256";
+      outputHash = hash;
+
+      nativeBuildInputs = [ curl coreutils ];
+
+      SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+    } ''
+    timestamp10=$(date '+%s')
+    md5hash=($(echo -n "${securityKey}${uri}$timestamp10" | md5sum))
+
+    curl \
+    --retry 3 --retry-delay 3 \
+    "${url}?t=$timestamp10&k=$md5hash" \
+    > $out
+  '';
 
   unpackCmd = "dpkg -x $src .";
   sourceRoot = ".";
 
-  postUnpack = ''
-    # distribution is missing libkappessframework.so, so we should not let
-    # autoPatchelfHook fail on the following dead libraries
-    rm -r opt/kingsoft/wps-office/office6/addons/pdfbatchcompression
-
-    # Remove the following libraries because they depend on qt4
-    rm -r opt/kingsoft/wps-office/office6/{librpcetapi.so,librpcwpsapi.so,librpcwppapi.so,libavdevice.so.58.10.100,libmediacoder.so}
-    rm -r opt/kingsoft/wps-office/office6/addons/wppcapturer/libwppcapturer.so
-    rm -r opt/kingsoft/wps-office/office6/addons/wppencoder/libwppencoder.so
-  '';
-
-  nativeBuildInputs = [ dpkg wrapGAppsHook wrapQtAppsHook makeWrapper autoPatchelfHook ];
+  nativeBuildInputs = [
+    dpkg
+    autoPatchelfHook
+  ];
 
   buildInputs = [
     alsa-lib
-    xorg.libXdamage
-    xorg.libXtst
+    at-spi2-core
     libtool
+    libxkbcommon
     nspr
     mesa
     libtiff
     udev
+    gtk3
+    qtbase
+    xorg.libXdamage
+    xorg.libXtst
+    xorg.libXv
   ];
+
+  dontWrapQtApps = true;
 
   runtimeDependencies = map lib.getLib [
     cups
     pango
+  ];
+
+  autoPatchelfIgnoreMissingDeps = [
+    # distribution is missing libkappessframework.so
+    "libkappessframework.so"
+    # qt4 support is deprecated
+    "libQtCore.so.4"
+    "libQtNetwork.so.4"
+    "libQtXml.so.4"
   ];
 
   installPhase = ''
@@ -79,23 +117,11 @@ stdenv.mkDerivation rec {
     runHook postInstall
   '';
 
-  dontWrapQtApps = true;
-  dontWrapGApps = true;
-
   preFixup = ''
     # The following libraries need libtiff.so.5, but nixpkgs provides libtiff.so.6
-    patchelf --replace-needed libtiff.so.5 libtiff.so $out/opt/kingsoft/wps-office/office6/{libpdfmain.so,libqpdfpaint.so,qt/plugins/imageformats/libqtiff.so}
+    patchelf --replace-needed libtiff.so.5 libtiff.so $out/opt/kingsoft/wps-office/office6/{libpdfmain.so,libqpdfpaint.so,qt/plugins/imageformats/libqtiff.so,addons/pdfbatchcompression/libpdfbatchcompressionapp.so}
     # dlopen dependency
     patchelf --add-needed libudev.so.1 $out/opt/kingsoft/wps-office/office6/addons/cef/libcef.so
-  '';
-
-  postFixup = ''
-    for f in "$out"/bin/*; do
-      echo "Wrapping $f"
-      wrapProgram "$f" \
-        "''${gappsWrapperArgs[@]}" \
-        "''${qtWrapperArgs[@]}"
-    done
   '';
 
   meta = with lib; {
@@ -105,6 +131,6 @@ stdenv.mkDerivation rec {
     sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     hydraPlatforms = [ ];
     license = licenses.unfreeRedistributable;
-    maintainers = with maintainers; [ mlatus th0rgal rewine ];
+    maintainers = with maintainers; [ mlatus th0rgal rewine pokon548 ];
   };
 }

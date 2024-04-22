@@ -5,6 +5,7 @@
 , configparser
 , distro
 , fetchFromGitHub
+, fetchpatch
 , gevent
 , jinja2
 , paramiko
@@ -18,7 +19,7 @@
 
 buildPythonPackage rec {
   pname = "pyinfra";
-  version = "2.6.2";
+  version = "2.9.2";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -27,7 +28,7 @@ buildPythonPackage rec {
     owner = "Fizzadar";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-8eYbsPBMcRhFk5eouSAHEr3q/Llj0RqR76iwn/TrSSg=";
+    hash = "sha256-lzbFwAg1aLCfBnSnqq4oVteArpkRBa7hU8V3vB5ODa8=";
   };
 
   propagatedBuildInputs = [
@@ -59,6 +60,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Python-based infrastructure automation";
+    mainProgram = "pyinfra";
     longDescription = ''
       pyinfra automates/provisions/manages/deploys infrastructure. It can be used for
       ad-hoc command execution, service deployment, configuration management and more.

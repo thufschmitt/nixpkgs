@@ -1,23 +1,21 @@
 { lib
 , stdenvNoCC
 , fetchurl
+, writeShellApplication
+, curl
+, jq
+, common-updater-scripts
 , undmg
 }:
 
-stdenvNoCC.mkDerivation rec {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "raycast";
-  version = "1.51.1";
+  version = "1.71.3";
 
   src = fetchurl {
-    # https://github.com/NixOS/nixpkgs/pull/223495
-    # official download API: https://api.raycast.app/v2/download
-    # this returns an AWS CloudFront signed URL with expiration timestamp and signature
-    # the returned URL will always be the latest Raycast which might result in an impure derivation
-    # the package maintainer created a repo (https://github.com/stepbrobd/raycast-overlay)
-    # to host GitHub Actions to periodically check for updates
-    # and re-release the `.dmg` file to Internet Archive (https://archive.org/details/raycast)
-    url = "https://archive.org/download/raycast/raycast-${version}.dmg";
-    sha256 = "sha256-6U0dsDlIuU4OjgF8lvXbtVQ+xFB54KZpasvd307jca4=";
+    name = "Raycast.dmg";
+    url = "https://releases.raycast.com/releases/${finalAttrs.version}/download?build=universal";
+    hash = "sha256-jiGo4H38qAiGMh4ckswyeDcijYL2wbcjs+IubDFjobU=";
   };
 
   dontPatch = true;
@@ -38,12 +36,23 @@ stdenvNoCC.mkDerivation rec {
     runHook postInstall
   '';
 
+  passthru.updateScript = lib.getExe (writeShellApplication {
+    name = "raycast-update-script";
+    runtimeInputs = [ curl jq common-updater-scripts ];
+    text = ''
+      set -eo pipefail
+      url=$(curl --silent "https://releases.raycast.com/releases/latest?build=universal")
+      version=$(echo "$url" | jq -r '.version')
+      update-source-version raycast "$version" --file=./pkgs/os-specific/darwin/raycast/default.nix
+    '';
+  });
+
   meta = with lib; {
     description = "Control your tools with a few keystrokes";
     homepage = "https://raycast.app/";
-    license = licenses.unfree;
+    license = with licenses; [ unfree ];
     sourceProvenance = with sourceTypes; [ binaryNativeCode ];
-    maintainers = with maintainers; [ lovesegfault stepbrobd ];
-    platforms = platforms.darwin;
+    maintainers = with maintainers; [ lovesegfault stepbrobd donteatoreo ];
+    platforms = [ "aarch64-darwin" "x86_64-darwin" ];
   };
-}
+})

@@ -2,11 +2,11 @@
 
 stdenvNoCC.mkDerivation rec {
   pname = "unifont_upper";
-  version = "15.0.01";
+  version = "15.1.05";
 
   src = fetchurl {
-    url = "mirror://gnu/unifont/unifont-${version}/${pname}-${version}.ttf";
-    hash = "sha256-o6ItW9fME+f4t2cvhj96r3ZG9nKLAUznn/pdukFYnxw=";
+    url = "mirror://gnu/unifont/unifont-${version}/${pname}-${version}.otf";
+    hash = "sha256-A/Z/+IMNUH/3Ir3ewf/U2xqkkpZDUDKO+dlnRYt+7U0=";
   };
 
   dontUnpack = true;
@@ -14,7 +14,7 @@ stdenvNoCC.mkDerivation rec {
   installPhase = ''
     runHook preInstall
 
-    install -Dm644 $src $out/share/fonts/truetype/unifont_upper.ttf
+    install -Dm644 $src $out/share/fonts/opentype/unifont_upper.otf
 
     runHook postInstall
   '';

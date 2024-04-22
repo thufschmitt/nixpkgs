@@ -1,7 +1,8 @@
 { lib
 , buildPythonPackage
 , pythonOlder
-, fetchFromBitbucket
+, fetchFromGitHub
+, setuptools
 , pyparsing
 , matplotlib
 , latex2mathml
@@ -13,17 +14,21 @@
 
 buildPythonPackage rec {
   pname = "schemdraw";
-  version = "0.16";
+  version = "0.18";
   format = "pyproject";
 
   disabled = pythonOlder "3.8";
 
-  src = fetchFromBitbucket {
+  src = fetchFromGitHub {
     owner = "cdelker";
     repo = pname;
     rev = version;
-    hash = "sha256-W9sXtYI8gEwQPRo50taEGT6AQG1tdAbeCtX49eHVvFQ=";
+    hash = "sha256-JJc3LA+fqB+2g7pPIZ8YMV921EyYpLZrHSJCYyYThZg=";
   };
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     pyparsing

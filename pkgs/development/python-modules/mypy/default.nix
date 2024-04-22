@@ -2,14 +2,14 @@
 , stdenv
 , buildPythonPackage
 , fetchFromGitHub
-, fetchpatch
+, pythonAtLeast
 , pythonOlder
 
 # build-system
 , setuptools
 , types-psutil
 , types-setuptools
-, types-typed-ast
+, wheel
 
 # propagates
 , mypy-extensions
@@ -24,60 +24,42 @@
 , attrs
 , filelock
 , pytest-xdist
-, pytest-forked
 , pytestCheckHook
-, py
-, six
 }:
 
 buildPythonPackage rec {
   pname = "mypy";
-  version = "1.0.1";
-  format = "pyproject";
+  version = "1.9.0";
+  pyproject = true;
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "python";
     repo = "mypy";
-    rev = "refs/tags/v${version}";
-    hash = "sha256-vxPEUDC6fkYYiOl5nHf0qwMgPDC+9Vw56eTUQ174raQ=";
+    rev = "refs/tags/${version}";
+    hash = "sha256-uOOZX8bKRunTOgYVbmetu2m0B7kijxBgWdNiLCAhiQ4=";
   };
 
-  patches = [
-    # Fix compatibility with setupptools>=67.4.0
-    (fetchpatch {
-      # https://github.com/python/mypy/pull/14781
-      url = "https://github.com/python/mypy/commit/ab7b69a0532a5fe976c9c2a1b713d82d630692a4.patch";
-      hash = "sha256-dtzmoOZP3tOtxrBVhgqpdv+rnrTjTKHxQhBieuJXRtA=";
-    })
-    (fetchpatch {
-      # https://github.com/python/mypy/pull/14787
-      url = "https://github.com/python/mypy/commit/243f584d43e6eb316920f3155067ce7c1b65d473.patch";
-      hash = "sha256-uuh3S5ZyuJeTXyMvav2uSEao2qq23xMjK8rJjkY8RCY=";
-      includes = [ "mypyc/build.py" ];
-    })
-  ];
-
-  nativeBuildInputs = [
+  build-system = [
     mypy-extensions
     setuptools
     types-psutil
     types-setuptools
-    types-typed-ast
     typing-extensions
+    wheel
   ] ++ lib.optionals (pythonOlder "3.11") [
     tomli
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     mypy-extensions
     typing-extensions
   ] ++ lib.optionals (pythonOlder "3.11") [
     tomli
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     dmypy = [
       psutil
     ];
@@ -106,17 +88,23 @@ buildPythonPackage rec {
     "mypy.report"
   ];
 
-  checkInputs = [
+  nativeCheckInputs = [
     attrs
     filelock
     pytest-xdist
-    pytest-forked
     pytestCheckHook
-    py
     setuptools
-    six
     tomli
-  ] ++ lib.flatten (lib.attrValues passthru.optional-dependencies);
+  ] ++ lib.flatten (lib.attrValues optional-dependencies);
+
+  disabledTests = [
+    # fails with typing-extensions>=4.10
+    # https://github.com/python/mypy/issues/17005
+    "test_runtime_typing_objects"
+  ] ++ lib.optionals (pythonAtLeast "3.12") [
+    # requires distutils
+    "test_c_unit_test"
+  ];
 
   disabledTestPaths = [
     # fails to find tyoing_extensions
@@ -124,12 +112,18 @@ buildPythonPackage rec {
     "mypy/test/testdaemon.py"
     # fails to find setuptools
     "mypyc/test/test_commandline.py"
+    # fails to find hatchling
+    "mypy/test/testpep561.py"
+  ] ++ lib.optionals stdenv.hostPlatform.isi686 [
+    # https://github.com/python/mypy/issues/15221
+    "mypyc/test/test_run.py"
   ];
 
   meta = with lib; {
     description = "Optional static typing for Python";
     homepage = "https://www.mypy-lang.org";
     license = licenses.mit;
-    maintainers = with maintainers; [ martingms lnl7 SuperSandro2000 ];
+    mainProgram = "mypy";
+    maintainers = with maintainers; [ lnl7 ];
   };
 }

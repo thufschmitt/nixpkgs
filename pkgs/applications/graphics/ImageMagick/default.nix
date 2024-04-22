@@ -25,11 +25,14 @@
 , libwebpSupport ? !stdenv.hostPlatform.isMinGW, libwebp
 , libheifSupport ? true, libheif
 , potrace
+, coreutils
 , curl
 , ApplicationServices
 , Foundation
 , testers
 , imagemagick
+, nixos-icons
+, perlPackages
 , python3
 }:
 
@@ -47,13 +50,13 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "imagemagick";
-  version = "7.1.1-8";
+  version = "7.1.1-29";
 
   src = fetchFromGitHub {
     owner = "ImageMagick";
     repo = "ImageMagick";
     rev = finalAttrs.version;
-    hash = "sha256-2wAm2y8YQwhgsPNqxGGJ65emL/kMYoVvF2phZMXTpZc=";
+    hash = "sha256-W9WbHzmTa0dA9+mOxXu88qmN1mO9ORaH0Nj6r2s1Q+E=";
   };
 
   outputs = [ "out" "dev" "doc" ]; # bin/ isn't really big
@@ -62,6 +65,10 @@ stdenv.mkDerivation (finalAttrs: {
   enableParallelBuilding = true;
 
   configureFlags = [
+    # specify delegates explicitly otherwise `convert` will invoke the build
+    # coreutils for filetypes it doesn't natively support.
+    "MVDelegate=${lib.getExe' coreutils "mv"}"
+    "RMDelegate=${lib.getExe' coreutils "rm"}"
     "--with-frozenpaths"
     (lib.withFeatureAs (arch != null) "gcc-arch" arch)
     (lib.withFeature librsvgSupport "rsvg")
@@ -124,13 +131,16 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   passthru.tests = {
-    version = testers.testVersion { package = imagemagick; };
+    version = testers.testVersion { package = finalAttrs.finalPackage; };
+    inherit nixos-icons;
+    inherit (perlPackages) ImageMagick;
     inherit (python3.pkgs) img2pdf;
     pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
   };
 
   meta = with lib; {
     homepage = "http://www.imagemagick.org/";
+    changelog = "https://github.com/ImageMagick/Website/blob/main/ChangeLog.md";
     description = "A software suite to create, edit, compose, or convert bitmap images";
     pkgConfigModules = [ "ImageMagick" "MagickWand" ];
     platforms = platforms.linux ++ platforms.darwin;

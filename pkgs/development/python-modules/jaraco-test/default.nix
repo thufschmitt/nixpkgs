@@ -2,44 +2,47 @@
 , buildPythonPackage
 , pythonOlder
 , fetchPypi
-, setuptools
 , setuptools-scm
 , toml
-, jaraco_functools
+, jaraco-functools
 , jaraco-context
 , more-itertools
-, jaraco_collections
+, jaraco-collections
 , pytestCheckHook
 }:
 
 buildPythonPackage rec {
   pname = "jaraco-test";
-  version = "5.3.0";
-  format = "pyproject";
+  version = "5.4.0";
+  pyproject = true;
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     pname = "jaraco.test";
     inherit version;
-    hash = "sha256-f2f8xTlTgXGCPlqp+dA04ulRLOTzVNEb39hNtytGHUA=";
+    hash = "sha256-29NDh4dYrcVER9YRXEYXia2zH8QHOyEpUCQwk7oxfsI=";
   };
 
-  nativeBuildInputs = [
-    setuptools
+  build-system = [
     setuptools-scm
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     toml
-    jaraco_functools
+    jaraco-functools
     jaraco-context
     more-itertools
-    jaraco_collections
+    jaraco-collections
   ];
 
   nativeCheckInputs = [
     pytestCheckHook
+  ];
+
+  disabledTestPaths = [
+    # https://github.com/jaraco/jaraco.test/issues/6
+    "jaraco/test/cpython.py"
   ];
 
   pythonImportsCheck = [

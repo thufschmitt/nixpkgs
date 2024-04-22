@@ -1,39 +1,63 @@
 { lib
 , buildPythonPackage
-, fetchFromGitHub
 , pythonOlder
-, pytestCheckHook
-, expecttest
-, pytest-timeout
+, fetchFromGitHub
+, pdm-backend
 , huggingface-hub
 , pyyaml
+, safetensors
 , torch
 , torchvision
+, expecttest
+, pytestCheckHook
+, pytest-timeout
 }:
 
 buildPythonPackage rec {
   pname = "timm";
-  version = "0.6.12";
-  disabled = pythonOlder "3.6";
+  version = "0.9.16";
+  pyproject = true;
+
+  disabled = pythonOlder "3.7";
 
   src = fetchFromGitHub {
     owner = "huggingface";
     repo = "pytorch-image-models";
     rev = "refs/tags/v${version}";
-    hash = "sha256-RNjCcCnNhtr5a+29Bx+k427a03MSooqvnuiDQ8cT8FA=";
+    hash = "sha256-IWEDKuI2565Z07q1MxTpzKS+CROPR6SyaD5fKcQ5eXk=";
   };
+
+  nativeBuildInputs = [
+    pdm-backend
+  ];
 
   propagatedBuildInputs = [
     huggingface-hub
     pyyaml
+    safetensors
     torch
     torchvision
   ];
 
-  nativeCheckInputs = [ expecttest pytestCheckHook pytest-timeout ];
-  pytestFlagsArray = [ "tests" ];
-  # takes too long and also tries to download models:
-  disabledTestPaths = [ "tests/test_models.py" ];
+  nativeCheckInputs = [
+    expecttest
+    pytestCheckHook
+    pytest-timeout
+  ];
+
+  pytestFlagsArray = [
+    "tests"
+  ];
+
+  disabledTestPaths = [
+    # Takes too long and also tries to download models
+    "tests/test_models.py"
+  ];
+
+  disabledTests = [
+    # AttributeError: 'Lookahead' object has no attribute '_optimizer_step_pre...
+    "test_lookahead"
+  ];
 
   pythonImportsCheck = [
     "timm"

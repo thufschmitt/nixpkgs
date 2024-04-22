@@ -1,39 +1,28 @@
-{ stdenv
-, lib
+{ lib
 , buildGoModule
 , fetchFromGitHub
-, writeShellScriptBin
 , runtimeShell
 , installShellFiles
+, bc
 , ncurses
-, perl
-, glibcLocales
 , testers
 , fzf
 }:
 
-let
-  # on Linux, wrap perl in the bash completion scripts with the glibc locales,
-  # so that using the shell completion (ctrl+r, etc) doesn't result in ugly
-  # warnings on non-nixos machines
-  ourPerl = if !stdenv.isLinux then perl else (
-    writeShellScriptBin "perl" ''
-      export LOCALE_ARCHIVE="${glibcLocales}/lib/locale/locale-archive"
-      exec ${perl}/bin/perl "$@"
-    '');
-in
 buildGoModule rec {
   pname = "fzf";
-  version = "0.40.0";
+  version = "0.50.0";
 
   src = fetchFromGitHub {
     owner = "junegunn";
     repo = pname;
     rev = version;
-    hash = "sha256-1+s4AqvDfeTxZcM3w2VPUY1oSStNBXs0x//t3X7/zAw=";
+    hash = "sha256-b8B05aj0+c620K6ftCXx1EGUt8mdqQYTE0D9aPU+/wA=";
   };
 
-  vendorHash = "sha256-SSz4oHUgfMRbvpdIl1xepfckef1HDA1y646FWnyBp6o=";
+  vendorHash = "sha256-Ho2jVD/U/2BFt3BF5w+KHp5nSVmukx0o2l3ISDGDSt0=";
+
+  CGO_ENABLED = 0;
 
   outputs = [ "out" "man" ];
 
@@ -54,10 +43,9 @@ buildGoModule rec {
         exit 1
     fi
 
-    # Has a sneaky dependency on perl
-    # Include first args to make sure we're patching the right thing
-    substituteInPlace shell/key-bindings.bash \
-      --replace " perl -n " " ${ourPerl}/bin/perl -n "
+    # fzf-tmux depends on bc
+    substituteInPlace bin/fzf-tmux \
+      --replace "bc" "${bc}/bin/bc"
   '';
 
   postInstall = ''
@@ -73,7 +61,10 @@ buildGoModule rec {
     install -D shell/* -t $out/share/fzf/
     install -D shell/key-bindings.fish $out/share/fish/vendor_functions.d/fzf_key_bindings.fish
     mkdir -p $out/share/fish/vendor_conf.d
-    echo fzf_key_bindings > $out/share/fish/vendor_conf.d/load-fzf-key-bindings.fish
+    cat << EOF > $out/share/fish/vendor_conf.d/load-fzf-key-bindings.fish
+      status is-interactive; or exit 0
+      fzf_key_bindings
+    EOF
 
     cat <<SCRIPT > $out/bin/fzf-share
     #!${runtimeShell}
@@ -95,5 +86,6 @@ buildGoModule rec {
     maintainers = with maintainers; [ Br1ght0ne ma27 zowoq ];
     platforms = platforms.unix;
     changelog = "https://github.com/junegunn/fzf/blob/${version}/CHANGELOG.md";
+    mainProgram = "fzf";
   };
 }

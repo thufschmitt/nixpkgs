@@ -1,17 +1,14 @@
 { lib, stdenv, fetchFromGitHub, kernel }:
 
-let
-  rev = "ee299797bcd54d5b8c58d2da8576c54cea1a03a2";
-in
 stdenv.mkDerivation rec {
   pname = "rtl88xxau-aircrack";
-  version = "${kernel.version}-${builtins.substring 0 6 rev}";
+  version = "${kernel.version}-unstable-2024-04-09";
 
   src = fetchFromGitHub {
     owner = "aircrack-ng";
     repo = "rtl8812au";
-    inherit rev;
-    sha256 = "sha256-JUyUOqLMD9nSo6i87K/6Ljp+pWSqSBz/IZiFWu03rQw=";
+    rev = "63cf0b4584aa8878b0fe8ab38017f31c319bde3d";
+    hash = "sha256-tDsI/ZzsQm9999EpCpDFArfEIg/ueUJEbSYESbGxd4A=";
   };
 
   nativeBuildInputs = kernel.moduleBuildDependencies;
@@ -32,10 +29,12 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   meta = with lib; {
-    description = "Aircrack-ng kernel module for Realtek 88XXau network cards\n(8811au, 8812au, 8814au and 8821au chipsets) with monitor mode and injection support.";
+    description = ''
+      Aircrack-ng kernel module for Realtek 88XXau network cards
+      (8811au, 8812au, 8814au and 8821au chipsets) with monitor mode and injection support.'';
     homepage = "https://github.com/aircrack-ng/rtl8812au";
     license = licenses.gpl2Only;
-    maintainers = [ maintainers.jethro ];
+    maintainers = [ maintainers.ja1den maintainers.jethro ];
     platforms = [ "x86_64-linux" "i686-linux" "aarch64-linux" ];
   };
 }

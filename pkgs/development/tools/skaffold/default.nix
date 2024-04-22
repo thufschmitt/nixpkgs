@@ -1,14 +1,14 @@
-{ lib, buildGoModule, fetchFromGitHub, installShellFiles }:
+{ lib, buildGoModule, fetchFromGitHub, installShellFiles, makeWrapper }:
 
 buildGoModule rec {
   pname = "skaffold";
-  version = "2.4.0";
+  version = "2.11.0";
 
   src = fetchFromGitHub {
     owner = "GoogleContainerTools";
     repo = "skaffold";
     rev = "v${version}";
-    hash = "sha256-feUR8R8mlKfSV2ct9EeAcEHJiK7Hb5PAXTnES9UG2Qc=";
+    hash = "sha256-xaRVgvYK6xWSy75K7AOkSw4ZjXn3xR0NqbBBbbK5MVU=";
   };
 
   vendorHash = null;
@@ -22,7 +22,7 @@ buildGoModule rec {
     "-X ${t}/version.buildDate=unknown"
   ];
 
-  nativeBuildInputs = [ installShellFiles ];
+  nativeBuildInputs = [ installShellFiles makeWrapper ];
 
   doInstallCheck = true;
   installCheckPhase = ''
@@ -30,6 +30,8 @@ buildGoModule rec {
   '';
 
   postInstall = ''
+    wrapProgram $out/bin/skaffold --set SKAFFOLD_UPDATE_CHECK false
+
     installShellCompletion --cmd skaffold \
       --bash <($out/bin/skaffold completion bash) \
       --zsh <($out/bin/skaffold completion zsh)
@@ -39,6 +41,7 @@ buildGoModule rec {
     homepage = "https://skaffold.dev/";
     changelog = "https://github.com/GoogleContainerTools/skaffold/releases/tag/v${version}";
     description = "Easy and Repeatable Kubernetes Development";
+    mainProgram = "skaffold";
     longDescription = ''
       Skaffold is a command line tool that facilitates continuous development for Kubernetes applications.
       You can iterate on your application source code locally then deploy to local or remote Kubernetes clusters.

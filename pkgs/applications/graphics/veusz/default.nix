@@ -1,14 +1,15 @@
-{ python3Packages
-, qtbase
+{ lib
+, python3Packages
+, fetchPypi
 , wrapQtAppsHook
-, lib
+, qtbase
 }:
 
 python3Packages.buildPythonApplication rec {
   pname = "veusz";
   version = "3.6.2";
 
-  src = python3Packages.fetchPypi {
+  src = fetchPypi {
     inherit pname version;
     sha256 = "whcaxF5LMEJNj8NSYeLpnb5uJboRl+vCQ1WxBrJjldE=";
   };
@@ -61,6 +62,7 @@ python3Packages.buildPythonApplication rec {
 
   meta = with lib; {
     description = "A scientific plotting and graphing program with a GUI";
+    mainProgram = "veusz";
     homepage = "https://veusz.github.io/";
     license = licenses.gpl2Plus;
     platforms = platforms.linux;

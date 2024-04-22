@@ -13,8 +13,10 @@
 , fmt_9
 , glm
 , gtk3
+, hidapi
 , imgui
 , libpng
+, libusb1
 , libzip
 , libXrender
 , pugixml
@@ -23,21 +25,34 @@
 , wayland
 , wxGTK32
 , zarchive
-
+, gamemode
 , vulkan-loader
 
 , nix-update-script
 }:
 
-stdenv.mkDerivation rec {
+let
+  # cemu doesn't build with imgui 1.90.2 or newer:
+  # error: 'struct ImGuiIO' has no member named 'ImeWindowHandle'
+  imgui' = imgui.overrideAttrs rec {
+    version = "1.90.1";
+    src = fetchFromGitHub {
+      owner = "ocornut";
+      repo = "imgui";
+      rev = "v${version}";
+      sha256 = "sha256-gf47uLeNiXQic43buB5ZnMqiotlUfIyAsP+3H7yJuFg=";
+    };
+  };
+
+in stdenv.mkDerivation rec {
   pname = "cemu";
-  version = "2.0-36";
+  version = "2.0-79";
 
   src = fetchFromGitHub {
     owner = "cemu-project";
     repo = "Cemu";
     rev = "v${version}";
-    hash = "sha256-RO8c9gLK00LLwDzcD8UOS3kh3kwTwFyrpuRlIXcInPo=";
+    hash = "sha256-vSZLiRzOOJJMgycjI5xpgJcUAj5WCz241mAABgNuECw=";
   };
 
   patches = [
@@ -64,8 +79,10 @@ stdenv.mkDerivation rec {
     fmt_9
     glm
     gtk3
-    imgui
+    hidapi
+    imgui'
     libpng
+    libusb1
     libzip
     libXrender
     pugixml
@@ -80,6 +97,7 @@ stdenv.mkDerivation rec {
     "-DCMAKE_C_FLAGS_RELEASE=-DNDEBUG"
     "-DCMAKE_CXX_FLAGS_RELEASE=-DNDEBUG"
     "-DENABLE_VCPKG=OFF"
+    "-DENABLE_FERAL_GAMEMODE=ON"
 
     # PORTABLE:
     # "All data created and maintained by Cemu will be in the directory where the executable file is located"
@@ -90,8 +108,9 @@ stdenv.mkDerivation rec {
     tag = last (splitString "-" version);
   in ''
     rm -rf dependencies/imgui
-    ln -s ${imgui}/include/imgui dependencies/imgui
-    sed 's/\(EMULATOR_VERSION_SUFFIX\).*experimental.*/\1 "-${tag} (experimental)"/' -i src/Common/version.h
+    ln -s ${imgui'}/include/imgui dependencies/imgui
+    substituteInPlace src/Common/version.h --replace " (experimental)" "-${tag} (experimental)"
+    substituteInPlace dependencies/gamemode/lib/gamemode_client.h --replace "libgamemode.so.0" "${gamemode.lib}/lib/libgamemode.so.0"
   '';
 
   installPhase = ''
@@ -126,5 +145,6 @@ stdenv.mkDerivation rec {
     license = licenses.mpl20;
     platforms = [ "x86_64-linux" ];
     maintainers = with maintainers; [ zhaofengli baduhai ];
+    mainProgram = "cemu";
   };
 }

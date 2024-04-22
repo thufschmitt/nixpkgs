@@ -3,31 +3,43 @@
 , fetchFromGitHub
 , poetry-core
 , pytestCheckHook
+, pythonOlder
 }:
 
 buildPythonPackage rec {
   pname = "crc";
-  version = "4.2.0";
-  format = "pyproject";
+  version = "6.1.2";
+  pyproject = true;
+
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "Nicoretti";
-    repo = pname;
+    repo = "crc";
     rev = "refs/tags/${version}";
-    hash = "sha256-h/RVMIJX+Lyted0FHNBcKY54EiirSclkBXCpAQSATq8=";
+    hash = "sha256-d946yBMrOIgMXGOr2ej5bvn59D5iAGMese24qdv8l/Y=";
   };
 
-  nativeBuildInputs = [ poetry-core ];
+  nativeBuildInputs = [
+    poetry-core
+  ];
 
-  pythonImportsCheck = [ "crc" ];
+  nativeCheckInputs = [
+    pytestCheckHook
+  ];
 
-  nativeCheckInputs = [ pytestCheckHook ];
+  pythonImportsCheck = [
+    "crc"
+  ];
 
-  disabledTestPaths = [ "test/bench" ];
+  disabledTestPaths = [
+    "test/bench"
+  ];
 
   meta = with lib; {
     changelog = "https://github.com/Nicoretti/crc/releases/tag/${version}";
     description = "Python module for calculating and verifying predefined & custom CRC's";
+    mainProgram = "crc";
     homepage = "https://nicoretti.github.io/crc/";
     license = licenses.bsd2;
     maintainers = with maintainers; [ jleightcap ];

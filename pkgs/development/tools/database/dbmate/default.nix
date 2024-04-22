@@ -1,25 +1,29 @@
-{ lib, buildGoModule, fetchFromGitHub }:
+{ lib
+, buildGoModule
+, fetchFromGitHub
+}:
 
 buildGoModule rec {
   pname = "dbmate";
-  version = "2.2.0";
+  version = "2.15.0";
 
   src = fetchFromGitHub {
     owner = "amacneil";
     repo = "dbmate";
-    rev = "v${version}";
-    sha256 = "sha256-K81AyhQfM1hBoA1gpU1MdcdkUnn2YKyig+fExVsMwMI=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-crn2FSJm7CSBg5TOcB5bJOsWqBrlwDoik7OS3HiCIGw=";
   };
 
-  vendorHash = "sha256-NZ2HVFViU8Vzwyo33cueNJwdCT4exZlB7g4WgoWKZBE=";
+  vendorHash = "sha256-eFGQ59fdS+QQounT/byA0w9W+MK2Lhp+mlXAWWAtk6U=";
 
   doCheck = false;
 
   meta = with lib; {
     description = "Database migration tool";
+    mainProgram = "dbmate";
     homepage = "https://github.com/amacneil/dbmate";
+    changelog = "https://github.com/amacneil/dbmate/releases/tag/v${version}";
     license = licenses.mit;
-    maintainers = [ maintainers.manveru ];
-    platforms = platforms.unix;
+    maintainers = with maintainers; [ manveru ];
   };
 }

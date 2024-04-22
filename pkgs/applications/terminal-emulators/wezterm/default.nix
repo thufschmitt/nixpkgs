@@ -22,6 +22,7 @@
 , CoreGraphics
 , Cocoa
 , Foundation
+, System
 , libiconv
 , UserNotifications
 , nixosTests
@@ -31,14 +32,14 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "wezterm";
-  version = "20230408-112425-69ae8472";
+  version = "20240203-110809-5046fc22";
 
   src = fetchFromGitHub {
     owner = "wez";
     repo = pname;
     rev = version;
     fetchSubmodules = true;
-    hash = "sha256-Uk6I/JtSkGCQGG95DDD1hsu40X00/k5d44WP3OJ+rn4=";
+    hash = "sha256-Az+HlnK/lRJpUSGm5UKyma1l2PaBKNCGFiaYnLECMX8=";
   };
 
   postPatch = ''
@@ -51,8 +52,7 @@ rustPlatform.buildRustPackage rec {
   cargoLock = {
     lockFile = ./Cargo.lock;
     outputHashes = {
-      "image-0.24.5" = "sha256-fTajVwm88OInqCPZerWcSAm1ga46ansQ3EzAmbT58Js=";
-      "xcb-imdkit-0.2.0" = "sha256-QOT9HLlA26DVPUF4ViKH2ckexUsu45KZMdJwoUhW+hA=";
+      "xcb-imdkit-0.3.0" = "sha256-fTpJ6uNhjmCWv7dZqVgYuS2Uic36XNYTbqlaly5QBjI=";
     };
   };
 
@@ -81,10 +81,13 @@ rustPlatform.buildRustPackage rec {
     CoreGraphics
     Foundation
     libiconv
+    System
     UserNotifications
   ];
 
   buildFeatures = [ "distro-defaults" ];
+
+  env.NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-framework System";
 
   postInstall = ''
     mkdir -p $out/nix-support
@@ -120,7 +123,8 @@ rustPlatform.buildRustPackage rec {
   passthru = {
     tests = {
       all-terminfo = nixosTests.allTerminfo;
-      terminal-emulators = nixosTests.terminal-emulators.wezterm;
+      # the test is commented out in nixos/tests/terminal-emulators.nix
+      #terminal-emulators = nixosTests.terminal-emulators.wezterm;
     };
     terminfo = runCommand "wezterm-terminfo"
       {
@@ -135,6 +139,7 @@ rustPlatform.buildRustPackage rec {
     description = "GPU-accelerated cross-platform terminal emulator and multiplexer written by @wez and implemented in Rust";
     homepage = "https://wezfurlong.org/wezterm";
     license = licenses.mit;
+    mainProgram = "wezterm";
     maintainers = with maintainers; [ SuperSandro2000 mimame ];
   };
 }

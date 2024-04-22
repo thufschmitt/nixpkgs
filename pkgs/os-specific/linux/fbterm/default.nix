@@ -35,6 +35,10 @@ stdenv.mkDerivation rec {
     ncurses
   ];
 
+  makeFlags = [
+    "AR:=$(AR)"
+  ];
+
   # preConfigure = ''
   #   sed -e '/ifdef SYS_signalfd/atypedef long long loff_t;' -i src/fbterm.cpp
   #   sed -e '/install-exec-hook:/,/^[^\t]/{d}; /.NOEXPORT/iinstall-exec-hook:\
@@ -92,6 +96,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "Framebuffer terminal emulator";
+    mainProgram = "fbterm";
     homepage = "https://salsa.debian.org/debian/fbterm";
     maintainers = with maintainers; [ lovesegfault raskin ];
     license = licenses.gpl2;

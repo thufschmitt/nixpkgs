@@ -1,6 +1,7 @@
 { lib
 , stdenv
 , fetchFromGitHub
+, fetchpatch
 , python3
 , meson
 , ninja
@@ -10,6 +11,7 @@
 , gtk4
 , libgee
 , libadwaita
+, libportal-gtk4
 , json-glib
 , blueprint-compiler
 , gtksourceview5
@@ -20,17 +22,17 @@
 }:
 
 let
-  pythonEnv = python3.withPackages ( ps: with ps; [ pyyaml ] );
+  pythonEnv = python3.withPackages (ps: with ps; [ pyyaml ]);
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "textpieces";
-  version = "3.4.0";
+  version = "3.4.1";
 
   src = fetchFromGitHub {
     owner = "liferooter";
-    repo = pname;
-    rev = "v${version}";
-    hash = "sha256-LQq6pjue72a4kIHhWtoxJi/eKxPa4du5sBQY97SG1gY=";
+    repo = "textpieces";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-3ZUHzt3oXYgsnJVDf83JUDhcF+0DLgFfOMtpKI/FTcE=";
   };
 
   nativeBuildInputs = [
@@ -43,20 +45,28 @@ stdenv.mkDerivation rec {
     wrapGAppsHook4
     appstream-glib
     desktop-file-utils
+    gobject-introspection
   ];
 
   buildInputs = [
     glib
     gtk4
     libadwaita
+    libportal-gtk4
     libgee
     json-glib
     gtksourceview5
-    gobject-introspection
   ];
 
   runtimeDependencies = [
     pythonEnv
+  ];
+
+  patches = [
+  (fetchpatch {
+    url = "https://github.com/liferooter/textpieces/commit/26348782b9fddc5f2ffb9497cf18ec8ce9592960.patch";
+    hash = "sha256-w86PCeDhoyMPm63GCBa2Ax8KfCdlxtmGeUrmt1ZSz1k=";
+  })
   ];
 
   postPatch = ''
@@ -73,4 +83,4 @@ stdenv.mkDerivation rec {
     platforms = platforms.linux;
     maintainers = with maintainers; [ zendo ];
   };
-}
+})

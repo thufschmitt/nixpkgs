@@ -13,13 +13,14 @@
 
 stdenv.mkDerivation rec {
   pname = "c-ares";
-  version = "1.19.0";
-  outputs = [ "out" "dev" ];
+  version = "1.27.0";
 
   src = fetchurl {
-    url = "https://c-ares.haxx.se/download/${pname}-${version}.tar.gz";
-    sha256 = "sha256-v866N+I/1TEpOCkALKwEAe9JptxVkj9/kiNlhbetHdM=";
+    url = "https://c-ares.org/download/${pname}-${version}.tar.gz";
+    hash = "sha256-CnK+ZpWZVcQ+KvL70DQY6Cor1UZGBOyaYhR+N6zrQgs=";
   };
+
+  outputs = [ "out" "dev" "man" ];
 
   nativeBuildInputs = lib.optionals withCMake [ cmake ];
 
@@ -31,7 +32,8 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = true;
 
   passthru.tests = {
-    inherit curl grpc;
+    inherit grpc;
+    curl = (curl.override { c-aresSupport = true; }).tests.withCheck;
   };
 
   meta = with lib; {

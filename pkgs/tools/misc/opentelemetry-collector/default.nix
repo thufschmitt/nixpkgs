@@ -1,27 +1,31 @@
 { lib
 , buildGoModule
 , fetchFromGitHub
+, installShellFiles
+, testers
+, opentelemetry-collector
 }:
 
 buildGoModule rec {
   pname = "opentelemetry-collector";
-  version = "0.77.0";
+  version = "0.97.0";
 
   src = fetchFromGitHub {
     owner = "open-telemetry";
     repo = "opentelemetry-collector";
     rev = "v${version}";
-    hash = "sha256-koPkEOtB5KnePdx67hJ/WNBojNDqKvf9kqYb59bwh8k=";
+    hash = "sha256-0zTEaSylZEU7mCCrMf9aV8V0MMD4Au4y0zacWSLcujg=";
   };
   # there is a nested go.mod
-  sourceRoot = "source/cmd/otelcorecol";
-  vendorHash = "sha256-M1fLrQFrcfCRCcunkgEzUicVfi5Mz/Or6tFpcGfWf4E=";
+  sourceRoot = "${src.name}/cmd/otelcorecol";
+  vendorHash = "sha256-/8WxTtTTuwdPP/4Bix8d9nkR/w6MDKLyumv4KBx5VqU=";
 
-  patches = [
-    # remove when fixed upstream
-    # https://github.com/open-telemetry/opentelemetry-collector/issues/7668
-    ./update_go-m1cpu_fix_aarch64-darwin.patch
-  ];
+  nativeBuildInputs = [ installShellFiles ];
+
+  # upstream strongly recommends disabling CGO
+  # additionally dependencies have had issues when GCO was enabled that weren't caught upstream
+  # https://github.com/open-telemetry/opentelemetry-collector/blob/main/CONTRIBUTING.md#using-cgo
+  CGO_ENABLED = 0;
 
   preBuild = ''
     # set the build version, can't be done via ldflags
@@ -29,6 +33,19 @@ buildGoModule rec {
   '';
 
   ldflags = [ "-s" "-w" ];
+
+  postInstall = ''
+    installShellCompletion --cmd otelcorecol \
+      --bash <($out/bin/otelcorecol completion bash) \
+      --fish <($out/bin/otelcorecol completion fish) \
+      --zsh <($out/bin/otelcorecol completion zsh)
+  '';
+
+  passthru.tests.version = testers.testVersion {
+    inherit version;
+    package = opentelemetry-collector;
+    command = "otelcorecol -v";
+  };
 
   meta = with lib; {
     homepage = "https://github.com/open-telemetry/opentelemetry-collector";
@@ -43,5 +60,6 @@ buildGoModule rec {
     '';
     license = licenses.asl20;
     maintainers = with maintainers; [ uri-canva jk ];
+    mainProgram = "otelcorecol";
   };
 }

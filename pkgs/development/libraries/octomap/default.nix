@@ -2,16 +2,16 @@
 
 stdenv.mkDerivation rec {
   pname = "octomap";
-  version = "1.9.8";
+  version = "1.10.0";
 
   src = fetchFromGitHub {
     owner = "OctoMap";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-qE5i4dGugm7tR5tgDCpbla/R7hYR/PI8BzrZQ4y6Yz8=";
+    hash = "sha256-QxQHxxFciR6cvB/b8i0mr1hqGxOXhXmB4zgdsD977Mw=";
   };
 
-  sourceRoot = "source/octomap";
+  sourceRoot = "${src.name}/octomap";
 
   nativeBuildInputs = [ cmake ];
 

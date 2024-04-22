@@ -4,22 +4,27 @@
 , fetchFromGitHub
 , ruby
 , which
-, runCommand
-, darwin
+, nix-update-script
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "rbspy";
-  version = "0.17.0";
+  version = "0.19.1";
 
   src = fetchFromGitHub {
-    owner = pname;
-    repo = pname;
-    rev = "v${version}";
-    hash = "sha256-NshDX7sbXnmK6k/EDD5thUcNKvSV4bNdJ5N2hNLlsnA=";
+    owner = "rbspy";
+    repo = "rbspy";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-2+miC7cp6YbeI7uucFlSdlDpPboJOhhBq7/eqXxZVqs=";
   };
 
-  cargoHash = "sha256-JzspNL4T28awa/1Uajw0gLM3bYyUBYTjnfCXn9qG7SY=";
+  cargoHash = "sha256-I+nh6cKniPIG5VYMMsABZNSP/c3DLWswsjenaQBh/X8=";
+
+  # error: linker `aarch64-linux-gnu-gcc` not found
+  postPatch = ''
+    rm .cargo/config
+  '';
+
   doCheck = true;
 
   # The current implementation of rbspy fails to detect the version of ruby
@@ -39,23 +44,18 @@ rustPlatform.buildRustPackage rec {
     "--skip=test_sample_subprocesses"
   ];
 
-  nativeBuildInputs = [ ruby which ];
+  nativeBuildInputs = [
+    ruby
+    which
+  ] ++ lib.optional stdenv.isDarwin rustPlatform.bindgenHook;
 
-  buildInputs = lib.optionals (stdenv.isDarwin && stdenv.isx86_64) [
-    # Pull a header that contains a definition of proc_pid_rusage().
-    (runCommand "${pname}_headers" { } ''
-      install -Dm444 ${lib.getDev darwin.apple_sdk.sdk}/include/libproc.h $out/include/libproc.h
-    '')
-  ];
-
-  LIBCLANG_PATH = lib.optionalString stdenv.isDarwin "${stdenv.cc.cc.lib}/lib";
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
-    broken = (stdenv.isLinux && stdenv.isAarch64);
     homepage = "https://rbspy.github.io/";
-    description = ''
-      A Sampling CPU Profiler for Ruby.
-    '';
+    description = "A Sampling CPU Profiler for Ruby";
+    mainProgram = "rbspy";
+    changelog = "https://github.com/rbspy/rbspy/releases/tag/v${version}";
     license = licenses.mit;
     maintainers = with maintainers; [ viraptor ];
     platforms = platforms.linux ++ platforms.darwin;

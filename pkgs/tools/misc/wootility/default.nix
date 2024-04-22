@@ -5,16 +5,14 @@
 , udev
 , wooting-udev-rules
 }:
-let
-  pname = "wootility";
-  version = "3.5.12";
-in
+
 appimageTools.wrapType2 rec {
-  name = "${pname}-${version}";
+  pname = "wootility";
+  version = "4.6.15";
 
   src = fetchurl {
-    url = "https://s3.eu-west-2.amazonaws.com/wooting-update/wootility-linux-latest/wootility-${version}.AppImage";
-    sha256 = "13bhckk25fzq9r9cdsg3yqjd4kn47asqdx8kw0in8iky4ri41vnc";
+    url = "https://s3.eu-west-2.amazonaws.com/wooting-update/wootility-lekker-linux-latest/wootility-lekker-${version}.AppImage";
+    sha256 = "sha256-A/cjm9rhcgp68hbyjy7OfYPBKBcccl0OdD7MTdpEdPM=";
   };
 
   profile = ''
@@ -28,7 +26,7 @@ appimageTools.wrapType2 rec {
       wooting-udev-rules
       xorg.libxkbfile
     ]);
-  extraInstallCommands = "mv $out/bin/{${name},${pname}}";
+  extraInstallCommands = "mv $out/bin/{${pname}-${version},${pname}}";
 
   meta = with lib; {
     homepage = "https://wooting.io/wootility";
@@ -36,5 +34,6 @@ appimageTools.wrapType2 rec {
     platforms = [ "x86_64-linux" ];
     license = "unknown";
     maintainers = with maintainers; [ davidtwco ];
+    mainProgram = "wootility";
   };
 }

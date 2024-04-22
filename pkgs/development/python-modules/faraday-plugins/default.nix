@@ -6,19 +6,21 @@
 , fetchFromGitHub
 , html2text
 , lxml
+, markdown
 , pytestCheckHook
 , python-dateutil
 , pythonOlder
 , pytz
 , requests
+, setuptools
 , simplejson
 , tabulate
 }:
 
 buildPythonPackage rec {
   pname = "faraday-plugins";
-  version = "1.11.0";
-  format = "setuptools";
+  version = "1.17.0";
+  pyproject = true;
 
   disabled = pythonOlder "3.7";
 
@@ -26,13 +28,17 @@ buildPythonPackage rec {
     owner = "infobyte";
     repo = "faraday_plugins";
     rev = "refs/tags/${version}";
-    hash = "sha256-rbmD+UeMzsccYq7AzANziUZCgKtShRe/fJersODMrF8=";
+    hash = "sha256-EE61RPantD1u9NNhyPRjoRkBifM3u16b0BC2aQC8UBA=";
   };
 
   postPatch = ''
     substituteInPlace setup.py \
-      --replace "version=version," "version='${version}',"
+      --replace-warn "version=version," "version='${version}',"
   '';
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     beautifulsoup4
@@ -40,6 +46,7 @@ buildPythonPackage rec {
     colorama
     html2text
     lxml
+    markdown
     python-dateutil
     pytz
     requests
@@ -71,6 +78,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Security tools report parsers for Faraday";
+    mainProgram = "faraday-plugins";
     homepage = "https://github.com/infobyte/faraday_plugins";
     changelog = "https://github.com/infobyte/faraday_plugins/releases/tag/${version}";
     license = with licenses; [ gpl3Only ];

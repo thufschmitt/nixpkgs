@@ -18,7 +18,7 @@
 
 stdenv.mkDerivation rec {
   pname = "gst-editing-services";
-  version = "1.22.2";
+  version = "1.22.9";
 
   outputs = [
     "out"
@@ -27,7 +27,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://gstreamer.freedesktop.org/src/${pname}/${pname}-${version}.tar.xz";
-    hash = "sha256-RTsUZPw4V94mmnyw69lmr+Ahcdl772cqC4oKbUPgzr8=";
+    hash = "sha256-NVOtOALczeDA7xRhiBrNm1W934rfdR3ky1G3+MtQRA0=";
   };
 
   nativeBuildInputs = [
@@ -45,7 +45,6 @@ stdenv.mkDerivation rec {
   buildInputs = [
     bash-completion
     libxml2
-    gobject-introspection
     gst-devtools
     python3
   ];
@@ -66,8 +65,10 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "Library for creation of audio/video non-linear editors";
+    mainProgram = "ges-launch-1.0";
     homepage = "https://gstreamer.freedesktop.org";
     license = licenses.lgpl2Plus;
     platforms = platforms.unix;
+    maintainers = with maintainers; [ lilyinstarlight ];
   };
 }

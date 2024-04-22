@@ -1,17 +1,17 @@
 { lib, stdenv, fetchFromGitHub, meson, ninja, pkg-config, scdoc
-, systemd, pango, cairo, gdk-pixbuf, jq
+, systemd, pango, cairo, gdk-pixbuf, jq, bash
 , wayland, wayland-protocols
 , wrapGAppsHook }:
 
 stdenv.mkDerivation rec {
   pname = "mako";
-  version = "1.7.1";
+  version = "1.8.0";
 
   src = fetchFromGitHub {
     owner = "emersion";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-/+XYf8FiH4lk7f7/pMt43hm13mRK+UqvaNOpf1TI6m4=";
+    sha256 = "sha256-sUFMcCrc5iNPeAmRbqDaT/n8OIlFJEwJTzY1HMx94RU=";
   };
 
   depsBuildBuild = [ pkg-config ];
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
 
   preFixup = ''
     gappsWrapperArgs+=(
-      --prefix PATH : "${lib.makeBinPath [ systemd /* for busctl */ jq ]}"
+      --prefix PATH : "${lib.makeBinPath [ systemd /* for busctl */ jq bash ]}"
     )
   '';
 
@@ -35,5 +35,6 @@ stdenv.mkDerivation rec {
     license = licenses.mit;
     maintainers = with maintainers; [ dywedir synthetica ];
     platforms = platforms.linux;
+    mainProgram = "mako";
   };
 }

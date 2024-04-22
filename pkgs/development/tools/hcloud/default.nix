@@ -1,21 +1,26 @@
-{ lib, buildGoModule, fetchFromGitHub, installShellFiles }:
+{ lib
+, buildGoModule
+, fetchFromGitHub
+, installShellFiles
+}:
 
 buildGoModule rec {
   pname = "hcloud";
-  version = "1.33.1";
+  version = "1.43.0";
 
   src = fetchFromGitHub {
     owner = "hetznercloud";
     repo = "cli";
-    rev = "v${version}";
-    sha256 = "sha256-0mbEQwKmhID4luzW1mMThilWR6R8rmF4ZY4/weNkDvs=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-czuMlnVhUDWGVbIZ0V7vaoOnT84WKPFjhcUvt5BzBXo=";
   };
 
-  vendorHash = "sha256-gz8vSVWh9wyM91rjJT102UJXBpeDoU895lTrHHZpj3I=";
+  vendorHash = "sha256-0XFgi2cPlsL4zCbttGrEsm0j5ftB8MAuphu3YNlPbIs=";
 
   ldflags = [
-    "-s" "-w"
-    "-X github.com/hetznercloud/cli/internal/version.Version=${version}"
+    "-s"
+    "-w"
+    "-X=github.com/hetznercloud/cli/internal/version.Version=${version}"
   ];
 
   nativeBuildInputs = [ installShellFiles ];
@@ -27,11 +32,12 @@ buildGoModule rec {
     done
   '';
 
-  meta = {
+  meta = with lib; {
     changelog = "https://github.com/hetznercloud/cli/releases/tag/v${version}";
     description = "A command-line interface for Hetzner Cloud, a provider for cloud virtual private servers";
+    mainProgram = "hcloud";
     homepage = "https://github.com/hetznercloud/cli";
-    license = lib.licenses.mit;
-    maintainers = [ lib.maintainers.zauberpony ];
+    license = licenses.mit;
+    maintainers = with maintainers; [ zauberpony techknowlogick ];
   };
 }

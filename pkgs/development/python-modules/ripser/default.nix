@@ -12,14 +12,14 @@
 
 buildPythonPackage rec {
   pname = "ripser";
-  version = "0.6.4";
+  version = "0.6.8";
   format = "setuptools";
 
   disabled = pythonOlder "3.6";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-eps+lCCGnFDfhemkRskSuK+BYh5iyhr4+UksYzW35ZQ=";
+    hash = "sha256-J5ctOvGtmg/e2ls7fN59LR4AbHedC9gKk6f8jIDIoFI=";
   };
 
   nativeBuildInputs = [
@@ -53,6 +53,6 @@ buildPythonPackage rec {
     homepage = "https://ripser.scikit-tda.org";
     changelog = "https://github.com/scikit-tda/ripser.py/blob/${version}/CHANGELOG.md";
     license = licenses.mit;
-    maintainers = with maintainers; [ costrouc ];
+    maintainers = with maintainers; [ ];
   };
 }

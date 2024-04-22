@@ -1,30 +1,35 @@
-{ lib
-, aiohttp
-, aioresponses
-, buildPythonPackage
-, fetchFromGitHub
-, orjson
-, pytest-asyncio
-, pytest-error-for-skips
-, pytestCheckHook
-, pythonOlder
+{
+  lib,
+  aiohttp,
+  aioresponses,
+  buildPythonPackage,
+  fetchFromGitHub,
+  orjson,
+  pytest-asyncio,
+  pytest-error-for-skips,
+  pytestCheckHook,
+  pythonOlder,
+  setuptools,
+  syrupy,
 }:
 
 buildPythonPackage rec {
   pname = "accuweather";
-  version = "0.5.1";
-  format = "setuptools";
+  version = "3.0.0";
+  pyproject = true;
 
-  disabled = pythonOlder "3.9";
+  disabled = pythonOlder "3.11";
 
   src = fetchFromGitHub {
     owner = "bieniu";
-    repo = pname;
+    repo = "accuweather";
     rev = "refs/tags/${version}";
-    hash = "sha256-kWhb9tDp7/p5iCXTpf4/fjSo1ceuA9I2eqSprt50rWU=";
+    hash = "sha256-hnKwK0I8C8Xh7yn4yk2DqowqgyZYDB22IEllm5MeIGo=";
   };
 
-  propagatedBuildInputs = [
+  build-system = [ setuptools ];
+
+  dependencies = [
     aiohttp
     orjson
   ];
@@ -34,11 +39,10 @@ buildPythonPackage rec {
     pytest-asyncio
     pytest-error-for-skips
     pytestCheckHook
+    syrupy
   ];
 
-  pythonImportsCheck = [
-    "accuweather"
-  ];
+  pythonImportsCheck = [ "accuweather" ];
 
   meta = with lib; {
     description = "Python wrapper for getting weather data from AccuWeather servers";

@@ -14,28 +14,28 @@
 
 buildPythonPackage rec {
   pname = "aiopvpc";
-  version = "4.1.0";
-  format = "pyproject";
+  version = "4.3.1";
+  pyproject = true;
 
   disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "azogue";
-    repo = pname;
+    repo = "aiopvpc";
     rev = "refs/tags/v${version}";
-    hash = "sha256-ixHLFVPlDZKQkPMrOt8PG5z+e84UlygQutkyS8wCZR4=";
+    hash = "sha256-1xeXfhoXRfJ7vrpRPeYmwcAGjL09iNCOm/f4pPvuZLU=";
   };
 
   postPatch = ''
-    substituteInPlace pyproject.toml --replace \
-      " --cov --cov-report term --cov-report html" ""
+    substituteInPlace pyproject.toml \
+      --replace-fail " --cov --cov-report term --cov-report html" ""
   '';
 
-  nativeBuildInputs = [
+  build-system = [
     poetry-core
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     aiohttp
     async-timeout
   ] ++ lib.optionals (pythonOlder "3.9") [

@@ -1,7 +1,6 @@
 { lib
 , stdenv
 , fetchurl
-, fetchpatch
 , python
 , root
 , makeWrapper
@@ -11,11 +10,11 @@
 
 stdenv.mkDerivation rec {
   pname = "yoda";
-  version = "1.9.8";
+  version = "1.9.10";
 
   src = fetchurl {
     url = "https://www.hepforge.org/archive/yoda/YODA-${version}.tar.bz2";
-    hash = "sha256-e8MGJGirulCv8+y4sizmdxlgNgCYkGiO9FM6qn+S5uQ=";
+    hash = "sha256-CnCO6dcElF0zh8xDexX/3fOCxw/lurOe0r2/g8LCjG8=";
   };
 
   nativeBuildInputs = with python.pkgs; [

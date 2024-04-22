@@ -3,12 +3,12 @@
 }:
 
 mkDerivation rec {
-  version = "2.3.6.1";
+  version = "2.3.7-1";
   pname = "lyx";
 
   src = fetchurl {
     url = "ftp://ftp.lyx.org/pub/lyx/stable/2.3.x/${pname}-${version}.tar.xz";
-    sha256 = "sha256-xr7SYzQZiY4Bp8w1AxDX2TS/WRyrcln8JYGqTADq+ng=";
+    sha256 = "sha256-Ob6IZPuGs06IMQ5w+4Dl6eKWYB8IVs8WGqCUFxcY2O0=";
   };
 
   # Needed with GCC 12
@@ -18,7 +18,7 @@ mkDerivation rec {
   '';
 
   # LaTeX is used from $PATH, as people often want to have it with extra pkgs
-  nativeBuildInputs = [ pkg-config makeWrapper python3 ];
+  nativeBuildInputs = [ pkg-config makeWrapper python3 qtbase ];
   buildInputs = [
     qtbase qtsvg file/*for libmagic*/ bc
     hunspell # enchant

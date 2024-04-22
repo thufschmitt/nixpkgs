@@ -4,18 +4,21 @@
 , buildPythonPackage
 , fetchFromGitHub
 , cmake
-, cython
+, cython_0
 , numpy
 , six
 , nose
 , mako
-, cudaSupport ? false, cudaPackages
+, config
+, cudaSupport ? config.cudaSupport
+, cudaPackages ? { }
 , openclSupport ? true, ocl-icd, clblas
 }:
 
 buildPythonPackage rec {
   pname = "libgpuarray";
   version = "0.7.6";
+  format = "setuptools";
 
   src = fetchFromGitHub {
     owner = "Theano";
@@ -64,13 +67,13 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [
     cmake
+    cython_0
   ] ++ lib.optionals cudaSupport [
     addOpenGLRunpath
   ];
 
 
   buildInputs = [
-    cython
     nose
   ];
 

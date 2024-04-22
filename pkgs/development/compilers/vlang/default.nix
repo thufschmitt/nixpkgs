@@ -1,20 +1,41 @@
-{ lib, stdenv, fetchFromGitHub, glfw, freetype, openssl, makeWrapper, upx, pkgsStatic, xorg, binaryen }:
+{ lib, stdenv, fetchFromGitHub, glfw, freetype, openssl, makeWrapper, upx, boehmgc, xorg, binaryen, darwin }:
 
 let
-  version = "weekly.2023.19";
-  # Required for bootstrap.
-  vc = fetchFromGitHub {
-    owner = "vlang";
-    repo = "vc";
-    rev = "f7c2b5f2a0738d0d236161c9de9f31dd0280ac86";
-    sha256 = "sha256-xU3TvyNgc0o4RCsHtoC6cZTNaue2yuAiolEOvP37TKA=";
+  version = "0.4.4";
+  ptraceSubstitution = ''
+    #include <sys/types.h>
+    #include <sys/ptrace.h>
+  '';
+  # vc is the V compiler's source translated to C (needed for boostrap).
+  # So we fix its rev to correspond to the V version.
+  vc = stdenv.mkDerivation {
+    pname = "v.c";
+    version = "0.4.4";
+    src = fetchFromGitHub {
+      owner = "vlang";
+      repo = "vc";
+      rev = "66eb8eae253d31fa5622e35a69580d9ad8efcccb";
+      hash = "sha256-YGlzr0Qq7+NtrnbaFPBuclzjOZBOnTe3BOhsuwdsQ5c=";
+    };
+
+    # patch the ptrace reference for darwin
+    installPhase = lib.optionalString stdenv.isDarwin ''
+      substituteInPlace v.c \
+        --replace "#include <sys/ptrace.h>" "${ptraceSubstitution}"
+    '' + ''
+      mkdir -p $out
+      cp v.c $out/
+    '';
   };
   # Required for vdoc.
   markdown = fetchFromGitHub {
     owner = "vlang";
     repo = "markdown";
-    rev = "6e970bd0a7459ad7798588f1ace4aa46c5e789a2";
-    hash = "sha256-hFf7c8ZNMU1j7fgmDakuO7tBVr12Wq0dgQddJnkMajE=";
+    rev = "0c280130cb7ec410b7d21810d1247956c15b72fc";
+    hash = "sha256-Fmhkrg9DBiWxInostNp+WfA3V5GgEIs5+KIYrqZosqY=";
+  };
+  boehmgcStatic = boehmgc.override {
+    enableStatic = true;
   };
 in
 stdenv.mkDerivation {
@@ -25,7 +46,7 @@ stdenv.mkDerivation {
     owner = "vlang";
     repo = "v";
     rev = version;
-    sha256 = "sha256-fHn1z2q3LmSycCOa1ii4DoHvbEW4uJt3Psq3/VuZNVQ=";
+    hash = "sha256-Aqecw8K+igHx5R34lQiWtdNfeGn+umcjcS4w0vXgpLM=";
   };
 
   propagatedBuildInputs = [ glfw freetype openssl ]
@@ -33,32 +54,27 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ makeWrapper ];
 
+  buildInputs = [
+    binaryen
+  ] ++ lib.optionals stdenv.isDarwin [
+    darwin.apple_sdk.frameworks.Cocoa
+  ] ++ lib.optionals stdenv.isLinux [
+    xorg.libX11
+    xorg.libXau
+    xorg.libXdmcp
+    xorg.xorgproto
+  ];
+
   makeFlags = [
     "local=1"
   ];
 
   env.VC = vc;
-  # libX11.dev and xorg.xorgproto are needed because of
-  # builder error: Header file <X11/Xlib.h>, needed for module `clipboard.x11` was not found. Please install a package with the X11 development headers, for example: `apt-get install libx11-dev`.
-  # libXau, libxcb, libXdmcp need to be static if you use static gcc otherwise
-  # /nix/store/xnk2z26fqy86xahiz3q797dzqx96sidk-glibc-2.37-8/lib/libc.so.6: undefined reference to `_rtld_glob al_ro@GLIBC_PRIVATE'
-  env.VFLAGS = "-cc ${pkgsStatic.gcc}/bin/gcc -no-retry-compilation -cflags -I${xorg.libX11.dev}/include -cflags -I${xorg.xorgproto}/include -ldflags -L${binaryen}/lib -ldflags -L${pkgsStatic.xorg.libX11}/lib -ldflags -L${pkgsStatic.xorg.libxcb}/lib -ldflags -lxcb -ldflags -L${pkgsStatic.xorg.libXau}/lib -ldflags -lXau -ldflags -L${pkgsStatic.xorg.libXdmcp}/lib -ldflags -lXdmcp";
 
   preBuild = ''
     export HOME=$(mktemp -d)
     mkdir -p ./thirdparty/tcc/lib
-    # this step is not needed it's just to silence a warning
-    # we don't use tcc at all since it fails on a missing libatomic
-    ln -s ${pkgsStatic.tinycc}/bin/tcc ./thirdparty/tcc/tcc.exe
-    cp -r ${pkgsStatic.boehmgc}/lib/* ./thirdparty/tcc/lib
-  '';
-
-  # vcreate_test.v requires git, so we must remove it when building the tools.
-  # vtest.v fails on Darwin, so let's just disable it for now.
-  preInstall = ''
-    mv cmd/tools/vcreate/vcreate_test.v $HOME/vcreate_test.v
-  '' + lib.optionalString stdenv.isDarwin ''
-    mv cmd/tools/vtest.v $HOME/vtest.v
+    cp -r ${boehmgcStatic}/lib/* ./thirdparty/tcc/lib
   '';
 
   installPhase = ''
@@ -77,22 +93,16 @@ stdenv.mkDerivation {
     $out/lib/v -v $out/lib/cmd/tools/vdoc
     $out/lib/v -v $out/lib/cmd/tools/vast
     $out/lib/v -v $out/lib/cmd/tools/vvet
+    $out/lib/v -v $out/lib/cmd/tools/vcreate
 
     runHook postInstall
-  '';
-
-  # Return vcreate_test.v and vtest.v, so the user can use it.
-  postInstall = ''
-    cp $HOME/vcreate_test.v $out/lib/cmd/tools/vcreate_test.v
-  '' + lib.optionalString stdenv.isDarwin ''
-    cp $HOME/vtest.v $out/lib/cmd/tools/vtest.v
   '';
 
   meta = with lib; {
     homepage = "https://vlang.io/";
     description = "Simple, fast, safe, compiled language for developing maintainable software";
     license = licenses.mit;
-    maintainers = with maintainers; [ Madouura ];
+    maintainers = with maintainers; [ Madouura delta231 ];
     mainProgram = "v";
     platforms = platforms.all;
   };

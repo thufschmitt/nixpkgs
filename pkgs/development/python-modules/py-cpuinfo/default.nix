@@ -38,6 +38,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Get CPU info with pure Python";
+    mainProgram = "cpuinfo";
     longDescription = ''
       Py-cpuinfo gets CPU info with pure Python and should work without any
       extra programs or libraries, beyond what your OS provides. It does not
@@ -47,6 +48,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/workhorsy/py-cpuinfo";
     changelog = "https://github.com/workhorsy/py-cpuinfo/blob/v${version}/ChangeLog";
     license = licenses.mit;
-    maintainers = with maintainers; [ costrouc ];
+    maintainers = with maintainers; [ ];
   };
 }

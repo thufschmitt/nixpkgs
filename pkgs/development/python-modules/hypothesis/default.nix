@@ -2,28 +2,28 @@
 , buildPythonPackage
 , isPyPy
 , fetchFromGitHub
+, setuptools
 , attrs
 , exceptiongroup
 , pexpect
 , doCheck ? true
 , pytestCheckHook
 , pytest-xdist
+, python
 , sortedcontainers
+, stdenv
 , pythonOlder
 , sphinxHook
 , sphinx-rtd-theme
 , sphinx-hoverxref
 , sphinx-codeautolink
 , tzdata
-# Used to break internal dependency loop.
-, enableDocumentation ? true
 }:
 
 buildPythonPackage rec {
   pname = "hypothesis";
-  version = "6.68.2";
-  outputs = [ "out" ] ++ lib.optional enableDocumentation "doc";
-  format = "setuptools";
+  version = "6.99.12";
+  pyproject = true;
 
   disabled = pythonOlder "3.7";
 
@@ -31,7 +31,7 @@ buildPythonPackage rec {
     owner = "HypothesisWorks";
     repo = "hypothesis";
     rev = "hypothesis-python-${version}";
-    hash = "sha256-SgX8esTyC3ulFIv9mZJUoBA5hiv7Izr2hyD+NOudkpE=";
+    hash = "sha256-0nzjRDv4L3bxxnC0lBY5S7FP9CFhyzHzNchWXoX91Zg=";
   };
 
   # I tried to package sphinx-selective-exclude, but it throws
@@ -49,11 +49,8 @@ buildPythonPackage rec {
 
   postUnpack = "sourceRoot=$sourceRoot/hypothesis-python";
 
-  nativeBuildInputs = lib.optionals enableDocumentation [
-    sphinxHook
-    sphinx-rtd-theme
-    sphinx-hoverxref
-    sphinx-codeautolink
+  nativeBuildInputs = [
+    setuptools
   ];
 
   propagatedBuildInputs = [
@@ -67,7 +64,7 @@ buildPythonPackage rec {
     pexpect
     pytest-xdist
     pytestCheckHook
-  ] ++ lib.optionals (isPyPy) [
+  ] ++ lib.optionals isPyPy [
     tzdata
   ];
 
@@ -82,15 +79,48 @@ buildPythonPackage rec {
     "tests/cover"
   ];
 
+  disabledTests = if (pythonOlder "3.10") then [
+    # not sure why these tests fail with only 3.9
+    # FileNotFoundError: [Errno 2] No such file or directory: 'git'
+    "test_observability"
+    "test_assume_has_status_reason"
+    "test_observability_captures_stateful_reprs"
+  ] else null;
+
   pythonImportsCheck = [
     "hypothesis"
   ];
 
+  passthru = {
+    doc = stdenv.mkDerivation {
+      # Forge look and feel of multi-output derivation as best as we can.
+      #
+      # Using 'outputs = [ "doc" ];' breaks a lot of assumptions.
+      name = "${pname}-${version}-doc";
+      inherit src pname version;
+
+      postInstallSphinx = ''
+        mv $out/share/doc/* $out/share/doc/python$pythonVersion-$pname-$version
+      '';
+
+      nativeBuildInputs = [
+        sphinxHook
+        sphinx-rtd-theme
+        sphinx-hoverxref
+        sphinx-codeautolink
+      ];
+
+      inherit (python) pythonVersion;
+      inherit meta;
+    };
+  };
+
   meta = with lib; {
     description = "Library for property based testing";
+    mainProgram = "hypothesis";
     homepage = "https://github.com/HypothesisWorks/hypothesis";
     changelog = "https://hypothesis.readthedocs.io/en/latest/changes.html#v${lib.replaceStrings [ "." ] [ "-" ] version}";
     license = licenses.mpl20;
-    maintainers = with maintainers; [ SuperSandro2000 ];
+    maintainers = with maintainers; [ ];
   };
 }

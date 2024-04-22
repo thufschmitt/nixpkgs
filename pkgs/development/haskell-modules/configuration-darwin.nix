@@ -117,6 +117,20 @@ self: super: ({
 
   yesod-bin = addBuildDepend darwin.apple_sdk.frameworks.Cocoa super.yesod-bin;
 
+  yesod-core = super.yesod-core.overrideAttrs (drv: {
+    # Allow access to local networking when the Darwin sandbox is enabled, so yesod-core can
+    # run tests that access localhost.
+    __darwinAllowLocalNetworking = true;
+  });
+
+  hidapi =
+    addExtraLibraries [
+      darwin.apple_sdk.frameworks.AppKit
+      darwin.apple_sdk.frameworks.IOKit
+      darwin.apple_sdk.frameworks.CoreFoundation
+    ]
+    (super.hidapi.override { systemd = null; });
+
   hmatrix = addBuildDepend darwin.apple_sdk.frameworks.Accelerate super.hmatrix;
 
   blas-hs = overrideCabal (drv: {
@@ -200,20 +214,6 @@ self: super: ({
     ] ++ (drv.libraryHaskellDepends or []);
   }) super.cas-store;
 
-  # 2021-05-25: Tests fail and I have no way to debug them.
-  hls-class-plugin = dontCheck super.hls-class-plugin;
-  hls-brittany-plugin = dontCheck super.hls-brittany-plugin;
-  hls-fourmolu-plugin = dontCheck super.hls-fourmolu-plugin;
-  hls-module-name-plugin = dontCheck super.hls-module-name-plugin;
-  hls-splice-plugin = dontCheck super.hls-splice-plugin;
-  hls-ormolu-plugin = dontCheck super.hls-ormolu-plugin;
-  hls-pragmas-plugin = dontCheck super.hls-pragmas-plugin;
-  hls-haddock-comments-plugin = dontCheck super.hls-haddock-comments-plugin;
-  hls-floskell-plugin = dontCheck super.hls-floskell-plugin;
-  hls-call-hierarchy-plugin = dontCheck super.hls-call-hierarchy-plugin;
-  # 2022-05-05: Tests fail and I have no way to debug them.
-  hls-rename-plugin = dontCheck super.hls-rename-plugin;
-
   # We are lacking pure pgrep at the moment for tests to work
   tmp-postgres = dontCheck super.tmp-postgres;
 
@@ -276,6 +276,12 @@ self: super: ({
     '' + drv.postPatch or "";
   }) super.http-client-tls;
 
+  http2 = super.http2.overrideAttrs (drv: {
+    # Allow access to local networking when the Darwin sandbox is enabled, so http2 can run tests
+    # that access localhost.
+    __darwinAllowLocalNetworking = true;
+  });
+
   foldl = overrideCabal (drv: {
     postPatch = ''
       # This comment has been inserted, so the derivation hash changes, forcing
@@ -288,6 +294,17 @@ self: super: ({
     '' + drv.postPatch or "";
   }) super.foldl;
 
+  # https://hydra.nixos.org/build/230964714/nixlog/1
+  inline-c-cpp = appendPatch (pkgs.fetchpatch {
+    url = "https://github.com/fpco/inline-c/commit/e8dc553b13bb847409fdced649a6a863323cff8a.patch";
+    name = "revert-use-system-cxx-std-lib.patch";
+    sha256 = "sha256-ql1/+8bvmWexyCdFR0VS4M4cY2lD0Px/9dHYLqlKyNA=";
+    revert = true;
+    stripLen = 1;
+  }) super.inline-c-cpp;
+
+  # Tests fail on macOS https://github.com/mrkkrp/zip/issues/112
+  zip = dontCheck super.zip;
 } // lib.optionalAttrs pkgs.stdenv.isAarch64 {  # aarch64-darwin
 
   # https://github.com/fpco/unliftio/issues/87
@@ -316,7 +333,7 @@ self: super: ({
   }) (disableCabalFlag "fixity-th" super.fourmolu);
 
   # https://github.com/NixOS/nixpkgs/issues/149692
-  Agda = removeConfigureFlag "-foptimise-heavily" super.Agda;
+  Agda = disableCabalFlag "optimise-heavily" super.Agda;
 
 } // lib.optionalAttrs pkgs.stdenv.isx86_64 {  # x86_64-darwin
 

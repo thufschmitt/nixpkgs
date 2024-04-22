@@ -14,7 +14,9 @@ let
       # taken from https://github.com/python/cpython/blob/05cb728d68a278d11466f9a6c8258d914135c96c/Lib/re.py#L251-L266
       special = [
         "(" ")" "[" "]" "{" "}" "?" "*" "+" "-" "|" "^" "$" "\\" "." "&" "~"
-        "#" " " "\t" "\n" "\r" "\v" "\f"
+        "#" " " "\t" "\n" "\r"
+        "" # \v / 0x0B
+        "" # \f / 0x0C
       ];
     in
       replaceStrings special (map (c: "\\${c}") special);
@@ -94,30 +96,30 @@ in
 {
   options = {
     services.cgit = mkOption {
-      description = mdDoc "Configure cgit instances.";
+      description = "Configure cgit instances.";
       default = {};
       type = types.attrsOf (types.submodule ({ config, ... }: {
         options = {
-          enable = mkEnableOption (mdDoc "cgit");
+          enable = mkEnableOption "cgit";
 
-          package = mkPackageOptionMD pkgs "cgit" {};
+          package = mkPackageOption pkgs "cgit" {};
 
           nginx.virtualHost = mkOption {
-            description = mdDoc "VirtualHost to serve cgit on, defaults to the attribute name.";
+            description = "VirtualHost to serve cgit on, defaults to the attribute name.";
             type = types.str;
             default = config._module.args.name;
             example = "git.example.com";
           };
 
           nginx.location = mkOption {
-            description = mdDoc "Location to serve cgit under.";
+            description = "Location to serve cgit under.";
             type = types.str;
             default = "/";
             example = "/git/";
           };
 
           repos = mkOption {
-            description = mdDoc "cgit repository settings, see cgitrc(5)";
+            description = "cgit repository settings, see cgitrc(5)";
             type = with types; attrsOf (attrsOf settingType);
             default = {};
             example = {
@@ -129,14 +131,14 @@ in
           };
 
           scanPath = mkOption {
-            description = mdDoc "A path which will be scanned for repositories.";
+            description = "A path which will be scanned for repositories.";
             type = types.nullOr types.path;
             default = null;
             example = "/var/lib/git";
           };
 
           settings = mkOption {
-            description = mdDoc "cgit configuration, see cgitrc(5)";
+            description = "cgit configuration, see cgitrc(5)";
             type = types.attrsOf settingType;
             default = {};
             example = literalExpression ''
@@ -148,7 +150,7 @@ in
           };
 
           extraConfig = mkOption {
-            description = mdDoc "These lines go to the end of cgitrc verbatim.";
+            description = "These lines go to the end of cgitrc verbatim.";
             type = types.lines;
             default = "";
           };

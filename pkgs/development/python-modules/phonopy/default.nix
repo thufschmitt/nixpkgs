@@ -9,19 +9,24 @@
 , spglib
 , pytestCheckHook
 , pythonOlder
+, setuptools
 }:
 
 buildPythonPackage rec {
   pname = "phonopy";
-  version = "2.17.1";
-  format = "setuptools";
+  version = "2.22.1";
+  pyproject = true;
 
   disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-t+1i1S8UVd0s9/Fda0H2kaouDDBVS+x6G40Meb2rLYc=";
+    hash = "sha256-nux6/1z1xBr+4+fWrR/oOc+zVOI9j60p/SHHAPZ+hWI=";
   };
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     h5py

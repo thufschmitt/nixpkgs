@@ -1,32 +1,44 @@
 { lib
+, aiohttp
+, async-timeout
 , buildPythonPackage
 , fetchFromGitHub
-, pytestCheckHook
+, pillow
 , pythonOlder
+, setuptools
 }:
 
 buildPythonPackage rec {
   pname = "aioslimproto";
-  version = "2.2.0";
-  format = "setuptools";
+  version = "3.0.1";
+  pyproject = true;
 
-  disabled = pythonOlder "3.9";
+  disabled = pythonOlder "3.10";
 
   src = fetchFromGitHub {
     owner = "home-assistant-libs";
-    repo = pname;
+    repo = "aioslimproto";
     rev = "refs/tags/${version}";
-    hash = "sha256-3aLAAUaoGkdzjUHFb6aiyVv0fzO8DojN0Y3DTf6h2Ow=";
+    hash = "sha256-K7z34fT0PQ5qcV+66VbhYTUhCjqW/OjPnrygBFKIW1k=";
   };
 
-  nativeCheckInputs = [
-    pytestCheckHook
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail "--cov" ""
+  '';
+
+  nativeBuildInputs = [
+    setuptools
   ];
 
-  disabledTests = [
-    # AssertionError: assert ['mixer', 'volume', '50'] == ['volume', '50']
-    "test_msg_instantiation"
+  propagatedBuildInputs = [
+    aiohttp
+    async-timeout
+    pillow
   ];
+
+  # Module has no tests
+  doCheck = false;
 
   pythonImportsCheck = [
     "aioslimproto"

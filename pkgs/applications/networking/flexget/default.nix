@@ -1,48 +1,33 @@
 { lib
 , python3
+, fetchPypi
 , fetchFromGitHub
 }:
 
-let
-  python = python3.override {
-    packageOverrides = self: super: {
-      sqlalchemy = super.sqlalchemy.overridePythonAttrs (old: rec {
-        version = "1.4.48";
-        src = self.fetchPypi {
-          pname = "SQLAlchemy";
-          inherit version;
-          hash = "sha256-tHvChwltmJoIOM6W99jpZpFKJNqHftQadTHUS1XNuN8=";
-        };
-      });
-    };
-  };
-in
-python.pkgs.buildPythonApplication rec {
+python3.pkgs.buildPythonApplication rec {
   pname = "flexget";
-  version = "3.7.0";
-  format = "pyproject";
+  version = "3.11.27";
+  pyproject = true;
 
   # Fetch from GitHub in order to use `requirements.in`
   src = fetchFromGitHub {
     owner = "Flexget";
     repo = "Flexget";
     rev = "refs/tags/v${version}";
-    hash = "sha256-H+R2NPHJbpQToKI1Op+DqPt82+w2xHxHC9NPpiF3aF0=";
+    hash = "sha256-0ENBUOH+/pe4OsVQ6cu1xLTPPHtUMNARQGVyxOk60X0=";
   };
 
   postPatch = ''
     # remove dependency constraints but keep environment constraints
     sed 's/[~<>=][^;]*//' -i requirements.txt
-
-    # "zxcvbn-python" was renamed to "zxcvbn", and we don't have the former in
-    # nixpkgs. See: https://github.com/NixOS/nixpkgs/issues/62110
-    substituteInPlace requirements.txt --replace "zxcvbn-python" "zxcvbn"
   '';
 
-  # ~400 failures
-  doCheck = false;
+  build-system = with python3.pkgs; [
+    setuptools
+    wheel
+  ];
 
-  propagatedBuildInputs = with python.pkgs; [
+  dependencies = with python3.pkgs; [
     # See https://github.com/Flexget/Flexget/blob/master/requirements.txt
     apscheduler
     beautifulsoup4
@@ -57,8 +42,10 @@ python.pkgs.buildPythonApplication rec {
     loguru
     more-itertools
     packaging
+    pendulum
     psutil
     pynzb
+    pyrsistent
     pyrss2gen
     python-dateutil
     pyyaml
@@ -89,6 +76,9 @@ python.pkgs.buildPythonApplication rec {
     "flexget"
     "flexget.plugins.clients.transmission"
   ];
+
+  # ~400 failures
+  doCheck = false;
 
   meta = with lib; {
     homepage = "https://flexget.com/";

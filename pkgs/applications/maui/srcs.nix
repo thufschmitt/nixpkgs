@@ -4,59 +4,59 @@
 
 {
   agenda = {
-    version = "0.1.1";
+    version = "0.5.3";
     src = fetchurl {
-      url = "${mirror}/stable/maui/agenda/0.1.1/agenda-0.1.1.tar.xz";
-      sha256 = "0czpsybvvvnfg0n1ri94a2agwhdnmy124ggxqb5kjnsw35ivz35a";
-      name = "agenda-0.1.1.tar.xz";
+      url = "${mirror}/stable/maui/agenda/0.5.3/agenda-0.5.3.tar.xz";
+      sha256 = "0kx5adv8w0dm84hibaazik6y9bcxw7w7zikw546d4dlaq13pk97i";
+      name = "agenda-0.5.3.tar.xz";
     };
   };
   arca = {
-    version = "0.1.1";
+    version = "0.5.3";
     src = fetchurl {
-      url = "${mirror}/stable/maui/arca/0.1.1/arca-0.1.1.tar.xz";
-      sha256 = "0d4mdv1israljn9mhpb3nx8442g7kiqg87gmsb74z08v02yywmc0";
-      name = "arca-0.1.1.tar.xz";
+      url = "${mirror}/stable/maui/arca/0.5.3/arca-0.5.3.tar.xz";
+      sha256 = "0mgn3y2jh9ifxg41fb6z14gp27f1pwfk9y8492qfp3wqfhhmycmk";
+      name = "arca-0.5.3.tar.xz";
     };
   };
   bonsai = {
-    version = "2.2.0";
+    version = "1.1.3";
     src = fetchurl {
-      url = "${mirror}/stable/maui/bonsai/1.0.0/bonsai-2.2.0.tar.xz";
-      sha256 = "0gpqdj30brqv9nsiis93w9lad4xn7d301gxncj04pcpybmbksg4r";
-      name = "bonsai-2.2.0.tar.xz";
+      url = "${mirror}/stable/maui/bonsai/1.1.3/bonsai-1.1.3.tar.xz";
+      sha256 = "0xyfqaihzjdbgcd0mg81qpd12w304zlhdw8mmiyqfamxh33xksql";
+      name = "bonsai-1.1.3.tar.xz";
     };
   };
   booth = {
-    version = "1.0.2";
+    version = "1.1.3";
     src = fetchurl {
-      url = "${mirror}/stable/maui/booth/1.0.2/booth-1.0.2.tar.xz";
-      sha256 = "1b9akwwi1cmvk87zna0yrw1a6mwjd8qg0k3lnivwqfm5zi1xlpb6";
-      name = "booth-1.0.2.tar.xz";
+      url = "${mirror}/stable/maui/booth/1.1.3/booth-1.1.3.tar.xz";
+      sha256 = "0l7bjlpm3m2wc528c6y5s5yf9rlxrl5h0c1lk9s90zzkmyhzpxrl";
+      name = "booth-1.1.3.tar.xz";
     };
   };
   buho = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/buho/2.2.2/buho-2.2.2.tar.xz";
-      sha256 = "0kvg34dmk46aawa8vnl70m8gi6qjr709czgmzb8a7pa77clyyyg8";
-      name = "buho-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/buho/3.1.0/buho-3.1.0.tar.xz";
+      sha256 = "0pw8ljnhb3xsbsls6ynihvb5vargk13bija02s963kkbyvcrka0a";
+      name = "buho-3.1.0.tar.xz";
     };
   };
   clip = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/clip/2.2.2/clip-2.2.2.tar.xz";
-      sha256 = "1dk9x5lrp197g2qgi10p536dshaaxacgrkwr3pqywqcqqyrvjiyf";
-      name = "clip-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/clip/3.1.0/clip-3.1.0.tar.xz";
+      sha256 = "1pcka3z5ik5s9hv0np83f6g1fp1pgzq14h83k4l38wfcvbmnjngb";
+      name = "clip-3.1.0.tar.xz";
     };
   };
   communicator = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/communicator/2.2.2/communicator-2.2.2.tar.xz";
-      sha256 = "02c7w6km6a5plf56g4wwdw8k8kif3pmwd1agvhvfpq84yq73naz4";
-      name = "communicator-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/communicator/3.1.0/communicator-3.1.0.tar.xz";
+      sha256 = "0207jz891d8hs36ma51jbm9af53423lvfir41xmbw5k8j1wi925p";
+      name = "communicator-3.1.0.tar.xz";
     };
   };
   era = {
@@ -68,139 +68,139 @@
     };
   };
   fiery = {
-    version = "1.0.2";
+    version = "1.1.3";
     src = fetchurl {
-      url = "${mirror}/stable/maui/fiery/1.0.2/fiery-1.0.2.tar.xz";
-      sha256 = "0xw3p0dna3p05k8mv8sw8aw3clgb3kx72405826k0ldva8mh5q55";
-      name = "fiery-1.0.2.tar.xz";
+      url = "${mirror}/stable/maui/fiery/1.1.3/fiery-1.1.3.tar.xz";
+      sha256 = "1wkvrp1b0y0b7mppwymxmlfrbczxqgxaws10y2001mdxryjf160b";
+      name = "fiery-1.1.3.tar.xz";
     };
   };
   index-fm = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/index/2.2.2/index-fm-2.2.2.tar.xz";
-      sha256 = "156fb5kx9hkdg4q4c2r0822s49w86kixvn3m7m1gfxbc6hr5h291";
-      name = "index-fm-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/index/3.1.0/index-fm-3.1.0.tar.xz";
+      sha256 = "13pvx4rildnc0yqb3km9r9spd2wf6vwayfh0i6bai2vfklv405yg";
+      name = "index-fm-3.1.0.tar.xz";
     };
   };
   mauikit = {
-    version = "2.2.1";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit/2.2.1/mauikit-2.2.1.tar.xz";
-      sha256 = "0rwjd2g82j1cvspr0l889nss6p26yf19h39q20h3d9ls7fbj897h";
-      name = "mauikit-2.2.1.tar.xz";
+      url = "${mirror}/stable/maui/mauikit/3.1.0/mauikit-3.1.0.tar.xz";
+      sha256 = "1v7nas1mdkpfyz6580y1z1rk3ad0azh047y19bjy0rrpp75iclmz";
+      name = "mauikit-3.1.0.tar.xz";
     };
   };
   mauikit-accounts = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit-accounts/2.2.2/mauikit-accounts-2.2.2.tar.xz";
-      sha256 = "10rvzy5m5bmf98q5akvq87q00nz9mxmnp9ywnswl65gnmihiwis8";
-      name = "mauikit-accounts-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/mauikit-accounts/3.1.0/mauikit-accounts-3.1.0.tar.xz";
+      sha256 = "0blzmjdv4cs2m4967mksj0pxpd1gvgjpkgwbwkhya36qc443yfya";
+      name = "mauikit-accounts-3.1.0.tar.xz";
     };
   };
   mauikit-calendar = {
-    version = "1.0.1";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit-calendar/1.0.1/mauikit-calendar-1.0.1.tar.xz";
-      sha256 = "0l3195zy2qzcc1in9m0k8lpzbqbhdjvlr40n23plr6ldwc61q34b";
-      name = "mauikit-calendar-1.0.1.tar.xz";
+      url = "${mirror}/stable/maui/mauikit-calendar/3.1.0/mauikit-calendar-3.1.0.tar.xz";
+      sha256 = "13hf6z99ibly4cbaf4n4r54qc2vcbmf8i8qjndf35z6kxjc4iwpd";
+      name = "mauikit-calendar-3.1.0.tar.xz";
     };
   };
   mauikit-documents = {
-    version = "1.0.1";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit-documents/1.0.1/mauikit-documents-1.0.1.tar.xz";
-      sha256 = "0rfznsdlfhf0bjk4fkybbvv56c55w0krjaa8by26fzkqannd7smd";
-      name = "mauikit-documents-1.0.1.tar.xz";
+      url = "${mirror}/stable/maui/mauikit-documents/3.1.0/mauikit-documents-3.1.0.tar.xz";
+      sha256 = "1v1hbzb84rkva5icmynh87h979xgv8a8da6pfzlf1y7h6syw1wf4";
+      name = "mauikit-documents-3.1.0.tar.xz";
     };
   };
   mauikit-filebrowsing = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit-filebrowsing/2.2.2/mauikit-filebrowsing-2.2.2.tar.xz";
-      sha256 = "0dj06qak410gf4xykhigxrswbchfkicgihzksgv63z9ggfg64jbr";
-      name = "mauikit-filebrowsing-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/mauikit-filebrowsing/3.1.0/mauikit-filebrowsing-3.1.0.tar.xz";
+      sha256 = "146iflqb4kq25f1azajlbwlbphbk754vvf6w7fzl75pdwhqsbxvp";
+      name = "mauikit-filebrowsing-3.1.0.tar.xz";
     };
   };
   mauikit-imagetools = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit-imagetools/2.2.2/mauikit-imagetools-2.2.2.tar.xz";
-      sha256 = "1jf60725v887dfl3l9sbknkwns15bz7a7b9v0p6llhw00hiq83b4";
-      name = "mauikit-imagetools-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/mauikit-imagetools/3.1.0/mauikit-imagetools-3.1.0.tar.xz";
+      sha256 = "1r7j9lg19s63325xyz6i8hzfn751s14mlpxym533mpzpx6yg784q";
+      name = "mauikit-imagetools-3.1.0.tar.xz";
     };
   };
   mauikit-terminal = {
-    version = "1.0.0";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit-terminal/1.0.0/mauikit-terminal-1.0.0.tar.xz";
-      sha256 = "1r6dcna2fyglj4q33i5qnzv763y3y65fcqb4ralyydlb8x2nb248";
-      name = "mauikit-terminal-1.0.0.tar.xz";
+      url = "${mirror}/stable/maui/mauikit-terminal/3.1.0/mauikit-terminal-3.1.0.tar.xz";
+      sha256 = "0q2d8lxzhmncassnl043vrgz9am25yk060v7l7bwm6fp9vv5ix5f";
+      name = "mauikit-terminal-3.1.0.tar.xz";
     };
   };
   mauikit-texteditor = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauikit-texteditor/2.2.2/mauikit-texteditor-2.2.2.tar.xz";
-      sha256 = "0g8n0xzn9iiq122hb23rhn3c9vkq6hm7kgv5mv8dx2kv17gdyzcg";
-      name = "mauikit-texteditor-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/mauikit-texteditor/3.1.0/mauikit-texteditor-3.1.0.tar.xz";
+      sha256 = "0fsjqfvg2fnfmrsz9hfcw20l5yv0pi5jiww2aqyqqpy09q7jxphv";
+      name = "mauikit-texteditor-3.1.0.tar.xz";
     };
   };
   mauiman = {
-    version = "1.0.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/mauiman/1.0.2/mauiman-1.0.2.tar.xz";
-      sha256 = "0v3jhy3j04aq5935pr6mzgdjwj6mgj1rwscmmg3b9vsi9f6s17n4";
-      name = "mauiman-1.0.2.tar.xz";
+      url = "${mirror}/stable/maui/mauiman/3.1.0/mauiman-3.1.0.tar.xz";
+      sha256 = "1462j8xbla6jra3qpxgp5hi580lk53a6ry4fzmllqpzprwgiyx2w";
+      name = "mauiman-3.1.0.tar.xz";
     };
   };
   nota = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/nota/2.2.2/nota-2.2.2.tar.xz";
-      sha256 = "1c72s4ra5gl9gpq8amwhaw9wkgrgd0fiaknxhn528gzpmq52i8rn";
-      name = "nota-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/nota/3.1.0/nota-3.1.0.tar.xz";
+      sha256 = "0x9xaas86rhbqs7wsc7chxc4iijg73wnzj2125dgdwcridmdfxix";
+      name = "nota-3.1.0.tar.xz";
     };
   };
   pix = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/pix/2.2.2/pix-2.2.2.tar.xz";
-      sha256 = "0j315n1aka0pikqyq2hy15k3indr7g8vkcyxsikdd3kj968386pv";
-      name = "pix-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/pix/3.1.0/pix-3.1.0.tar.xz";
+      sha256 = "0j3xwdscjqyisv5zn8pb0mqarpfkknz3wxgzd7yl2g1gxdpl502h";
+      name = "pix-3.1.0.tar.xz";
     };
   };
   shelf = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/shelf/2.2.2/shelf-2.2.2.tar.xz";
-      sha256 = "1aw6k7z7w0qslya20h0gv3k8h526jrz8a6vb10ack3i5gw6csp1k";
-      name = "shelf-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/shelf/3.1.0/shelf-3.1.0.tar.xz";
+      sha256 = "166l6f5ifv5yz3sgds50bi9swdr3zl7m499myy5x8ph2jw1i2dvq";
+      name = "shelf-3.1.0.tar.xz";
     };
   };
   station = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/station/2.2.2/station-2.2.2.tar.xz";
-      sha256 = "1svs6kjbk09l3sprq64bdm01y73vcb10y4ifh5y2a1fwa99c59sb";
-      name = "station-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/station/3.1.0/station-3.1.0.tar.xz";
+      sha256 = "0skwagzwd4v24ldrww727zs3chzfb1spbynzdjb0yc7pggzxn8nf";
+      name = "station-3.1.0.tar.xz";
     };
   };
   strike = {
-    version = "2.2.0";
+    version = "1.1.3";
     src = fetchurl {
-      url = "${mirror}/stable/maui/strike/1.0.0/strike-2.2.0.tar.xz";
-      sha256 = "159l1i0mi3q5avcg45aq5ixz8wjfryhip61h9gynxr1m77qdpfnc";
-      name = "strike-2.2.0.tar.xz";
+      url = "${mirror}/stable/maui/strike/1.1.3/strike-1.1.3.tar.xz";
+      sha256 = "1b0n56mfchcf37j33i3kxp3pd9sc2f1fq5hjfhy1s34dk8gfv947";
+      name = "strike-1.1.3.tar.xz";
     };
   };
   vvave = {
-    version = "2.2.2";
+    version = "3.1.0";
     src = fetchurl {
-      url = "${mirror}/stable/maui/vvave/2.2.2/vvave-2.2.2.tar.xz";
-      sha256 = "0m8jg79gz3dljbkrgjqlfmbmpgwawzaz37avx5nj1rlpm36b195f";
-      name = "vvave-2.2.2.tar.xz";
+      url = "${mirror}/stable/maui/vvave/3.1.0/vvave-3.1.0.tar.xz";
+      sha256 = "1ig6vzrqrq4h8y69xm6hxppzspa4vrawpn4rk6rva26j5qm7dh1l";
+      name = "vvave-3.1.0.tar.xz";
     };
   };
 }

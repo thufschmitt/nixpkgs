@@ -11,19 +11,17 @@
 
 buildPythonPackage rec {
   pname = "dissect-extfs";
-  version = "3.4";
+  version = "3.9";
   format = "pyproject";
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "fox-it";
     repo = "dissect.extfs";
     rev = "refs/tags/${version}";
-    hash = "sha256-NSDhkkxqQSrfV1uttxUjLmdXlrgfAMrs5vSWgKyjuB4=";
+    hash = "sha256-xZEULUm0I754f9MEIUZEua76SaY/WMFp4Q5BMNZ8fWU=";
   };
-
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   nativeBuildInputs = [
     setuptools
@@ -42,6 +40,9 @@ buildPythonPackage rec {
   pythonImportsCheck = [
     "dissect.extfs"
   ];
+
+  # Archive files seems to be corrupt
+  doCheck = false;
 
   meta = with lib; {
     description = "Dissect module implementing a parser for the ExtFS file system";

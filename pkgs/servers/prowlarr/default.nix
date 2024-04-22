@@ -21,15 +21,15 @@ let
   }.${stdenv.hostPlatform.system} or unsupported;
 
   hash = {
-    aarch64-darwin = "sha256-Fk0JTHapmvf0FWDC/V+IoCDpjU0stVxo9XfAOXqMECM=";
-    aarch64-linux = "sha256-s2TP8t+87ZQka9q0AQBfxpBwryx/qNqXfxYojvJEaAU=";
-    x86_64-darwin = "sha256-nhWyAlc7vuM2c66lJ2e2sXFZlw7vWL9cKiDNrUS6LEs=";
-    x86_64-linux = "sha256-GbEQuTKCVfLd0oZbPKbVVbgGMi+eooBpc9zL2k/L3zY=";
+    aarch64-darwin = "sha256-ImivrfKromlA4753KUJIJCZr3yFYm/fWEqK6veEJBfw=";
+    aarch64-linux = "sha256-6UvjzheFkIRE1m0Wglhuch8oL5mmZoVMd9mtS7Gz7JQ=";
+    x86_64-darwin = "sha256-SvdMYwTcSm+Ozs2eBgTtjgMcUpgHK+VfQqmhPwD7VIk=";
+    x86_64-linux = "sha256-9yGQ7f28hTo+WKr6wqrSqMUqMTeRuq1cBs9e2INQfqM=";
   }.${stdenv.hostPlatform.system} or unsupported;
 
 in stdenv.mkDerivation rec {
   inherit pname;
-  version = "1.4.1.3258";
+  version = "1.15.0.4361";
 
   src = fetchurl {
     url = "https://github.com/Prowlarr/Prowlarr/releases/download/v${version}/Prowlarr.master.${version}.${os}-core-${arch}.tar.gz";
@@ -63,6 +63,7 @@ in stdenv.mkDerivation rec {
     changelog = "https://github.com/Prowlarr/Prowlarr/releases/tag/v${version}";
     license = licenses.gpl3Only;
     maintainers = with maintainers; [ jdreaver ];
+    mainProgram = "Prowlarr";
     platforms = [
       "aarch64-darwin"
       "aarch64-linux"

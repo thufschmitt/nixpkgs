@@ -13,6 +13,8 @@
   libICE,
   libSM,
   fontconfig,
+
+  xdg-utils,
 }:
 
 buildDotnetModule rec {
@@ -47,8 +49,14 @@ buildDotnetModule rec {
     fontconfig
   ];
 
+  # Required for OneClick
+  makeWrapperArgs = [
+    ''--suffix PATH : "${lib.makeBinPath [ xdg-utils ]}"''
+  ];
+
   meta = with lib; {
     description = "Yet another mod installer for Beat Saber, heavily inspired by ModAssistant";
+    mainProgram = "BeatSaberModManager";
     homepage = "https://github.com/affederaffe/BeatSaberModManager";
     longDescription = ''
       BeatSaberModManager is yet another mod installer for Beat Saber, heavily inspired by ModAssistant

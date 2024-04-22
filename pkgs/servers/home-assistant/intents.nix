@@ -1,61 +1,36 @@
 { lib
 , buildPythonPackage
-, fetchFromGitHub
+, fetchPypi
 , pythonOlder
+
+# build-system
 , setuptools
-
-# build
-, hassil
-, jinja2
-, pyyaml
-, regex
-, voluptuous
-, python
-
-# tests
-, pytest-xdist
-, pytestCheckHook
 }:
 
 buildPythonPackage rec {
   pname = "home-assistant-intents";
-  version = "2023.4.26";
-  format = "pyproject";
+  version = "2024.4.3";
+  format = "wheel";
 
   disabled = pythonOlder "3.9";
 
-  src = fetchFromGitHub {
-    owner = "home-assistant";
-    repo = "intents";
-    rev = "refs/tags/${version}";
-    hash = "sha256-l22+scT/4qIU5qWlWURr5wVEBoWNXGqYEaS3IVwG1Zs=";
+  src = fetchPypi {
+    inherit version format;
+    pname = "home_assistant_intents";
+    dist = "py3";
+    python = "py3";
+    hash = "sha256-GraYVtioKIoKlPRBhhhzlbBfI6heXAaA1MQpUqAgEDQ=";
   };
 
-  sourceRoot = "source/package";
-
-  nativeBuildInputs = [
-    hassil
-    jinja2
-    pyyaml
-    regex
+  build-system = [
     setuptools
-    voluptuous
   ];
 
-  postInstall = ''
-    pushd ..
-    # https://github.com/home-assistant/intents/blob/main/script/package#L18
-    ${python.pythonForBuild.interpreter} -m script.intentfest merged_output $out/${python.sitePackages}/home_assistant_intents/data
-    popd
-  '';
-
-  checkInputs = [
-    pytest-xdist
-    pytestCheckHook
-  ];
+  # sdist/wheel do not ship tests
+  doCheck = false;
 
   pytestFlagsArray = [
-    "../tests"
+    "intents/tests"
   ];
 
   meta = with lib; {

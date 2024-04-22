@@ -1,33 +1,53 @@
-{ mkDerivation, fetchurl, makeBinaryWrapper, unzip, lib, php }:
+{ lib
+, callPackage
+, fetchFromGitHub
+, php
+, unzip
+, _7zz
+, xz
+, git
+, curl
+, cacert
+, makeBinaryWrapper
+}:
 
-mkDerivation rec {
-  pname = "composer";
-  version = "2.5.5";
+php.buildComposerProject (finalAttrs: {
+  # Hash used by ../../../build-support/php/pkgs/composer-phar.nix to
+  # use together with the version from this package to keep the
+  # bootstrap phar file up-to-date together with the end user composer
+  # package.
+  passthru.pharHash = "sha256-/MAv8ES1oE++z/AVjLYEHCXo94rElAmHNv7NK7TzgeQ=";
 
-  src = fetchurl {
-    url = "https://github.com/composer/composer/releases/download/${version}/composer.phar";
-    sha256 = "sha256-VmptHPS+HMOsiC0qKhOBf/rlTmD1qnyRN0NIEKWAn/w=";
+  composer = callPackage ../../../build-support/php/pkgs/composer-phar.nix {
+    inherit (finalAttrs) version;
+    inherit (finalAttrs.passthru) pharHash;
   };
 
-  dontUnpack = true;
+  pname = "composer";
+  version = "2.7.3";
+
+  src = fetchFromGitHub {
+    owner = "composer";
+    repo = "composer";
+    rev = finalAttrs.version;
+    hash = "sha256-4cQ/p6lC8qgba/GSKuP2rFc0mZrUc+HuwvBMXnVERoU=";
+  };
 
   nativeBuildInputs = [ makeBinaryWrapper ];
 
-  installPhase = ''
-    runHook preInstall
-    mkdir -p $out/bin
-    install -D $src $out/libexec/composer/composer.phar
-    makeWrapper ${php}/bin/php $out/bin/composer \
-      --add-flags "$out/libexec/composer/composer.phar" \
-      --prefix PATH : ${lib.makeBinPath [ unzip ]}
-    runHook postInstall
+  postInstall = ''
+    wrapProgram $out/bin/composer \
+      --prefix PATH : ${lib.makeBinPath [ _7zz cacert curl git unzip xz ]}
   '';
 
-  meta = with lib; {
+  vendorHash = "sha256-dNNV9fTyGyRoGeDV/vBjn0aMgkaUMsrKQv5AOoiYokQ=";
+
+  meta = {
+    changelog = "https://github.com/composer/composer/releases/tag/${finalAttrs.version}";
     description = "Dependency Manager for PHP";
-    license = licenses.mit;
     homepage = "https://getcomposer.org/";
-    changelog = "https://github.com/composer/composer/releases/tag/${version}";
-    maintainers = with maintainers; [ offline ] ++ teams.php.members;
+    license = lib.licenses.mit;
+    mainProgram = "composer";
+    maintainers = lib.teams.php.members;
   };
-}
+})

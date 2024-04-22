@@ -1,8 +1,8 @@
 { lib
 , stdenv
-, buildPythonPackage
 , aiohttp
 , aioresponses
+, buildPythonPackage
 , cachetools
 , cryptography
 , fetchPypi
@@ -21,27 +21,29 @@
 , requests
 , responses
 , rsa
-, six
-, urllib3
+, setuptools
 }:
 
 buildPythonPackage rec {
   pname = "google-auth";
-  version = "2.17.3";
-  format = "setuptools";
+  version = "2.28.1";
+  pyproject = true;
 
-  disabled = pythonOlder "3.6";
+  disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-zjEeK8WLEw/d8xbfV8mzlDwqe09uwx3pZjqTM+QGTvw=";
+    hash = "sha256-NPwwRsJXztzxYi/Esx/Cvnkj2bTUSXPUgRJezFDYOIU=";
   };
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     cachetools
     pyasn1-modules
     rsa
-    six
   ];
 
   passthru.optional-dependencies = {
@@ -54,6 +56,7 @@ buildPythonPackage rec {
       pyopenssl
     ];
     pyopenssl = [
+      cryptography
       pyopenssl
     ];
     reauth = [
@@ -75,10 +78,8 @@ buildPythonPackage rec {
     pytest-localserver
     pytestCheckHook
     responses
-    urllib3
   ] ++ passthru.optional-dependencies.aiohttp
-  # `cryptography` is still required on `aarch64-darwin` for `tests/crypt/*`
-  ++ (if (stdenv.isDarwin && stdenv.isAarch64) then [ cryptography ] else passthru.optional-dependencies.enterprise_cert)
+  ++ passthru.optional-dependencies.enterprise_cert
   ++ passthru.optional-dependencies.reauth;
 
   pythonImportsCheck = [
@@ -105,6 +106,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/googleapis/google-auth-library-python";
     changelog = "https://github.com/googleapis/google-auth-library-python/blob/v${version}/CHANGELOG.md";
     license = licenses.asl20;
-    maintainers = with maintainers; [ SuperSandro2000 ];
+    maintainers = with maintainers; [ ];
   };
 }

@@ -27,7 +27,7 @@ The modules are typically installed to `lib/gio/modules/` directory of a package
 
 In particular, we recommend:
 
-* adding `dconf.lib` for any software on Linux that reads [GSettings](#ssec-gnome-settings) (even transitivily through e.g. GTK’s file manager)
+* adding `dconf.lib` for any software on Linux that reads [GSettings](#ssec-gnome-settings) (even transitively through e.g. GTK’s file manager)
 * adding `glib-networking` for any software that accesses network using GIO or libsoup – glib-networking contains a module that implements TLS support and loads system-wide proxy settings
 
 To allow software to use various virtual file systems, `gvfs` package can be also added. But that is usually an optional feature so we typically use `gvfs` from the system (e.g. installed globally using NixOS module).
@@ -47,6 +47,7 @@ When an application uses icons, an icon theme should be available in `XDG_DATA_D
 In the rare case you need to use icons from dependencies (e.g. when an app forces an icon theme), you can use the following to pick them up:
 
 ```nix
+{
   buildInputs = [
     pantheon.elementary-icon-theme
   ];
@@ -56,6 +57,7 @@ In the rare case you need to use icons from dependencies (e.g. when an app force
       --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS"
     )
   '';
+}
 ```
 
 To avoid costly file system access when locating icons, GTK, [as well as Qt](https://woboq.com/blog/qicon-reads-gtk-icon-cache-in-qt57.html), can rely on `icon-theme.cache` files from the themes' top-level directories. These files are generated using `gtk-update-icon-cache`, which is expected to be run whenever an icon is added or removed to an icon theme (typically an application icon into `hicolor` theme) and some programs do indeed run this after icon installation. However, since packages are installed into their own prefix by Nix, this would lead to conflicts. For that reason, `gtk3` provides a [setup hook](#ssec-gnome-hooks-gtk-drop-icon-theme-cache) that will clean the file from installation. Since most applications only ship their own icon that will be loaded on start-up, it should not affect them too much. On the other hand, icon themes are much larger and more widely used so we need to cache them. Because we recommend installing icon themes globally, we will generate the cache files from all packages in a profile using a NixOS module. You can enable the cache generation using `gtk.iconCache.enable` option if your desktop environment does not already do that.
@@ -85,22 +87,26 @@ If your application uses [GStreamer](https://gstreamer.freedesktop.org/) or [Gri
 Given the requirements above, the package expression would become messy quickly:
 
 ```nix
-preFixup = ''
-  for f in $(find $out/bin/ $out/libexec/ -type f -executable); do
-    wrapProgram "$f" \
-      --prefix GIO_EXTRA_MODULES : "${getLib dconf}/lib/gio/modules" \
-      --prefix XDG_DATA_DIRS : "$out/share" \
-      --prefix XDG_DATA_DIRS : "$out/share/gsettings-schemas/${name}" \
-      --prefix XDG_DATA_DIRS : "${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}" \
-      --prefix XDG_DATA_DIRS : "${hicolor-icon-theme}/share" \
-      --prefix GI_TYPELIB_PATH : "${lib.makeSearchPath "lib/girepository-1.0" [ pango json-glib ]}"
-  done
-'';
+{
+  preFixup = ''
+    for f in $(find $out/bin/ $out/libexec/ -type f -executable); do
+      wrapProgram "$f" \
+        --prefix GIO_EXTRA_MODULES : "${getLib dconf}/lib/gio/modules" \
+        --prefix XDG_DATA_DIRS : "$out/share" \
+        --prefix XDG_DATA_DIRS : "$out/share/gsettings-schemas/${name}" \
+        --prefix XDG_DATA_DIRS : "${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}" \
+        --prefix XDG_DATA_DIRS : "${hicolor-icon-theme}/share" \
+        --prefix GI_TYPELIB_PATH : "${lib.makeSearchPath "lib/girepository-1.0" [ pango json-glib ]}"
+    done
+  '';
+}
 ```
 
-Fortunately, there is [`wrapGAppsHook`]{#ssec-gnome-hooks-wrapgappshook}. It works in conjunction with other setup hooks that populate environment variables, and it will then wrap all executables in `bin` and `libexec` directories using said variables.
+Fortunately, there is [`wrapGAppsHook`]{#ssec-gnome-hooks-wrapgappshook}. It works in conjunction with other setup hooks that populate environment variables, and it will then wrap all executables in `bin` and `libexec` directories using said variables. For convenience, it also adds `dconf.lib` for a GIO module implementing a GSettings backend using `dconf`, `gtk3` for GSettings schemas, and `librsvg` for GdkPixbuf loader to the closure.
 
-For convenience, it also adds `dconf.lib` for a GIO module implementing a GSettings backend using `dconf`, `gtk3` for GSettings schemas, and `librsvg` for GdkPixbuf loader to the closure. There is also [`wrapGAppsHook4`]{#ssec-gnome-hooks-wrapgappshook4}, which replaces GTK 3 with GTK 4. And in case you are packaging a program without a graphical interface, you might want to use [`wrapGAppsNoGuiHook`]{#ssec-gnome-hooks-wrapgappsnoguihook}, which runs the same script as `wrapGAppsHook` but does not bring `gtk3` and `librsvg` into the closure.
+There is also [`wrapGAppsHook4`]{#ssec-gnome-hooks-wrapgappshook4}, which replaces GTK 3 with GTK 4. Instead of `wrapGAppsHook`, this should be used for all GTK4 applications.
+
+In case you are packaging a program without a graphical interface, you might want to use [`wrapGAppsNoGuiHook`]{#ssec-gnome-hooks-wrapgappsnoguihook}, which runs the same script as `wrapGAppsHook` but does not bring `gtk3` and `librsvg` into the closure.
 
 - `wrapGAppsHook` itself will add the package’s `share` directory to `XDG_DATA_DIRS`.
 
@@ -121,14 +127,16 @@ For convenience, it also adds `dconf.lib` for a GIO module implementing a GSetti
 You can also pass additional arguments to `makeWrapper` using `gappsWrapperArgs` in `preFixup` hook:
 
 ```nix
-preFixup = ''
-  gappsWrapperArgs+=(
-    # Thumbnailers
-    --prefix XDG_DATA_DIRS : "${gdk-pixbuf}/share"
-    --prefix XDG_DATA_DIRS : "${librsvg}/share"
-    --prefix XDG_DATA_DIRS : "${shared-mime-info}/share"
-  )
-'';
+{
+  preFixup = ''
+    gappsWrapperArgs+=(
+      # Thumbnailers
+      --prefix XDG_DATA_DIRS : "${gdk-pixbuf}/share"
+      --prefix XDG_DATA_DIRS : "${librsvg}/share"
+      --prefix XDG_DATA_DIRS : "${shared-mime-info}/share"
+    )
+  '';
+}
 ```
 
 ## Updating GNOME packages {#ssec-gnome-updating}
@@ -137,15 +145,15 @@ Most GNOME package offer [`updateScript`](#var-passthru-updateScript), it is the
 
 ## Frequently encountered issues {#ssec-gnome-common-issues}
 
-#### `GLib-GIO-ERROR **: 06:04:50.903: No GSettings schemas are installed on the system` {#ssec-gnome-common-issues-no-schemas}
+### `GLib-GIO-ERROR **: 06:04:50.903: No GSettings schemas are installed on the system` {#ssec-gnome-common-issues-no-schemas}
 
 There are no schemas available in `XDG_DATA_DIRS`. Temporarily add a random package containing schemas like `gsettings-desktop-schemas` to `buildInputs`. [`glib`](#ssec-gnome-hooks-glib) and [`wrapGAppsHook`](#ssec-gnome-hooks-wrapgappshook) setup hooks will take care of making the schemas available to application and you will see the actual missing schemas with the [next error](#ssec-gnome-common-issues-missing-schema). Or you can try looking through the source code for the actual schemas used.
 
-#### `GLib-GIO-ERROR **: 06:04:50.903: Settings schema ‘org.gnome.foo’ is not installed` {#ssec-gnome-common-issues-missing-schema}
+### `GLib-GIO-ERROR **: 06:04:50.903: Settings schema ‘org.gnome.foo’ is not installed` {#ssec-gnome-common-issues-missing-schema}
 
 Package is missing some GSettings schemas. You can find out the package containing the schema with `nix-locate org.gnome.foo.gschema.xml` and let the hooks handle the wrapping as [above](#ssec-gnome-common-issues-no-schemas).
 
-#### When using `wrapGAppsHook` with special derivers you can end up with double wrapped binaries. {#ssec-gnome-common-issues-double-wrapped}
+### When using `wrapGAppsHook` with special derivers you can end up with double wrapped binaries. {#ssec-gnome-common-issues-double-wrapped}
 
 This is because derivers like `python.pkgs.buildPythonApplication` or `qt5.mkDerivation` have setup-hooks automatically added that produce wrappers with makeWrapper. The simplest way to workaround that is to disable the `wrapGAppsHook` automatic wrapping with `dontWrapGApps = true;` and pass the arguments it intended to pass to makeWrapper to another.
 
@@ -159,7 +167,7 @@ python3.pkgs.buildPythonApplication {
   nativeBuildInputs = [
     wrapGAppsHook
     gobject-introspection
-    ...
+    # ...
   ];
 
   dontWrapGApps = true;
@@ -181,7 +189,7 @@ mkDerivation {
   nativeBuildInputs = [
     wrapGAppsHook
     qmake
-    ...
+    # ...
   ];
 
   dontWrapGApps = true;
@@ -193,7 +201,7 @@ mkDerivation {
 }
 ```
 
-#### I am packaging a project that cannot be wrapped, like a library or GNOME Shell extension. {#ssec-gnome-common-issues-unwrappable-package}
+### I am packaging a project that cannot be wrapped, like a library or GNOME Shell extension. {#ssec-gnome-common-issues-unwrappable-package}
 
 You can rely on applications depending on the library setting the necessary environment variables but that is often easy to miss. Instead we recommend to patch the paths in the source code whenever possible. Here are some examples:
 
@@ -209,6 +217,6 @@ You can rely on applications depending on the library setting the necessary envi
 
   []{#ssec-gnome-common-issues-unwrappable-package-gsettings-c} [Hard-coding GSettings schema path in C library](https://github.com/NixOS/nixpkgs/blob/29c120c065d03b000224872251bed93932d42412/pkgs/development/libraries/glib-networking/default.nix#L31-L34) – nothing special other than using [Coccinelle patch](https://github.com/NixOS/nixpkgs/pull/67957#issuecomment-527717467) to generate the patch itself.
 
-#### I need to wrap a binary outside `bin` and `libexec` directories. {#ssec-gnome-common-issues-weird-location}
+### I need to wrap a binary outside `bin` and `libexec` directories. {#ssec-gnome-common-issues-weird-location}
 
 You can manually trigger the wrapping with `wrapGApp` in `preFixup` phase. It takes a path to a program as a first argument; the remaining arguments are passed directly to [`wrapProgram`](#fun-wrapProgram) function.

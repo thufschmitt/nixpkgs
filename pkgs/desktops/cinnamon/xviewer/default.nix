@@ -27,13 +27,13 @@
 
 stdenv.mkDerivation rec {
   pname = "xviewer";
-  version = "3.2.12";
+  version = "3.4.4";
 
   src = fetchFromGitHub {
     owner = "linuxmint";
     repo = pname;
     rev = version;
-    sha256 = "sha256-tiZeC862gHbZt76sbxseUu9vWN+1huftXpE7lQLkGKU=";
+    sha256 = "sha256-Kr3GoroQUzOePJiYeJYE9wrqWKcfX7ncu3tZSxOdnvU=";
   };
 
   nativeBuildInputs = [
@@ -66,6 +66,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "A generic image viewer from Linux Mint";
+    mainProgram = "xviewer";
     homepage = "https://github.com/linuxmint/xviewer";
     license = licenses.gpl2Only;
     platforms = platforms.linux;

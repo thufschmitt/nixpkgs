@@ -10,6 +10,7 @@
 
 mkDerivation {
   pname = "spectacle";
+
   nativeBuildInputs = [ extra-cmake-modules kdoctools wrapGAppsHook ];
   buildInputs = [
     kconfig kcoreaddons kdbusaddons kdeclarative ki18n kio knotifications
@@ -32,6 +33,7 @@ mkDerivation {
   meta = with lib; {
     homepage = "https://apps.kde.org/spectacle/";
     description = "Screenshot capture utility";
+    mainProgram = "spectacle";
     maintainers = with maintainers; [ ttuegel ];
   };
 }

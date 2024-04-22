@@ -1,6 +1,7 @@
 { lib
 , stdenv
 , python3
+, fetchPypi
 , openssl
   # Many Salt modules require various Python modules to be installed,
   # passing them in this array enables Salt to find them.
@@ -9,27 +10,13 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "salt";
-  version = "3006.1";
+  version = "3007.0";
+  format = "setuptools";
 
-  src = python3.pkgs.fetchPypi {
+  src = fetchPypi {
     inherit pname version;
-    hash = "sha256-lVh71hHepq/7aQjQ7CaGy37bhMFBRLSFF3bxJ6YOxbk=";
+    hash = "sha256-Qb+E5x/GVb+KS1LrRA0GIa6WEJaghtIOEy4VEuLt3/g=";
   };
-
-  propagatedBuildInputs = with python3.pkgs; [
-    distro
-    jinja2
-    jmespath
-    looseversion
-    markupsafe
-    msgpack
-    packaging
-    psutil
-    pycryptodomex
-    pyyaml
-    pyzmq
-    requests
-  ] ++ extraInputs;
 
   patches = [
     ./fix-libcrypto-loading.patch
@@ -49,6 +36,22 @@ python3.pkgs.buildPythonApplication rec {
     substituteInPlace "requirements/zeromq.txt" \
       --replace 'pyzmq==25.0.2 ; sys_platform == "win32"' ""
   '';
+
+  propagatedBuildInputs = with python3.pkgs; [
+    distro
+    jinja2
+    jmespath
+    looseversion
+    markupsafe
+    msgpack
+    packaging
+    psutil
+    pycryptodomex
+    pyyaml
+    pyzmq
+    requests
+    tornado
+  ] ++ extraInputs;
 
   # Don't use fixed dependencies on Darwin
   USE_STATIC_REQUIREMENTS = "0";

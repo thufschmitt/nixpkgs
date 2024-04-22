@@ -10,11 +10,11 @@
 
 stdenv.mkDerivation rec {
   pname = "qmidiarp";
-  version = "0.6.7";
+  version = "0.7.0";
 
   src = fetchgit {
     url = "https://git.code.sf.net/p/qmidiarp/code";
-    sha256 = "sha256-CxElnyREXLR086xYxCQTHZumrLP52CDYvv+ougKqJz0=";
+    sha256 = "sha256-oUdgff2xsXTis+C2Blv0tspWNIMGSODrKxWDpMDYnEU=";
     rev = "qmidiarp-${version}";
   };
 
@@ -34,6 +34,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "An advanced MIDI arpeggiator";
+    mainProgram = "qmidiarp";
     longDescription = ''
       An advanced MIDI arpeggiator, programmable step sequencer and LFO for Linux.
       It can hold any number of arpeggiator, sequencer, or LFO modules running in

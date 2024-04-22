@@ -10,8 +10,8 @@
 
 buildPythonPackage rec {
   pname = "dissect-executable";
-  version = "1.2";
-  format = "pyproject";
+  version = "1.5";
+  pyproject = true;
 
   disabled = pythonOlder "3.7";
 
@@ -19,10 +19,8 @@ buildPythonPackage rec {
     owner = "fox-it";
     repo = "dissect.executable";
     rev = "refs/tags/${version}";
-    hash = "sha256-I/LwIGce1bebAvjVuFE0rJAuJ/65xMTIim6M0BJR6TI=";
+    hash = "sha256-aAalU0TUqXc13WnxJvirG3QzQyMstecOfnXMdFT8IzU=";
   };
-
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   nativeBuildInputs = [
     setuptools

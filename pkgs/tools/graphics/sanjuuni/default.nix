@@ -1,21 +1,32 @@
 { lib
 , stdenv
 , fetchFromGitHub
+, fetchpatch
 , pkg-config
 , ffmpeg
 , poco
+, ocl-icd
+, opencl-clhpp
 }:
 
 stdenv.mkDerivation rec {
   pname = "sanjuuni";
-  version = "0.3";
+  version = "0.4";
 
   src = fetchFromGitHub {
     owner = "MCJack123";
     repo = "sanjuuni";
     rev = version;
-    sha256 = "sha256-8IbdLXWUtT2VN6Eu1b8x4DnyI8JOd/12t0XDa6o3N+A=";
+    sha256 = "sha256-wgtyrik4Z5AXd8MHkiMuxMpGh/xcEtNqivyhvL68aac=";
   };
+
+  patches = [
+    (fetchpatch {
+      name = "build-with-cxx17.patch";
+      url = "https://github.com/MCJack123/sanjuuni/commit/f2164bc18935bcf63ee5b0a82087bc91f7fd258d.patch";
+      hash = "sha256-ZmP+AmUV7fcIFqSA6e56Nt6u03leE9PX36g2z0nLswo=";
+    })
+  ];
 
   nativeBuildInputs = [
     pkg-config
@@ -24,6 +35,8 @@ stdenv.mkDerivation rec {
   buildInputs = [
     ffmpeg
     poco
+    ocl-icd
+    opencl-clhpp
   ];
 
   installPhase = ''
@@ -41,5 +54,6 @@ stdenv.mkDerivation rec {
     maintainers = [ maintainers.tomodachi94 ];
     license = licenses.gpl2Plus;
     broken = stdenv.isDarwin;
+    mainProgram = "sanjuuni";
   };
 }

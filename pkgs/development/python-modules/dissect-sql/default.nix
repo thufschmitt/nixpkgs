@@ -11,19 +11,17 @@
 
 buildPythonPackage rec {
   pname = "dissect-sql";
-  version = "3.4";
+  version = "3.8";
   format = "pyproject";
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "fox-it";
     repo = "dissect.sql";
     rev = "refs/tags/${version}";
-    hash = "sha256-JrdYCqyds6opgRz2Jxu70MewN7uR+GoN6GF0HZgB1BI=";
+    hash = "sha256-f19l1NxIdkQRaqEAgeTIuloPY079TmnNZ/DLQEXFQIA=";
   };
-
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   nativeBuildInputs = [
     setuptools

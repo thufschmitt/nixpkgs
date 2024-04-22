@@ -1,54 +1,73 @@
 { lib
-, stdenv
 , fetchFromGitHub
-, asio
+
 , cmake
+, ninja
+
+, alsa-lib
+, asio
 , curl
+, nlohmann_json
 , obs-studio
 , opencv
 , procps
 , qtbase
+, stdenv
+, tesseract
 , websocketpp
 , xorg
+
+, httplib
+, libremidi
 }:
 
 stdenv.mkDerivation rec {
   pname = "advanced-scene-switcher";
-  version = "1.21.1";
+  version = "1.25.5";
 
   src = fetchFromGitHub {
     owner = "WarmUpTill";
     repo = "SceneSwitcher";
     rev = version;
-    sha256 = "1p6fl1fy39hrm7yasjhv6z79bnjk2ib3yg9dvf1ahwzkd9bpyfyl";
+    hash = "sha256-ROR+R1Zak8XkhFk1+Pyi0lB+JZI4SVtKGin4vem7NEE=";
   };
 
-  nativeBuildInputs = [ cmake ];
+  nativeBuildInputs = [
+    cmake
+    ninja
+  ];
 
   buildInputs = [
+    alsa-lib
     asio
     curl
+    libremidi
+    nlohmann_json
     obs-studio
     opencv
     procps
     qtbase
+    tesseract
     websocketpp
     xorg.libXScrnSaver
   ];
 
   dontWrapQtApps = true;
 
-  postInstall = ''
-    mkdir $out/lib $out/share
-    mv $out/obs-plugins/64bit $out/lib/obs-plugins
-    mv $out/data $out/share/obs
+  postUnpack = ''
+    cp -r ${httplib.src}/* $sourceRoot/deps/cpp-httplib
+    cp -r ${libremidi.src}/* $sourceRoot/deps/libremidi
+    chmod -R +w $sourceRoot/deps/cpp-httplib
+    chmod -R +w $sourceRoot/deps/libremidi
   '';
 
-  meta = {
+  env.NIX_CFLAGS_COMPILE = "-Wno-error=stringop-overflow";
+
+  meta = with lib; {
     description = "An automated scene switcher for OBS Studio";
     homepage = "https://github.com/WarmUpTill/SceneSwitcher";
-    maintainers = with lib.maintainers; [ paveloom ];
-    license = lib.licenses.gpl2Plus;
-    platforms = lib.platforms.linux;
+    license = licenses.gpl2Plus;
+    platforms = platforms.linux;
+    maintainers = with maintainers; [ ];
   };
 }

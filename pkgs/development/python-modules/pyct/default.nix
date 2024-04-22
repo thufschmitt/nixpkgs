@@ -36,9 +36,10 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "ClI for Python common tasks for users";
+    mainProgram = "pyct";
     homepage = "https://github.com/pyviz/pyct";
     changelog = "https://github.com/pyviz-dev/pyct/releases/tag/v${version}";
     license = licenses.bsd3;
-    maintainers = with maintainers; [ costrouc ];
+    maintainers = with maintainers; [ ];
   };
 }

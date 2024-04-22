@@ -1,9 +1,11 @@
 { lib
 , python3
+, fetchPypi
 , pkgsCross
 , avrdude
 , dfu-programmer
 , dfu-util
+, wb32-dfu-updater
 , gcc-arm-embedded
 , gnumake
 , teensy-loader-cli
@@ -11,12 +13,12 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "qmk";
-  version = "1.1.2";
+  version = "1.1.5";
   format = "pyproject";
 
-  src = python3.pkgs.fetchPypi {
+  src = fetchPypi {
     inherit pname version;
-    hash = "sha256-+HH4jxoMoxujGgCdcWQX5GvFOKT4347eaoAckHbCKZg=";
+    hash = "sha256-Lv48dSIwxrokuHGcO26FpWRL+PfQ3SN3V+2pt7fmCxE=";
   };
 
   nativeBuildInputs = with python3.pkgs; [
@@ -37,6 +39,7 @@ python3.pkgs.buildPythonApplication rec {
     avrdude
     dfu-programmer
     dfu-util
+    wb32-dfu-updater
     teensy-loader-cli
     gcc-arm-embedded
     gnumake
@@ -68,5 +71,6 @@ python3.pkgs.buildPythonApplication rec {
     '';
     license = licenses.mit;
     maintainers = with maintainers; [ bhipple babariviere ekleog ];
+    mainProgram = "qmk";
   };
 }

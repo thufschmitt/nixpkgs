@@ -1,9 +1,6 @@
 { lib
 , fetchFromGitHub
 , rustPlatform
-, llvm
-, clang
-, libclang
 , pipewire
 , pkg-config
 , bcc
@@ -22,10 +19,9 @@ in rustPlatform.buildRustPackage {
   };
   cargoSha256 = "sha256-hpFDAhOzm4v3lBWwAl/10pS5xvKCScdKsp5wpCeQ+FE=";
 
-  nativeBuildInputs = [ pkg-config llvm clang ];
+  nativeBuildInputs = [ pkg-config rustPlatform.bindgenHook ];
   buildInputs = [ dbus pipewire ];
 
-  LIBCLANG_PATH = "${libclang.lib}/lib";
   EXECSNOOP_PATH = "${bcc}/bin/execsnoop";
 
   # tests don't build
@@ -39,6 +35,7 @@ in rustPlatform.buildRustPackage {
 
   meta = with lib; {
     description = "System76 Scheduler";
+    mainProgram = "system76-scheduler";
     homepage = "https://github.com/pop-os/system76-scheduler";
     license = licenses.mpl20;
     platforms = [ "x86_64-linux" "x86-linux" "aarch64-linux" ];

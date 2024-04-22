@@ -11,14 +11,14 @@
 
 buildPythonPackage rec {
   pname = "ffmpeg-progress-yield";
-  version = "0.7.4";
+  version = "0.7.8";
   format = "setuptools";
 
   disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-gBWkoR0cJdcWShX9aIDt6DpK1dkT9bfvgnrgXGgZPSQ=";
+    hash = "sha256-muauX4Mq58ew9lGPE0H+bu4bqPydNADLocujjy6qRh4=";
   };
 
   propagatedBuildInputs = [ colorama tqdm ];
@@ -36,6 +36,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Run an ffmpeg command with progress";
+    mainProgram = "ffmpeg-progress-yield";
     homepage = "https://github.com/slhck/ffmpeg-progress-yield";
     changelog = "https://github.com/slhck/ffmpeg-progress-yield/blob/v${version}/CHANGELOG.md";
     license = with licenses; [ mit ];

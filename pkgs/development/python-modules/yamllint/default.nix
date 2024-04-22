@@ -1,24 +1,31 @@
 { lib
+, stdenv
 , buildPythonPackage
-, fetchPypi
+, fetchFromGitHub
+, setuptools
 , pathspec
 , pytestCheckHook
 , pythonOlder
 , pyyaml
-, stdenv
 }:
 
 buildPythonPackage rec {
   pname = "yamllint";
-  version = "1.31.0";
-  format = "setuptools";
+  version = "1.35.1";
+  pyproject = true;
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-LYPx0S9zPhYqh+BrF2FJ17ucW65Knl/OHHcdf3A/emU=";
+  src = fetchFromGitHub {
+    owner = "adrienverge";
+    repo = "yamllint";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-+7Q2cPl4XElI2IfLAkteifFVTrGkj2IjZk7nPuc6eYM=";
   };
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     pyyaml
@@ -39,10 +46,13 @@ buildPythonPackage rec {
     "test_run_with_locale"
   ];
 
-  pythonImportsCheck = [ "yamllint" ];
+  pythonImportsCheck = [
+    "yamllint"
+  ];
 
   meta = with lib; {
     description = "A linter for YAML files";
+    mainProgram = "yamllint";
     homepage = "https://github.com/adrienverge/yamllint";
     changelog = "https://github.com/adrienverge/yamllint/blob/v${version}/CHANGELOG.rst";
     license = licenses.gpl3Plus;

@@ -1,4 +1,5 @@
-{ buildPythonPackage
+{ lib
+, buildPythonPackage
 , dj-database-url
 , django
 , django-rq
@@ -6,46 +7,56 @@
 , flit-core
 , freezegun
 , google-cloud-translate
-, lib
 , polib
 , python
+, pythonOlder
 , typing-extensions
 , wagtail
+, wagtail-modeladmin
 }:
 
 buildPythonPackage rec {
   pname = "wagtail-localize";
-  version = "1.5";
-  format = "pyproject";
+  version = "1.9";
+  pyproject = true;
+
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
-    repo = pname;
+    repo = "wagtail-localize";
     owner = "wagtail";
-    rev = "v${version}";
-    sha256 = "sha256-aNz4OoUUXWMCahMxuYBxvNWnw7Inxd5svBgwLgoirW8=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-ENdUXfvQOfd9cgHr6fd5Hf+8AJXFix3YbsYJQfpu4ZE=";
   };
+
+  nativeBuildInputs = [
+    flit-core
+  ];
 
   propagatedBuildInputs = [
     django
     wagtail
     polib
     typing-extensions
+    wagtail-modeladmin
   ];
 
-  checkInputs = [
+  nativeCheckInputs = [
     dj-database-url
     django-rq
     freezegun
     google-cloud-translate
   ];
 
-  nativeBuildInputs = [ flit-core ];
-
   passthru.optional-dependencies = {
-    google = [ google-cloud-translate ];
+    google = [
+      google-cloud-translate
+    ];
   };
 
   checkPhase = ''
+    # test_translate_html fails with later Beautifulsoup releases
+    rm wagtail_localize/machine_translators/tests/test_dummy_translator.py
     ${python.interpreter} testmanage.py test
   '';
 

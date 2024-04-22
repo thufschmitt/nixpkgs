@@ -7,7 +7,7 @@
 
 buildPythonPackage rec {
   pname = "aiooncue";
-  version = "0.3.4";
+  version = "0.3.7";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -15,8 +15,8 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "bdraco";
     repo = pname;
-    rev = version;
-    hash = "sha256-/Db32OomEkrBtq5lfT8zBGgvaUWnWE/sTqwNVNB9XAg=";
+    rev = "refs/tags/${version}";
+    hash = "sha256-TKOpx+twnG9zj7RcwOn53ebT7eyLOFKyxChp9lCdoU8=";
   };
 
   propagatedBuildInputs = [

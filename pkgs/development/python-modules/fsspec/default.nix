@@ -29,16 +29,16 @@
 
 buildPythonPackage rec {
   pname = "fsspec";
-  version = "2023.4.0";
+  version = "2024.3.0";
   format = "setuptools";
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "fsspec";
     repo = "filesystem_spec";
-    rev = version;
-    hash = "sha256-qkvhmXJNxA8v+kbZ6ulxJAQr7ReQpb+JkbhOUnL59KM=";
+    rev = "refs/tags/${version}";
+    hash = "sha256-C+47BcIELZTEARXW8fAMHMjyKUWxU1tNKWGoPPtt/fQ=";
   };
 
   propagatedBuildInputs = [
@@ -126,6 +126,10 @@ buildPythonPackage rec {
     pytestCheckHook
   ];
 
+  preCheck = ''
+    export HOME=$(mktemp -d)
+  '';
+
   __darwinAllowLocalNetworking = true;
 
   disabledTests = [
@@ -144,6 +148,13 @@ buildPythonPackage rec {
     # this two tests however, assume nanosecond resolution
     "test_modified"
     "test_touch"
+    # tries to access /home, ignores $HOME
+    "test_directories"
+  ];
+
+  disabledTestPaths = [
+    # JSON decoding issues
+    "fsspec/implementations/tests/test_dbfs.py"
   ];
 
   pythonImportsCheck = [
@@ -155,6 +166,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/fsspec/filesystem_spec";
     changelog = "https://github.com/fsspec/filesystem_spec/raw/${version}/docs/source/changelog.rst";
     license = licenses.bsd3;
-    maintainers = with maintainers; [ costrouc ];
+    maintainers = with maintainers; [ ];
   };
 }

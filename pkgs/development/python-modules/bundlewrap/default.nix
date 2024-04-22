@@ -18,16 +18,16 @@
 
 buildPythonPackage rec {
   pname = "bundlewrap";
-  version = "4.17.0";
+  version = "4.18.0";
   format = "setuptools";
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "bundlewrap";
     repo = "bundlewrap";
     rev = "refs/tags/${version}";
-    hash = "sha256-hdTJcuhVMbLqtPclgj4u6XwH0A5DvnGpnkhIG6Gm8+4=";
+    hash = "sha256-7jBFeJem+0vZot+BknKmCxozmoHCBCAZqDbfQQG3/Vw=";
   };
 
   nativeBuildInputs = [ setuptools ];
@@ -47,6 +47,7 @@ buildPythonPackage rec {
   meta = with lib; {
     homepage = "https://bundlewrap.org/";
     description = "Easy, Concise and Decentralized Config management with Python";
+    mainProgram = "bw";
     license = [ licenses.gpl3 ] ;
     maintainers = with maintainers; [ wamserma ];
   };

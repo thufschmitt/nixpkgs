@@ -5,19 +5,20 @@
 
 buildGoModule rec {
   pname = "pprof";
-  version = "unstable-2022-05-09";
+  version = "unstable-2024-02-27";
 
   src = fetchFromGitHub {
     owner = "google";
     repo = "pprof";
-    rev = "59ca7ad80af3faf4f87f4d82ff02f5d390c08ed6";
-    sha256 = "0jni73ila3glg7rl11v0al947d94dd0syhkjqnliaryh8dkxbx80";
+    rev = "401108e1b7e7e113ef887df16b6227698eb5bb0f";
+    hash = "sha256-TD285HHXkePQA2J9W/dEciK5tOLmvbDPr54KNXeE1b4=";
   };
 
-  vendorSha256 = "0vr8jp3kxgadb73g67plfrl5dkxfwrxaxjs664918jssy25vyk2y";
+  vendorHash = "sha256-XOcOt+pe1lZj4XHafxROLslhyJk4mTC72yn7R1k2JCk=";
 
   meta = with lib; {
     description = "A tool for visualization and analysis of profiling data";
+    mainProgram = "pprof";
     homepage = "https://github.com/google/pprof";
     license = licenses.asl20;
     longDescription = ''

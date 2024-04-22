@@ -1,23 +1,25 @@
 { lib
 , stdenv
 , fetchurl
+, autoreconfHook
 , guile
 , pkg-config
 , texinfo
 }:
 
-assert stdenv ? cc && stdenv.cc.isGNU;
-
 stdenv.mkDerivation rec {
   pname = "guile-lib";
-  version = "0.2.7";
+  version = "0.2.8";
 
   src = fetchurl {
     url = "mirror://savannah/${pname}/${pname}-${version}.tar.gz";
-    hash = "sha256-5O87hF8SGILHwM8E+BocuP02DG9ktWuGjeVUYhT5BN4=";
+    hash = "sha256-ZOkC7gy7LO4e+4Fow7+e1J4LMqiiPbhj6DvxSBfXZ9k=";
   };
 
+  strictDeps = true;
   nativeBuildInputs = [
+    autoreconfHook
+    guile
     pkg-config
   ];
   buildInputs = [
@@ -25,7 +27,15 @@ stdenv.mkDerivation rec {
     texinfo
   ];
 
-  doCheck = true;
+  postPatch = ''
+    substituteInPlace configure.ac \
+      --replace 'SITEDIR="$datadir/guile-lib"' 'SITEDIR=$datadir/guile/site/$GUILE_EFFECTIVE_VERSION' \
+      --replace 'SITECCACHEDIR="$libdir/guile-lib/guile/$GUILE_EFFECTIVE_VERSION/site-ccache"' 'SITECCACHEDIR="$libdir/guile/$GUILE_EFFECTIVE_VERSION/site-ccache"'
+  '';
+
+  makeFlags = [ "GUILE_AUTO_COMPILE=0" ];
+
+  doCheck = !stdenv.isDarwin;
 
   preCheck = ''
     # Make `libgcc_s.so' visible for `pthread_cancel'.
@@ -43,7 +53,7 @@ stdenv.mkDerivation rec {
       for Guile".
     '';
     license = licenses.gpl3Plus;
-    maintainers = with maintainers; [ vyp ];
-    platforms = platforms.gnu ++ platforms.linux;
+    maintainers = with maintainers; [ vyp foo-dogsquared ];
+    platforms = guile.meta.platforms;
   };
 }

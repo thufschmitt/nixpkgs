@@ -41,8 +41,9 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "pip update helpers";
+    mainProgram = "pipdate";
     homepage = "https://github.com/nschloe/pipdate";
     license = licenses.gpl3Plus;
-    maintainers = with maintainers; [ costrouc ];
+    maintainers = with maintainers; [ ];
   };
 }

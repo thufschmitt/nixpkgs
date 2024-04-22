@@ -11,8 +11,6 @@
 
 { pkgs, lib, ... }:
 
-with lib;
-
 let
   inherit (import ./ssh-keys.nix pkgs) snakeOilPrivateKey snakeOilPublicKey;
   initialRootPassword = "notproduction";
@@ -21,32 +19,30 @@ let
   aliceUsername = "alice";
   aliceUserId = "2";
   alicePassword = "R5twyCgU0uXC71wT9BBTCqLs6HFZ7h3L";
-  aliceProjectId = "2";
+  aliceProjectId = "1";
   aliceProjectName = "test-alice";
 
   bobUsername = "bob";
   bobUserId = "3";
   bobPassword = "XwkkBbl2SiIwabQzgcoaTbhsotijEEtF";
-  bobProjectId = "3";
+  bobProjectId = "2";
 in {
   name = "gitlab";
-  meta = with pkgs.lib.maintainers; {
-    maintainers = [ globin yayayayaka ];
-  };
+  meta.maintainers = with lib.maintainers; [ globin yayayayaka ];
 
   nodes = {
     gitlab = { ... }: {
       imports = [ common/user-account.nix ];
 
-      virtualisation.memorySize = if pkgs.stdenv.is64bit then 4096 else 2047;
+      virtualisation.memorySize = 6144;
       virtualisation.cores = 4;
       virtualisation.useNixStoreImage = true;
       virtualisation.writableStore = false;
 
-      systemd.services.gitlab.serviceConfig.Restart = mkForce "no";
-      systemd.services.gitlab-workhorse.serviceConfig.Restart = mkForce "no";
-      systemd.services.gitaly.serviceConfig.Restart = mkForce "no";
-      systemd.services.gitlab-sidekiq.serviceConfig.Restart = mkForce "no";
+      systemd.services.gitlab.serviceConfig.Restart = lib.mkForce "no";
+      systemd.services.gitlab-workhorse.serviceConfig.Restart = lib.mkForce "no";
+      systemd.services.gitaly.serviceConfig.Restart = lib.mkForce "no";
+      systemd.services.gitlab-sidekiq.serviceConfig.Restart = lib.mkForce "no";
 
       services.nginx = {
         enable = true;
@@ -93,6 +89,10 @@ in {
           dbFile = pkgs.writeText "dbsecret" "we2quaeZ";
           jwsFile = pkgs.runCommand "oidcKeyBase" {} "${pkgs.openssl}/bin/openssl genrsa 2048 > $out";
         };
+
+        # reduce memory usage
+        sidekiq.concurrency = 1;
+        puma.workers = 2;
       };
     };
   };
@@ -195,7 +195,7 @@ in {
         gitlab.succeed(
             "echo \"Authorization: Bearer $(curl -X POST -H 'Content-Type: application/json' -d @${auth} http://gitlab/oauth/token | ${pkgs.jq}/bin/jq -r '.access_token')\" >/tmp/headers"
         )
-      '' + optionalString doSetup ''
+      '' + lib.optionalString doSetup ''
         with subtest("Create user Alice"):
             gitlab.succeed(
                 """[ "$(curl -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H @/tmp/headers -d @${createUserAlice} http://gitlab/api/v4/users)" = "201" ]"""
@@ -423,7 +423,7 @@ in {
       gitlab.systemctl("start gitlab-backup.service")
       gitlab.wait_for_unit("gitlab-backup.service")
       gitlab.wait_for_file("${nodes.gitlab.services.gitlab.statePath}/backup/dump_gitlab_backup.tar")
-      gitlab.systemctl("stop postgresql.service gitlab.target")
+      gitlab.systemctl("stop postgresql.service gitlab-config.service gitlab.target")
       gitlab.succeed(
           "find ${nodes.gitlab.services.gitlab.statePath} -mindepth 1 -maxdepth 1 -not -name backup -execdir rm -r {} +"
       )

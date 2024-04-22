@@ -10,7 +10,7 @@ in {
 
   imports = [ ../../../modules/virtualisation/amazon-image.nix ];
 
-  # Amazon recomments setting this to the highest possible value for a good EBS
+  # Amazon recommends setting this to the highest possible value for a good EBS
   # experience, which prior to 4.15 was 255.
   # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/nvme-ebs-volumes.html#timeout-nvme-ebs-volumes
   config.boot.kernelParams =
@@ -23,7 +23,7 @@ in {
   options.amazonImage = {
     name = mkOption {
       type = types.str;
-      description = lib.mdDoc "The name of the generated derivation";
+      description = "The name of the generated derivation";
       default = "nixos-amazon-image-${config.system.nixos.label}-${pkgs.stdenv.hostPlatform.system}";
     };
 
@@ -35,7 +35,7 @@ in {
         ]
       '';
       default = [];
-      description = lib.mdDoc ''
+      description = ''
         This option lists files to be copied to fixed locations in the
         generated image. Glob patterns work.
       '';
@@ -43,15 +43,15 @@ in {
 
     sizeMB = mkOption {
       type = with types; either (enum [ "auto" ]) int;
-      default = 2048;
+      default = 3072;
       example = 8192;
-      description = lib.mdDoc "The size in MB of the image";
+      description = "The size in MB of the image";
     };
 
     format = mkOption {
       type = types.enum [ "raw" "qcow2" "vpc" ];
       default = "vpc";
-      description = lib.mdDoc "The image format to output";
+      description = "The image format to output";
     };
   };
 
@@ -157,4 +157,6 @@ in {
       '';
     };
   in if config.ec2.zfs.enable then zfsBuilder else extBuilder;
+
+  meta.maintainers = with maintainers; [ arianvp ];
 }

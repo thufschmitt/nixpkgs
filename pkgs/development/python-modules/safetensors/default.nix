@@ -3,7 +3,6 @@
 , buildPythonPackage
 , cargo
 , fetchFromGitHub
-, fetchpatch
 , h5py
 , numpy
 , pythonOlder
@@ -17,41 +16,32 @@
 
 buildPythonPackage rec {
   pname = "safetensors";
-  version = "0.3.0";
-  format = "pyproject";
+  version = "0.4.2";
+  pyproject = true;
 
   disabled = pythonOlder "3.7";
 
   src = fetchFromGitHub {
     owner = "huggingface";
-    repo = pname;
+    repo = "safetensors";
     rev = "refs/tags/v${version}";
-    hash = "sha256-Qpb5lTw1WEME9tWEGfxC8l8dK9mGMH2rz+O+xGCrUxw";
+    hash = "sha256-hdPUI8k7CCQwt2C/AsjUHRmAL6ob+yCN97KkWtqOQL8=";
   };
-
-  patches = [
-    # remove after next release
-    (fetchpatch {
-      name = "commit-cargo-lockfile";
-      relative = "bindings/python";
-      url = "https://github.com/huggingface/safetensors/commit/a7061b4235b59312010b2dd6f9597381428ee9a2.patch";
-      hash = "sha256-iH4vQOL2LU93kd0dSS8/JJxKGb+kDstqnExjYSSwi78";
-    })
-  ];
 
   cargoDeps = rustPlatform.fetchCargoTarball {
-    inherit src patches;
-    sourceRoot = "source/bindings/python";
-    hash = "sha256-tC0XawmKWNGCaByHQfJEfmHM3m/qgTuIpcRaEFJC6dM";
+    inherit src;
+    sourceRoot = "${src.name}/bindings/python";
+    hash = "sha256-7n9aYlha6IaPsZ2zMfD5EIkrk8ENwMBwj41s6QU7ml0=";
   };
 
-  sourceRoot = "source/bindings/python";
+  sourceRoot = "${src.name}/bindings/python";
 
   nativeBuildInputs = [
     setuptools-rust
     cargo
     rustc
     rustPlatform.cargoSetupHook
+    rustPlatform.maturinBuildHook
   ];
 
   buildInputs = lib.optionals stdenv.isDarwin [ libiconv ];
@@ -65,6 +55,9 @@ buildPythonPackage rec {
     "tests/test_flax_comparison.py"
     "tests/test_paddle_comparison.py"
     "tests/test_tf_comparison.py"
+  ] ++ lib.optionals stdenv.isDarwin [
+    # don't require mlx (not in Nixpkgs) to run tests
+    "tests/test_mlx_comparison.py"
   ];
 
   pythonImportsCheck = [

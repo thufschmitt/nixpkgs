@@ -1,4 +1,4 @@
-{ lib, stdenv, mkDerivation, fetchFromGitHub
+{ lib, stdenv, mkDerivation, fetchFromGitHub, fetchpatch
 , pkg-config, autoreconfHook
 , openssl, db48, boost, zlib, miniupnpc
 , glib, protobuf, util-linux, qrencode
@@ -19,6 +19,22 @@ mkDerivation rec {
     rev = "v${version}";
     sha256 = "sha256-TuDc47TZOEQA5Lr4DQkEhnO/Szp9h71xPjaBL3jFWuM=";
   };
+
+  patches = [
+    (fetchpatch {
+      name = "boost1770.patch";
+      url = "https://aur.archlinux.org/cgit/aur.git/plain/boost1770.patch?h=litecoin-qt&id=dc75ad854af123f375b5b683be64aa14573170d7";
+      hash = "sha256-PTkYQRA8n5a9yR2AvpzH5natsXT2W6Xjo0ONCPJx78k=";
+    })
+
+    # Fix gcc-13 build by adding missing headers:
+    #   https://github.com/litecoin-project/litecoin/pull/929
+    (fetchpatch {
+      name = "gcc-13.patch";
+      url = "https://github.com/litecoin-project/litecoin/commit/6d1adb19aa79a8e8e140582759515bbd76816aa0.patch";
+      hash = "sha256-1y4Iz2plMw5HMAjl9x50QQpYrYaUd2WKrrAcUnQmlBY=";
+    })
+  ];
 
   nativeBuildInputs = [ pkg-config autoreconfHook ];
   buildInputs = [ openssl db48 boost zlib zeromq fmt

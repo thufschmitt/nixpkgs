@@ -5,12 +5,12 @@
 , llvm
 , pkg-config
 , makeWrapper
+, elfutils
 , file
 , hyperscan
 , jansson
 , libbpf
 , libcap_ng
-, libelf
 , libevent
 , libmaxminddb
 , libnet
@@ -22,8 +22,7 @@
 , luajit
 , lz4
 , nspr
-, nss
-, pcre
+, pcre2
 , python
 , zlib
 , redisSupport ? true, redis, hiredis
@@ -34,11 +33,11 @@
 in
 stdenv.mkDerivation rec {
   pname = "suricata";
-  version = "6.0.11";
+  version = "7.0.4";
 
   src = fetchurl {
     url = "https://www.openinfosecfoundation.org/download/${pname}-${version}.tar.gz";
-    sha256 = "sha256-TaXk6R5JmSYzpgJM4Qr+ZEElWyd1qPIPHvGIvREprGY=";
+    hash = "sha256-ZABgEgAkvnDb6B9uxu/HLkYlD8s2IZ3/Z+ZBciD/Ibc=";
   };
 
   nativeBuildInputs = [
@@ -51,10 +50,10 @@ stdenv.mkDerivation rec {
   ;
 
   buildInputs = [
+    elfutils
     jansson
     libbpf
     libcap_ng
-    libelf
     libevent
     libmagic
     libmaxminddb
@@ -67,8 +66,7 @@ stdenv.mkDerivation rec {
     luajit
     lz4
     nspr
-    nss
-    pcre
+    pcre2
     python
     zlib
   ]
@@ -101,7 +99,6 @@ stdenv.mkDerivation rec {
     "--enable-nflog"
     "--enable-nfqueue"
     "--enable-pie"
-    "--disable-prelude"
     "--enable-python"
     "--enable-unix-socket"
     "--localstatedir=/var"
@@ -127,6 +124,7 @@ stdenv.mkDerivation rec {
   hardeningDisable = [ "stackprotector" ];
 
   installFlags = [
+    "e_datadir=\${TMPDIR}"
     "e_localstatedir=\${TMPDIR}"
     "e_logdir=\${TMPDIR}"
     "e_logcertsdir=\${TMPDIR}"

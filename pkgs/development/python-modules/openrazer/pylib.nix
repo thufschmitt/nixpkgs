@@ -4,6 +4,7 @@
 , fetchFromGitHub
 , numpy
 , openrazer-daemon
+, setuptools
 }:
 
 let
@@ -12,7 +13,9 @@ in
 buildPythonPackage (common // {
   pname = "openrazer";
 
-  sourceRoot = "source/pylib";
+  sourceRoot = "${common.src.name}/pylib";
+
+  nativeBuildInputs = [ setuptools ];
 
   propagatedBuildInputs = [
     dbus-python

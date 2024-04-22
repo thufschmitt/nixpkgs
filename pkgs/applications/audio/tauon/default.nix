@@ -10,6 +10,7 @@
 , gobject-introspection
 , gtk3
 , kissfft
+, libappindicator
 , libnotify
 , libsamplerate
 , libvorbis
@@ -23,15 +24,15 @@
 , withDiscordRPC ? false
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "tauon";
-  version = "7.6.4";
+  version = "7.7.2";
 
   src = fetchFromGitHub {
     owner = "Taiko2k";
     repo = "TauonMusicBox";
-    rev = "v${version}";
-    hash = "sha256-xMUQ2LabxuvCdd7dsoXPN3tjkDxfXIQ8UrJcsGQ+EEU=";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-IVl7XL6nn42zaY4bDraF9os0dXfquUql4E96djfVdVg=";
   };
 
   postUnpack = ''
@@ -69,12 +70,13 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     pkg-config
     python3Packages.wrapPython
+    gobject-introspection
   ];
 
   buildInputs = [
     flac
-    gobject-introspection
     gtk3
+    libappindicator
     libnotify
     libopenmpt
     librsvg
@@ -132,10 +134,11 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "The Linux desktop music player from the future";
+    mainProgram = "tauon";
     homepage = "https://tauonmusicbox.rocks/";
-    changelog = "https://github.com/Taiko2k/TauonMusicBox/releases/tag/v${version}";
+    changelog = "https://github.com/Taiko2k/TauonMusicBox/releases/tag/v${finalAttrs.version}";
     license = licenses.gpl3;
     maintainers = with maintainers; [ jansol ];
     platforms = platforms.linux ++ platforms.darwin;
   };
-}
+})

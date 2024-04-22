@@ -17,12 +17,18 @@ in
   };
 
   options = {
-    programs.cfs-zen-tweaks.enable = mkEnableOption (lib.mdDoc "CFS Zen Tweaks");
+    programs.cfs-zen-tweaks.enable = mkEnableOption "CFS Zen Tweaks";
   };
 
   config = mkIf cfg.enable {
     systemd.packages = [ pkgs.cfs-zen-tweaks ];
 
-    systemd.services.set-cfs-tweak.wantedBy = [ "multi-user.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" "suspend-then-hibernate.target" ];
+    systemd.services.set-cfs-tweaks.wantedBy = [
+      "multi-user.target"
+      "suspend.target"
+      "hibernate.target"
+      "hybrid-sleep.target"
+      "suspend-then-hibernate.target"
+    ];
   };
 }

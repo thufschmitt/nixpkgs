@@ -11,14 +11,14 @@
 
 buildPythonPackage rec {
   pname = "google-cloud-core";
-  version = "2.3.2";
+  version = "2.4.1";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-uVKe5wR/2NS/SiGC3mGRVCQN8X++YOrTmQeMGuFSr5o=";
+    hash = "sha256-m3dJJyqBK95Y//KIaNDF4vWFuC834JofbtLU0Q8TQHM=";
   };
 
   propagatedBuildInputs = [
@@ -51,6 +51,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/googleapis/python-cloud-core";
     changelog = "https://github.com/googleapis/python-cloud-core/blob/v${version}/CHANGELOG.md";
     license = licenses.asl20;
-    maintainers = with maintainers; [ SuperSandro2000 ];
+    maintainers = with maintainers; [ ];
   };
 }

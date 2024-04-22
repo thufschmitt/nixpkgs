@@ -13,14 +13,14 @@
 
 buildPythonPackage rec {
   pname = "pypykatz";
-  version = "0.6.6";
+  version = "0.6.9";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-fPeEKTfRL142RIMSQxpByIAy09sXlmDjIATikc82Iuw=";
+    hash = "sha256-Xni2cYI+ByTFSDvuWHDU97KljwMe3aT7P+VIir6ktks=";
   };
 
   propagatedBuildInputs = [
@@ -42,6 +42,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Mimikatz implementation in Python";
+    mainProgram = "pypykatz";
     homepage = "https://github.com/skelsec/pypykatz";
     changelog = "https://github.com/skelsec/pypykatz/releases/tag/${version}";
     license = with licenses; [ mit ];

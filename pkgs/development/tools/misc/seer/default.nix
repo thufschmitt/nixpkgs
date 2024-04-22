@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchFromGitHub, cmake, qtcharts, qtbase, wrapQtAppsHook }:
+{ lib, stdenv, fetchFromGitHub, cmake, gdb, qtcharts, qtbase, wrapQtAppsHook }:
 
 stdenv.mkDerivation rec {
   pname = "seer";
@@ -15,11 +15,17 @@ stdenv.mkDerivation rec {
     cd src
   '';
 
+  patchPhase = ''
+    substituteInPlace src/{SeerGdbConfigPage,SeerMainWindow,SeerGdbWidget}.cpp \
+      --replace "/usr/bin/gdb" "${gdb}/bin/gdb"
+  '';
+
   buildInputs = [ qtbase qtcharts ];
   nativeBuildInputs = [ cmake wrapQtAppsHook ];
 
   meta = with lib; {
     description = "A Qt gui frontend for GDB";
+    mainProgram = "seergdb";
     homepage = "https://github.com/epasveer/seer";
     license = licenses.gpl3Only;
     platforms = platforms.linux;

@@ -42,13 +42,13 @@
 
 buildPythonPackage rec {
   pname = "nipype";
-  version = "1.8.5";
+  version = "1.8.6";
   disabled = pythonOlder "3.7";
   format = "setuptools";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-44QnQ/tmBGTdKd5z3Pye9m0nO+ELzGQFn/Ic1e8ellU=";
+    hash = "sha256-l3sTFej3D5QWPsB+MeVXG+g/Kt1gIxQcWgascAEm+NE=";
   };
 
   postPatch = ''
@@ -106,6 +106,7 @@ buildPythonPackage rec {
   meta = with lib; {
     homepage = "https://nipy.org/nipype/";
     description = "Neuroimaging in Python: Pipelines and Interfaces";
+    mainProgram = "nipypecli";
     license = licenses.bsd3;
     maintainers = with maintainers; [ ashgillman ];
   };

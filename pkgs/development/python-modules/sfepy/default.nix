@@ -1,5 +1,4 @@
-{ stdenv
-, lib
+{ lib
 , buildPythonPackage
 , fetchFromGitHub
 , numpy
@@ -7,7 +6,7 @@
 , matplotlib
 , pyparsing
 , tables
-, cython
+, cython_0
 , python
 , sympy
 , meshio
@@ -21,19 +20,20 @@
 
 buildPythonPackage rec {
   pname = "sfepy";
-  version = "2022.3";
+  version = "2023.1";
+  format = "setuptools";
   disabled = pythonOlder "3.8";
 
   src = fetchFromGitHub {
     owner = "sfepy";
     repo = "sfepy";
     rev = "release_${version}";
-    hash = "sha256-6AhyO6LRG6N62ZAoPCZpRKu4ZBzj9IHkurhKFIPFAJI=";
+    hash = "sha256-PuU6DL9zftHltpYI9VZQzKGIP8l9UUU8GVChrHtpNM0=";
   };
 
   propagatedBuildInputs = [
     numpy
-    cython
+    cython_0
     scipy
     matplotlib
     pyparsing
@@ -47,9 +47,6 @@ buildPythonPackage rec {
   ];
 
   postPatch = ''
-    # broken tests
-    rm sfepy/tests/test_meshio.py
-
     # slow tests
     rm sfepy/tests/test_io.py
     rm sfepy/tests/test_elasticity_small_strain.py

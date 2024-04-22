@@ -11,7 +11,7 @@
 
 buildPythonPackage rec {
   pname = "hatch-fancy-pypi-readme";
-  version = "22.8.0";
+  version = "24.1.0";
   format = "pyproject";
 
   disabled = pythonOlder "3.7";
@@ -19,7 +19,7 @@ buildPythonPackage rec {
   src = fetchPypi {
     pname = "hatch_fancy_pypi_readme";
     inherit version;
-    hash = "sha256-2pEoLKCWAcGK3tjjeNr4tXjHAhSGbwlxFW7pu5zmwmo=";
+    hash = "sha256-RN0jnxp3m53PjryUAaYR/X9+PhRXjc8iwmXfr3wVFLg=";
   };
 
   nativeBuildInputs = [
@@ -51,6 +51,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Fancy PyPI READMEs with Hatch";
+    mainProgram = "hatch-fancy-pypi-readme";
     homepage = "https://github.com/hynek/hatch-fancy-pypi-readme";
     license = licenses.mit;
     maintainers = with maintainers; [ tjni ];

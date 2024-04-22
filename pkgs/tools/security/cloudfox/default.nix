@@ -1,20 +1,26 @@
-{ lib
-, buildGoModule
-, fetchFromGitHub
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
 }:
 
 buildGoModule rec {
   pname = "cloudfox";
-  version = "1.10.3";
+  version = "1.14.0";
 
   src = fetchFromGitHub {
     owner = "BishopFox";
-    repo = pname;
+    repo = "cloudfox";
     rev = "refs/tags/v${version}";
-    hash = "sha256-XLn2GwoVNPoGTgXZx/q9dEmWigKB1BNylzxO9dBT3Zg=";
+    hash = "sha256-vh7U66od+i1kmTtpHZ1tuMPTl0AnXoYUKMU16ZgxFBQ=";
   };
 
-  vendorHash = "sha256-v8rEsp2mDgfjCO2VvWNIxex8F350MDnZ40bR4szv+3o=";
+  vendorHash = "sha256-2+UiaU4S64afH8Y8uz5ZclO5NxTi4YlUZ87ZN1MnLj0=";
+
+  ldflags = [
+    "-w"
+    "-s"
+  ];
 
   # Some tests are failing because of wrong filename/path
   doCheck = false;
@@ -25,5 +31,6 @@ buildGoModule rec {
     changelog = "https://github.com/BishopFox/cloudfox/releases/tag/v${version}";
     license = licenses.mit;
     maintainers = with maintainers; [ fab ];
+    mainProgram = "cloudfox";
   };
 }

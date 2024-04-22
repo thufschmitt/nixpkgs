@@ -7,21 +7,21 @@
 
 buildGoModule rec {
   pname = "gotrue";
-  version = "2.47.1";
+  version = "2.105.0";
 
   src = fetchFromGitHub {
     owner = "supabase";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-GBrdYlWvtlz/A/5Tn58EPYBL3X73D44GzbN1OrzwU8U=";
+    hash = "sha256-6tFXuVBd7UptoVMSse1Pk9ok6XyGL994pfFkFTyc5I0=";
   };
 
-  vendorHash = "sha256-FIl30sKmdcXayK8KWGFl+N+lYExl4ibKZ2tcvelw8zo=";
+  vendorHash = "sha256-cwTwze8WuhL5exaY5HJYDgcxNB9O1QuFpJgZmj6R838=";
 
   ldflags = [
     "-s"
     "-w"
-    "-X=github.com/netlify/gotrue/internal/utilities.Version=${version}"
+    "-X github.com/supabase/gotrue/internal/utilities.Version=${version}"
   ];
 
   # integration tests require network to connect to postgres database
@@ -36,6 +36,7 @@ buildGoModule rec {
   meta = with lib; {
     homepage = "https://github.com/supabase/gotrue";
     description = "A JWT based API for managing users and issuing JWT tokens";
+    mainProgram = "gotrue";
     changelog = "https://github.com/supabase/gotrue/releases/tag/v${version}";
     license = licenses.mit;
     maintainers = with maintainers; [ urandom ];

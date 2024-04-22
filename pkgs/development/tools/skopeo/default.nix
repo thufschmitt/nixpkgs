@@ -18,13 +18,13 @@
 
 buildGoModule rec {
   pname = "skopeo";
-  version = "1.12.0";
+  version = "1.15.0";
 
   src = fetchFromGitHub {
     rev = "v${version}";
     owner = "containers";
     repo = "skopeo";
-    hash = "sha256-a4uM2WjDhjz4zTiM2HWoDHQQ9aT38HV9GNUJAJmZR+w=";
+    hash = "sha256-GMZjmKM2bFv57b2u7VjiA2OF6gD7vtoQ3ofS2rQfNrk=";
   };
 
   outputs = [ "out" "man" ];
@@ -36,7 +36,7 @@ buildGoModule rec {
   nativeBuildInputs = [ pkg-config go-md2man installShellFiles makeWrapper ];
 
   buildInputs = [ gpgme ]
-  ++ lib.optionals stdenv.isLinux [ lvm2 btrfs-progs ];
+    ++ lib.optionals stdenv.isLinux [ lvm2 btrfs-progs ];
 
   buildPhase = ''
     runHook preBuild
@@ -71,6 +71,7 @@ buildGoModule rec {
   meta = with lib; {
     changelog = "https://github.com/containers/skopeo/releases/tag/${src.rev}";
     description = "A command line utility for various operations on container images and image repositories";
+    mainProgram = "skopeo";
     homepage = "https://github.com/containers/skopeo";
     maintainers = with maintainers; [ lewo developer-guy ] ++ teams.podman.members;
     license = licenses.asl20;

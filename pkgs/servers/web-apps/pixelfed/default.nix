@@ -2,43 +2,42 @@
 , stdenv
 , fetchFromGitHub
 , php
-, pkgs
 , nixosTests
+, nix-update-script
 , dataDir ? "/var/lib/pixelfed"
 , runtimeDir ? "/run/pixelfed"
 }:
 
-let
-  package = (import ./composition.nix {
-    inherit pkgs;
-    inherit (stdenv.hostPlatform) system;
-    noDev = true; # Disable development dependencies
-  }).overrideAttrs (attrs : {
-    installPhase = attrs.installPhase + ''
-      rm -R $out/bootstrap/cache
-      # Move static contents for the NixOS module to pick it up, if needed.
-      mv $out/bootstrap $out/bootstrap-static
-      mv $out/storage $out/storage-static
-      ln -s ${dataDir}/.env $out/.env
-      ln -s ${dataDir}/storage $out/
-      ln -s ${dataDir}/storage/app/public $out/public/storage
-      ln -s ${runtimeDir} $out/bootstrap
-      chmod +x $out/artisan
-    '';
-  });
-in package.override rec {
+php.buildComposerProject (finalAttrs: {
   pname = "pixelfed";
-  version = "0.11.5";
+  version = "0.11.13";
 
-  # GitHub distribution does not include vendored files
   src = fetchFromGitHub {
     owner = "pixelfed";
-    repo = pname;
-    rev = "v${version}";
-    hash = "sha256-ZrvYKMSx5WymWR46/UKr5jCsclXXzBeY21ju22zeqN0=";
+    repo = finalAttrs.pname;
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-bEwKaC9fSOGLQbjsuPuIdMMbO3kzvzQxWQR8C2A4mQc=";
   };
 
-  passthru.tests = { inherit (nixosTests) pixelfed; };
+  vendorHash = "sha256-ahQsOq3qOMGt3b0Ebac4xex+MP9knTmjyCy0PSNE4W8=";
+
+  postInstall = ''
+    mv "$out/share/php/${finalAttrs.pname}"/* $out
+    rm -R $out/bootstrap/cache
+    # Move static contents for the NixOS module to pick it up, if needed.
+    mv $out/bootstrap $out/bootstrap-static
+    mv $out/storage $out/storage-static
+    ln -s ${dataDir}/.env $out/.env
+    ln -s ${dataDir}/storage $out/
+    ln -s ${dataDir}/storage/app/public $out/public/storage
+    ln -s ${runtimeDir} $out/bootstrap
+    chmod +x $out/artisan
+  '';
+
+  passthru = {
+    tests = { inherit (nixosTests) pixelfed; };
+    updateScript = nix-update-script { };
+  };
 
   meta = with lib; {
     description = "A federated image sharing platform";
@@ -47,4 +46,4 @@ in package.override rec {
     maintainers = with maintainers; [ raitobezarius ];
     platforms = php.meta.platforms;
   };
-}
+})

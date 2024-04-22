@@ -13,14 +13,14 @@
 
 buildPythonPackage rec {
   pname = "dask-jobqueue";
-  version = "0.8.1";
+  version = "0.8.5";
   format = "setuptools";
 
   disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-Fv0bZGoHOtPedd3hKg3+UpuDbyGjvbzuKoi+8k6REqc=";
+    hash = "sha256-9pI/nX/4lLlu+/cGEYss03/Td1HVZ+kcIt/T4uqpMgI=";
   };
 
   propagatedBuildInputs = [
@@ -82,6 +82,6 @@ buildPythonPackage rec {
     description = "Deploy Dask on job schedulers like PBS, SLURM, and SGE";
     homepage = "https://github.com/dask/dask-jobqueue";
     license = licenses.bsd3;
-    maintainers = with maintainers; [ costrouc ];
+    maintainers = with maintainers; [ ];
   };
 }

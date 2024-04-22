@@ -2,9 +2,7 @@
 , lib
 , fetchFromGitLab
 , fetchpatch
-, gnome
 , gobject-introspection
-, gtk3
 , intltool
 , python3
 , wrapGAppsHook
@@ -26,7 +24,7 @@ python3.pkgs.buildPythonApplication rec {
     gobject-introspection
     intltool
     wrapGAppsHook
-    python3.pkgs.distutils_extra
+    python3.pkgs.distutils-extra
   ];
 
   propagatedBuildInputs = with python3.pkgs; [
@@ -53,6 +51,7 @@ python3.pkgs.buildPythonApplication rec {
     broken = stdenv.isDarwin;
     homepage = "https://tails.boum.org";
     description = "GTK application to display Tor circuits and streams";
+    mainProgram = "onioncircuits";
     license = licenses.gpl3;
     maintainers = with maintainers; [ milran ];
   };

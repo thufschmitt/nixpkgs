@@ -2,21 +2,23 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "cargo-temp";
-  version = "0.2.16";
+  version = "0.2.20";
 
   src = fetchFromGitHub {
     owner = "yozhgoor";
-    repo = pname;
+    repo = "cargo-temp";
     rev = "v${version}";
-    sha256 = "sha256-9rFczpVboJ+TPQzuegFj8RGYBel+4n5iY4B0sruK5wc=";
+    hash = "sha256-zyzzYftoMNPHvCtGYsxEiiWXd3vjWTfmiIpEJ86ac9c=";
   };
 
-  cargoSha256 = "sha256-uIgDs7dFJjZgOE/y3T11N3zl8AwRvIyJbIC7wD7Nr7Q=";
+  cargoHash = "sha256-qkYvgKTT4wdYBRTwtDiHYCEBtbNjr6CWQB2y/kL0f8Y=";
 
   meta = with lib; {
     description = "A CLI tool that allow you to create a temporary new Rust project using cargo with already installed dependencies";
+    mainProgram = "cargo-temp";
     homepage = "https://github.com/yozhgoor/cargo-temp";
+    changelog = "https://github.com/yozhgoor/cargo-temp/releases/tag/${src.rev}";
     license = with licenses; [ mit /* or */ asl20 ];
-    maintainers = with maintainers; [ figsoda ];
+    maintainers = with maintainers; [ figsoda matthiasbeyer ];
   };
 }

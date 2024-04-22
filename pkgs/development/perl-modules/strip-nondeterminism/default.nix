@@ -28,9 +28,8 @@ buildPerlPackage rec {
   buildInputs = [
     ArchiveZip
     ArchiveCpio
+    SubOverride
   ];
-
-  nativeCheckInputs = [ SubOverride ];
 
   postPatch = ''
     substituteInPlace lib/File/StripNondeterminism.pm \
@@ -62,6 +61,7 @@ buildPerlPackage rec {
 
   meta = with lib; {
     description = "A Perl module for stripping bits of non-deterministic information";
+    mainProgram = "strip-nondeterminism";
     homepage = "https://reproducible-builds.org/";
     license = licenses.gpl3Only;
     maintainers = with maintainers; [ pSub artturin ];

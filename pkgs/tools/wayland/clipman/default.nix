@@ -8,16 +8,16 @@
 
 buildGoModule rec {
   pname = "clipman";
-  version = "1.6.2";
+  version = "1.6.3";
 
   src = fetchFromGitHub {
-    owner = "yory8";
+    owner = "chmouel";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-lahya0w1bgcTnpxANxNT2MIWu5yVUdqQl19kQzwUdAw=";
+    sha256 = "sha256-htMApyGuDCjQR+2pgi6KPk+K+GbO63fJWFxl9GW8yfg=";
   };
 
-  vendorSha256 = "sha256-Z/sVCJz/igPDdeczC6pemLub6X6z4ZGlBwBmRsEnXKI=";
+  vendorHash = "sha256-Z/sVCJz/igPDdeczC6pemLub6X6z4ZGlBwBmRsEnXKI=";
 
   outputs = [ "out" "man" ];
 
@@ -32,10 +32,11 @@ buildGoModule rec {
   '';
 
   meta = with lib; {
-    homepage = "https://github.com/yory8/clipman";
+    homepage = "https://github.com/chmouel/clipman";
     description = "A simple clipboard manager for Wayland";
     license = licenses.gpl3Only;
     maintainers = with maintainers; [ ma27 ];
     platforms = platforms.linux;
+    mainProgram = "clipman";
   };
 }

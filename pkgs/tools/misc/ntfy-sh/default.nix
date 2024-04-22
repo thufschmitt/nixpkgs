@@ -1,25 +1,37 @@
-{ lib, pkgs, stdenv, buildGoModule, fetchFromGitHub, nixosTests
-, nodejs, debianutils, mkdocs, python3, python3Packages }:
+{ lib, buildGoModule, fetchFromGitHub, buildNpmPackage
+, nixosTests, debianutils, mkdocs, python3, python3Packages
+}:
 
 
-let
-  nodeDependencies = (import ./node-composition.nix {
-    inherit pkgs nodejs;
-    inherit (stdenv.hostPlatform) system;
-  }).nodeDependencies;
-in
 buildGoModule rec {
   pname = "ntfy-sh";
-  version = "2.4.0";
+  version = "2.10.0";
 
   src = fetchFromGitHub {
     owner = "binwiederhier";
     repo = "ntfy";
     rev = "v${version}";
-    sha256 = "sha256-bwYiIeDpZZpfv/HNtB/3acL0dJfegF/4OqWcEV8YGfY=";
+    hash = "sha256-Ns73kZ7XJKj93fhTDQ3L5hk4NZVEcKysJVEZk6jX7KE=";
   };
 
-  vendorSha256 = "sha256-HHuj3PcIu1wsdcfd04PofoZHjRSgTfWfJcomqH3KXa8=";
+  vendorHash = "sha256-c7fOSI+BPF3lwAJEftZHk9o/97T9kntgSsXoko3AYtQ=";
+
+  ui = buildNpmPackage {
+    inherit src version;
+    pname = "ntfy-sh-ui";
+    npmDepsHash = "sha256-nU5atvqyt5U7z8XB0+25uF+7tWPW2yYnkV/124fKoPE=";
+
+    prePatch = ''
+      cd web/
+    '';
+
+    installPhase = ''
+      mv build/index.html build/app.html
+      rm build/config.js
+      mkdir -p $out
+      mv build/ $out/site
+    '';
+  };
 
   doCheck = false;
 
@@ -28,10 +40,9 @@ buildGoModule rec {
   nativeBuildInputs = [
     debianutils
     mkdocs
-    nodejs
     python3
     python3Packages.mkdocs-material
-    python3Packages.mkdocs-minify
+    python3Packages.mkdocs-minify-plugin
     python3Packages.mkdocs-simple-hooks
   ];
 
@@ -40,8 +51,8 @@ buildGoModule rec {
   '';
 
   preBuild = ''
-    ln -s ${nodeDependencies}/lib/node_modules web/node_modules
-    DISABLE_ESLINT_PLUGIN=true npm_config_offline=true make web-build docs-build
+    cp -r ${ui}/site/ server/
+    make docs-build
   '';
 
   passthru = {

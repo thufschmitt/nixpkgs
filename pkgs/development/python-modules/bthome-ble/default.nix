@@ -2,26 +2,27 @@
 , bluetooth-data-tools
 , bluetooth-sensor-state-data
 , buildPythonPackage
+, cryptography
 , fetchFromGitHub
 , poetry-core
-, pycryptodomex
 , pytestCheckHook
 , pythonOlder
+, pytz
 , sensor-state-data
 }:
 
 buildPythonPackage rec {
   pname = "bthome-ble";
-  version = "2.11.2";
-  format = "pyproject";
+  version = "3.8.1";
+  pyproject = true;
 
   disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "Bluetooth-Devices";
-    repo = pname;
+    repo = "bthome-ble";
     rev = "refs/tags/v${version}";
-    hash = "sha256-U0R4WWgXtfP1vvrGdJl70xO88YhvxwJYDnMiN4B+Waw=";
+    hash = "sha256-eaRFHrISxYovQLtNUPrgNw3ATClHqpZ+Us+JGmNNbyY=";
   };
 
   nativeBuildInputs = [
@@ -31,8 +32,9 @@ buildPythonPackage rec {
   propagatedBuildInputs = [
     bluetooth-data-tools
     bluetooth-sensor-state-data
+    cryptography
     sensor-state-data
-    pycryptodomex
+    pytz
   ];
 
   nativeCheckInputs = [

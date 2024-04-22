@@ -1,6 +1,5 @@
 { lib
 , mkDerivation
-, cmake
 , extra-cmake-modules
 , wrapGAppsHook
 , gst_all_1
@@ -11,6 +10,7 @@
 , mpv
 , qtmultimedia
 , qtquickcontrols2
+, yt-dlp
 }:
 
 mkDerivation {
@@ -36,6 +36,13 @@ mkDerivation {
     gstreamer
   ]);
 
+  qtWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [ yt-dlp ])
+  ];
+
   preFixup = ''
     qtWrapperArgs+=("''${gappsWrapperArgs[@]}")
   '';
@@ -43,6 +50,7 @@ mkDerivation {
 
   meta = {
     description = "Youtube player powered by an invidious server";
+    mainProgram = "plasmatube";
     homepage = "https://invent.kde.org/plasma-mobile/plasmatube";
     license = lib.licenses.gpl3Plus;
     maintainers = with lib.maintainers; [ dotlambda ];

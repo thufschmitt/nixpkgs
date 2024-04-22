@@ -5,7 +5,8 @@
 , openssl
 , pkg-config
 , installShellFiles
-, Security
+, darwin
+, bash
 
   # rbw-fzf
 , withFzf ? false
@@ -24,20 +25,24 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "rbw";
-  version = "1.7.1";
+  version = "1.10.0";
 
   src = fetchzip {
     url = "https://git.tozt.net/rbw/snapshot/rbw-${version}.tar.gz";
-    sha256 = "sha256-xE3T3iVXFaaTF90ehQiG6+dLXcsqrHeprSMUnlSsxkE=";
+    hash = "sha256-uJ1QLEaab/Vb5GiAmbwjve3Y/3SM2XbNTRTvl2vPDYc=";
   };
 
-  cargoHash = "sha256-eaG56FGz4smlqDPi/CJ0KB7NMEgp684X19PVWxGQutw=";
+  cargoHash = "sha256-tDgkANbUmNLe3us+05gD9IS0f+RTQBXTGvuz2cr2zYY=";
 
   nativeBuildInputs = [
     installShellFiles
   ] ++ lib.optionals stdenv.isLinux [ pkg-config ];
 
-  buildInputs = lib.optionals stdenv.isDarwin [ Security ];
+  buildInputs = [ bash ] # for git-credential-rbw
+  ++ lib.optionals stdenv.isDarwin [
+    darwin.apple_sdk_11_0.frameworks.Security
+    darwin.apple_sdk_11_0.frameworks.AppKit
+  ];
 
   preConfigure = lib.optionalString stdenv.isLinux ''
     export OPENSSL_INCLUDE_DIR="${openssl.dev}/include"

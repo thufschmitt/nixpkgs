@@ -3,17 +3,19 @@
 Nix packages can declare *meta-attributes* that contain information about a package such as a description, its homepage, its license, and so on. For instance, the GNU Hello package has a `meta` declaration like this:
 
 ```nix
-meta = with lib; {
-  description = "A program that produces a familiar, friendly greeting";
-  longDescription = ''
-    GNU Hello is a program that prints "Hello, world!" when you run it.
-    It is fully customizable.
-  '';
-  homepage = "https://www.gnu.org/software/hello/manual/";
-  license = licenses.gpl3Plus;
-  maintainers = with maintainers; [ eelco ];
-  platforms = platforms.all;
-};
+{
+  meta = {
+    description = "A program that produces a familiar, friendly greeting";
+    longDescription = ''
+      GNU Hello is a program that prints "Hello, world!" when you run it.
+      It is fully customizable.
+    '';
+    homepage = "https://www.gnu.org/software/hello/manual/";
+    license = lib.licenses.gpl3Plus;
+    maintainers = with lib.maintainers; [ eelco ];
+    platforms = lib.platforms.all;
+  };
+}
 ```
 
 Meta-attributes are not passed to the builder of the package. Thus, a change to a meta-attribute doesn’t trigger a recompilation of the package.
@@ -24,7 +26,8 @@ It is expected that each meta-attribute is one of the following:
 
 ### `description` {#var-meta-description}
 
-A short (one-line) description of the package. This is shown by `nix-env -q --description` and also on the Nixpkgs release pages.
+A short (one-line) description of the package.
+This is displayed on [search.nixos.org](https://search.nixos.org/packages).
 
 Don’t include a period at the end. Don’t include newline characters. Capitalise the first character. For brevity, don’t repeat the name of package --- just describe what it does.
 
@@ -70,18 +73,20 @@ A list of the maintainers of this Nix expression. Maintainers are defined in [`n
 
 ### `mainProgram` {#var-meta-mainProgram}
 
-The name of the main binary for the package. This effects the binary `nix run` executes and falls back to the name of the package. Example: `"rg"`
+The name of the main binary for the package. This affects the binary `nix run` executes. Example: `"rg"`
 
 ### `priority` {#var-meta-priority}
 
-The *priority* of the package, used by `nix-env` to resolve file name conflicts between packages. See the Nix manual page for `nix-env` for details. Example: `"10"` (a low-priority package).
+The *priority* of the package, used by `nix-env` to resolve file name conflicts between packages. See the [manual page for `nix-env`](https://nixos.org/manual/nix/stable/command-ref/nix-env) for details. Example: `"10"` (a low-priority package).
 
 ### `platforms` {#var-meta-platforms}
 
 The list of Nix platform types on which the package is supported. Hydra builds packages according to the platform specified. If no platform is specified, the package does not have prebuilt binaries. An example is:
 
 ```nix
-meta.platforms = lib.platforms.linux;
+{
+  meta.platforms = lib.platforms.linux;
+}
 ```
 
 Attribute Set `lib.platforms` defines [various common lists](https://github.com/NixOS/nixpkgs/blob/master/lib/systems/doubles.nix) of platforms types.
@@ -94,8 +99,10 @@ In general it is preferable to set `meta.platforms = lib.platforms.all` and then
 For example, a package which requires dynamic linking and cannot be linked statically could use this:
 
 ```nix
-meta.platforms = lib.platforms.all;
-meta.badPlatforms = [ lib.systems.inspect.patterns.isStatic ];
+{
+  meta.platforms = lib.platforms.all;
+  meta.badPlatforms = [ lib.systems.inspect.patterns.isStatic ];
+}
 ```
 
 The [`lib.meta.availableOn`](https://github.com/NixOS/nixpkgs/blob/b03ac42b0734da3e7be9bf8d94433a5195734b19/lib/meta.nix#L95-L106) function can be used to test whether or not a package is available (i.e. buildable) on a given platform.
@@ -128,14 +135,14 @@ Prefer `passthru.tests` for tests that are introduced in nixpkgs because:
 * we can run `passthru.tests` independently
 * `installCheckPhase` adds overhead to each build
 
-For more on how to write and run package tests, see <xref linkend="sec-package-tests"/>.
+For more on how to write and run package tests, see [](#sec-package-tests).
 
 #### NixOS tests {#var-meta-tests-nixos}
 
 The NixOS tests are available as `nixosTests` in parameters of derivations. For instance, the OpenSMTPD derivation includes lines similar to:
 
 ```nix
-{ /* ... */, nixosTests }:
+{ /* ... , */ nixosTests }:
 {
   # ...
   passthru.tests = {
@@ -182,7 +189,7 @@ runCommand "my-package-test" {
 
 ### `timeout` {#var-meta-timeout}
 
-A timeout (in seconds) for building the derivation. If the derivation takes longer than this time to build, it can fail due to breaking the timeout. However, all computers do not have the same computing power, hence some builders may decide to apply a multiplicative factor to this value. When filling this value in, try to keep it approximately consistent with other values already present in `nixpkgs`.
+A timeout (in seconds) for building the derivation. If the derivation takes longer than this time to build, Hydra will fail it due to breaking the timeout. However, all computers do not have the same computing power, hence some builders may decide to apply a multiplicative factor to this value. When filling this value in, try to keep it approximately consistent with other values already present in `nixpkgs`.
 
 `meta` attributes are not stored in the instantiated derivation.
 Therefore, this setting may be lost when the package is used as a dependency.
@@ -193,8 +200,10 @@ To be effective, it must be presented directly to an evaluation process that han
 The list of Nix platform types for which the [Hydra](https://github.com/nixos/hydra) [instance at `hydra.nixos.org`](https://nixos.org/hydra) will build the package. (Hydra is the Nix-based continuous build system.) It defaults to the value of `meta.platforms`. Thus, the only reason to set `meta.hydraPlatforms` is if you want `hydra.nixos.org` to build the package on a subset of `meta.platforms`, or not at all, e.g.
 
 ```nix
-meta.platforms = lib.platforms.linux;
-meta.hydraPlatforms = [];
+{
+  meta.platforms = lib.platforms.linux;
+  meta.hydraPlatforms = [];
+}
 ```
 
 ### `broken` {#var-meta-broken}
@@ -208,13 +217,17 @@ This means that `broken` can be used to express constraints, for example:
 - Does not cross compile
 
   ```nix
-   meta.broken = !(stdenv.buildPlatform.canExecute stdenv.hostPlatform)
+  {
+    meta.broken = !(stdenv.buildPlatform.canExecute stdenv.hostPlatform);
+  }
   ```
 
 - Broken if all of a certain set of its dependencies are broken
 
   ```nix
-  meta.broken = lib.all (map (p: p.meta.broken) [ glibc musl ])
+  {
+    meta.broken = lib.all (map (p: p.meta.broken) [ glibc musl ]);
+  }
   ```
 
 This makes `broken` strictly more powerful than `meta.badPlatforms`.

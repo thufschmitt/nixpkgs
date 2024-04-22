@@ -10,7 +10,7 @@
 
 buildPythonPackage rec {
   pname = "blobfile";
-  version = "2.0.2";
+  version = "2.1.0";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -19,7 +19,7 @@ buildPythonPackage rec {
     owner = "christopher-hesse";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-vVoiNIN/LNdbedaOQ+gtj4jhzmrGri49fftHKG+K/fg=";
+    hash = "sha256-VBh1JMP+8FEqD0uXpxA5RRMFH9XIUb4FUgsPq3vZWHM=";
   };
 
   propagatedBuildInputs = [
@@ -40,7 +40,7 @@ buildPythonPackage rec {
     description = "Read Google Cloud Storage, Azure Blobs, and local paths with the same interface";
     homepage = "https://github.com/christopher-hesse/blobfile";
     changelog = "https://github.com/christopher-hesse/blobfile/blob/v${version}/CHANGES.md";
-    license = licenses.mit;
+    license = licenses.unlicense;
     maintainers = with maintainers; [ happysalada ];
   };
 }

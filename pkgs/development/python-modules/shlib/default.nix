@@ -1,6 +1,7 @@
 { lib
 , buildPythonPackage
 , fetchFromGitHub
+, flit-core
 , pytestCheckHook
 , braceexpand
 , inform
@@ -8,26 +9,34 @@
 
 buildPythonPackage rec {
   pname = "shlib";
-  version = "1.5";
+  version = "1.6";
+  pyproject = true;
 
   src = fetchFromGitHub {
     owner = "KenKundert";
     repo = "shlib";
-    rev = "v${version}";
-    hash = "sha256-2fwRxa64QXKJuhYwt9Z4BxhTeq1iwbd/IznfxPUjeSM=";
+    rev = "refs/tags/v${version}";
+    hash = "sha256-f2jJgpjybutCpYnIT+RihtoA1YlXdhTs+MvV8bViSMQ=";
   };
 
-  pythonImportsCheck = [ "shlib" ];
   postPatch = ''
     patchShebangs .
   '';
-  nativeCheckInputs = [
-    pytestCheckHook
+
+  build-system = [
+    flit-core
   ];
-  propagatedBuildInputs = [
+
+  dependencies = [
     braceexpand
     inform
   ];
+
+  nativeCheckInputs = [
+    pytestCheckHook
+  ];
+
+  pythonImportsCheck = [ "shlib" ];
 
   meta = with lib; {
     description = "shell library";

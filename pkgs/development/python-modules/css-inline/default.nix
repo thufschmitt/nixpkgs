@@ -9,6 +9,7 @@
 # native darwin dependencies
 , libiconv
 , Security
+, SystemConfiguration
 
 # tests
 , pytestCheckHook
@@ -17,14 +18,14 @@
 
 buildPythonPackage rec {
   pname = "css-inline";
-  version = "0.8.7";
-  format = "pyproject";
+  version = "0.13.0";
+  pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Stranger6667";
     repo = "css-inline";
     rev = "python-v${version}";
-    hash = "sha256-VtWvzEqozbRo9OIcObdaRRqDq9Tcp0KxXOPZWO5qTeE=";
+    hash = "sha256-hhjeOr7EJc4Tmn/eQ1vF0xChSIlgfSmtqi6s7WCUq00=";
   };
 
   postPatch = ''
@@ -32,14 +33,16 @@ buildPythonPackage rec {
     ln -s ${./Cargo.lock} Cargo.lock
   '';
 
+  # call `cargo build --release` in bindings/python and copy the
+  # resulting lock file
   cargoDeps = rustPlatform.fetchCargoTarball {
     inherit src;
     postPatch = ''
-      cd  bindings/python
+      cd bindings/python
       ln -s ${./Cargo.lock} Cargo.lock
     '';
     name = "${pname}-${version}";
-    hash = "sha256-S8ebg5sMK7zoG84eAeXIWqDYuRVW9Mx9GJUAaKD9mxw=";
+    hash = "sha256-noYBSwCfdpuwb55toyx4K/16Z4A0NWjnMuzwTi5g8AU=";
   };
 
   nativeBuildInputs = [
@@ -50,6 +53,7 @@ buildPythonPackage rec {
   buildInputs = lib.optionals stdenv.isDarwin [
     libiconv
     Security
+    SystemConfiguration
   ];
 
   pythonImportsCheck = [
@@ -59,6 +63,14 @@ buildPythonPackage rec {
   nativeCheckInputs = [
     hypothesis
     pytestCheckHook
+  ];
+
+  disabledTests = [
+    # fails to connect to local server
+    "test_remote_stylesheet"
+  ] ++ lib.optionals (stdenv.isDarwin) [
+    # pyo3_runtime.PanicException: event loop thread panicked
+    "test_invalid_href"
   ];
 
   meta = with lib; {

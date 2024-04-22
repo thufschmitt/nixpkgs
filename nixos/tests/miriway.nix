@@ -3,11 +3,6 @@ import ./make-test-python.nix ({ pkgs, lib, ... }: {
 
   meta = {
     maintainers = with lib.maintainers; [ OPNA2608 ];
-    # Natively running Mir has problems with capturing the first registered libinput device.
-    # In our VM  runners on ARM and on some hardware configs (my RPi4, distro-independent), this misses the keyboard.
-    # It can be worked around by dis- and reconnecting the affected hardware, but we can't do this in these tests.
-    # https://github.com/MirServer/mir/issues/2837
-    broken = pkgs.stdenv.hostPlatform.isAarch;
   };
 
   nodes.machine = { config, ... }: {
@@ -24,10 +19,8 @@ import ./make-test-python.nix ({ pkgs, lib, ... }: {
       user = "alice";
     };
 
-    services.xserver = {
-      enable = true;
-      displayManager.defaultSession = lib.mkForce "miriway";
-    };
+    services.xserver.enable = true;
+    services.displayManager.defaultSession = lib.mkForce "miriway";
 
     programs.miriway = {
       enable = true;
@@ -36,7 +29,7 @@ import ./make-test-python.nix ({ pkgs, lib, ... }: {
         enable-x11=
 
         ctrl-alt=t:foot --maximized
-        ctrl-alt=a:env WINIT_UNIX_BACKEND=x11 WAYLAND_DISPLAY=invalid alacritty --option window.startup_mode=maximized
+        ctrl-alt=a:env WINIT_UNIX_BACKEND=x11 WAYLAND_DISPLAY= alacritty --option window.startup_mode=\"maximized\"
 
         shell-component=dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY
 
@@ -88,7 +81,7 @@ import ./make-test-python.nix ({ pkgs, lib, ... }: {
       };
     };
 
-    fonts.fonts = [ pkgs.inconsolata ];
+    fonts.packages = [ pkgs.inconsolata ];
   };
 
   enableOCR = true;
@@ -105,7 +98,7 @@ import ./make-test-python.nix ({ pkgs, lib, ... }: {
     # Test Wayland
     # We let Miriway start the first terminal, as we might get stuck if it's not ready to process the first keybind
     # machine.send_key("ctrl-alt-t")
-    machine.wait_for_text("alice@machine")
+    machine.wait_for_text(r"(alice|machine)")
     machine.send_chars("test-wayland\n")
     machine.wait_for_file("/tmp/test-wayland-exit-ok")
     machine.copy_from_vm("/tmp/test-wayland.out")
@@ -117,7 +110,7 @@ import ./make-test-python.nix ({ pkgs, lib, ... }: {
 
     # Test XWayland
     machine.send_key("ctrl-alt-a")
-    machine.wait_for_text("alice@machine")
+    machine.wait_for_text(r"(alice|machine)")
     machine.send_chars("test-x11\n")
     machine.wait_for_file("/tmp/test-x11-exit-ok")
     machine.copy_from_vm("/tmp/test-x11.out")

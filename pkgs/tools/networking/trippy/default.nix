@@ -5,16 +5,16 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "trippy";
-  version = "0.7.0";
+  version = "0.10.0";
 
   src = fetchFromGitHub {
     owner = "fujiapple852";
     repo = "trippy";
     rev = version;
-    hash = "sha256-ABdG1FKgFF/vMkAQl2tk8FcnSzC4Z3r9E67ZwAGPt8U=";
+    hash = "sha256-IKGtnWRjrVof+2cq41TPfjhFrkn10yhY6j63dYwTzPA=";
   };
 
-  cargoHash = "sha256-1H3JHZbG8k15Qfpsk+XykmbotHcO+J4zTbwdlOR2kso=";
+  cargoHash = "sha256-OCbrg1uSot0uNFx7uSlN5Bh6bl34ng9xO6lo9wks6nY=";
 
   meta = with lib; {
     description = "A network diagnostic tool";

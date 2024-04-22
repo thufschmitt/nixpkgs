@@ -1,7 +1,7 @@
-{ lib, python3 }:
+{ lib, python3, fetchPypi }:
 
 let
-  inherit (python3.pkgs) buildPythonApplication fetchPypi requests;
+  inherit (python3.pkgs) buildPythonApplication requests;
 in
 buildPythonApplication rec {
   pname = "tzupdate";
@@ -16,6 +16,7 @@ buildPythonApplication rec {
 
   meta = with lib; {
     description = "Update timezone information based on geoip";
+    mainProgram = "tzupdate";
     homepage = "https://github.com/cdown/tzupdate";
     maintainers = [ maintainers.michaelpj ];
     license = licenses.unlicense;

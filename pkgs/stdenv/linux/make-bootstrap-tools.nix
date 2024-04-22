@@ -78,7 +78,8 @@ in with pkgs; rec {
         cp -d ${libc.out}/lib/libutil*.so* $out/lib
         cp -d ${libc.out}/lib/libnss*.so* $out/lib
         cp -d ${libc.out}/lib/libresolv*.so* $out/lib
-        cp -d ${libc.out}/lib/crt?.o $out/lib
+        # Copy all runtime files to enable non-PIE, PIE, static PIE and profile-generated builds
+        cp -d ${libc.out}/lib/*.o $out/lib
 
         # Hacky compat with our current unpack-bootstrap-tools.sh
         ln -s librt.so "$out"/lib/librt-dummy.so
@@ -130,7 +131,7 @@ in with pkgs; rec {
         cp -d ${patch}/bin/* $out/bin
         cp ${patchelf}/bin/* $out/bin
 
-        cp -d ${gnugrep.pcre.out}/lib/libpcre*.so* $out/lib # needed by grep
+        cp -d ${gnugrep.pcre2.out}/lib/libpcre2*.so* $out/lib # needed by grep
 
         # Copy what we need of GCC.
         cp -d ${bootGCC.out}/bin/gcc $out/bin
@@ -210,22 +211,6 @@ in with pkgs; rec {
       # locations in the store.
       allowedReferences = [];
     };
-
-  dist = stdenv.mkDerivation {
-    name = "stdenv-bootstrap-tools";
-
-    meta = {
-      # Increase priority to unblock nixpkgs-unstable
-      # https://github.com/NixOS/nixpkgs/pull/104679#issuecomment-732267288
-      schedulingPriority = 200;
-    };
-
-    buildCommand = ''
-      mkdir -p $out/nix-support
-      echo "file tarball ${build}/on-server/bootstrap-tools.tar.xz" >> $out/nix-support/hydra-build-products
-      echo "file busybox ${build}/on-server/busybox" >> $out/nix-support/hydra-build-products
-    '';
-  };
 
   bootstrapFiles = {
     # Make them their own store paths to test that busybox still works when the binary is named /nix/store/HASH-busybox

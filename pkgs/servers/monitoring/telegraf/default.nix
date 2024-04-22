@@ -1,10 +1,14 @@
-{ lib, buildGoModule, fetchFromGitHub, nixosTests }:
+{ lib
+, buildGoModule
+, fetchFromGitHub
+, nixosTests
+, testers
+, telegraf
+}:
 
 buildGoModule rec {
   pname = "telegraf";
-  version = "1.26.2";
-
-  excludedPackages = "test";
+  version = "1.30.1";
 
   subPackages = [ "cmd/telegraf" ];
 
@@ -12,22 +16,32 @@ buildGoModule rec {
     owner = "influxdata";
     repo = "telegraf";
     rev = "v${version}";
-    sha256 = "sha256-Y3WDhYJ4So0vcJPvd+1l8Fpuqa84vm7A1Teh5G+pOmI=";
+    hash = "sha256-cBEPNPeezh4X817Iq8Bo41/KX58I9HL2GA0lAU7+ISE=";
   };
 
-  vendorHash = "sha256-uEqFst42z8tfTgnNF4l/8+6XakRPsT0qL0YJOQD/z60=";
+  vendorHash = "sha256-jTw5YLGgHs3uvihI6KPZg+cNrnNixUznJsH0CtIVe6I=";
   proxyVendor = true;
 
   ldflags = [
-    "-w" "-s" "-X main.version=${version}"
+    "-s"
+    "-w"
+    "-X=github.com/influxdata/telegraf/internal.Commit=${src.rev}"
+    "-X=github.com/influxdata/telegraf/internal.Version=${version}"
   ];
 
-  passthru.tests = { inherit (nixosTests) telegraf; };
+  passthru.tests = {
+    inherit (nixosTests) telegraf;
+    version = testers.testVersion {
+      package = telegraf;
+    };
+  };
 
   meta = with lib; {
     description = "The plugin-driven server agent for collecting & reporting metrics";
-    license = licenses.mit;
+    mainProgram = "telegraf";
     homepage = "https://www.influxdata.com/time-series-platform/telegraf/";
-    maintainers = with maintainers; [ mic92 roblabla timstott ];
+    changelog = "https://github.com/influxdata/telegraf/blob/${src.rev}/CHANGELOG.md";
+    license = licenses.mit;
+    maintainers = with maintainers; [ mic92 roblabla timstott zowoq ];
   };
 }

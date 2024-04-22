@@ -17,28 +17,28 @@
 , gtk3
 , darwin
 , perl
+, wrapGAppsHook
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "oculante";
-  version = "0.6.63";
+  version = "0.8.18";
 
   src = fetchFromGitHub {
     owner = "woelper";
-    repo = pname;
+    repo = "oculante";
     rev = version;
-    sha256 = "sha256-ynxGpx8LLcd4/n9hz/bbhpZUxqX1sPS7LFYPZ22hTxo=";
+    hash = "sha256-TLY6ydYeRuT93jjUeE7EaFNNllwla4h563UhXAxSyko=";
   };
 
-  cargoLock = {
-    lockFile = ./Cargo.lock;
-  };
+  cargoHash = "sha256-RKJE09Z4XxRLWQ95Om3tru4rI2TD7XmxoHhPHFirREo=";
 
   nativeBuildInputs = [
     cmake
     pkg-config
     nasm
     perl
+    wrapGAppsHook
   ];
 
   checkFlagsArray = [ "--skip=tests::net" ]; # requires network access
@@ -60,8 +60,15 @@ rustPlatform.buildRustPackage rec {
     darwin.libobjc
   ];
 
-  postFixup = lib.optionalString stdenv.isLinux ''
-    patchelf $out/bin/oculante --add-rpath ${lib.makeLibraryPath [ libxkbcommon libX11 ]}
+  checkFlags = [
+    "--skip=bench"
+  ];
+
+  postInstall = ''
+    install -Dm444 $src/res/oculante.png -t $out/share/icons/hicolor/128x128/apps/
+    install -Dm444 $src/res/oculante.desktop -t $out/share/applications
+    wrapProgram $out/bin/oculante \
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [libGL]}
   '';
 
   meta = with lib; {
@@ -70,6 +77,7 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/woelper/oculante";
     changelog = "https://github.com/woelper/oculante/blob/${version}/CHANGELOG.md";
     license = licenses.mit;
+    mainProgram = "oculante";
     maintainers = with maintainers; [ dit7ya figsoda ];
   };
 }

@@ -13,13 +13,13 @@
 stdenv.mkDerivation rec {
   pname = "${passthru.prettyName}-unwrapped";
   # nixpkgs-update: no auto update
-  version = "unstable-2023-03-20";
+  version = "unstable-2023-11-24";
 
   src = fetchFromGitHub {
     owner = "open-watcom";
     repo = "open-watcom-v2";
-    rev = "d9181a345b9301a64380eb40d78c74c197a3fa1e";
-    sha256 = "sha256-2kT4OZJk6m6Z/XN2q17jXJPgAG4nD2U1+J5CZl4+tAs=";
+    rev = "7976a5c7ca4e856907ccd378c17c71578ad51cb7";
+    hash = "sha256-u9ljy4dZRoXKyUqdolxZijpc99TuhKPPlL6xlV3xJXA=";
   };
 
   postPatch = ''

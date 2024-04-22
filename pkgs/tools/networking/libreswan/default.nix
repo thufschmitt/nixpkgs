@@ -45,11 +45,11 @@ in
 
 stdenv.mkDerivation rec {
   pname = "libreswan";
-  version = "4.11";
+  version = "4.15";
 
   src = fetchurl {
     url = "https://download.libreswan.org/${pname}-${version}.tar.gz";
-    sha256 = "sha256-QpqRf+SlUmDxUs+zGIpYflsS6UoU4kCsElMZ/xS4yD0=";
+    hash = "sha256-/mDX2zmMjuIlBV2zZeyWiiSuvLxcNQYRMfz/2tG+BK8=";
   };
 
   strictDeps = true;
@@ -148,5 +148,6 @@ stdenv.mkDerivation rec {
     platforms = platforms.linux ++ platforms.freebsd;
     license = with licenses; [ gpl2Plus mpl20 ] ;
     maintainers = with maintainers; [ afranchuk rnhmjoj ];
+    mainProgram = "ipsec";
   };
 }

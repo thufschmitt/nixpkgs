@@ -10,14 +10,14 @@
 
 buildPythonPackage rec {
   pname = "pydyf";
-  version = "0.5.0";
+  version = "0.9.0";
   format = "pyproject";
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-UedRrhUEA3wfwfSBURkTewEYAs1fbDU52wZsRVsUp+E=";
+    hash = "sha256-1bJE6PwkEZznvV1R6i1nc8D/iKqBWX21VrxEDGuIBhA=";
   };
 
   postPatch = ''
@@ -42,6 +42,7 @@ buildPythonPackage rec {
   meta = with lib; {
     description = "Low-level PDF generator written in Python and based on PDF specification 1.7";
     homepage = "https://doc.courtbouillon.org/pydyf/stable/";
+    changelog = "https://github.com/CourtBouillon/pydyf/releases/tag/v${version}";
     license = licenses.bsd3;
     maintainers = with maintainers; [ rprecenth ];
   };

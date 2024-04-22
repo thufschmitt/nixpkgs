@@ -4,44 +4,8 @@ with lib;
 
 let
   systemBuilder =
-    let
-      kernelPath = "${config.boot.kernelPackages.kernel}/" +
-        "${config.system.boot.loader.kernelFile}";
-      initrdPath = "${config.system.build.initialRamdisk}/" +
-        "${config.system.boot.loader.initrdFile}";
-    in ''
+    ''
       mkdir $out
-
-      # Containers don't have their own kernel or initrd.  They boot
-      # directly into stage 2.
-      ${optionalString config.boot.kernel.enable ''
-        if [ ! -f ${kernelPath} ]; then
-          echo "The bootloader cannot find the proper kernel image."
-          echo "(Expecting ${kernelPath})"
-          false
-        fi
-
-        ln -s ${kernelPath} $out/kernel
-        ln -s ${config.system.modulesTree} $out/kernel-modules
-        ${optionalString (config.hardware.deviceTree.package != null) ''
-          ln -s ${config.hardware.deviceTree.package} $out/dtbs
-        ''}
-
-        echo -n "$kernelParams" > $out/kernel-params
-
-        ln -s ${initrdPath} $out/initrd
-
-        ln -s ${config.system.build.initialRamdiskSecretAppender}/bin/append-initrd-secrets $out
-
-        ln -s ${config.hardware.firmware}/lib/firmware $out/firmware
-      ''}
-
-      echo "$activationScript" > $out/activate
-      echo "$dryActivationScript" > $out/dry-activate
-      substituteInPlace $out/activate --subst-var out
-      substituteInPlace $out/dry-activate --subst-var out
-      chmod u+x $out/activate $out/dry-activate
-      unset activationScript dryActivationScript
 
       ${if config.boot.initrd.systemd.enable then ''
         cp ${config.system.build.bootStage2} $out/prepare-root
@@ -63,22 +27,9 @@ let
       echo -n "$nixosLabel" > $out/nixos-version
       echo -n "${config.boot.kernelPackages.stdenv.hostPlatform.system}" > $out/system
 
-      mkdir $out/bin
-      export localeArchive="${config.i18n.glibcLocales}/lib/locale/locale-archive"
-      export distroId=${config.system.nixos.distroId};
-      substituteAll ${./switch-to-configuration.pl} $out/bin/switch-to-configuration
-      chmod +x $out/bin/switch-to-configuration
-      ${optionalString (pkgs.stdenv.hostPlatform == pkgs.stdenv.buildPlatform) ''
-        if ! output=$($perl/bin/perl -c $out/bin/switch-to-configuration 2>&1); then
-          echo "switch-to-configuration syntax is not valid:"
-          echo "$output"
-          exit 1
-        fi
-      ''}
-
       ${config.system.systemBuilderCommands}
 
-      echo -n "$extraDependencies" > $out/extra-dependencies
+      cp "$extraDependenciesPath" "$out/extra-dependencies"
 
       ${optionalString (!config.boot.isContainer && config.boot.bootspec.enable) ''
         ${config.boot.bootspec.writer}
@@ -93,29 +44,19 @@ let
   # symlinks to the various parts of the built configuration (the
   # kernel, systemd units, init scripts, etc.) as well as a script
   # `switch-to-configuration' that activates the configuration and
-  # makes it bootable.
+  # makes it bootable. See `activatable-system.nix`.
   baseSystem = pkgs.stdenvNoCC.mkDerivation ({
     name = "nixos-system-${config.system.name}-${config.system.nixos.label}";
     preferLocalBuild = true;
     allowSubstitutes = false;
+    passAsFile = [ "extraDependencies" ];
     buildCommand = systemBuilder;
 
-    inherit (pkgs) coreutils;
     systemd = config.systemd.package;
-    shell = "${pkgs.bash}/bin/sh";
-    su = "${pkgs.shadow.su}/bin/su";
-    utillinux = pkgs.util-linux;
 
-    kernelParams = config.boot.kernelParams;
-    installBootLoader = config.system.build.installBootLoader;
-    activationScript = config.system.activationScripts.script;
-    dryActivationScript = config.system.dryActivationScript;
     nixosLabel = config.system.nixos.label;
 
     inherit (config.system) extraDependencies;
-
-    # Needed by switch-to-configuration.
-    perl = pkgs.perl.withPackages (p: with p; [ ConfigIniFiles FileSlurp ]);
   } // config.system.systemBuilderArgs);
 
   # Handle assertions and warnings
@@ -152,7 +93,7 @@ in
     system.boot.loader.id = mkOption {
       internal = true;
       default = "";
-      description = lib.mdDoc ''
+      description = ''
         Id string of the used bootloader.
       '';
     };
@@ -162,7 +103,7 @@ in
       default = pkgs.stdenv.hostPlatform.linux-kernel.target;
       defaultText = literalExpression "pkgs.stdenv.hostPlatform.linux-kernel.target";
       type = types.str;
-      description = lib.mdDoc ''
+      description = ''
         Name of the kernel file to be passed to the bootloader.
       '';
     };
@@ -171,36 +112,16 @@ in
       internal = true;
       default = "initrd";
       type = types.str;
-      description = lib.mdDoc ''
+      description = ''
         Name of the initrd file to be passed to the bootloader.
       '';
     };
 
     system.build = {
-      installBootLoader = mkOption {
-        internal = true;
-        # "; true" => make the `$out` argument from switch-to-configuration.pl
-        #             go to `true` instead of `echo`, hiding the useless path
-        #             from the log.
-        default = "echo 'Warning: do not know how to make this configuration bootable; please enable a boot loader.' 1>&2; true";
-        description = lib.mdDoc ''
-          A program that writes a bootloader installation script to the path passed in the first command line argument.
-
-          See `nixos/modules/system/activation/switch-to-configuration.pl`.
-        '';
-        type = types.unique {
-          message = ''
-            Only one bootloader can be enabled at a time. This requirement has not
-            been checked until NixOS 22.05. Earlier versions defaulted to the last
-            definition. Change your configuration to enable only one bootloader.
-          '';
-        } (types.either types.str types.package);
-      };
-
       toplevel = mkOption {
         type = types.package;
         readOnly = true;
-        description = lib.mdDoc ''
+        description = ''
           This option contains the store path that typically represents a NixOS system.
 
           You can read this path in a custom deployment tool for example.
@@ -212,7 +133,7 @@ in
     system.copySystemConfiguration = mkOption {
       type = types.bool;
       default = false;
-      description = lib.mdDoc ''
+      description = ''
         If enabled, copies the NixOS configuration file
         (usually {file}`/etc/nixos/configuration.nix`)
         and links it from the resulting system
@@ -234,7 +155,7 @@ in
       type = types.attrsOf types.unspecified;
       internal = true;
       default = {};
-      description = lib.mdDoc ''
+      description = ''
         `lib.mkDerivation` attributes that will be passed to the top level system builder.
       '';
     };
@@ -243,7 +164,7 @@ in
       default = "";
       example = "-dev$";
       type = types.str;
-      description = lib.mdDoc ''
+      description = ''
         A POSIX Extended Regular Expression that matches store paths that
         should not appear in the system closure, with the exception of {option}`system.extraDependencies`, which is not checked.
       '';
@@ -253,16 +174,16 @@ in
       type = types.lines;
       internal = true;
       default = "";
-      description = lib.mdDoc ''
+      description = ''
         This code will be added to the builder creating the system store path.
       '';
     };
 
     system.extraDependencies = mkOption {
-      type = types.listOf types.package;
+      type = types.listOf types.pathInStore;
       default = [];
-      description = lib.mdDoc ''
-        A list of packages that should be included in the system
+      description = ''
+        A list of paths that should be included in the system
         closure but generally not visible to users.
 
         This option has also been used for build-time checks, but the
@@ -274,7 +195,7 @@ in
     system.checks = mkOption {
       type = types.listOf types.package;
       default = [];
-      description = lib.mdDoc ''
+      description = ''
         Packages that are added as dependencies of the system's build, usually
         for the purpose of validating some part of the configuration.
 
@@ -290,12 +211,12 @@ in
         { ... }: {
           options.original = mkOption {
             type = types.package;
-            description = lib.mdDoc "The original package to override.";
+            description = "The original package to override.";
           };
 
           options.replacement = mkOption {
             type = types.package;
-            description = lib.mdDoc "The replacement package.";
+            description = "The replacement package.";
           };
         })
       );
@@ -303,7 +224,7 @@ in
         oldDependency = original;
         newDependency = replacement;
       });
-      description = lib.mdDoc ''
+      description = ''
         List of packages to override without doing a full rebuild.
         The original derivation and replacement derivation must have the same
         name length, and ideally should have close-to-identical directory layout.
@@ -321,7 +242,7 @@ in
         then "unnamed"
         else config.networking.hostName;
       '';
-      description = lib.mdDoc ''
+      description = ''
         The name of the system used in the {option}`system.build.toplevel` derivation.
 
         That derivation has the following name:
@@ -332,7 +253,7 @@ in
     system.includeBuildDependencies = mkOption {
       type = types.bool;
       default = false;
-      description = lib.mdDoc ''
+      description = ''
         Whether to include the build closure of the whole system in
         its runtime closure.  This can be useful for making changes
         fully offline, as it includes all sources, patches, and
@@ -379,6 +300,16 @@ in
         '';
 
     system.systemBuilderArgs = {
+
+      # Legacy environment variables. These were used by the activation script,
+      # but some other script might still depend on them, although unlikely.
+      installBootLoader = config.system.build.installBootLoader;
+      localeArchive = "${config.i18n.glibcLocales}/lib/locale/locale-archive";
+      distroId = config.system.nixos.distroId;
+      perl = pkgs.perl.withPackages (p: with p; [ ConfigIniFiles FileSlurp ]);
+      # End if legacy environment variables
+
+
       # Not actually used in the builder. `passedChecks` is just here to create
       # the build dependencies. Checks are similar to build dependencies in the
       # sense that if they fail, the system build fails. However, checks do not

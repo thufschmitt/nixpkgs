@@ -2,26 +2,26 @@
 , stdenvNoCC
 , buildGoModule
 , fetchFromGitHub
-, clash-geoip
+, dbip-country-lite
 }:
 
 let
   generator = buildGoModule rec {
     pname = "sing-geoip";
-    version = "unstable-2022-07-05";
+    version = "20240312";
 
     src = fetchFromGitHub {
       owner = "SagerNet";
       repo = pname;
-      rev = "2ced72c94da4c9259c40353c375319d9d28a78f3";
-      hash = "sha256-z8aP+OfTuzQNwOT3EEnI9uze/vbHTJLEiCPqIrnNUHw=";
+      rev = "refs/tags/${version}";
+      hash = "sha256-nIrbiECK25GyuPEFqMvPdZUShC2JC1NI60Y10SsoWyY=";
     };
 
-    vendorHash = "sha256-lr0XMLFxJmLqIqCuGgmsFh324jmZVj71blmStMn41Rs=";
+    vendorHash = "sha256-WH0eMg06qCiVcy4H+vBtYrmLMA2KJRCPGXiEnatW+LU=";
 
     postPatch = ''
-      # The codes args should start from the third args
-      substituteInPlace main.go --replace "os.Args[2:]" "os.Args[3:]"
+      sed -i -e '/func main()/,/^}/d' main.go
+      cat ${./main.go} >> main.go
     '';
 
     meta = with lib; {
@@ -29,12 +29,13 @@ let
       homepage = "https://github.com/SagerNet/sing-geoip";
       license = licenses.gpl3Plus;
       maintainers = with maintainers; [ linsui ];
+      mainProgram = "sing-geoip";
     };
   };
 in
-stdenvNoCC.mkDerivation rec {
+stdenvNoCC.mkDerivation {
   inherit (generator) pname;
-  inherit (clash-geoip) version;
+  inherit (dbip-country-lite) version;
 
   dontUnpack = true;
 
@@ -43,8 +44,7 @@ stdenvNoCC.mkDerivation rec {
   buildPhase = ''
     runHook preBuild
 
-    ${pname} ${clash-geoip}/etc/clash/Country.mmdb geoip.db
-    ${pname} ${clash-geoip}/etc/clash/Country.mmdb geoip-cn.db cn
+    sing-geoip ${dbip-country-lite.mmdb}
 
     runHook postBuild
   '';
@@ -54,6 +54,7 @@ stdenvNoCC.mkDerivation rec {
 
     install -Dm644 geoip.db $out/share/sing-box/geoip.db
     install -Dm644 geoip-cn.db $out/share/sing-box/geoip-cn.db
+    install -Dm644 rule-set/* -t $out/share/sing-box/rule-set
 
     runHook postInstall
   '';
@@ -61,6 +62,6 @@ stdenvNoCC.mkDerivation rec {
   passthru = { inherit generator; };
 
   meta = generator.meta // {
-    inherit (clash-geoip.meta) license;
+    inherit (dbip-country-lite.meta) license;
   };
 }

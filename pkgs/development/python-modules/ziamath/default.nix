@@ -1,7 +1,8 @@
 { lib
 , buildPythonPackage
 , pythonOlder
-, fetchFromBitbucket
+, fetchFromGitHub
+, setuptools
 , ziafont
 , pytestCheckHook
 , nbval
@@ -10,16 +11,21 @@
 
 buildPythonPackage rec {
   pname = "ziamath";
-  version = "0.7";
+  version = "0.9";
+  format = "pyproject";
 
   disabled = pythonOlder "3.8";
 
-  src = fetchFromBitbucket {
+  src = fetchFromGitHub {
     owner = "cdelker";
     repo = pname;
     rev = version;
-    hash = "sha256-JuuCDww0EZEHZLxB5oQrWEJpv0szjwe4iXCRGl7OYTA=";
+    hash = "sha256-ISd+J7R8qZ0NXdlyHMj+torzr+541UAhNCSaUH8ytSQ=";
   };
+
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   propagatedBuildInputs = [
     ziafont
@@ -32,6 +38,13 @@ buildPythonPackage rec {
   ];
 
   pytestFlagsArray = [ "--nbval-lax" ];
+
+  # Prevent the test suite from attempting to download fonts
+  postPatch = ''
+    substituteInPlace test/styles.ipynb \
+      --replace '"def testfont(exprs, fonturl):\n",' '"def testfont(exprs, fonturl):\n", "    return\n",' \
+      --replace "mathfont='FiraMath-Regular.otf', " ""
+  '';
 
   pythonImportsCheck = [ "ziamath" ];
 

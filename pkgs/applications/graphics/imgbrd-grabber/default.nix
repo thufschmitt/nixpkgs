@@ -1,4 +1,5 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , cmake
 , fetchFromGitHub
 , wrapQtAppsHook
@@ -87,12 +88,13 @@ stdenv.mkDerivation rec {
     ln -s $out/share/Grabber/Grabber-cli $out/bin/Grabber-cli
   '';
 
-  sourceRoot = "source/src";
+  sourceRoot = "${src.name}/src";
 
   meta = with lib; {
     description = "Very customizable imageboard/booru downloader with powerful filenaming features";
     license = licenses.asl20;
     homepage = "https://bionus.github.io/imgbrd-grabber/";
+    mainProgram = "Grabber";
     maintainers = [ maintainers.evanjs ];
   };
 }

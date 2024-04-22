@@ -15,7 +15,7 @@ in
       ensureHeadlessSoftwareOpenGL = mkOption {
         type = types.bool;
         default = false;
-        description = lib.mdDoc ''
+        description = ''
           Whether to set up NixOS such that TurboVNC's built-in software OpenGL
           implementation works.
 
@@ -39,7 +39,7 @@ in
   config = mkIf cfg.ensureHeadlessSoftwareOpenGL {
 
     # TurboVNC has builtin support for Mesa llvmpipe's `swrast`
-    # software rendering to implemnt GLX (OpenGL on Xorg).
+    # software rendering to implement GLX (OpenGL on Xorg).
     # However, just building TurboVNC with support for that is not enough
     # (it only takes care of the X server side part of OpenGL);
     # the indiviudual applications (e.g. `glxgears`) also need to directly load

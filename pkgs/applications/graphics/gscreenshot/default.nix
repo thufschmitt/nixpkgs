@@ -18,13 +18,13 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "gscreenshot";
-  version = "3.4.0";
+  version = "3.5.0";
 
   src = fetchFromGitHub {
     owner = "thenaterhood";
     repo = "${pname}";
-    rev = "v${version}";
-    sha256 = "YuISiTUReX9IQpckIgbt03CY7klnog/IeOtfBoQ1DZM=";
+    rev = "refs/tags/v${version}";
+    sha256 = "sha256-BA118PwMslqvnlRES2fEgTjzfNvKNVae7GzWSyuaqYM=";
   };
 
   # needed for wrapGAppsHook to function

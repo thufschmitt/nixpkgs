@@ -4,9 +4,9 @@
 mkXfceDerivation {
   category = "xfce";
   pname = "libxfce4ui";
-  version = "4.18.3";
+  version = "4.18.6";
 
-  sha256 = "sha256-Wb1nq744HDO4erJ2nJdFD0OMHVh14810TngN3FLFWIA=";
+  sha256 = "sha256-ojmI745tKLHv26uL1qS/v6hAcLmAV/WF2NAtAhQRUkg=";
 
   nativeBuildInputs = [ gobject-introspection vala ];
   buildInputs =  [ gtk3 libstartup_notification libgtop libepoxy xfconf ];
@@ -18,6 +18,7 @@ mkXfceDerivation {
 
   meta = with lib; {
     description = "Widgets library for Xfce";
+    mainProgram = "xfce4-about";
     license = with licenses; [ lgpl2Plus lgpl21Plus ];
     maintainers = with maintainers; [ ] ++ teams.xfce.members;
   };

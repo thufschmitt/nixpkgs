@@ -10,19 +10,17 @@
 
 buildPythonPackage rec {
   pname = "dissect-fat";
-  version = "3.4";
-  format = "pyproject";
+  version = "3.8";
+  pyproject = true;
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "fox-it";
     repo = "dissect.fat";
     rev = "refs/tags/${version}";
-    hash = "sha256-fnppFbdI+SfGPPcSspIQnI5wH3MerGtlEbm8pe3oSBs=";
+    hash = "sha256-xFfB7QOZ3KjsOPQ1cPTRkqb0hgD4waOq8kkSTJStQ+E=";
   };
-
-  SETUPTOOLS_SCM_PRETEND_VERSION = version;
 
   nativeBuildInputs = [
     setuptools

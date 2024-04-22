@@ -10,13 +10,13 @@
 
 stdenv.mkDerivation rec {
   pname = "hblock";
-  version = "3.4.1";
+  version = "3.4.4";
 
   src = fetchFromGitHub {
     owner = "hectorm";
     repo = "hblock";
     rev = "v${version}";
-    hash = "sha256-yOX/CsWs5HVH9s0KCzZm6PPqlDJHxz46jJB6KKC7Hsg=";
+    hash = "sha256-cYLpK5zUOzgbcBVrJT/N6Y9kMpg6KD1EthrstoF4sF8=";
   };
 
   buildInputs = [ coreutils curl gnugrep gawk ];
@@ -32,8 +32,10 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "Improve your security and privacy by blocking ads, tracking and malware domains";
+    mainProgram = "hblock";
     homepage = "https://github.com/hectorm/hblock";
     license = licenses.mit;
     maintainers = with maintainers; [ alanpearce ];
+    platforms = platforms.unix;
   };
 }

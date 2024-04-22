@@ -2,16 +2,16 @@
 
 buildGoModule rec {
   pname = "goawk";
-  version = "1.22.0";
+  version = "1.27.0";
 
   src = fetchFromGitHub {
     owner = "benhoyt";
     repo = "goawk";
     rev = "v${version}";
-    sha256 = "sha256-8UoYGAmYmC0hcxLfkNac3flKyPBT/xsykuy+TvVosBI=";
+    hash = "sha256-KB9N345xkgsPfI4DQYFag7qSdFv/JSU18YG8IPFrcQA=";
   };
 
-  vendorSha256 = null;
+  vendorHash = null;
 
   nativeCheckInputs = [ gawk ];
 

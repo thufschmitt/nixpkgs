@@ -8,16 +8,16 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "namaka";
-  version = "0.1.1";
+  version = "0.2.0";
 
   src = fetchFromGitHub {
     owner = "nix-community";
     repo = "namaka";
     rev = "v${version}";
-    hash = "sha256-ZTMqleCWmuNWhZE375gtF1j1JRkaKEUFN1AM43e7h4Y=";
+    hash = "sha256-CLGEW11Fo1v4vj0XSqiyW1EbhRZFO7dkgM43eKwItrk=";
   };
 
-  cargoHash = "sha256-QnEiCWC0awE7CUSpfGJGV7ItXRnP1omodPfKAtXSihY=";
+  cargoHash = "sha256-exftXTO/NbTfd7gNPpZ886jXH1XveqX+Cl/gXpZlS4c=";
 
   nativeBuildInputs = [
     installShellFiles
@@ -40,6 +40,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "Snapshot testing tool for Nix based on haumea";
+    mainProgram = "namaka";
     homepage = "https://github.com/nix-community/namaka";
     changelog = "https://github.com/nix-community/namaka/blob/${src.rev}/CHANGELOG.md";
     license = licenses.mpl20;

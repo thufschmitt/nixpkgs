@@ -9,14 +9,14 @@
 
 buildPythonPackage rec {
   pname = "onvif-zeep-async";
-  version = "3.1.7";
+  version = "3.1.12";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-ra/1qKKmuWWvJCrr1uTCU5Awv5+GShgDHlHw0igLc4c=";
+    hash = "sha256-TXSwrWnDXzntXZN/u09QB3BsIa6tpf6LpGFKEyA/GH8=";
   };
 
   propagatedBuildInputs = [
@@ -34,6 +34,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "ONVIF Client Implementation in Python";
+    mainProgram = "onvif-cli";
     homepage = "https://github.com/hunterjm/python-onvif-zeep-async";
     license = with licenses; [ mit ];
     maintainers = with maintainers; [ fab ];

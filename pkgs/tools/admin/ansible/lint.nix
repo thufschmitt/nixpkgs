@@ -6,12 +6,12 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "ansible-lint";
-  version = "6.16.0";
+  version = "24.2.2";
   format = "pyproject";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-34Lzk18SCeMHRAjurl6DfM7G/VLB0xJmif9BJKuwpcs=";
+    hash = "sha256-6ElHbhUC435aRsJijJkyYM5GS995dRljc13MtoMFGX4=";
   };
 
   postPatch = ''
@@ -33,6 +33,7 @@ python3.pkgs.buildPythonApplication rec {
   propagatedBuildInputs = with python3.pkgs; [
     # https://github.com/ansible/ansible-lint/blob/master/.config/requirements.in
     ansible-core
+    ansible-compat
     black
     filelock
     jsonschema
@@ -87,6 +88,7 @@ python3.pkgs.buildPythonApplication rec {
 
   meta = with lib; {
     description = "Best practices checker for Ansible";
+    mainProgram = "ansible-lint";
     homepage = "https://github.com/ansible/ansible-lint";
     changelog = "https://github.com/ansible/ansible-lint/releases/tag/v${version}";
     license = licenses.mit;

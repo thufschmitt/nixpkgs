@@ -1,9 +1,13 @@
 { lib
 , buildPythonPackage
 , fetchFromGitHub
+, beautifulsoup4
 , deprecated
+, jmespath
+, lxml
 , oauthlib
 , requests
+, requests-kerberos
 , requests-oauthlib
 , six
 , pytestCheckHook
@@ -12,7 +16,7 @@
 
 buildPythonPackage rec {
   pname = "atlassian-python-api";
-  version = "3.36.0";
+  version = "3.41.11";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -21,13 +25,17 @@ buildPythonPackage rec {
     owner = "atlassian-api";
     repo = pname;
     rev = "refs/tags/${version}";
-    hash = "sha256-9xKGA9F3RLijjiEnb01QjmWA9CnN7FZGEEFEWZU4A+A=";
+    hash = "sha256-yQqy+pFl5TK4CEUM+vpwl+pkUjBuc0xvqC9o1ZC5m7c=";
   };
 
   propagatedBuildInputs = [
+    beautifulsoup4
     deprecated
+    jmespath
+    lxml
     oauthlib
     requests
+    requests-kerberos
     requests-oauthlib
     six
   ];

@@ -1,6 +1,7 @@
 { lib
 , absl-py
 , buildPythonPackage
+, flit-core
 , chex
 , fetchFromGitHub
 , jaxlib
@@ -11,21 +12,25 @@
 
 buildPythonPackage rec {
   pname = "optax";
-  version = "0.1.5";
-  format = "setuptools";
+  version = "0.2.2";
+  pyproject = true;
 
-  disabled = pythonOlder "3.7";
+  disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "deepmind";
-    repo = pname;
+    repo = "optax";
     rev = "refs/tags/v${version}";
-    hash = "sha256-vhPpynKq0dboSt+fQ4lvVv9ytDXnZKRrc7lF03Mm39g=";
+    hash = "sha256-sBiKUuQR89mttc9Njrh1aeUJOYdlcF7Nlj3/+Y7OMb4=";
   };
 
   outputs = [
     "out"
     "testsout"
+  ];
+
+  nativeBuildInputs = [
+    flit-core
   ];
 
   buildInputs = [

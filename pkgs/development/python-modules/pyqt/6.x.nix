@@ -1,8 +1,7 @@
 { lib
 , stdenv
 , buildPythonPackage
-, isPy27
-, fetchPypi
+, fetchurl
 , pkg-config
 , dbus
 , lndir
@@ -15,9 +14,7 @@
 , pythonOlder
 , withMultimedia ? true
 , withWebSockets ? true
-# FIXME: Once QtLocation is available for Qt6 enable this
-# https://bugreports.qt.io/browse/QTBUG-96795
-#, withLocation ? true
+, withLocation ? true
 # Not currently part of PyQt6
 #, withConnectivity ? true
 , withPrintSupport ? true
@@ -25,15 +22,18 @@
 }:
 
 buildPythonPackage rec {
-  pname = "PyQt6";
-  version = "6.5.0";
+  pname = "pyqt6";
+  version = "6.7.0.dev2404081550";
   format = "pyproject";
 
   disabled = pythonOlder "3.6";
 
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-uXy0vpssiZeQTqZozzsKSuWCIZb3eSWQ0F7N5iFqn7w=";
+  src = fetchurl {
+    urls = [
+      "https://riverbankcomputing.com/pypi/packages/PyQt6/PyQt6-${version}.tar.gz"
+      "http://web.archive.org/web/20240411124842if_/https://riverbankcomputing.com/pypi/packages/PyQt6/PyQt6-${version}.tar.gz"
+    ];
+    hash = "sha256-H5qZ/rnruGh+UVSXLZyTSvjagmmli/iYq+7BaIzl1YQ=";
   };
 
   patches = [
@@ -46,11 +46,15 @@ buildPythonPackage rec {
   ];
 
   # be more verbose
+  # and normalize version
   postPatch = ''
     cat >> pyproject.toml <<EOF
     [tool.sip.project]
     verbose = true
     EOF
+
+    substituteInPlace pyproject.toml \
+      --replace-fail 'version = "${version}"' 'version = "${lib.versions.pad 3 version}"'
   '';
 
   enableParallelBuilding = true;
@@ -83,7 +87,7 @@ buildPythonPackage rec {
   # ++ lib.optional withConnectivity qtconnectivity
   ++ lib.optional withMultimedia qtmultimedia
   ++ lib.optional withWebSockets qtwebsockets
-  # ++ lib.optional withLocation qtlocation
+  ++ lib.optional withLocation qtlocation
   ;
 
   buildInputs = with qt6Packages; [
@@ -97,7 +101,7 @@ buildPythonPackage rec {
   ]
   # ++ lib.optional withConnectivity qtconnectivity
   ++ lib.optional withWebSockets qtwebsockets
-  # ++ lib.optional withLocation qtlocation
+  ++ lib.optional withLocation qtlocation
   ;
 
   propagatedBuildInputs = [
@@ -132,8 +136,10 @@ buildPythonPackage rec {
   ++ lib.optional withWebSockets "PyQt6.QtWebSockets"
   ++ lib.optional withMultimedia "PyQt6.QtMultimedia"
   # ++ lib.optional withConnectivity "PyQt6.QtConnectivity"
-  # ++ lib.optional withLocation "PyQt6.QtPositioning"
+  ++ lib.optional withLocation "PyQt6.QtPositioning"
   ;
+
+  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.isDarwin "-Wno-address-of-temporary";
 
   meta = with lib; {
     description = "Python bindings for Qt6";

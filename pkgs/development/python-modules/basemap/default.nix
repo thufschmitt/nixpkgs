@@ -17,16 +17,17 @@
 
 buildPythonPackage rec {
   pname = "basemap";
-  version = "1.3.6";
+  version = "1.4.1";
+  format = "setuptools";
 
   src = fetchFromGitHub {
     owner = "matplotlib";
     repo = "basemap";
     rev = "refs/tags/v${version}";
-    hash = "sha256-BSWifzh+Y1f+x89oNYMBvttWY9qZ0IM5QYqSgyVb1fE=";
+    hash = "sha256-0rTGsphwLy2yGvhO7bcmFqdgysIXXkDBmURwRVw3ZHY=";
   };
 
-  sourceRoot = "source/packages/basemap";
+  sourceRoot = "${src.name}/packages/basemap";
 
   nativeBuildInputs = [
     cython

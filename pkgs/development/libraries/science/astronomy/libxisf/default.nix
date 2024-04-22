@@ -6,19 +6,24 @@
 , lz4
 , pugixml
 , zlib
+, zstd
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "libxisf";
-  version = "0.2.3";
+  version = "0.2.12";
 
   src = fetchFromGitea {
     domain = "gitea.nouspiro.space";
     owner = "nou";
     repo = "libXISF";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-u5EYnRO2rUV8ofLL9qfACeVvVbWXEXpkqh2Q4OOxpaQ=";
+    hash = "sha256-QhshgKyf9s5U5JMa5TZelIo1tpJGlsOQePPG1kEfbq8=";
   };
+
+  patches = [
+    ./0001-Fix-pkg-config-paths.patch
+  ];
 
   nativeBuildInputs = [
     cmake
@@ -33,6 +38,7 @@ stdenv.mkDerivation (finalAttrs: {
     lz4
     pugixml
     zlib
+    zstd
   ];
 
   doCheck = true;

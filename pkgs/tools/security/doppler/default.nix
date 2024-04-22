@@ -8,16 +8,16 @@
 
 buildGoModule rec {
   pname = "doppler";
-  version = "3.58.0";
+  version = "3.68.0";
 
   src = fetchFromGitHub {
     owner = "dopplerhq";
     repo = "cli";
     rev = version;
-    sha256 = "sha256-1cAsoaKKxSz2YhwMkfyzAyH8zFHm7YWS01/3CmcD8uY=";
+    sha256 = "sha256-IKfLoCFJOGE200Mef660CQNMukEmpgIWo6ngOYvX5Hw=";
   };
 
-  vendorHash = "sha256-yuGjaUHfXCJnMvxfaSwbVAApflwfsvX2W7iEZdruMDE=";
+  vendorHash = "sha256-NUHWKPszQH/pvnA+j65+bJ6t+C0FDRRbTviqkYztpE4=";
 
   ldflags = [
     "-s -w"
@@ -41,6 +41,7 @@ buildGoModule rec {
 
   meta = with lib; {
     description = "The official CLI for interacting with your Doppler Enclave secrets and configuration";
+    mainProgram = "doppler";
     homepage = "https://doppler.com";
     license = licenses.asl20;
     maintainers = with maintainers; [ lucperkins ];

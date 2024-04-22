@@ -17,7 +17,7 @@
 
 buildPythonPackage rec {
   pname = "cloudsplaining";
-  version = "0.5.1";
+  version = "0.6.2";
   format = "setuptools";
 
   disabled = pythonOlder "3.6";
@@ -26,7 +26,7 @@ buildPythonPackage rec {
     owner = "salesforce";
     repo = pname;
     rev = "refs/tags/${version}";
-    hash = "sha256-L7sEv0xe8+riJb7DW2N6+MsoXBXJNzK96oGkpAkAyLU=";
+    hash = "sha256-7aOPerqayuJTHItlpnVVSzOlSGNnqHvtIi5BdovNh3A=";
   };
 
   propagatedBuildInputs = [
@@ -62,6 +62,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Python module for AWS IAM security assessment";
+    mainProgram = "cloudsplaining";
     homepage = "https://github.com/salesforce/cloudsplaining";
     license = licenses.bsd3;
     maintainers = with maintainers; [ fab ];

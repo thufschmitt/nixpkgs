@@ -1,11 +1,14 @@
 { lib
 , stdenv
-, fetchurl
+, fetchFromGitHub
 , fetchpatch
+, autoreconfHook
+, boost
 , pkg-config
 , gnutls
 , libgcrypt
 , libpar2
+, libcap
 , libsigcxx
 , libxml2
 , ncurses
@@ -14,31 +17,33 @@
 , nixosTests
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "nzbget";
-  version = "21.1";
+  version = "23.0";
 
-  src = fetchurl {
-    url = "https://github.com/nzbget/nzbget/releases/download/v${version}/nzbget-${version}-src.tar.gz";
-    hash = "sha256-To/BvrgNwq8tajajOjP0Te3d1EhgAsZE9MR5MEMHICU=";
+  src = fetchFromGitHub {
+    owner = "nzbgetcom";
+    repo = "nzbget";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-JqC82zpsIqRYB7128gTSOQMWJFR/t63NJXlPgGqP0jE=";
   };
 
   patches = [
-    # openssl 3 compatibility
-    # https://github.com/nzbget/nzbget/pull/793
+    # add nzbget-ng patch not in nzbgetcom for buffer overflow issue -- see https://github.com/nzbget-ng/nzbget/pull/43
     (fetchpatch {
-      name = "daemon-connect-dont-use-fips-mode-set-with-openssl-3.patch";
-      url = "https://github.com/nzbget/nzbget/commit/f76e8555504e3af4cf8dd4a8c8e374b3ca025099.patch";
-      hash = "sha256-39lvnhBK4126TYsRbJOUxsV9s9Hjuviw7CH/wWn/VkM=";
+      url = "https://github.com/nzbget-ng/nzbget/commit/8fbbbfb40003c6f32379a562ce1d12515e61e93e.patch";
+      hash = "sha256-mgI/twEoMTFMFGfH1/Jm6mE9u9/CE6RwELCSGx5erUo=";
     })
   ];
 
-  nativeBuildInputs = [ pkg-config ];
+  nativeBuildInputs = [ autoreconfHook pkg-config ];
 
   buildInputs = [
+    boost
     gnutls
     libgcrypt
     libpar2
+    libcap
     libsigcxx
     libxml2
     ncurses
@@ -46,15 +51,21 @@ stdenv.mkDerivation rec {
     zlib
   ];
 
+  prePatch = ''
+    sed -i 's/AC_INIT.*/AC_INIT( nzbget, m4_esyscmd_s( echo ${finalAttrs.version} ) )/' configure.ac
+  '';
+
   enableParallelBuilding = true;
 
   passthru.tests = { inherit (nixosTests) nzbget; };
 
   meta = with lib; {
-    homepage = "https://nzbget.net";
+    homepage = "https://nzbget.com/";
+    changelog = "https://github.com/nzbgetcom/nzbget/releases/tag/v${finalAttrs.version}";
     license = licenses.gpl2Plus;
     description = "A command line tool for downloading files from news servers";
-    maintainers = with maintainers; [ pSub ];
+    maintainers = with maintainers; [ pSub devusb ];
     platforms = with platforms; unix;
+    mainProgram = "nzbget";
   };
-}
+})
